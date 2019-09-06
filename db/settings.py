@@ -75,8 +75,12 @@ WSGI_APPLICATION = 'db.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'admin',
+        'USER': 'admin',
+        'PASSWORD': 'NK1QjbesuPcW0ZOMfj8zzd5jw4AkfJ7Tq1uQ+pmVG2g=',
+        'HOST': 'thebias.nl',
+        'PORT': '5432',
     }
 }
 
