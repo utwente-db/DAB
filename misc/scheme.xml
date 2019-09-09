@@ -40,8 +40,7 @@
 </datatypes><table x="391" y="299" name="StudentGroup">
 <row name="id" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
-<default>NULL</default><relation table="Courses" row="id" />
-</row>
+<default>NULL</default></row>
 <row name="DB_ID" null="0" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="StudentDatabases" row="DB_ID" />
@@ -50,10 +49,11 @@
 <part>id</part>
 </key>
 </table>
-<table x="692" y="266" name="Courses">
+<table x="388" y="413" name="Courses">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
-<default>NULL</default></row>
+<default>NULL</default><relation table="Roles" row="id" />
+</row>
 <row name="Course_name" null="0" autoincrement="0">
 <datatype>MEDIUMTEXT</datatype>
 <default>'NULL'</default></row>
@@ -67,7 +67,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="414" y="436" name="StudentDatabases">
+<table x="646" y="315" name="StudentDatabases">
 <row name="DB_ID" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default></row>
@@ -87,7 +87,7 @@
 <part>DB_ID</part>
 </key>
 </table>
-<table x="682" y="448" name="Roles">
+<table x="186" y="226" name="Roles">
 <row name="id" null="1" autoincrement="1">
 <datatype>INTEGER</datatype>
 <default>NULL</default><relation table="StudentGroup" row="id" />
