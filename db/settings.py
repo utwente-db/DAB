@@ -25,7 +25,7 @@ SECRET_KEY = 'k$=*=7$_j21c0!otzao(^x6ftf!15-n+d(qp=0x*0m_d+1$vu('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [u'db.thebias.nl']
+ALLOWED_HOSTS = [u'db.thebias.nl', u'localhost']
 
 
 # Application definition
