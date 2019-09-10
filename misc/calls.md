@@ -1,7 +1,5 @@
 # Description of the REST calls.
 
-test line
-
 NB: all of these require the user to be authenticated; make sure to always check!
 
 ## Retrieval, via GET
