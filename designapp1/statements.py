@@ -37,12 +37,12 @@ def create_db(db_name, username, password):
 #Deletes a database
 def delete_db(db_name):
 	with connection.cursor() as cursor:
-		cursor.execute("DROP DATABASE %s", [db_name])
+		cursor.execute("DROP DATABASE \""+db_name+"\";")
 
 #Deletes a user
 def delete_user(username):
 	with connection.cursor() as cursor:
-		cursor.execute("DROP USER %s", [username])
+		cursor.execute("DROP USER \""+username+"\";")
 
 #Deletes a database and its owner
 #WARNING: use only if the user exclusively owns this database
