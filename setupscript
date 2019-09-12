@@ -1,5 +1,6 @@
 #!/bin/bash 
 
+#DEPRECATED, USE init.sh and start.sh
 
 #To run on fresh linux installation
 #sudo wget https://git.thebias.nl/floris/design/raw/branch/base-backend/setupscript | sudo bash setupscript

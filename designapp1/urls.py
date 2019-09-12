@@ -1,4 +1,6 @@
 from django.conf.urls import url,include
+from django.urls import path
+
 from . import views
 from rest_framework import routers
 
@@ -10,7 +12,8 @@ router.register('Studentgroup', views.StudentgroupView)
 
 
 urlpatterns = [
-   url('', include(router.urls))
+   # url('', include(router.urls))
+   path('', views.index, name='index')
 ]
 
 

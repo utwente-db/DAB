@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.http import HttpResponse
 from django.shortcuts import render
+from django.template import loader
 from rest_framework import viewsets
 
 #OWN PROJECT
@@ -34,4 +36,11 @@ class StudentdatabasesView(viewsets.ModelViewSet):
         queryset = Studentdatabases.objects.all()
         serializer_class = StudentdatabasesSerializer
 
-
+def index(request):
+    template = loader.get_template('designapp1/index.html')
+    number=3
+    context = {
+        'number': number,
+        'range': range(number)
+    }
+    return HttpResponse(template.render(context, request))
