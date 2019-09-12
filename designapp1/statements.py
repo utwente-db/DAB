@@ -4,11 +4,23 @@ import psycopg2 as db
 This file contains the ugly part of the program where we insert raw SQL into the database
 """
 
-#Why
-db_host = connection.settings_dict["HOST"]
-db_user = connection.settings_dict["USER"]
-db_port = connection.settings_dict["PORT"]
-db_password = connection.settings_dict["PASSWORD"]
+#for internal use: returns new connection object to other database
+def connect(db_name):
+	#Why
+	db_host = connection.settings_dict["HOST"]
+	db_user = connection.settings_dict["USER"]
+	db_port = connection.settings_dict["PORT"]
+	db_password = connection.settings_dict["PASSWORD"]
+
+	conn = db.connect(user=db_user,
+		              password=db_password,
+		              host=db_host,
+		              port=db_port,
+		              database=db_name)
+
+	return conn
+
+
 
 #Creates a database owned and administered by a user with a password
 #Also ensures this database does not have a schema public, but instead has a schema private.
@@ -23,11 +35,7 @@ def create_db(db_name, username, password):
 		cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \""+db_name+"\" FROM public;")
 
 		#In order to drop the public schema, we HAVE to connect to the database in question
-		conn = db.connect(user=db_user,
-			              password=db_password,
-			              host=db_host,
-			              port=db_port,
-			              database=db_name)
+		conn = connect(db_name)
 
 		with conn.cursor() as cur:
 			cur.execute("DROP SCHEMA public CASCADE;")
