@@ -1,3 +1,11 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Front page</title>
+{#    favicon ?#}
+{% endblock %}
+
+{% block content %}
 {% if number > 2 %}
     Listing numbers up to {{ number }}
     <ul>
@@ -8,3 +16,4 @@
 {% else %}
     <p>Number is low.</p>
 {% endif %}
+{% endblock %}

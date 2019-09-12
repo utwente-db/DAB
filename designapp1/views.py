@@ -37,7 +37,7 @@ class StudentdatabasesView(viewsets.ModelViewSet):
         serializer_class = StudentdatabasesSerializer
 
 def index(request):
-    template = loader.get_template('designapp1/index.html')
+    template = loader.get_template('index.html')
     number=3
     context = {
         'number': number,
