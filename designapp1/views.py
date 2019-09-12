@@ -18,6 +18,12 @@ from .serializers import CoursesSerializer
 from .serializers import StudentgroupSerializer
 from .serializers import StudentdatabasesSerializer
 
+from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
+from django.http import HttpResponse
+
+import json
+from designapp1 import statements
+
 # Create your views here.
 
 class RolesView(viewsets.ModelViewSet):
@@ -47,3 +53,34 @@ def index(request):
 
 def test(request):
     return HttpResponse("test")
+
+@require_POST
+def create_db(request):
+	body = json.loads(request.body.decode("utf-8"))
+	statements.create_db(body["name"], body["owner"], body["password"])
+	return HttpResponse("")
+
+@require_POST
+def delete_db(request):
+	body = json.loads(request.body.decode("utf-8"))
+	statements.delete_db(body["name"])
+	return HttpResponse("")
+
+@require_POST
+def delete_user(request):
+	body = json.loads(request.body.decode("utf-8"))
+	statements.delete_user(body["name"])
+	return HttpResponse("")
+
+@require_POST
+def delete_db_with_owner(request):
+	body = json.loads(request.body.decode("utf-8"))
+	statements.delete_db_with_owner(body["name"])
+	return HttpResponse("")
+
+@require_GET
+def get_users(request):
+	answer = statements.get_users()
+	answer = json.JSONEncoder().encode(answer)
+	response = HttpResponse(str(answer), content_type="application/json")
+	return response

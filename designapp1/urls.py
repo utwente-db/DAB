@@ -1,6 +1,5 @@
-from django.conf.urls import url,include
+from django.conf.urls import url, include
 from django.urls import path
-
 from . import views
 from rest_framework import routers
 
@@ -15,6 +14,11 @@ urlpatterns = [
    # url('', include(router.urls))
    path('', views.index, name='index'),
    path('test/', views.test, name='testpath'),
+   path('create_db', views.create_db, name='create_db'),
+   path('delete_db', views.delete_db, name='delete_db'),
+   path('delete_user', views.delete_user, name='delete_user'),
+   path('delete_db_with_owner', views.delete_db_with_owner, name='delete_db_with_owner'),
+   path('get_users', views.get_users, name='get_users')
 ]
 
 
