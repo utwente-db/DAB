@@ -44,3 +44,6 @@ def index(request):
         'range': range(number)
     }
     return HttpResponse(template.render(context, request))
+
+def test(request):
+    return HttpResponse("test")

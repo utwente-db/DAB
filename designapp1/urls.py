@@ -13,7 +13,8 @@ router.register('Studentgroup', views.StudentgroupView)
 
 urlpatterns = [
    # url('', include(router.urls))
-   path('', views.index, name='index')
+   path('', views.index, name='index'),
+   path('test/', views.test, name='testpath'),
 ]
 
 
