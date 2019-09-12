@@ -23,22 +23,16 @@ def create_db(db_name, username, password):
 		cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \""+db_name+"\" FROM public;")
 
 		#In order to drop the public schema, we HAVE to connect to the database in question
-		try:
-			conn = db.connect(user=db_user,
-				              password=db_password,
-				              host=db_host,
-				              port=db_port,
-				              database=db_name)
+		conn = db.connect(user=db_user,
+			              password=db_password,
+			              host=db_host,
+			              port=db_port,
+			              database=db_name)
 
-			with conn.cursor() as cur:
-				cur.execute("DROP SCHEMA public CASCADE;")
-				cur.execute("CREATE SCHEMA private;")
-				cur.execute("ALTER SCHEMA private OWNER TO \""+username+"\";")
-
-		except (Exception, db.Error) as error:
-			return "Error: "+str(error)
-
-		return "ok"
+		with conn.cursor() as cur:
+			cur.execute("DROP SCHEMA public CASCADE;")
+			cur.execute("CREATE SCHEMA private;")
+			cur.execute("ALTER SCHEMA private OWNER TO \""+username+"\";")
 
 #Deletes a database
 def delete_db(db_name):
@@ -54,21 +48,28 @@ def delete_user(username):
 #WARNING: use only if the user exclusively owns this database
 #TODO: enforce the above
 def delete_db_with_owner(db_name):
-	connection.set_isolation_level(3)
-	with connection.cursor() as cursor:
-		cursor.execute("SELECT pg_catalog.pg_get_userbyid(d.datdba) as owner FROM pg_catalog.pg_database d WHERE d.datname = %s;", [db_name])
-		owner = cursor.fetchone()[0];
-		cursor.execute("DROP USER %s", [owner])
-		cursor.execute("DROP DATABASE %s" [db_name])
-	connection.commit()
-	connection.set_isolation_level(0)
+	connection.autocommit = False
+	try:
+		with connection.cursor() as cursor:
+			cursor.execute("SELECT pg_catalog.pg_get_userbyid(d.datdba) as owner FROM pg_catalog.pg_database d WHERE d.datname = %s;", [db_name])
+			owner = cursor.fetchone()[0];
+			cursor.execute("DROP DATABASE \""+db_name+"\";")
+			cursor.execute("DROP USER \""+owner+"\";")
+		connection.commit()
+	except (Exception, db.Error) as error:
+		connection.rollback()
+		raise error
+	connection.autocommit = True
 
 
 #Gets a list of all non-super users and their passwords
 #WARNING: these passwords are real. Be sure to not make non-superusers with plaintext passwords for other reasons!
 def get_users():
-	with connection.cursor as cursor:
-		cursor.execute("SELECT usename as username, passwd as password FROM pg_catalog.pg_shadow WHERE NOT usesuper;")
-		return cursor.fetchall()
+	with connection.cursor() as cursor:
+		cursor.execute("SELECT usename, passwd FROM pg_catalog.pg_shadow WHERE NOT usesuper;")
+		result = []
+		for item in cursor.fetchall():
+			result.append({"username": item[0], "password": item[1]})
+		return result
 
 

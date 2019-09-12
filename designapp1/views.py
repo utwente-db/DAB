@@ -43,12 +43,30 @@ class StudentdatabasesView(viewsets.ModelViewSet):
 @require_POST
 def create_db(request):
 	body = json.loads(request.body.decode("utf-8"))
-	r = statements.create_db(body["name"], body["owner"], body["password"])
-	if(r=="ok"):
-		return HttpResponse("")
-	else:
-		response = HttpResponse(r)
-		response.status_code = 500
-		return response
+	statements.create_db(body["name"], body["owner"], body["password"])
+	return HttpResponse("")
 
+@require_POST
+def delete_db(request):
+	body = json.loads(request.body.decode("utf-8"))
+	statements.delete_db(body["name"])
+	return HttpResponse("")
 
+@require_POST
+def delete_user(request):
+	body = json.loads(request.body.decode("utf-8"))
+	statements.delete_user(body["name"])
+	return HttpResponse("")
+
+@require_POST
+def delete_db_with_owner(request):
+	body = json.loads(request.body.decode("utf-8"))
+	statements.delete_db_with_owner(body["name"])
+	return HttpResponse("")
+
+@require_GET
+def get_users(request):
+	answer = statements.get_users()
+	answer = json.JSONEncoder().encode(answer)
+	response = HttpResponse(str(answer), content_type="application/json")
+	return response

@@ -12,7 +12,11 @@ router.register('Studentgroup', views.StudentgroupView)
 
 urlpatterns = [
    url('', include(router.urls)),
-   path('create_db', views.create_db, name='create_db')
+   path('create_db', views.create_db, name='create_db'),
+   path('delete_db', views.delete_db, name='delete_db'),
+   path('delete_user', views.delete_user, name='delete_user'),
+   path('delete_db_with_owner', views.delete_db_with_owner, name='delete_db_with_owner'),
+   path('get_users', views.get_users, name='get_users')
 ]
 
 
