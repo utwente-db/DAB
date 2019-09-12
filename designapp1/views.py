@@ -16,6 +16,12 @@ from .serializers import CoursesSerializer
 from .serializers import StudentgroupSerializer
 from .serializers import StudentdatabasesSerializer
 
+from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
+from django.http import HttpResponse
+
+import json
+from designapp1 import statements
+
 # Create your views here.
 
 class RolesView(viewsets.ModelViewSet):
@@ -33,5 +39,16 @@ class StudentgroupView(viewsets.ModelViewSet):
 class StudentdatabasesView(viewsets.ModelViewSet):
         queryset = Studentdatabases.objects.all()
         serializer_class = StudentdatabasesSerializer
+
+@require_POST
+def create_db(request):
+	body = json.loads(request.body.decode("utf-8"))
+	r = statements.create_db(body["name"], body["owner"], body["password"])
+	if(r=="ok"):
+		return HttpResponse("")
+	else:
+		response = HttpResponse(r)
+		response.status_code = 500
+		return response
 
 

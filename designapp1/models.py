@@ -28,7 +28,6 @@ class Roles(models.Model):
     maxdatabases = models.IntegerField()
 
 
-
     class Meta:
         managed = False
         db_table = 'roles'

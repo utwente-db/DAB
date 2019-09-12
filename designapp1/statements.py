@@ -5,27 +5,40 @@ This file contains the ugly part of the program where we insert raw SQL into the
 """
 
 #Why
-host = connection.settings_dict["HOST"]
+db_host = connection.settings_dict["HOST"]
+db_user = connection.settings_dict["USER"]
+db_port = connection.settings_dict["PORT"]
+db_password = connection.settings_dict["PASSWORD"]
 
 #Creates a database owned and administered by a user with a password
 #Also ensures this database does not have a schema public, but instead has a schema private.
 def create_db(db_name, username, password):
-	global host
+	global db_host, db_user, db_port, db_password
 	with connection.cursor() as cursor:
-		cursor.execute("CREATE USER %s WITH UNENCRYPTED PASSWORD %s;", [username, password])
-		cursor.execute("CREATE DATABASE %s WITH OWNER %s;", [db_name, username])
-		cursor.execute("GRANT ALL PRIVILEGES ON DATABASE %s TO %s;", [db_name, username])
-		cursor.execute("REVOKE PRIVILEGES ON DATABASE %s FROM public;", [db_name])
+		#TODO: literally any security of any kind at all
+		#(especially preventing injections)
+		cursor.execute("CREATE USER \""+username+"\" WITH UNENCRYPTED PASSWORD '"+password+"';")
+		cursor.execute("CREATE DATABASE \""+db_name+"\" WITH OWNER \""+username+"\";")
+		cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \""+db_name+"\" TO \""+username+"\";")
+		cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \""+db_name+"\" FROM public;")
 
 		#In order to drop the public schema, we HAVE to connect to the database in question
-		#For security&tm; reasons I would like to not use the admin account for this.
 		try:
-			conn = db.connect("dbname='"+db_name+"' user='"+username+"' host='"+host+"' password='"+password+"'");
+			conn = db.connect(user=db_user,
+				              password=db_password,
+				              host=db_host,
+				              port=db_port,
+				              database=db_name)
 
-			with conn.cursor as cur:
+			with conn.cursor() as cur:
 				cur.execute("DROP SCHEMA public CASCADE;")
 				cur.execute("CREATE SCHEMA private;")
-				cur.execute("ALTER SCHEMA private OWNER TO %s", [username])
+				cur.execute("ALTER SCHEMA private OWNER TO \""+username+"\";")
+
+		except (Exception, db.Error) as error:
+			return "Error: "+str(error)
+
+		return "ok"
 
 #Deletes a database
 def delete_db(db_name):
