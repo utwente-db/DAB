@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Login</title>
+{#    favicon ?#}
+{% endblock %}
+
+{% block content %}
+
+<form action="login" method="POST">
+	<input type="text" placeholder="username"/><br/>
+	<input type="password" placeholder="password"/><br/>
+	<input type="submit"/>
+</form>
+
+{% endblock %}

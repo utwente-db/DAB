@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.http import HttpResponse
+from django.shortcuts import render
+from rest_framework import viewsets
 from django.shortcuts import render
 from django.template import loader
 from rest_framework import viewsets
+
 
 #OWN PROJECT
 
@@ -19,10 +21,12 @@ from .serializers import StudentgroupSerializer
 from .serializers import StudentdatabasesSerializer
 
 from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
 import json
 from designapp1 import statements
+
+from .forms import *
 
 # Create your views here.
 
@@ -41,18 +45,6 @@ class StudentgroupView(viewsets.ModelViewSet):
 class StudentdatabasesView(viewsets.ModelViewSet):
         queryset = Studentdatabases.objects.all()
         serializer_class = StudentdatabasesSerializer
-
-def index(request):
-    template = loader.get_template('index.html')
-    number=3
-    context = {
-        'number': number,
-        'range': range(number)
-    }
-    return HttpResponse(template.render(context, request))
-
-def test(request):
-    return HttpResponse("test")
 
 @require_POST
 def create_db(request):
@@ -84,3 +76,28 @@ def get_users(request):
 	answer = json.JSONEncoder().encode(answer)
 	response = HttpResponse(str(answer), content_type="application/json")
 	return response
+
+@require_http_methods(["GET", "POST"])
+def register(request):
+	if request.method == "POST":
+		form = RegisterForm(request.POST)
+		if form.is_valid():
+			data = form.cleaned_data
+			role = Roles(role=0, email=data["mail"], password=data["password"], maxdatabases=0)
+			role.save()
+			return HttpResponseRedirect("/")
+
+	form = RegisterForm()
+	return render(request, 'register.html', {'form': form})
+
+@require_http_methods(["GET", "POST"])
+def login(request):
+	if request.method == "GET":
+		template = loader.get_template("login.html")
+		return HttpResponse(template.render())
+	elif request.method == "POST":
+		pass
+
+@require_POST
+def logout(request):
+	pass

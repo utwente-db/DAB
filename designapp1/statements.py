@@ -34,13 +34,13 @@ def create_db(db_name, username, password):
 		cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \""+db_name+"\" TO \""+username+"\";")
 		cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \""+db_name+"\" FROM public;")
 
-		#In order to drop the public schema, we HAVE to connect to the database in question
-		conn = connect(db_name)
+	#In order to drop the public schema, we HAVE to connect to the database in question
+	conn = connect(db_name)
 
-		with conn.cursor() as cur:
-			cur.execute("DROP SCHEMA public CASCADE;")
-			cur.execute("CREATE SCHEMA private;")
-			cur.execute("ALTER SCHEMA private OWNER TO \""+username+"\";")
+	with conn.cursor() as cur:
+		cur.execute("DROP SCHEMA public CASCADE;")
+		cur.execute("CREATE SCHEMA private;")
+		cur.execute("ALTER SCHEMA private OWNER TO \""+username+"\";")
 
 #Deletes a database
 def delete_db(db_name):
