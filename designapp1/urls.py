@@ -11,7 +11,9 @@ router.register('Studentgroup', views.StudentgroupView)
 
 
 urlpatterns = [
-   url('', include(router.urls)),
+   # url('', include(router.urls))
+   path('', views.index, name='index'),
+   path('test/', views.test, name='testpath'),
    path('create_db', views.create_db, name='create_db'),
    path('delete_db', views.delete_db, name='delete_db'),
    path('delete_user', views.delete_user, name='delete_user'),
