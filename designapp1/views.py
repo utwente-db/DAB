@@ -47,32 +47,54 @@ class StudentdatabasesView(viewsets.ModelViewSet):
         queryset = Studentdatabases.objects.all()
         serializer_class = StudentdatabasesSerializer
 
+unauthorised = HttpResponse()
+unauthorised.status_code = 401
+
+def check_role(request, role):
+	try:
+		print(request.session["role"])
+		if(int(request.session["role"]) <= role):
+			return True
+	except Exception:
+		pass
+	return False
+
 @require_POST
 def create_db(request):
+	if not check_role(request, 0):
+		return unauthorised;
 	body = json.loads(request.body.decode("utf-8"))
 	statements.create_db(body["name"], body["owner"], body["password"])
 	return HttpResponse("")
 
 @require_POST
 def delete_db(request):
+	if not check_role(request, 0):
+		return unauthorised;
 	body = json.loads(request.body.decode("utf-8"))
 	statements.delete_db(body["name"])
 	return HttpResponse("")
 
 @require_POST
 def delete_user(request):
+	if not check_role(request, 0):
+		return unauthorised;
 	body = json.loads(request.body.decode("utf-8"))
 	statements.delete_user(body["name"])
 	return HttpResponse("")
 
 @require_POST
 def delete_db_with_owner(request):
+	if not check_role(request, 0):
+		return unauthorised;
 	body = json.loads(request.body.decode("utf-8"))
 	statements.delete_db_with_owner(body["name"])
 	return HttpResponse("")
 
 @require_GET
 def get_users(request):
+	if not check_role(request, 0):
+		return unauthorised;
 	answer = statements.get_users()
 	answer = json.JSONEncoder().encode(answer)
 	response = HttpResponse(str(answer), content_type="application/json")
@@ -87,23 +109,37 @@ def register(request):
 			password = hash.make(data["password"])
 			role = Roles(role=0, email=data["mail"], password=password, maxdatabases=0)
 			role.save()
-			return HttpResponseRedirect("/")
+			return render(request, 'login.html', {'form': LoginForm(), 'message': "Registration succesful; try to login"})
 
 	form = RegisterForm()
 	return render(request, 'register.html', {'form': form})
 
 @require_http_methods(["GET", "POST"])
 def login(request):
+	incorrect_message = "No such user/password combination found"
 	if request.method == "POST":
 		form = LoginForm(request.POST)
 		if form.is_valid():
 			data = form.cleaned_data
-			
-			return HttpResponseRedirect("/")
+			user = Roles.objects.get(email=data["mail"])
+
+			if hash.verify(user.password, data["password"]):
+				request.session["user"] = user.id
+				request.session["role"] = user.role
+				request.session.modified = True
+				return HttpResponseRedirect("/")
+			else:
+				return render(request, 'login.html', {'form': form, 'message': incorrect_message})
 
 	form = LoginForm()
-	return render(request, 'login.html', {'form': form, message: ""})
+	return render(request, 'login.html', {'form': form, 'message': ""})
 
 @require_POST
 def logout(request):
-	pass
+	request.session.flush()
+	return render(request, 'login.html', {'form': LoginForm(), 'message': "You have been logged out"})
+
+#Function for debug purposes only; just returns a small web page with the a button to log out.
+@require_GET
+def logout_button(request):
+	return HttpResponse("<not DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
