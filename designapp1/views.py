@@ -27,6 +27,7 @@ import json
 from designapp1 import statements
 
 from .forms import *
+from . import hash
 
 # Create your views here.
 
@@ -83,7 +84,8 @@ def register(request):
 		form = RegisterForm(request.POST)
 		if form.is_valid():
 			data = form.cleaned_data
-			role = Roles(role=0, email=data["mail"], password=data["password"], maxdatabases=0)
+			password = hash.make(data["password"])
+			role = Roles(role=0, email=data["mail"], password=password, maxdatabases=0)
 			role.save()
 			return HttpResponseRedirect("/")
 
@@ -92,11 +94,15 @@ def register(request):
 
 @require_http_methods(["GET", "POST"])
 def login(request):
-	if request.method == "GET":
-		template = loader.get_template("login.html")
-		return HttpResponse(template.render())
-	elif request.method == "POST":
-		pass
+	if request.method == "POST":
+		form = LoginForm(request.POST)
+		if form.is_valid():
+			data = form.cleaned_data
+			
+			return HttpResponseRedirect("/")
+
+	form = LoginForm()
+	return render(request, 'login.html', {'form': form, message: ""})
 
 @require_POST
 def logout(request):

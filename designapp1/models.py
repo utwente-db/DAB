@@ -10,7 +10,7 @@ from django.db import models
 
 class Courses(models.Model):
     fid = models.ForeignKey('Roles', models.DO_NOTHING, db_column='fid')
-    coursename = models.TextField()
+    coursename = models.CharField(max_length=265)
     students = models.IntegerField()
     info = models.TextField()
     djangoid = models.IntegerField(primary_key=True)
@@ -23,8 +23,8 @@ class Courses(models.Model):
 
 class Roles(models.Model):
     role = models.IntegerField()
-    email = models.TextField()
-    password = models.TextField()
+    email = models.CharField(max_length=265, unique=True)
+    password = models.CharField(max_length=265)
     maxdatabases = models.IntegerField()
 
 
@@ -47,9 +47,9 @@ class Studentgroup(models.Model):
 class Studentdatabases(models.Model):
     dbid = models.OneToOneField(Studentgroup,on_delete=models.CASCADE,db_column='dbid')
     databasename = models.TextField()
-    course = models.TextField()
-    username = models.TextField()
-    password = models.TextField()
+    course = models.CharField(max_length=265)
+    username = models.CharField(max_length=265)
+    password = models.TextField(max_length=265)
     djangoid = models.IntegerField(primary_key=True)
 
 
