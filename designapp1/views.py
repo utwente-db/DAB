@@ -8,12 +8,12 @@ from rest_framework import viewsets
 
 from .models import Roles
 from .models import Studentdatabases
-from .models import Studentgroup
+#from .models import Studentgroup
 from .models import Courses
 
 from .serializers import RolesSerializer
 from .serializers import CoursesSerializer
-from .serializers import StudentgroupSerializer
+#from .serializers import StudentgroupSerializer
 from .serializers import StudentdatabasesSerializer
 
 from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
@@ -32,9 +32,9 @@ class CoursesView(viewsets.ModelViewSet):
         queryset = Courses.objects.all()
         serializer_class = CoursesSerializer
 
-class StudentgroupView(viewsets.ModelViewSet):
-        queryset = Studentgroup.objects.all()
-        serializer_class = StudentgroupSerializer
+#class StudentgroupView(viewsets.ModelViewSet):
+#        queryset = Studentgroup.objects.all()
+#        serializer_class = StudentgroupSerializer
 
 class StudentdatabasesView(viewsets.ModelViewSet):
         queryset = Studentdatabases.objects.all()

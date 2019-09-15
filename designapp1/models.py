@@ -7,20 +7,6 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-
-class Courses(models.Model):
-    fid = models.ForeignKey('Roles', models.DO_NOTHING, db_column='fid')
-    coursename = models.TextField()
-    students = models.IntegerField()
-    info = models.TextField()
-    djangoid = models.IntegerField(primary_key=True)
-
-
-    class Meta:
-        managed = False
-        db_table = 'courses'
-        verbose_name_plural = 'Courses'
-
 class Roles(models.Model):
     role = models.IntegerField()
     email = models.TextField()
@@ -33,24 +19,43 @@ class Roles(models.Model):
         db_table = 'roles'
         verbose_name_plural = 'Roles'
 
-class Studentgroup(models.Model):
-    fid = models.ForeignKey(Roles, models.DO_NOTHING, db_column='fid')
-    dbid = models.IntegerField()
-    djangoid = models.IntegerField(primary_key=True)
+
+class Courses(models.Model):
+    courseid = models.AutoField(db_column='courseid',primary_key=True)
+    fid = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='fid')
+    coursename = models.CharField(max_length=256)
+    students = models.IntegerField()
+    info = models.TextField()
+
+    def __str__(self):
+       return self.coursename
 
 
-    class Meta:
+    class Meta(object):
         managed = False
-        db_table = 'studentgroup'
-        verbose_name_plural = 'Studentgroup'
+        db_table = 'courses'
+        verbose_name_plural = 'Courses'
+        unique_together = ('fid','coursename')
+
+#class Studentgroup(models.Model):
+#    fid = models.ForeignKey(Roles, on_delete=models.CASCADE)
+#    dbid = models.IntegerField()
+#
+#
+#    class Meta:
+#        managed = False
+#        db_table = 'studentgroup'
+#        verbose_name_plural = 'Studentgroup'
+#        unique_together = ('fid','dbid')
+
 
 class Studentdatabases(models.Model):
-    dbid = models.OneToOneField(Studentgroup,on_delete=models.CASCADE,db_column='dbid')
+    dbid = models.AutoField(db_column='dbid',primary_key=True)
+    fid = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='fid')
     databasename = models.TextField()
     course = models.TextField()
     username = models.TextField()
     password = models.TextField()
-    djangoid = models.IntegerField(primary_key=True)
 
 
     class Meta:
