@@ -11,6 +11,7 @@ class Roles(models.Model):
     role = models.IntegerField()
     email = models.CharField(max_length=265, unique=True)
     password = models.CharField(max_length=265)
+
 class Roles(models.Model):
     role = models.IntegerField()
     email = models.CharField(max_length=265, unique=True)
@@ -60,7 +61,6 @@ class Studentdatabases(models.Model):
     course = models.CharField(max_length=265)
     username = models.CharField(max_length=265)
     password = models.TextField(max_length=265)
-    djangoid = models.IntegerField(primary_key=True)
 
     class Meta:
         managed = False
