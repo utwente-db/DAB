@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Login</title>
+{#    favicon ?#}
+{% endblock %}
+
+{% block content %}
+{{ message }} <br/>
+<form action="login" method="POST">
+	<!-- {% csrf_token %}-->
+	{{ form }}
+	<input type="submit"/>
+</form>
+
+{% endblock %}

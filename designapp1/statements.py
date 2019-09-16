@@ -4,11 +4,23 @@ import psycopg2 as db
 This file contains the ugly part of the program where we insert raw SQL into the database
 """
 
-#Why
-db_host = connection.settings_dict["HOST"]
-db_user = connection.settings_dict["USER"]
-db_port = connection.settings_dict["PORT"]
-db_password = connection.settings_dict["PASSWORD"]
+#for internal use: returns new connection object to other database
+def connect(db_name):
+	#Why
+	db_host = connection.settings_dict["HOST"]
+	db_user = connection.settings_dict["USER"]
+	db_port = connection.settings_dict["PORT"]
+	db_password = connection.settings_dict["PASSWORD"]
+
+	conn = db.connect(user=db_user,
+		              password=db_password,
+		              host=db_host,
+		              port=db_port,
+		              database=db_name)
+
+	return conn
+
+
 
 #Creates a database owned and administered by a user with a password
 #Also ensures this database does not have a schema public, but instead has a schema private.
@@ -23,27 +35,23 @@ def create_db(db_name, username, password):
 		cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \""+db_name+"\" TO \""+username+"\";")
 		cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \""+db_name+"\" FROM public;")
 
-		#In order to drop the public schema, we HAVE to connect to the database in question
-		conn = db.connect(user=db_user,
-			              password=db_password,
-			              host=db_host,
-			              port=db_port,
-			              database=db_name)
+	#In order to drop the public schema, we HAVE to connect to the database in question
+	conn = connect(db_name)
 
-		with conn.cursor() as cur:
-			cur.execute("DROP SCHEMA public CASCADE;")
-			cur.execute("CREATE SCHEMA private;")
-			cur.execute("ALTER SCHEMA private OWNER TO \""+username+"\";")
+	with conn.cursor() as cur:
+		cur.execute("DROP SCHEMA public CASCADE;")
+		cur.execute("CREATE SCHEMA private;")
+		cur.execute("ALTER SCHEMA private OWNER TO \""+username+"\";")
 
 #Deletes a database
 def delete_db(db_name):
 	with connection.cursor() as cursor:
-		cursor.execute("DROP DATABASE %s", [db_name])
+		cursor.execute("DROP DATABASE \""+db_name+"\";")
 
 #Deletes a user
 def delete_user(username):
 	with connection.cursor() as cursor:
-		cursor.execute("DROP USER %s", [username])
+		cursor.execute("DROP USER \""+username+"\";")
 
 #Deletes a database and its owner
 #WARNING: use only if the user exclusively owns this database
