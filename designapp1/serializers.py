@@ -1,3 +1,4 @@
+
 from rest_framework import serializers
 from .models import Roles
 from .models import Courses
@@ -28,9 +29,10 @@ class StudentdatabasesSerializer(serializers.ModelSerializer):
                 create_db(db_name,db_user,db_pass) 
                 return Studentdatabases.objects.create(**validated_data)
        def destroy(self, request, *args, **kwargs):
-                logging.debug("request:")
+                logging.debug("request:",request)
                 #db_name = self.validated_data['databasename']
                 #delete_db(db_name)
+
        class Meta:
                 model = Studentdatabases
                 fields = ('dbid','fid','databasename','course','username','password')

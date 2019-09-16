@@ -22,6 +22,13 @@ from django.http import HttpResponse
 import json
 from designapp1 import statements
 
+import logging
+
+logging.basicConfig(
+       level = logging.DEBUG,
+       format = '%(asctime)s %(levelname)s %(message)s',
+)
+
 # Create your views here.
 
 class RolesView(viewsets.ModelViewSet):
@@ -32,6 +39,7 @@ class CoursesView(viewsets.ModelViewSet):
         queryset = Courses.objects.all()
         serializer_class = CoursesSerializer
 
+
 #class StudentgroupView(viewsets.ModelViewSet):
 #        queryset = Studentgroup.objects.all()
 #        serializer_class = StudentgroupSerializer
@@ -39,6 +47,11 @@ class CoursesView(viewsets.ModelViewSet):
 class StudentdatabasesView(viewsets.ModelViewSet):
         queryset = Studentdatabases.objects.all()
         serializer_class = StudentdatabasesSerializer
+
+
+        def get_queryset(self):
+              logging.debug(self.request)              
+
 
 @require_POST
 def create_db(request):
