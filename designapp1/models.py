@@ -9,8 +9,8 @@ from django.db import models
 
 class Roles(models.Model):
     role = models.IntegerField()
-    email = models.TextField()
-    password = models.TextField()
+    email = models.CharField(max_length=265, unique=True)
+    password = models.TextField(max_length=265)
     maxdatabases = models.IntegerField()
 
 
@@ -53,9 +53,9 @@ class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid',primary_key=True)
     fid = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='fid')
     databasename = models.TextField()
-    course = models.TextField()
-    username = models.TextField()
-    password = models.TextField()
+    course = models.CharField(max_length=265)
+    username = models.CharField(max_length=265)
+    password = models.TextField(max_length=265)
 
 
     class Meta:
