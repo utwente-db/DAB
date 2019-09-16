@@ -12,12 +12,12 @@ from rest_framework import viewsets
 
 from .models import Roles
 from .models import Studentdatabases
-from .models import Studentgroup
+#from .models import Studentgroup
 from .models import Courses
 
 from .serializers import RolesSerializer
 from .serializers import CoursesSerializer
-from .serializers import StudentgroupSerializer
+#from .serializers import StudentgroupSerializer
 from .serializers import StudentdatabasesSerializer
 
 from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
@@ -28,6 +28,12 @@ from designapp1 import statements
 
 from .forms import *
 from . import hash
+import logging
+
+logging.basicConfig(
+       level = logging.DEBUG,
+       format = '%(asctime)s %(levelname)s %(message)s',
+)
 
 # Create your views here.
 
@@ -39,9 +45,10 @@ class CoursesView(viewsets.ModelViewSet):
         queryset = Courses.objects.all()
         serializer_class = CoursesSerializer
 
-class StudentgroupView(viewsets.ModelViewSet):
-        queryset = Studentgroup.objects.all()
-        serializer_class = StudentgroupSerializer
+
+#class StudentgroupView(viewsets.ModelViewSet):
+#        queryset = Studentgroup.objects.all()
+#        serializer_class = StudentgroupSerializer
 
 class StudentdatabasesView(viewsets.ModelViewSet):
         queryset = Studentdatabases.objects.all()
@@ -58,6 +65,9 @@ def check_role(request, role):
 	except Exception:
 		pass
 	return False
+
+def get_queryset(self):
+   logging.debug(self.request)              
 
 @require_POST
 def create_db(request):
