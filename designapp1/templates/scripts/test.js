@@ -3,4 +3,8 @@ function f(input) {
     a = "a";
     return input + a;
 }
-f(3);
+f(4);
+var burger = "burger", burger1 = "skert";
+function f1() {
+}
+//# sourceMappingURL=test.js.map

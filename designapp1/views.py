@@ -72,7 +72,19 @@ def check_role(request, role):
 	return False
 
 def get_queryset(self):
-   logging.debug(self.request)              
+   logging.debug(self.request)
+
+def index(request):
+    template = loader.get_template('index.html')
+    number=3
+    context = {
+        'number': number,
+        'range': range(number)
+    }
+    return HttpResponse(template.render(context, request))
+
+def test(request):
+    return HttpResponse("test")
 
 @require_POST
 def create_db(request):
