@@ -152,4 +152,4 @@ def logout(request):
 #Function for debug purposes only; just returns a small web page with the a button to log out.
 @require_GET
 def logout_button(request):
-	return HttpResponse("<not DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
+	return HttpResponse("<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
