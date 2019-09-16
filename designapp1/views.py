@@ -153,3 +153,8 @@ def logout(request):
 @require_GET
 def logout_button(request):
 	return HttpResponse("<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
+
+def test(request):
+	c = Courses.objects.get(courseid=3)
+	print(c.assistants.all())
+	return HttpResponse()
