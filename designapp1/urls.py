@@ -11,6 +11,7 @@ router.register('Studentdatabases', views.StudentdatabasesView)
 
 
 urlpatterns = [
+   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabases),
    url('', include(router.urls)),
    path('create_db', views.create_db, name='create_db'),
    path('delete_db', views.delete_db, name='delete_db'),
