@@ -21,7 +21,6 @@ urlpatterns = [
    path('register', views.register, name="register"),
    path('logout', views.logout, name="logout"),
    path('logout_button', views.logout_button, name='logout_button'),
-   path('test', views.test, name='test')
 ]
 
 
