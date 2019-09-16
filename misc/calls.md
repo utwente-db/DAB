@@ -29,3 +29,50 @@ NB: make sure it's not cached for too long
 - Delete a database
 - Delete a user
 - Delete a batch of databases and users
+
+# Currently available calls
+
+## /get_users
+
+Method: GET
+Body: none
+Returns: a JSON array of usernames and passwords, representing the currently present database users and their passwords
+
+## /create_db
+
+creates a new database and a new user to own it. 
+Ensures permissions on this database are correct
+
+Method: POST
+Body: JSON, containing:
+- name: the name of the database
+- owner: the name of the user that owns it
+- password: the password of the user
+Returns: Status codes
+
+## /delete_db
+
+Deletes database
+
+Method: POST
+Body: JSON, containing:
+- name: the name of the database
+Returns: Status codes
+
+## /delete_user
+
+Deletes user. Warning: does not work if user still owns a database!
+
+Method: POST
+Body: JSON, containing:
+- name: the name of the user
+Returns: status codes
+
+## /delete_db_with_owner
+
+Deletes database and owner of said database. Owner does not get removed if he still owns other databases.
+
+Method: POST
+Body: JSON, containing: 
+- name: the name of the database
+Returns: status codes

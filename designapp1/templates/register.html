@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Register</title>
+{#    favicon ?#}
+{% endblock %}
+
+{% block content %}
+
+<form action="register" method="POST">
+	<!--{% csrf_token% }-->
+	{{ form }}
+	<input type="submit"/>
+</form>
+
+{% endblock %}
