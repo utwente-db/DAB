@@ -57,9 +57,14 @@ class StudentdatabasesView(viewsets.ModelViewSet):
 unauthorised = HttpResponse()
 unauthorised.status_code = 401
 
+bad_request = HttpResponse()
+bad_request.status_code = 400
+
+not_found = HttpResponse();
+not_found.status_code = 404
+
 def check_role(request, role):
 	try:
-		print(request.session["role"])
 		if(int(request.session["role"]) <= role):
 			return True
 	except Exception:
@@ -117,7 +122,7 @@ def register(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			password = hash.make(data["password"])
-			role = Roles(role=0, email=data["mail"], password=password, maxdatabases=0)
+			role = Roles(role=3, email=data["mail"], password=password, maxdatabases=0)
 			role.save()
 			return render(request, 'login.html', {'form': LoginForm(), 'message': "Registration succesful; try to login"})
 
@@ -153,3 +158,31 @@ def logout(request):
 @require_GET
 def logout_button(request):
 	return HttpResponse("<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
+
+@require_POST
+def set_role(request):
+	#Always check in case session is not set
+	if not check_role(request, 1):
+		return unauthorised
+	body = json.loads(request.body.decode("utf-8"))
+	# Check if you have the permission to promote this user to this level
+	if not ("role" in body and "user" in body):
+		return bad_request
+	if body["role"] <= request.session["role"] and request.session["role"] > 0:
+		return unauthorised
+	if not (3 >= body["role"] >= 0):
+		return bad_request
+
+	if request.session["role"] > 0:
+		try:
+			user = Roles.objects.get(email=body["user"], role__gt=request.session["role"])
+			user.role = body["role"]
+			user.save()
+		except Roles.DoesNotExist as e:
+			return not_found
+	else:
+		#admins don't care
+		user = Roles.objects.get(email=body["user"])
+		user.role = body["role"]
+		user.save()
+	return HttpResponse()
