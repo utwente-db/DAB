@@ -8,6 +8,7 @@
 from django.db import models
 
 class Roles(models.Model):
+    id = models.IntegerField(primary_key=True)
     role = models.IntegerField()
     email = models.CharField(max_length=265, unique=True)
     password = models.TextField(max_length=265)
@@ -26,6 +27,12 @@ class Courses(models.Model):
     coursename = models.CharField(max_length=256)
     students = models.IntegerField()
     info = models.TextField()
+    assistants = models.ManyToManyField(
+        Roles,
+        through='TAs',
+        through_fields=('course', 'role'),
+        related_name = 'assisting'
+    )
 
     def __str__(self):
        return self.coursename
@@ -62,3 +69,11 @@ class Studentdatabases(models.Model):
         db_table = 'studentdatabases'
         verbose_name_plural = 'StudentDatabases'
 
+class TAs(models.Model):
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
+    role = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='role')
+
+    class Meta:
+        managed = False
+        db_table = 'tas'
+        verbose_name_plural = 'TAs'
