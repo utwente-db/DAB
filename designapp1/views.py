@@ -173,8 +173,7 @@ def logout(request):
 @require_GET
 def logout_button(request):
 	return HttpResponse("<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
-
-<<<<<<< HEAD
+    
 #Function to change the role of users
 #A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.
 @require_POST
