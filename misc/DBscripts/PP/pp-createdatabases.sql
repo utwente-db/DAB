@@ -1,0 +1,1300 @@
+--- Drop database pp00
+
+DROP DATABASE IF EXISTS pp00;
+
+--- Drop database pp01
+
+DROP DATABASE IF EXISTS pp01;
+
+--- Drop database pp02
+
+DROP DATABASE IF EXISTS pp02;
+
+--- Drop database pp03
+
+DROP DATABASE IF EXISTS pp03;
+
+--- Drop database pp04
+
+DROP DATABASE IF EXISTS pp04;
+
+--- Drop database pp05
+
+DROP DATABASE IF EXISTS pp05;
+
+--- Drop database pp06
+
+DROP DATABASE IF EXISTS pp06;
+
+--- Drop database pp07
+
+DROP DATABASE IF EXISTS pp07;
+
+--- Drop database pp08
+
+DROP DATABASE IF EXISTS pp08;
+
+--- Drop database pp09
+
+DROP DATABASE IF EXISTS pp09;
+
+--- Drop database pp10
+
+DROP DATABASE IF EXISTS pp10;
+
+--- Drop database pp11
+
+DROP DATABASE IF EXISTS pp11;
+
+--- Drop database pp12
+
+DROP DATABASE IF EXISTS pp12;
+
+--- Drop database pp13
+
+DROP DATABASE IF EXISTS pp13;
+
+--- Drop database pp14
+
+DROP DATABASE IF EXISTS pp14;
+
+--- Drop database pp15
+
+DROP DATABASE IF EXISTS pp15;
+
+--- Drop database pp16
+
+DROP DATABASE IF EXISTS pp16;
+
+--- Drop database pp17
+
+DROP DATABASE IF EXISTS pp17;
+
+--- Drop database pp18
+
+DROP DATABASE IF EXISTS pp18;
+
+--- Drop database pp19
+
+DROP DATABASE IF EXISTS pp19;
+
+--- Drop database pp20
+
+DROP DATABASE IF EXISTS pp20;
+
+--- Drop database pp21
+
+DROP DATABASE IF EXISTS pp21;
+
+--- Drop database pp22
+
+DROP DATABASE IF EXISTS pp22;
+
+--- Drop database pp23
+
+DROP DATABASE IF EXISTS pp23;
+
+--- Drop database pp24
+
+DROP DATABASE IF EXISTS pp24;
+
+--- Drop database pp25
+
+DROP DATABASE IF EXISTS pp25;
+
+--- Drop database pp26
+
+DROP DATABASE IF EXISTS pp26;
+
+--- Drop database pp27
+
+DROP DATABASE IF EXISTS pp27;
+
+--- Drop database pp28
+
+DROP DATABASE IF EXISTS pp28;
+
+--- Drop database pp29
+
+DROP DATABASE IF EXISTS pp29;
+
+--- Drop database pp30
+
+DROP DATABASE IF EXISTS pp30;
+
+--- Drop database pp31
+
+DROP DATABASE IF EXISTS pp31;
+
+--- Drop database pp32
+
+DROP DATABASE IF EXISTS pp32;
+
+--- Drop database pp33
+
+DROP DATABASE IF EXISTS pp33;
+
+--- Drop database pp34
+
+DROP DATABASE IF EXISTS pp34;
+
+--- Drop database pp35
+
+DROP DATABASE IF EXISTS pp35;
+
+--- Drop database pp36
+
+DROP DATABASE IF EXISTS pp36;
+
+--- Drop database pp37
+
+DROP DATABASE IF EXISTS pp37;
+
+--- Drop database pp38
+
+DROP DATABASE IF EXISTS pp38;
+
+--- Drop database pp39
+
+DROP DATABASE IF EXISTS pp39;
+
+--- Drop database pp40
+
+DROP DATABASE IF EXISTS pp40;
+
+--- Drop database pp41
+
+DROP DATABASE IF EXISTS pp41;
+
+--- Drop database pp42
+
+DROP DATABASE IF EXISTS pp42;
+
+--- Drop database pp43
+
+DROP DATABASE IF EXISTS pp43;
+
+--- Drop database pp44
+
+DROP DATABASE IF EXISTS pp44;
+
+--- Drop database pp45
+
+DROP DATABASE IF EXISTS pp45;
+
+--- Drop database pp46
+
+DROP DATABASE IF EXISTS pp46;
+
+--- Drop database pp47
+
+DROP DATABASE IF EXISTS pp47;
+
+--- Drop database pp48
+
+DROP DATABASE IF EXISTS pp48;
+
+--- Drop database pp49
+
+DROP DATABASE IF EXISTS pp49;
+
+--- Database for user pp00
+
+CREATE DATABASE pp00 WITH OWNER pp00;
+
+\c pp00
+GRANT ALL PRIVILEGES ON DATABASE pp00 TO pp00;
+REVOKE ALL PRIVILEGES ON DATABASE pp00 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp00;
+ALTER SCHEMA pp00 OWNER TO pp00;
+SET search_path TO pp00;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp00;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp00;
+ALTER TABLE drives_raw OWNER TO pp00;
+ALTER TABLE saw OWNER TO pp00;
+ALTER TABLE drives OWNER TO pp00;
+
+--- Database for user pp01
+
+CREATE DATABASE pp01 WITH OWNER pp01;
+
+\c pp01
+GRANT ALL PRIVILEGES ON DATABASE pp01 TO pp01;
+REVOKE ALL PRIVILEGES ON DATABASE pp01 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp01;
+ALTER SCHEMA pp01 OWNER TO pp01;
+SET search_path TO pp01;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp01;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp01;
+ALTER TABLE drives_raw OWNER TO pp01;
+ALTER TABLE saw OWNER TO pp01;
+ALTER TABLE drives OWNER TO pp01;
+
+--- Database for user pp02
+
+CREATE DATABASE pp02 WITH OWNER pp02;
+
+\c pp02
+GRANT ALL PRIVILEGES ON DATABASE pp02 TO pp02;
+REVOKE ALL PRIVILEGES ON DATABASE pp02 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp02;
+ALTER SCHEMA pp02 OWNER TO pp02;
+SET search_path TO pp02;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp02;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp02;
+ALTER TABLE drives_raw OWNER TO pp02;
+ALTER TABLE saw OWNER TO pp02;
+ALTER TABLE drives OWNER TO pp02;
+
+--- Database for user pp03
+
+CREATE DATABASE pp03 WITH OWNER pp03;
+
+\c pp03
+GRANT ALL PRIVILEGES ON DATABASE pp03 TO pp03;
+REVOKE ALL PRIVILEGES ON DATABASE pp03 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp03;
+ALTER SCHEMA pp03 OWNER TO pp03;
+SET search_path TO pp03;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp03;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp03;
+ALTER TABLE drives_raw OWNER TO pp03;
+ALTER TABLE saw OWNER TO pp03;
+ALTER TABLE drives OWNER TO pp03;
+
+--- Database for user pp04
+
+CREATE DATABASE pp04 WITH OWNER pp04;
+
+\c pp04
+GRANT ALL PRIVILEGES ON DATABASE pp04 TO pp04;
+REVOKE ALL PRIVILEGES ON DATABASE pp04 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp04;
+ALTER SCHEMA pp04 OWNER TO pp04;
+SET search_path TO pp04;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp04;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp04;
+ALTER TABLE drives_raw OWNER TO pp04;
+ALTER TABLE saw OWNER TO pp04;
+ALTER TABLE drives OWNER TO pp04;
+
+--- Database for user pp05
+
+CREATE DATABASE pp05 WITH OWNER pp05;
+
+\c pp05
+GRANT ALL PRIVILEGES ON DATABASE pp05 TO pp05;
+REVOKE ALL PRIVILEGES ON DATABASE pp05 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp05;
+ALTER SCHEMA pp05 OWNER TO pp05;
+SET search_path TO pp05;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp05;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp05;
+ALTER TABLE drives_raw OWNER TO pp05;
+ALTER TABLE saw OWNER TO pp05;
+ALTER TABLE drives OWNER TO pp05;
+
+--- Database for user pp06
+
+CREATE DATABASE pp06 WITH OWNER pp06;
+
+\c pp06
+GRANT ALL PRIVILEGES ON DATABASE pp06 TO pp06;
+REVOKE ALL PRIVILEGES ON DATABASE pp06 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp06;
+ALTER SCHEMA pp06 OWNER TO pp06;
+SET search_path TO pp06;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp06;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp06;
+ALTER TABLE drives_raw OWNER TO pp06;
+ALTER TABLE saw OWNER TO pp06;
+ALTER TABLE drives OWNER TO pp06;
+
+--- Database for user pp07
+
+CREATE DATABASE pp07 WITH OWNER pp07;
+
+\c pp07
+GRANT ALL PRIVILEGES ON DATABASE pp07 TO pp07;
+REVOKE ALL PRIVILEGES ON DATABASE pp07 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp07;
+ALTER SCHEMA pp07 OWNER TO pp07;
+SET search_path TO pp07;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp07;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp07;
+ALTER TABLE drives_raw OWNER TO pp07;
+ALTER TABLE saw OWNER TO pp07;
+ALTER TABLE drives OWNER TO pp07;
+
+--- Database for user pp08
+
+CREATE DATABASE pp08 WITH OWNER pp08;
+
+\c pp08
+GRANT ALL PRIVILEGES ON DATABASE pp08 TO pp08;
+REVOKE ALL PRIVILEGES ON DATABASE pp08 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp08;
+ALTER SCHEMA pp08 OWNER TO pp08;
+SET search_path TO pp08;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp08;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp08;
+ALTER TABLE drives_raw OWNER TO pp08;
+ALTER TABLE saw OWNER TO pp08;
+ALTER TABLE drives OWNER TO pp08;
+
+--- Database for user pp09
+
+CREATE DATABASE pp09 WITH OWNER pp09;
+
+\c pp09
+GRANT ALL PRIVILEGES ON DATABASE pp09 TO pp09;
+REVOKE ALL PRIVILEGES ON DATABASE pp09 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp09;
+ALTER SCHEMA pp09 OWNER TO pp09;
+SET search_path TO pp09;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp09;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp09;
+ALTER TABLE drives_raw OWNER TO pp09;
+ALTER TABLE saw OWNER TO pp09;
+ALTER TABLE drives OWNER TO pp09;
+
+--- Database for user pp10
+
+CREATE DATABASE pp10 WITH OWNER pp10;
+
+\c pp10
+GRANT ALL PRIVILEGES ON DATABASE pp10 TO pp10;
+REVOKE ALL PRIVILEGES ON DATABASE pp10 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp10;
+ALTER SCHEMA pp10 OWNER TO pp10;
+SET search_path TO pp10;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp10;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp10;
+ALTER TABLE drives_raw OWNER TO pp10;
+ALTER TABLE saw OWNER TO pp10;
+ALTER TABLE drives OWNER TO pp10;
+
+--- Database for user pp11
+
+CREATE DATABASE pp11 WITH OWNER pp11;
+
+\c pp11
+GRANT ALL PRIVILEGES ON DATABASE pp11 TO pp11;
+REVOKE ALL PRIVILEGES ON DATABASE pp11 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp11;
+ALTER SCHEMA pp11 OWNER TO pp11;
+SET search_path TO pp11;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp11;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp11;
+ALTER TABLE drives_raw OWNER TO pp11;
+ALTER TABLE saw OWNER TO pp11;
+ALTER TABLE drives OWNER TO pp11;
+
+--- Database for user pp12
+
+CREATE DATABASE pp12 WITH OWNER pp12;
+
+\c pp12
+GRANT ALL PRIVILEGES ON DATABASE pp12 TO pp12;
+REVOKE ALL PRIVILEGES ON DATABASE pp12 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp12;
+ALTER SCHEMA pp12 OWNER TO pp12;
+SET search_path TO pp12;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp12;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp12;
+ALTER TABLE drives_raw OWNER TO pp12;
+ALTER TABLE saw OWNER TO pp12;
+ALTER TABLE drives OWNER TO pp12;
+
+--- Database for user pp13
+
+CREATE DATABASE pp13 WITH OWNER pp13;
+
+\c pp13
+GRANT ALL PRIVILEGES ON DATABASE pp13 TO pp13;
+REVOKE ALL PRIVILEGES ON DATABASE pp13 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp13;
+ALTER SCHEMA pp13 OWNER TO pp13;
+SET search_path TO pp13;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp13;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp13;
+ALTER TABLE drives_raw OWNER TO pp13;
+ALTER TABLE saw OWNER TO pp13;
+ALTER TABLE drives OWNER TO pp13;
+
+--- Database for user pp14
+
+CREATE DATABASE pp14 WITH OWNER pp14;
+
+\c pp14
+GRANT ALL PRIVILEGES ON DATABASE pp14 TO pp14;
+REVOKE ALL PRIVILEGES ON DATABASE pp14 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp14;
+ALTER SCHEMA pp14 OWNER TO pp14;
+SET search_path TO pp14;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp14;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp14;
+ALTER TABLE drives_raw OWNER TO pp14;
+ALTER TABLE saw OWNER TO pp14;
+ALTER TABLE drives OWNER TO pp14;
+
+--- Database for user pp15
+
+CREATE DATABASE pp15 WITH OWNER pp15;
+
+\c pp15
+GRANT ALL PRIVILEGES ON DATABASE pp15 TO pp15;
+REVOKE ALL PRIVILEGES ON DATABASE pp15 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp15;
+ALTER SCHEMA pp15 OWNER TO pp15;
+SET search_path TO pp15;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp15;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp15;
+ALTER TABLE drives_raw OWNER TO pp15;
+ALTER TABLE saw OWNER TO pp15;
+ALTER TABLE drives OWNER TO pp15;
+
+--- Database for user pp16
+
+CREATE DATABASE pp16 WITH OWNER pp16;
+
+\c pp16
+GRANT ALL PRIVILEGES ON DATABASE pp16 TO pp16;
+REVOKE ALL PRIVILEGES ON DATABASE pp16 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp16;
+ALTER SCHEMA pp16 OWNER TO pp16;
+SET search_path TO pp16;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp16;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp16;
+ALTER TABLE drives_raw OWNER TO pp16;
+ALTER TABLE saw OWNER TO pp16;
+ALTER TABLE drives OWNER TO pp16;
+
+--- Database for user pp17
+
+CREATE DATABASE pp17 WITH OWNER pp17;
+
+\c pp17
+GRANT ALL PRIVILEGES ON DATABASE pp17 TO pp17;
+REVOKE ALL PRIVILEGES ON DATABASE pp17 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp17;
+ALTER SCHEMA pp17 OWNER TO pp17;
+SET search_path TO pp17;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp17;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp17;
+ALTER TABLE drives_raw OWNER TO pp17;
+ALTER TABLE saw OWNER TO pp17;
+ALTER TABLE drives OWNER TO pp17;
+
+--- Database for user pp18
+
+CREATE DATABASE pp18 WITH OWNER pp18;
+
+\c pp18
+GRANT ALL PRIVILEGES ON DATABASE pp18 TO pp18;
+REVOKE ALL PRIVILEGES ON DATABASE pp18 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp18;
+ALTER SCHEMA pp18 OWNER TO pp18;
+SET search_path TO pp18;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp18;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp18;
+ALTER TABLE drives_raw OWNER TO pp18;
+ALTER TABLE saw OWNER TO pp18;
+ALTER TABLE drives OWNER TO pp18;
+
+--- Database for user pp19
+
+CREATE DATABASE pp19 WITH OWNER pp19;
+
+\c pp19
+GRANT ALL PRIVILEGES ON DATABASE pp19 TO pp19;
+REVOKE ALL PRIVILEGES ON DATABASE pp19 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp19;
+ALTER SCHEMA pp19 OWNER TO pp19;
+SET search_path TO pp19;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp19;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp19;
+ALTER TABLE drives_raw OWNER TO pp19;
+ALTER TABLE saw OWNER TO pp19;
+ALTER TABLE drives OWNER TO pp19;
+
+--- Database for user pp20
+
+CREATE DATABASE pp20 WITH OWNER pp20;
+
+\c pp20
+GRANT ALL PRIVILEGES ON DATABASE pp20 TO pp20;
+REVOKE ALL PRIVILEGES ON DATABASE pp20 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp20;
+ALTER SCHEMA pp20 OWNER TO pp20;
+SET search_path TO pp20;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp20;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp20;
+ALTER TABLE drives_raw OWNER TO pp20;
+ALTER TABLE saw OWNER TO pp20;
+ALTER TABLE drives OWNER TO pp20;
+
+--- Database for user pp21
+
+CREATE DATABASE pp21 WITH OWNER pp21;
+
+\c pp21
+GRANT ALL PRIVILEGES ON DATABASE pp21 TO pp21;
+REVOKE ALL PRIVILEGES ON DATABASE pp21 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp21;
+ALTER SCHEMA pp21 OWNER TO pp21;
+SET search_path TO pp21;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp21;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp21;
+ALTER TABLE drives_raw OWNER TO pp21;
+ALTER TABLE saw OWNER TO pp21;
+ALTER TABLE drives OWNER TO pp21;
+
+--- Database for user pp22
+
+CREATE DATABASE pp22 WITH OWNER pp22;
+
+\c pp22
+GRANT ALL PRIVILEGES ON DATABASE pp22 TO pp22;
+REVOKE ALL PRIVILEGES ON DATABASE pp22 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp22;
+ALTER SCHEMA pp22 OWNER TO pp22;
+SET search_path TO pp22;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp22;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp22;
+ALTER TABLE drives_raw OWNER TO pp22;
+ALTER TABLE saw OWNER TO pp22;
+ALTER TABLE drives OWNER TO pp22;
+
+--- Database for user pp23
+
+CREATE DATABASE pp23 WITH OWNER pp23;
+
+\c pp23
+GRANT ALL PRIVILEGES ON DATABASE pp23 TO pp23;
+REVOKE ALL PRIVILEGES ON DATABASE pp23 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp23;
+ALTER SCHEMA pp23 OWNER TO pp23;
+SET search_path TO pp23;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp23;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp23;
+ALTER TABLE drives_raw OWNER TO pp23;
+ALTER TABLE saw OWNER TO pp23;
+ALTER TABLE drives OWNER TO pp23;
+
+--- Database for user pp24
+
+CREATE DATABASE pp24 WITH OWNER pp24;
+
+\c pp24
+GRANT ALL PRIVILEGES ON DATABASE pp24 TO pp24;
+REVOKE ALL PRIVILEGES ON DATABASE pp24 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp24;
+ALTER SCHEMA pp24 OWNER TO pp24;
+SET search_path TO pp24;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp24;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp24;
+ALTER TABLE drives_raw OWNER TO pp24;
+ALTER TABLE saw OWNER TO pp24;
+ALTER TABLE drives OWNER TO pp24;
+
+--- Database for user pp25
+
+CREATE DATABASE pp25 WITH OWNER pp25;
+
+\c pp25
+GRANT ALL PRIVILEGES ON DATABASE pp25 TO pp25;
+REVOKE ALL PRIVILEGES ON DATABASE pp25 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp25;
+ALTER SCHEMA pp25 OWNER TO pp25;
+SET search_path TO pp25;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp25;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp25;
+ALTER TABLE drives_raw OWNER TO pp25;
+ALTER TABLE saw OWNER TO pp25;
+ALTER TABLE drives OWNER TO pp25;
+
+--- Database for user pp26
+
+CREATE DATABASE pp26 WITH OWNER pp26;
+
+\c pp26
+GRANT ALL PRIVILEGES ON DATABASE pp26 TO pp26;
+REVOKE ALL PRIVILEGES ON DATABASE pp26 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp26;
+ALTER SCHEMA pp26 OWNER TO pp26;
+SET search_path TO pp26;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp26;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp26;
+ALTER TABLE drives_raw OWNER TO pp26;
+ALTER TABLE saw OWNER TO pp26;
+ALTER TABLE drives OWNER TO pp26;
+
+--- Database for user pp27
+
+CREATE DATABASE pp27 WITH OWNER pp27;
+
+\c pp27
+GRANT ALL PRIVILEGES ON DATABASE pp27 TO pp27;
+REVOKE ALL PRIVILEGES ON DATABASE pp27 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp27;
+ALTER SCHEMA pp27 OWNER TO pp27;
+SET search_path TO pp27;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp27;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp27;
+ALTER TABLE drives_raw OWNER TO pp27;
+ALTER TABLE saw OWNER TO pp27;
+ALTER TABLE drives OWNER TO pp27;
+
+--- Database for user pp28
+
+CREATE DATABASE pp28 WITH OWNER pp28;
+
+\c pp28
+GRANT ALL PRIVILEGES ON DATABASE pp28 TO pp28;
+REVOKE ALL PRIVILEGES ON DATABASE pp28 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp28;
+ALTER SCHEMA pp28 OWNER TO pp28;
+SET search_path TO pp28;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp28;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp28;
+ALTER TABLE drives_raw OWNER TO pp28;
+ALTER TABLE saw OWNER TO pp28;
+ALTER TABLE drives OWNER TO pp28;
+
+--- Database for user pp29
+
+CREATE DATABASE pp29 WITH OWNER pp29;
+
+\c pp29
+GRANT ALL PRIVILEGES ON DATABASE pp29 TO pp29;
+REVOKE ALL PRIVILEGES ON DATABASE pp29 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp29;
+ALTER SCHEMA pp29 OWNER TO pp29;
+SET search_path TO pp29;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp29;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp29;
+ALTER TABLE drives_raw OWNER TO pp29;
+ALTER TABLE saw OWNER TO pp29;
+ALTER TABLE drives OWNER TO pp29;
+
+--- Database for user pp30
+
+CREATE DATABASE pp30 WITH OWNER pp30;
+
+\c pp30
+GRANT ALL PRIVILEGES ON DATABASE pp30 TO pp30;
+REVOKE ALL PRIVILEGES ON DATABASE pp30 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp30;
+ALTER SCHEMA pp30 OWNER TO pp30;
+SET search_path TO pp30;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp30;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp30;
+ALTER TABLE drives_raw OWNER TO pp30;
+ALTER TABLE saw OWNER TO pp30;
+ALTER TABLE drives OWNER TO pp30;
+
+--- Database for user pp31
+
+CREATE DATABASE pp31 WITH OWNER pp31;
+
+\c pp31
+GRANT ALL PRIVILEGES ON DATABASE pp31 TO pp31;
+REVOKE ALL PRIVILEGES ON DATABASE pp31 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp31;
+ALTER SCHEMA pp31 OWNER TO pp31;
+SET search_path TO pp31;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp31;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp31;
+ALTER TABLE drives_raw OWNER TO pp31;
+ALTER TABLE saw OWNER TO pp31;
+ALTER TABLE drives OWNER TO pp31;
+
+--- Database for user pp32
+
+CREATE DATABASE pp32 WITH OWNER pp32;
+
+\c pp32
+GRANT ALL PRIVILEGES ON DATABASE pp32 TO pp32;
+REVOKE ALL PRIVILEGES ON DATABASE pp32 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp32;
+ALTER SCHEMA pp32 OWNER TO pp32;
+SET search_path TO pp32;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp32;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp32;
+ALTER TABLE drives_raw OWNER TO pp32;
+ALTER TABLE saw OWNER TO pp32;
+ALTER TABLE drives OWNER TO pp32;
+
+--- Database for user pp33
+
+CREATE DATABASE pp33 WITH OWNER pp33;
+
+\c pp33
+GRANT ALL PRIVILEGES ON DATABASE pp33 TO pp33;
+REVOKE ALL PRIVILEGES ON DATABASE pp33 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp33;
+ALTER SCHEMA pp33 OWNER TO pp33;
+SET search_path TO pp33;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp33;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp33;
+ALTER TABLE drives_raw OWNER TO pp33;
+ALTER TABLE saw OWNER TO pp33;
+ALTER TABLE drives OWNER TO pp33;
+
+--- Database for user pp34
+
+CREATE DATABASE pp34 WITH OWNER pp34;
+
+\c pp34
+GRANT ALL PRIVILEGES ON DATABASE pp34 TO pp34;
+REVOKE ALL PRIVILEGES ON DATABASE pp34 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp34;
+ALTER SCHEMA pp34 OWNER TO pp34;
+SET search_path TO pp34;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp34;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp34;
+ALTER TABLE drives_raw OWNER TO pp34;
+ALTER TABLE saw OWNER TO pp34;
+ALTER TABLE drives OWNER TO pp34;
+
+--- Database for user pp35
+
+CREATE DATABASE pp35 WITH OWNER pp35;
+
+\c pp35
+GRANT ALL PRIVILEGES ON DATABASE pp35 TO pp35;
+REVOKE ALL PRIVILEGES ON DATABASE pp35 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp35;
+ALTER SCHEMA pp35 OWNER TO pp35;
+SET search_path TO pp35;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp35;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp35;
+ALTER TABLE drives_raw OWNER TO pp35;
+ALTER TABLE saw OWNER TO pp35;
+ALTER TABLE drives OWNER TO pp35;
+
+--- Database for user pp36
+
+CREATE DATABASE pp36 WITH OWNER pp36;
+
+\c pp36
+GRANT ALL PRIVILEGES ON DATABASE pp36 TO pp36;
+REVOKE ALL PRIVILEGES ON DATABASE pp36 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp36;
+ALTER SCHEMA pp36 OWNER TO pp36;
+SET search_path TO pp36;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp36;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp36;
+ALTER TABLE drives_raw OWNER TO pp36;
+ALTER TABLE saw OWNER TO pp36;
+ALTER TABLE drives OWNER TO pp36;
+
+--- Database for user pp37
+
+CREATE DATABASE pp37 WITH OWNER pp37;
+
+\c pp37
+GRANT ALL PRIVILEGES ON DATABASE pp37 TO pp37;
+REVOKE ALL PRIVILEGES ON DATABASE pp37 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp37;
+ALTER SCHEMA pp37 OWNER TO pp37;
+SET search_path TO pp37;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp37;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp37;
+ALTER TABLE drives_raw OWNER TO pp37;
+ALTER TABLE saw OWNER TO pp37;
+ALTER TABLE drives OWNER TO pp37;
+
+--- Database for user pp38
+
+CREATE DATABASE pp38 WITH OWNER pp38;
+
+\c pp38
+GRANT ALL PRIVILEGES ON DATABASE pp38 TO pp38;
+REVOKE ALL PRIVILEGES ON DATABASE pp38 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp38;
+ALTER SCHEMA pp38 OWNER TO pp38;
+SET search_path TO pp38;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp38;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp38;
+ALTER TABLE drives_raw OWNER TO pp38;
+ALTER TABLE saw OWNER TO pp38;
+ALTER TABLE drives OWNER TO pp38;
+
+--- Database for user pp39
+
+CREATE DATABASE pp39 WITH OWNER pp39;
+
+\c pp39
+GRANT ALL PRIVILEGES ON DATABASE pp39 TO pp39;
+REVOKE ALL PRIVILEGES ON DATABASE pp39 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp39;
+ALTER SCHEMA pp39 OWNER TO pp39;
+SET search_path TO pp39;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp39;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp39;
+ALTER TABLE drives_raw OWNER TO pp39;
+ALTER TABLE saw OWNER TO pp39;
+ALTER TABLE drives OWNER TO pp39;
+
+--- Database for user pp40
+
+CREATE DATABASE pp40 WITH OWNER pp40;
+
+\c pp40
+GRANT ALL PRIVILEGES ON DATABASE pp40 TO pp40;
+REVOKE ALL PRIVILEGES ON DATABASE pp40 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp40;
+ALTER SCHEMA pp40 OWNER TO pp40;
+SET search_path TO pp40;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp40;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp40;
+ALTER TABLE drives_raw OWNER TO pp40;
+ALTER TABLE saw OWNER TO pp40;
+ALTER TABLE drives OWNER TO pp40;
+
+--- Database for user pp41
+
+CREATE DATABASE pp41 WITH OWNER pp41;
+
+\c pp41
+GRANT ALL PRIVILEGES ON DATABASE pp41 TO pp41;
+REVOKE ALL PRIVILEGES ON DATABASE pp41 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp41;
+ALTER SCHEMA pp41 OWNER TO pp41;
+SET search_path TO pp41;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp41;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp41;
+ALTER TABLE drives_raw OWNER TO pp41;
+ALTER TABLE saw OWNER TO pp41;
+ALTER TABLE drives OWNER TO pp41;
+
+--- Database for user pp42
+
+CREATE DATABASE pp42 WITH OWNER pp42;
+
+\c pp42
+GRANT ALL PRIVILEGES ON DATABASE pp42 TO pp42;
+REVOKE ALL PRIVILEGES ON DATABASE pp42 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp42;
+ALTER SCHEMA pp42 OWNER TO pp42;
+SET search_path TO pp42;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp42;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp42;
+ALTER TABLE drives_raw OWNER TO pp42;
+ALTER TABLE saw OWNER TO pp42;
+ALTER TABLE drives OWNER TO pp42;
+
+--- Database for user pp43
+
+CREATE DATABASE pp43 WITH OWNER pp43;
+
+\c pp43
+GRANT ALL PRIVILEGES ON DATABASE pp43 TO pp43;
+REVOKE ALL PRIVILEGES ON DATABASE pp43 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp43;
+ALTER SCHEMA pp43 OWNER TO pp43;
+SET search_path TO pp43;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp43;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp43;
+ALTER TABLE drives_raw OWNER TO pp43;
+ALTER TABLE saw OWNER TO pp43;
+ALTER TABLE drives OWNER TO pp43;
+
+--- Database for user pp44
+
+CREATE DATABASE pp44 WITH OWNER pp44;
+
+\c pp44
+GRANT ALL PRIVILEGES ON DATABASE pp44 TO pp44;
+REVOKE ALL PRIVILEGES ON DATABASE pp44 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp44;
+ALTER SCHEMA pp44 OWNER TO pp44;
+SET search_path TO pp44;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp44;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp44;
+ALTER TABLE drives_raw OWNER TO pp44;
+ALTER TABLE saw OWNER TO pp44;
+ALTER TABLE drives OWNER TO pp44;
+
+--- Database for user pp45
+
+CREATE DATABASE pp45 WITH OWNER pp45;
+
+\c pp45
+GRANT ALL PRIVILEGES ON DATABASE pp45 TO pp45;
+REVOKE ALL PRIVILEGES ON DATABASE pp45 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp45;
+ALTER SCHEMA pp45 OWNER TO pp45;
+SET search_path TO pp45;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp45;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp45;
+ALTER TABLE drives_raw OWNER TO pp45;
+ALTER TABLE saw OWNER TO pp45;
+ALTER TABLE drives OWNER TO pp45;
+
+--- Database for user pp46
+
+CREATE DATABASE pp46 WITH OWNER pp46;
+
+\c pp46
+GRANT ALL PRIVILEGES ON DATABASE pp46 TO pp46;
+REVOKE ALL PRIVILEGES ON DATABASE pp46 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp46;
+ALTER SCHEMA pp46 OWNER TO pp46;
+SET search_path TO pp46;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp46;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp46;
+ALTER TABLE drives_raw OWNER TO pp46;
+ALTER TABLE saw OWNER TO pp46;
+ALTER TABLE drives OWNER TO pp46;
+
+--- Database for user pp47
+
+CREATE DATABASE pp47 WITH OWNER pp47;
+
+\c pp47
+GRANT ALL PRIVILEGES ON DATABASE pp47 TO pp47;
+REVOKE ALL PRIVILEGES ON DATABASE pp47 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp47;
+ALTER SCHEMA pp47 OWNER TO pp47;
+SET search_path TO pp47;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp47;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp47;
+ALTER TABLE drives_raw OWNER TO pp47;
+ALTER TABLE saw OWNER TO pp47;
+ALTER TABLE drives OWNER TO pp47;
+
+--- Database for user pp48
+
+CREATE DATABASE pp48 WITH OWNER pp48;
+
+\c pp48
+GRANT ALL PRIVILEGES ON DATABASE pp48 TO pp48;
+REVOKE ALL PRIVILEGES ON DATABASE pp48 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp48;
+ALTER SCHEMA pp48 OWNER TO pp48;
+SET search_path TO pp48;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp48;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp48;
+ALTER TABLE drives_raw OWNER TO pp48;
+ALTER TABLE saw OWNER TO pp48;
+ALTER TABLE drives OWNER TO pp48;
+
+--- Database for user pp49
+
+CREATE DATABASE pp49 WITH OWNER pp49;
+
+\c pp49
+GRANT ALL PRIVILEGES ON DATABASE pp49 TO pp49;
+REVOKE ALL PRIVILEGES ON DATABASE pp49 FROM public;
+DROP SCHEMA public;
+
+CREATE SCHEMA pp49;
+ALTER SCHEMA pp49 OWNER TO pp49;
+SET search_path TO pp49;
+
+GRANT ALL PRIVILEGES ON varid,domid TO pp49;
+
+\i trio-crime.sql
+
+ALTER TABLE saw_raw OWNER TO pp49;
+ALTER TABLE drives_raw OWNER TO pp49;
+ALTER TABLE saw OWNER TO pp49;
+ALTER TABLE drives OWNER TO pp49;
+
