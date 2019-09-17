@@ -59,7 +59,7 @@ class CoursesView(viewsets.ModelViewSet):
 #class StudentgroupView(viewsets.ModelViewSet):
 #        queryset = Studentgroup.objects.all()
 #        serializer_class = StudentgroupSerializer
-
+#warning: csrf_exempt moet aan in productie, maar noodzakelijk om postman te gebruiken
 @csrf_exempt
 def studentdatabases(request,pk):
 
