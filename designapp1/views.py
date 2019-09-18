@@ -199,3 +199,18 @@ def set_role(request):
 			#user may not exist
 			return not_found
 	return HttpResponse()
+
+@require_GET
+def whoami(request):
+	if not check_role(request, 3):
+		return not_found
+
+	user = Roles.objects.get(id=request.session["user"])
+	response = {
+	"id": user.id,
+	"email": user.email,
+	"role": user.role
+	}
+	
+	response = json.JSONEncoder().encode(response)
+	return HttpResponse(str(response), content_type="application/json")
