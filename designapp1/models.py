@@ -8,12 +8,11 @@
 from django.db import models
 
 class Roles(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(db_column='id',primary_key=True)
     role = models.IntegerField()
     email = models.CharField(max_length=265, unique=True)
     password = models.TextField(max_length=265)
     maxdatabases = models.IntegerField()
-
 
     class Meta:
         managed = False
@@ -30,7 +29,7 @@ class Courses(models.Model):
     assistants = models.ManyToManyField(
         Roles,
         through='TAs',
-        through_fields=('course', 'role'),
+        through_fields=('courseid', 'studentid'),
         related_name = 'assisting'
     )
 
@@ -44,25 +43,13 @@ class Courses(models.Model):
         verbose_name_plural = 'Courses'
         unique_together = ('fid','coursename')
 
-#class Studentgroup(models.Model):
-#    fid = models.ForeignKey(Roles, on_delete=models.CASCADE)
-#    dbid = models.IntegerField()
-#
-#
-#    class Meta:
-#        managed = False
-#        db_table = 'studentgroup'
-#        verbose_name_plural = 'Studentgroup'
-#        unique_together = ('fid','dbid')
-
-
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid',primary_key=True)
     fid = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='fid')
     databasename = models.TextField(unique=True)
     course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
     username = models.CharField(max_length=265)
-    password = models.TextField(max_length=265)
+    password = models.CharField(max_length=265)
 
     class Meta:
         managed = False
@@ -70,8 +57,9 @@ class Studentdatabases(models.Model):
         verbose_name_plural = 'StudentDatabases'
 
 class TAs(models.Model):
-    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
-    role = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='role')
+    taid = models.AutoField(db_column = 'taid', primary_key=True)
+    courseid = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='courseid')
+    studentid = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='studentid')
 
     class Meta:
         managed = False

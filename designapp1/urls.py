@@ -7,11 +7,31 @@ router = routers.DefaultRouter()
 router.register('Roles', views.RolesView)
 router.register('Courses', views.CoursesView)
 router.register('Studentdatabases', views.StudentdatabasesView)
-#router.register('Studentgroup', views.StudentgroupView)
+router.register('Tas', views.TasView)
 
 
 urlpatterns = [
+
+   #General
    url('', include(router.urls)),
+
+   #Specific databases
+
+   #Studentdatabases
+   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabasessingle),
+   url(r'^studentdatabases/$', views.studentdatabasesbase),
+   #Courses
+   url(r'^courses/(?P<pk>[a-z0-9]+)$', views.coursessingle),
+   url(r'^courses/$', views.coursesbase),
+   #TAs
+   url(r'^tas/(?P<pk>[a-z0-9]+)$', views.rolessingle),
+   url(r'^tas/$', views.rolesbase),
+   #Roles
+   url(r'^roles/(?P<pk>[a-z0-9]+)$', views.rolessingle),
+   url(r'^roles/$', views.rolesbase),
+
+   #Login
+
    path('create_db', views.create_db, name='create_db'),
    path('delete_db', views.delete_db, name='delete_db'),
    path('delete_user', views.delete_user, name='delete_user'),
