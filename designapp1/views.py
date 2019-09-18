@@ -143,7 +143,7 @@ def register(request):
 
 @require_http_methods(["GET", "POST"])
 def login(request):
-	incorrect_message = "No such user/password combination found"
+	incorrect_message = "wrong email or password"
 	if request.method == "POST":
 		form = LoginForm(request.POST)
 		if form.is_valid():

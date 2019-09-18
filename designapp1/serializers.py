@@ -26,7 +26,7 @@ class StudentdatabasesSerializer(serializers.ModelSerializer):
                 db_name = self.validated_data['databasename']
                 db_user = self.validated_data['username']
                 db_pass = self.validated_data['password']
-                create_db(db_name,db_user,db_pass) 
+                create_db(db_name,db_user,db_pass)
                 return Studentdatabases.objects.create(**validated_data)
        def destroy(self, request, *args, **kwargs):
                 logging.debug("request:",request)
@@ -46,4 +46,3 @@ class RolesSerializer(serializers.ModelSerializer):
        class Meta:
                 model = Roles
                 fields = ('id','role','email','password','maxdatabases')
-

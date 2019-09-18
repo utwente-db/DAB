@@ -6997,4 +6997,3 @@ ALTER SCHEMA semi OWNER TO di199;
 SET search_path TO semi;
 \i semi-dump.sql
 ALTER TABLE semi.voc OWNER TO di199;
-

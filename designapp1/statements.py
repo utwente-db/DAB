@@ -80,5 +80,3 @@ def get_users():
 		for item in cursor.fetchall():
 			result.append({"username": item[0], "password": item[1]})
 		return result
-
-

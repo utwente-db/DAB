@@ -8,4 +8,3 @@ SET search_path TO semi;
 
 \i voc.sql
 ALTER TABLE semi.voc OWNER TO di00;
-
