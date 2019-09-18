@@ -59,7 +59,7 @@ class Courses(models.Model):
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid',primary_key=True)
     fid = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='fid')
-    databasename = models.TextField()
+    databasename = models.TextField(unique=True)
     course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
     username = models.CharField(max_length=265)
     password = models.TextField(max_length=265)
