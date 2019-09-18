@@ -76,3 +76,19 @@ Method: POST
 Body: JSON, containing: 
 - name: the name of the database
 Returns: status codes
+
+## /set_role
+
+Sets the role of a user.
+Note that unless one is admin, one can only set the role of someone with a higher role than oneself, and to a role higher to oneself.
+So a teacher can create ta's and that's about it.
+
+Method: POST
+Body: JSON, containing:
+- role: the role the user should be set to
+- user: the users email. Possibly change to user id?
+
+returns: 
+- 200 if succesful
+- 401 if user does not have permission
+- 404 if the user that should be modified does not exist, or already has too low of a role.

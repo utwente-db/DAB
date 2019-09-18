@@ -148,14 +148,17 @@ def login(request):
 		form = LoginForm(request.POST)
 		if form.is_valid():
 			data = form.cleaned_data
-			user = Roles.objects.get(email=data["mail"])
+			try:
+				user = Roles.objects.get(email=data["mail"])
 
-			if hash.verify(user.password, data["password"]):
-				request.session["user"] = user.id
-				request.session["role"] = user.role
-				request.session.modified = True
-				return HttpResponseRedirect("/")
-			else:
+				if hash.verify(user.password, data["password"]):
+					request.session["user"] = user.id
+					request.session["role"] = user.role
+					request.session.modified = True
+					return HttpResponseRedirect("/")
+				else:
+					return render(request, 'login.html', {'form': form, 'message': incorrect_message})
+			except Roles.DoesNotExist:
 				return render(request, 'login.html', {'form': form, 'message': incorrect_message})
 
 	form = LoginForm()
@@ -171,30 +174,40 @@ def logout(request):
 def logout_button(request):
 	return HttpResponse("<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
 
+#Function to change the role of users
+#A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.
 @require_POST
 def set_role(request):
 	#Always check in case session is not set
 	if not check_role(request, 1):
 		return unauthorised
 	body = json.loads(request.body.decode("utf-8"))
-	# Check if you have the permission to promote this user to this level
+	# Check if the request is formed correctly
 	if not ("role" in body and "user" in body):
 		return bad_request
+	# Check if you have the permission to do this in principle
 	if body["role"] <= request.session["role"] and request.session["role"] > 0:
 		return unauthorised
+	# Check if the user role you are trying to assign exists
 	if not (3 >= body["role"] >= 0):
 		return bad_request
 
+	#if you are not admin, make sure you don't demote an admin or something
 	if request.session["role"] > 0:
 		try:
 			user = Roles.objects.get(email=body["user"], role__gt=request.session["role"])
 			user.role = body["role"]
 			user.save()
 		except Roles.DoesNotExist as e:
+			#means no user found with low enough permissions that you can edit them
 			return not_found
 	else:
 		#admins don't care
-		user = Roles.objects.get(email=body["user"])
-		user.role = body["role"]
-		user.save()
+		try:
+			user = Roles.objects.get(email=body["user"])
+			user.role = body["role"]
+			user.save()
+		except Roles.DoesNotExist as e:
+			#user may not exist
+			return not_found
 	return HttpResponse()
