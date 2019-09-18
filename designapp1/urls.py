@@ -11,6 +11,8 @@ router.register('Studentdatabases', views.StudentdatabasesView)
 
 
 urlpatterns = [
+   path('', views.index, name='index'),
+   path('test/', views.test, name='testpath'),
    url('', include(router.urls)),
    path('create_db', views.create_db, name='create_db'),
    path('delete_db', views.delete_db, name='delete_db'),
