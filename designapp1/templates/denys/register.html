@@ -15,97 +15,29 @@
             <div class="row">
                 <div class="col-md-8 offset-md-2 border border-dark rounded-lg shadow-lg bg-white">
                     <!-- Register Form -->
-                    <form class="p-5" action="register_succes.html">
+                    <form class="p-5" action="register">
                         <p class="text-center h4 mb-4">Register</p>
                         <hr/>
                         <div class="mt-5 form-group row">
-                            <label for="selectCourse" class="col-4 col-form-label">Select Course</label>
+                            <label for="email" class="col-4 col-form-label">UT Mail</label>
                             <div class="col-8">
-                                <select class="form-control" id="selectCourse">
-                                    <option selected>Choose a course...</option>
-                                    <!-- Provided by back-end -->
-                                    <option value="Pearls">Pearls of Computer Science</option>
-                                    <option value="DataInformation">Data & Information</option>
-                                    <option value="DataScience">Data Science</option>
-                                </select>
+                                <input type="text" class="form-control" placeholder="your.name@student.utwente.nl" id="email" required autofocus>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="groupNo" class="col-9 col-form-label">Canvas Group Number</label>
-                            <div class="col-3">
-                                <select class="form-control" id="selectGroupNo">
-                                    <option selected>-</option>
-                                    <!-- Provided by back-end -->
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="5">5</option>
-                                    <option value="6">6</option>
-                                    <option value="7">7</option>
-                                    <option value="8">8</option>
-                                </select>
+                            <label for="password" class="col-4 col-form-label">Password</label>
+                            <div class="col-8">
+                                <input type="password" class="form-control" id="password" required>
                             </div>
                         </div>
-                        <div class="form-group row border mt-1 mb-4 rounded-lg">
-                            <p class="col-12 text-center my-3">Student 1</p>
-                            <label for="firstName lastName" class="col-2 col-form-label mb-3">Names</label>
-                            <div class="col-5">
-                                <input type="text" class="form-control" placeholder="First" id="firstName">
-                            </div>
-                            <div class="col-5">
-                                <input type="text" class="form-control" placeholder="Last" id="lastName">
-                            </div>
-                            <label for="sNumber" class="col-5 col-form-label mb-3">Student Number</label>
-                            <div class="col-7">
-                                <input type="text" class="form-control" placeholder="s1234567" id="sNumber">
-                            </div>
-                            <label for="email" class="col-3 col-form-label mb-3">UT Mail</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="your.name@student.utwente.nl" id="email">
+                        <div class="form-group row">
+                            <label for="confirm_password" class="col-4 col-form-label">Confirm Password</label>
+                            <div class="col-8">
+                                <input type="password" class="form-control" id="confirm_password" required>
                             </div>
                         </div>
-
-                        <!-- Script for adding/removing students -->
-                        <script type="text/text/javascript">
-                            function addStudent() {
-			                    var node = document.createElement("p");
-			                    var inner = "test";
-			                    node.innerHTML = inner;
-			                    list = document.getElementById("student");
-			                    list.appendChild(node);
-		                    }
-                        </script>
-
-                        <!-- <div class="form-group row border mt-1 mb-3 rounded-lg">
-                            <p class="col-12 text-center my-3">Student 2</p>
-                            <label for="firstName lastName" class="col-2 col-form-label mb-3">Names</label>
-                            <div class="col-5">
-                                <input type="text" class="form-control" placeholder="First" id="firstName">
-                            </div>
-                            <div class="col-5">
-                                <input type="text" class="form-control" placeholder="Last" id="lastName">
-                            </div>
-                            <label for="sNumber" class="col-5 col-form-label mb-3">Student Number</label>
-                            <div class="col-7">
-                                <input type="text" class="form-control" placeholder="s1234567" id="sNumber">
-                            </div>
-                            <label for="email" class="col-3 col-form-label mb-3">UT Mail</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" placeholder="your.name@student.utwente.nl" id="email">
-                            </div>
-                        </div> -->
-                        <div id="student"/>
-
-                        <div class="col-2 offset-5 btn-group-vertical" role="group">
-                            <button class="btn btn-danger" type="button" onclick="deleteStudent()">-</button>
-                            <button class="btn btn-success" type="button" onclick="addStudent()">+</button>
-                        </div>
-
-                        <button class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3" type="submit">Done!</button>
+                        <button class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3" type="submit">Register</button>
                     </form>
-
-
                 </div>
             </div>
         </div>

@@ -143,7 +143,7 @@ def register(request):
 
 @require_http_methods(["GET", "POST"])
 def login(request):
-	incorrect_message = "No such user/password combination found"
+	incorrect_message = "wrong email or password"
 	if request.method == "POST":
 		form = LoginForm(request.POST)
 		if form.is_valid():
@@ -173,7 +173,7 @@ def logout(request):
 @require_GET
 def logout_button(request):
 	return HttpResponse("<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
-    
+
 #Function to change the role of users
 #A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.
 @require_POST

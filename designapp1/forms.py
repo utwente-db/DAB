@@ -13,5 +13,20 @@ class RegisterForm(forms.Form):
 			raise forms.ValidationError("passwords do not match")
 
 class LoginForm(forms.Form):
-	mail = forms.CharField(max_length=100, required=True, label="email")
-	password = forms.CharField(widget=forms.PasswordInput, required=True, label="password")
+	mail = forms.CharField(
+		widget=forms.TextInput(
+			attrs={
+				'class': 'form-control mb-4',
+				'placeholder': 'E-Mail Address',
+				'autofocus': 'True'
+				}),
+		max_length=100, required=True, label=""
+	)
+	password = forms.CharField(
+		widget=forms.PasswordInput(
+			attrs={
+				'class': 'form-control mb-4',
+				'placeholder': 'Password',
+			}),
+		required=True, label=""
+	)
