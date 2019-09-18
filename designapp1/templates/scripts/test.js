@@ -1,10 +1,4 @@
-function f(input) {
-    var a;
-    a = "a";
-    return input + a;
-}
-f(4);
-var burger = "burger", burger1 = "skert";
-function f1() {
-}
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+require("bootstrap/dist/css/bootstrap.min.css");
 //# sourceMappingURL=test.js.map
