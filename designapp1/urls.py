@@ -25,5 +25,3 @@ urlpatterns = [
    path('logout_button', views.logout_button, name='logout_button'),
    path('set_role', views.set_role, name='set_role')
 ]
-
-
