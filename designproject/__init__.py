@@ -1,3 +1,6 @@
+import os
+os.environ["DJANGO_SETTINGS_MODULE"] = "designproject.settings"
+
 import logging
 from django.conf import settings
 
