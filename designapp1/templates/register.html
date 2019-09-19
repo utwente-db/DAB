@@ -2,15 +2,41 @@
 
 {% block head %}
     <title>Register</title>
-{#    favicon ?#}
 {% endblock %}
 
 {% block content %}
-
-<form action="register" method="POST">
-	<!--{% csrf_token% }-->
-	{{ form }}
-	<input type="submit"/>
-</form>
-
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2 border border-dark rounded-lg shadow-lg bg-white">
+            <!-- Register Form -->
+            <form class="p-5" action="register" method="POST">
+                {% csrf_token %}
+                <p class="text-center h4 mb-4">Register</p>
+                <hr/>
+                <div class="mt-5 form-group row">
+                    <label for="email" class="col-4 col-form-label">UT Mail</label>
+                    <div class="col-8">
+                        <!-- <input type="text" class="form-control" placeholder="your.name@student.utwente.nl" id="email" required autofocus> -->
+                        {{ form.mail }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="password" class="col-4 col-form-label">Password</label>
+                    <div class="col-8">
+                        <!-- <input type="password" class="form-control" id="password" required> -->
+                        {{ form.password }}
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="passwordConfirm" class="col-4 col-form-label">Confirm Password</label>
+                    <div class="col-8">
+                        <!-- <input type="password" class="form-control" id="passwordConfirm" required> -->
+                        {{ form.passwordConfirm }}
+                    </div>
+                </div>
+                <button class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3" type="submit">Register</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
