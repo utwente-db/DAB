@@ -138,8 +138,9 @@ def studentdatabasesbase(request):
 
             with conn.cursor() as cur:
                 cur.execute("DROP SCHEMA public CASCADE;")
-                cur.execute("CREATE SCHEMA private;")
-                cur.execute("ALTER SCHEMA private OWNER TO %s;",[AsIs(username)])
+                cur.execute("CREATE SCHEMA %s;", [AsIs(username)])
+                cur.execute("ALTER SCHEMA %s OWNER TO %s;",[AsIs(username), AsIs(username)])
+            conn.commit()
 
             serializer_class.save()
             return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
