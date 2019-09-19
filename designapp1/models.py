@@ -65,3 +65,13 @@ class TAs(models.Model):
         managed = False
         db_table = 'tas'
         verbose_name_plural = 'TAs'
+
+class Schemas(models.Model):
+    name = models.CharField(max_length=256, primary_key=True),
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course', primary_key=True),
+    sql = models.TextField()
+
+    class Meta:
+        managed=False
+        db_table = 'schemas'
+        verbose_name_plural = 'Schemas'
