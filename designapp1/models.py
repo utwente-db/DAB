@@ -43,6 +43,17 @@ class Courses(models.Model):
         verbose_name_plural = 'Courses'
         unique_together = ('fid','coursename')
 
+class Schemas(models.Model):
+    id = models.AutoField(db_column='id', primary_key=True)
+    name = models.CharField(max_length=256),
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course'),
+    sql = models.TextField()
+
+    class Meta:
+        managed=False
+        db_table = 'schemas'
+        verbose_name_plural = 'Schemas'
+
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid',primary_key=True)
     fid = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='fid')
@@ -50,6 +61,7 @@ class Studentdatabases(models.Model):
     course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
     username = models.CharField(max_length=265)
     password = models.CharField(max_length=265)
+    schema = models.ForeignKey(Schemas, on_delete=models.PROTECT, db_column='schema')
 
     class Meta:
         managed = False
@@ -65,14 +77,3 @@ class TAs(models.Model):
         managed = False
         db_table = 'tas'
         verbose_name_plural = 'TAs'
-
-class Schemas(models.Model):
-    id = models.AutoField(db_column='id', primary_key=True)
-    name = models.CharField(max_length=256),
-    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course'),
-    sql = models.TextField()
-
-    class Meta:
-        managed=False
-        db_table = 'schemas'
-        verbose_name_plural = 'Schemas'

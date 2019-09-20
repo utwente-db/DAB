@@ -92,3 +92,8 @@ returns:
 - 200 if succesful
 - 401 if user does not have permission
 - 404 if the user that should be modified does not exist, or already has too low of a role.
+
+## /whoami
+
+Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
+If the user is not logged in, returns a 404.
