@@ -67,8 +67,9 @@ class TAs(models.Model):
         verbose_name_plural = 'TAs'
 
 class Schemas(models.Model):
-    name = models.CharField(max_length=256, primary_key=True),
-    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course', primary_key=True),
+    id = models.AutoField(db_column='id', primary_key=True)
+    name = models.CharField(max_length=256),
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course'),
     sql = models.TextField()
 
     class Meta:
