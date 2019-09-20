@@ -78,10 +78,10 @@ def connect(db_name):
         db_password = connection.settings_dict["PASSWORD"]
 
         conn = db.connect(user=db_user,
-                              password=db_password,
-                              host=db_host,
-                              port=db_port,
-                              database=db_name)
+                          password=db_password,
+                          host=db_host,
+                          port=db_port,
+                          database=db_name)
 
         return conn
 
@@ -102,9 +102,23 @@ def studentdatabasessingle(request,pk):
               return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         logging.debug(db_name.databasename)
         logging.debug(db_name.username)
-        with connection.cursor() as cursor:
-             cursor.execute("DROP DATABASE %s;",[AsIs(db_name.databasename)])
-             cursor.execute("DROP USER  %s;",[AsIs(db_name.username)])
+        try:
+            with connection.cursor() as cursor:
+                connection.autocommit = False #want to make sure we can't be outrun
+                #make sure no one can connect to the database
+                cursor.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '%s'", [AsIs(db_name.databasename)])
+                #drop any existing connections
+                cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'", [AsIs(db_name.databasename)])
+                #actually drop the database
+                cursor.execute("DROP DATABASE %s;",[AsIs(db_name.databasename)])
+                #kick out the user just to be sure
+                cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE usename = '%s'", [AsIs(db_name.username)])
+                #Drop the user
+                cursor.execute("DROP USER  %s;",[AsIs(db_name.username)])
+                connection.commit()
+                connection.autocommit = True
+        except Exception:
+            connection.autocommit = False #just in case django doesn't do this properly
         db_name.delete()
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
   else:
@@ -144,8 +158,13 @@ def studentdatabasesbase(request):
 
             serializer_class.save()
             return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+<<<<<<< HEAD
         return JsonResponse(customer_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+=======
+        return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+     
+>>>>>>> master
    else:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
@@ -418,3 +437,5 @@ def whoami(request):
 
 	response = json.JSONEncoder().encode(response)
 	return HttpResponse(str(response), content_type="application/json")
+
+from . import schemas
