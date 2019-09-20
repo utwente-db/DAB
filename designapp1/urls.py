@@ -11,8 +11,12 @@ router.register('Tas', views.TasView)
 
 
 urlpatterns = [
+<<<<<<< HEAD
 
    #General
+=======
+   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabases),
+>>>>>>> origin/delete_function_rest
    url('', include(router.urls)),
 
    #Specific databases
