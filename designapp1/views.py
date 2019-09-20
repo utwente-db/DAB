@@ -111,6 +111,9 @@ def studentdatabasessingle(request,pk):
                 cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'", [AsIs(db_name.databasename)])
                 #actually drop the database
                 cursor.execute("DROP DATABASE %s;",[AsIs(db_name.databasename)])
+                #kick out the user just to be sure
+                cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE usename = '%s'", [AsIs(db_name.username)])
+                #Drop the user
                 cursor.execute("DROP USER  %s;",[AsIs(db_name.username)])
                 connection.commit()
                 connection.autocommit = True
