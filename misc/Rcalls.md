@@ -10,22 +10,36 @@ POST/DELETE -> 200 if success ,404 otherwise
 ### /studentdatabases/
 
 GET	-> get info all users
+	RESPONSE: 	Succes:		data
+			Otherwise: 	404
 POST 	-> add user
-body: 
+	RESPONSE: 	Sucess:		201 
+			Invalid input:	400 [parser fails to process input]
+			DB insert err:	500
+	body: 
 
-	{
-	"fid":"5", [FOREIGN KEY, MUST EXIST]
-	"databasename":"test20", [FREE TO CHOOSE]
-	"course":"3", [FOREIGN KEY, MUST EXIST]
-	"username":"test20", [FREE TO CHOOSE]
-	"password":"test20" [FREE TO CHOOSE]
-	}
+		{
+		"fid":"5", [FOREIGN KEY, MUST EXIST]
+		"databasename":"test20", [FREE TO CHOOSE]
+		"course":"3", [FOREIGN KEY, MUST EXIST]
+		"username":"test20", [FREE TO CHOOSE]
+		"password":"test20" [FREE TO CHOOSE]
+		}
+OTHERWISE
+	RESPONSE:	Any case:	405
 
 ### /studentdatabases/pk
 
 GET	-> for that pk
-DELETE	-> for that pk	
+	RESPONSE: 	Succes:		data
+			Otherwise:	404
 
+DELETE	-> for that pk	
+	RESPONSE: 	Succes:		204
+			PK not found: 	404 
+			DB remove err:	500
+OTHERWISE
+	RESPONSE:	Any case:	405
 
 ## TABLE: Courses
 

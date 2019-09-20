@@ -18,16 +18,18 @@ urlpatterns = [
    #Specific databases
 
    #Studentdatabases
+   #url(r'^<database>/(?P<pk>[a-z0-9]+)$', views.studentdatabasessingle),
    url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabasessingle),
+   #url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.singleview),
    url(r'^studentdatabases/$', views.studentdatabasesbase),
    #Courses
-   url(r'^courses/(?P<pk>[a-z0-9]+)$', views.coursessingle),
+   url(r'^courses/(?P<pk>[a-z0-9]+)$', views.singleview),
    url(r'^courses/$', views.coursesbase),
    #TAs
-   url(r'^tas/(?P<pk>[a-z0-9]+)$', views.rolessingle),
+   url(r'^tas/(?P<pk>[a-z0-9]+)$', views.singleview),
    url(r'^tas/$', views.rolesbase),
    #Roles
-   url(r'^roles/(?P<pk>[a-z0-9]+)$', views.rolessingle),
+   url(r'^roles/(?P<pk>[a-z0-9]+)$', views.singleview),
    url(r'^roles/$', views.rolesbase),
 
    #Login
