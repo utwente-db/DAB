@@ -4,10 +4,11 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register('Roles', views.RolesView)
+router.register('dbmusers', views.dbmusersView)
 router.register('Courses', views.CoursesView)
 router.register('Studentdatabases', views.StudentdatabasesView)
 router.register('Tas', views.TasView)
+router.register('schemas', views.schemasView)
 
 
 urlpatterns = [
@@ -18,19 +19,21 @@ urlpatterns = [
    #Specific databases
 
    #Studentdatabases
-   #url(r'^<database>/(?P<pk>[a-z0-9]+)$', views.studentdatabasessingle),
    url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabasessingle),
-   #url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.singleview),
    url(r'^studentdatabases/$', views.studentdatabasesbase),
    #Courses
    url(r'^courses/(?P<pk>[a-z0-9]+)$', views.singleview),
-   url(r'^courses/$', views.coursesbase),
+   url(r'^courses/$', views.baseview),
    #TAs
    url(r'^tas/(?P<pk>[a-z0-9]+)$', views.singleview),
-   url(r'^tas/$', views.rolesbase),
-   #Roles
-   url(r'^roles/(?P<pk>[a-z0-9]+)$', views.singleview),
-   url(r'^roles/$', views.rolesbase),
+   url(r'^tas/$', views.baseview),
+   #dbmusers
+   url(r'^dbmusers/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^dbmusers/$', views.baseview),
+   #schemas
+   url(r'^schemas/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^schemas/$', views.baseview),
+
 
    #Login
 

@@ -2,22 +2,30 @@
 
 !!!---- When not specified the body can be empty ----!!!
 
-GET -> data if success, 404 otherwise
-POST/DELETE -> 200 if success ,404 otherwise
+IN GENERAL IF YOU GET A 500 ERROR -> YOU FIND A BUG, PLEASE REPORT
+
+GET
+	RESPONSE: 	Succes:		data
+			Otherwise: 	404
+POST
+	RESPONSE: 	Succes:		201
+			bad request: 	400 [Did you provide the correct fields?]
+			DB del err:	500 [ONLY with studentdatabases-> not good,report]
+DELETE
+	RESPONSE: 	Succes:		202
+			Otherwise: 	404 [Probably the pk is not in the db]
+			DB del err:	500 [ONLY with studentdatabases-> not good,report]
+ 
+OTHERWISE [ALSO (e.g.) when trying to post on a particular pk]
+	RESPONSE:	Any case:	405
 
 ## TABLE: studentdatabases
 
 ### /studentdatabases/
 
 GET	-> get info all users
-	RESPONSE: 	Succes:		data
-			Otherwise: 	404
 POST 	-> add user
-	RESPONSE: 	Sucess:		201 
-			Invalid input:	400 [parser fails to process input]
-			DB insert err:	500
 	body: 
-
 		{
 		"fid":"5", [FOREIGN KEY, MUST EXIST]
 		"databasename":"test20", [FREE TO CHOOSE]
@@ -25,21 +33,12 @@ POST 	-> add user
 		"username":"test20", [FREE TO CHOOSE]
 		"password":"test20" [FREE TO CHOOSE]
 		}
-OTHERWISE
-	RESPONSE:	Any case:	405
 
 ### /studentdatabases/pk
 
 GET	-> for that pk
-	RESPONSE: 	Succes:		data
-			Otherwise:	404
-
 DELETE	-> for that pk	
-	RESPONSE: 	Succes:		204
-			PK not found: 	404 
-			DB remove err:	500
-OTHERWISE
-	RESPONSE:	Any case:	405
+
 
 ## TABLE: Courses
 
@@ -61,23 +60,21 @@ body:
 GET	-> get course for that course id
 DELETE	-> delete course for that course id
 
-## TABLE: Roles
+## TABLE: dbmusers
 
-### /roles/
+### /dbmusers/
 
 GET	-> get all users
 POST	-> add a new user
 body: 
-
 	{
-	"fid":"5", [FOREIGN KEY, MUST EXIST]
-	"databasename":"test20", [FREE TO CHOOSE]
-	"course":"3", [FOREIGN KEY, MUST EXIST]
-	"username":"test20", [FREE TO CHOOSE]
-	"password":"test20" [FREE TO CHOOSE]
+	"role":"0", [0=admin,1=teacher,0=student]
+	"email":"asdfasdf2", [FREE TO CHOOSE, THOUGH NO DUPLICATE IN TABLE]
+	"password":"test205", [FREE TO CHOOSE, IS HASHED]
+	"maxdatabases":"2" [FREE TO CHOOSE]
 	}
 
-### /roles/pk
+### /dbmusers/pk
 
 GET	-> get user for that user id
 DELETE	-> delete user for that user id
@@ -91,10 +88,8 @@ POST	-> add a new ta
 body: 
 
 	{
-	"role":"0", [FREE TO CHOOSE]
-	"email":"test@test.com", [FREE TO CHOOSE]
-	"password":"3325asdf", [FREE TO CHOOSE]
-	"maxdatabases":"4" [FREE TO CHOOSE]
+	"courseid":"8",  [FOREIGN KEY, MUST EXIST]
+	"studentid":"16" [FOREIGN KEY, MUST EXIST]
 	}
 
 ### /tas/pk
@@ -102,3 +97,20 @@ body:
 	GET	-> get ta for that ta id
 	DELETE	-> delete ta for that ta id
 
+## TABLE: Schemas
+
+### /schemas/
+
+GET	-> get all schemas
+POST	-> add a new schema
+body: 
+	{
+	"name":"test325",  [FREE TO CHOOSE]
+	"course":"16", [FOREIGN KEY, MUST EXISTS]
+	"sql":"sql part" [FREE TO CHOOSE, BUT MUST BE SQL ]	
+  	}
+
+### /schemas/pk
+
+GET	-> get schemas for that schemaid
+DELETE	-> delete schema for that schemaid

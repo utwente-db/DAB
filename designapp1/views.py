@@ -39,9 +39,9 @@ logging.basicConfig(
 
 # DESIGN PROJECT
 
-class RolesView(viewsets.ModelViewSet):
-	queryset = Roles.objects.all()
-	serializer_class = RolesSerializer
+class dbmusersView(viewsets.ModelViewSet):
+	queryset = dbmusers.objects.all()
+	serializer_class = dbmusersSerializer
 
 class CoursesView(viewsets.ModelViewSet):
         queryset = Courses.objects.all()
@@ -55,13 +55,14 @@ class TasView(viewsets.ModelViewSet):
         queryset = TAs.objects.all()
         serializer_class = TasSerializer
 
-#Order:
-#studentdatabases
-#courses
-#roles
-#tas
+class schemasView(viewsets.ModelViewSet):
+        queryset = schemas.objects.all()
+        serializer_class = schemasserializer
+
+#REST RESPONSES
 
 def get_base_response(dbname,serializer):
+        logging.debug('hier ook al')
         try:
                database = dbname.objects.all()
                serializer_class = serializer(database, many=True)
@@ -70,10 +71,25 @@ def get_base_response(dbname,serializer):
         else:
                return JsonResponse(serializer_class.data, safe=False)
 
-def get_single_response(dbname,serializer,column,pk):
+def get_single_response(request,pk):
+        logging.debug('hier')
+        database = None
         try:
-              database = dbname.objects.get(column=pk)
-              serializer_class = serializer(database, many=False)
+              if "courses" in request.path_info:
+                database = Courses.objects.get(courseid=pk)
+                serializer_class = CoursesSerializer(database, many=False)
+              elif "dbmusers" in request.path_info:
+                database = dbmusers.objects.get(id=pk)
+                serializer_class = dbmusersSerializer(database, many=False)
+              elif "tas" in request.path_info:
+                database = TAs.objects.get(taid=pk)
+                serializer_class = TasSerializer(database, many=False)
+              elif "studentdatabases" in request.path_info:
+                database = Studentdatabases.objects.get(dbid=pk)
+                serializer_class = StudentdatabasesSerializer(database, many=False)
+              elif "schemas" in request.path_info:
+                database = schemas.objects.get(id=pk)
+                serializer_class = schemasserializer(database, many=False)
         except:
               return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
@@ -82,7 +98,7 @@ def get_single_response(dbname,serializer,column,pk):
 def post_base_response(request,serializer):
         try:
             databases = JSONParser().parse(request)
-            serializer_class = StudentdatabasesSerializer(data=databases)
+            serializer_class = serializer(data=databases)
         except:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -92,9 +108,9 @@ def post_base_response(request,serializer):
             else:
                 return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def delete_single_response(dbname,dbcolumn,pk):
+def delete_single_response(dbname,instance_pk):
         try:
-              instance = dbname.objects.get(dbcolumn=pk)
+              instance = dbname.objects.get(pk=instance_pk)
         except:
               return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
@@ -118,10 +134,10 @@ def connect(db_name):
 
 
 @csrf_exempt
-def studentdatabasessingle(request,database,pk):
+def studentdatabasessingle(request,pk):
   
   if request.method == 'GET':
-        return get_single_response(Studentdatabases,StudentdatabasesSerializer,dbid,pk)
+        return get_single_response(request,pk)
   elif request.method == 'DELETE':
         try:
               db_name = Studentdatabases.objects.get(pk=pk)
@@ -201,61 +217,42 @@ def studentdatabasesbase(request):
 def singleview(request,pk):
    
    if request.method == 'GET':
-        if "courses" in request.path_info:
-              return get_single_response(Courses,CoursesSerializer,courseid,pk)
+        return get_single_response(request,pk)
    elif request.method == 'DELETE':
         if "courses" in request.path_info:
-               return delete_single_response(Courses,pk,pk)
-
-
+               return delete_single_response(Courses,pk)
+        elif "dbmusers" in request.path_info:
+               return delete_single_response(dbmusers,pk)
+        elif "tas" in request.path_info:
+               return delete_single_response(TAs,pk)
+        elif "schemas" in request.path_info:
+               return delete_single_response(schemas,pk)
+   else:
+        return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @csrf_exempt
-def coursesbase(request):
-
+def baseview(request):
   if request.method == 'GET':
-        return get_base_response(Courses,CoursesSerializer)
+        if "courses" in request.path_info:
+            return get_base_response(Courses,CoursesSerializer)
+        if "dbmusers" in request.path_info:
+            return get_base_response(dbmusers,dbmusersSerializer)
+        if "tas" in request.path_info:
+            return get_base_response(TAs,TasSerializer)
+        if "schemas" in request.path_info:
+            return get_base_response(schemas,schemasserializer)
+
   elif request.method == 'POST':
-        return post_base_response(request,CoursesSerializer)
-
-@csrf_exempt
-def coursessingle(request,pk):
-
-   if request.method == 'GET':
-        return get_single_response(Courses,CoursesSerializer,courseid,pk)
-   elif request.method == 'DELETE':
-        return delete_single_response(Courses,pk,pk)
-
-@csrf_exempt
-def rolesbase(request):
-
-    if request.method == 'GET':
-        return get_base_response(Roles,RolesSerializer)
-    elif request.method == 'POST':
-        return post_base_response(request,RolesSerializer)
-
-@csrf_exempt
-def rolessingle(request,pk):
-
-   if request.method == 'GET':
-        return get_single_response(Roles,RolesSerializer,id,pk)
-   elif request.method == 'DELETE':
-        return delete_single_response(Roles,pk,pk)
-
-@csrf_exempt
-def tasbase(request):
-
-   if request.method == 'GET':
-        return get_base_response(TAs,TAsSerializer)
-   elif request.method == 'POST':
-        return post_base_response(request,TAsSerializer)
-
-@csrf_exempt
-def tassingle(request,pk):
-
-   if request.method == 'GET':
-        return get_single_response(TAs,TAsSerializer,taid,pk)
-   elif request.method == 'DELETE':
-        return delete_single_response(TAs,pk,pk)
+        if "courses" in request.path_info:
+            return post_base_response(request,CoursesSerializer)
+        if "dbmusers" in request.path_info:
+            return post_base_response(request,dbmusersSerializer)
+        if "tas" in request.path_info:
+            return post_base_response(request,TasSerializer)
+        if "schemas" in request.path_info:
+            return post_base_response(request,schemasserializer)
+  else:
+        return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 #-----------------------------------------LOGIN-------------------------------------------------
 
@@ -327,7 +324,7 @@ def register(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			password = hash.make(data["password"])
-			role = Roles(role=3, email=data["mail"], password=password, maxdatabases=0)
+			role = dbmusers(role=3, email=data["mail"], password=password, maxdatabases=0)
 			role.save()
 			return render(request, 'login.html', {'form': LoginForm(), 'message': "Registration succesful; try to login"})
 
@@ -342,7 +339,7 @@ def login(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			try:
-				user = Roles.objects.get(email=data["mail"])
+				user = dbmusers.objects.get(email=data["mail"])
 
 				if hash.verify(user.password, data["password"]):
 					request.session["user"] = user.id
@@ -351,7 +348,7 @@ def login(request):
 					return HttpResponseRedirect("/")
 				else:
 					return render(request, 'login.html', {'form': form, 'message': incorrect_message})
-			except Roles.DoesNotExist:
+			except dbmusers.DoesNotExist:
 				return render(request, 'login.html', {'form': form, 'message': incorrect_message})
 
 	form = LoginForm()
@@ -388,19 +385,19 @@ def set_role(request):
 	#if you are not admin, make sure you don't demote an admin or something
 	if request.session["role"] > 0:
 		try:
-			user = Roles.objects.get(email=body["user"], role__gt=request.session["role"])
+			user = dbmusers.objects.get(email=body["user"], role__gt=request.session["role"])
 			user.role = body["role"]
 			user.save()
-		except Roles.DoesNotExist as e:
+		except dbmusers.DoesNotExist as e:
 			#means no user found with low enough permissions that you can edit them
 			return not_found
 	else:
 		#admins don't care
 		try:
-			user = Roles.objects.get(email=body["user"])
+			user = dbmusers.objects.get(email=body["user"])
 			user.role = body["role"]
 			user.save()
-		except Roles.DoesNotExist as e:
+		except dbmusers.DoesNotExist as e:
 			#user may not exist
 			return not_found
 	return HttpResponse()
@@ -410,7 +407,7 @@ def whoami(request):
 	if not check_role(request, 3):
 		return not_found
 
-	user = Roles.objects.get(id=request.session["user"])
+	user = dbmusers.objects.get(id=request.session["user"])
 	response = {
 	"id": user.id,
 	"email": user.email,

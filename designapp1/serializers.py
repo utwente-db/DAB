@@ -1,8 +1,5 @@
 from rest_framework import serializers
-from .models import Roles
-from .models import Courses
-from .models import Studentdatabases
-from .models import TAs
+from .models import *
 
 class CoursesSerializer(serializers.ModelSerializer):
        class Meta:
@@ -13,12 +10,16 @@ class StudentdatabasesSerializer(serializers.ModelSerializer):
                 model = Studentdatabases
                 fields = '__all__'
 
-class RolesSerializer(serializers.ModelSerializer):
+class dbmusersSerializer(serializers.ModelSerializer):
        class Meta:
-                model = Roles
+                model = dbmusers
                 fields = '__all__'
 
 class TasSerializer(serializers.ModelSerializer):
        class Meta:
                model = TAs
+               fields = '__all__'
+class schemasserializer(serializers.ModelSerializer):
+       class Meta:
+               model = schemas
                fields = '__all__'
