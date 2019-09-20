@@ -78,10 +78,10 @@ def connect(db_name):
         db_password = connection.settings_dict["PASSWORD"]
 
         conn = db.connect(user=db_user,
-                              password=db_password,
-                              host=db_host,
-                              port=db_port,
-                              database=db_name)
+                          password=db_password,
+                          host=db_host,
+                          port=db_port,
+                          database=db_name)
 
         return conn
 
@@ -144,7 +144,7 @@ def studentdatabasesbase(request):
 
             serializer_class.save()
             return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(customer_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
      
    else:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
@@ -406,3 +406,5 @@ def whoami(request):
 	
 	response = json.JSONEncoder().encode(response)
 	return HttpResponse(str(response), content_type="application/json")
+
+from . import schemas
