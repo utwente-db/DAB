@@ -45,12 +45,12 @@ class Courses(models.Model):
 
 class schemas(models.Model):
     id = models.AutoField(db_column='id', primary_key=True)
-    name = models.CharField(max_length=256,null=False,db_column='name',blank=False),
-    course = models.ForeignKey(Courses,null=False, on_delete=models.CASCADE, db_column='course',blank=False),
+    name = models.CharField(max_length=256,null=False,db_column='name',blank=False)
+    course = models.ForeignKey(Courses,null=False, on_delete=models.CASCADE, db_column='course',blank=False)
     sql = models.TextField(db_column='sql')
 
     class Meta:
-        managed=False
+        managed = False
         db_table = 'schemas'
         verbose_name_plural = 'Schemas'
 
