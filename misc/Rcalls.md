@@ -17,7 +17,8 @@ DELETE
 			DB del err:	500 [ONLY with studentdatabases-> not good,report]
  
 OTHERWISE [ALSO (e.g.) when trying to post on a particular pk]
-	RESPONSE:	Any case:	405
+	RESPONSE:	Dont touch that:401 [you have no authorisation to do that action]
+			Any other case:	405
 
 ## TABLE: studentdatabases
 
@@ -31,8 +32,10 @@ POST 	-> add user
 		"databasename":"test20", [FREE TO CHOOSE]
 		"course":"3", [FOREIGN KEY, MUST EXIST]
 		"username":"test20", [FREE TO CHOOSE]
-		"password":"test20" [FREE TO CHOOSE]
+		"password":"test20", [FREE TO CHOOSE]
+		"schema":"1"[FOREIGN KEY, MUST EXIST]
 		}
+NOTE: DO NOT START A DATABASENAME WITH A NUMBER, IT WILL FAIL
 
 ### /studentdatabases/pk
 
@@ -68,7 +71,7 @@ GET	-> get all users
 POST	-> add a new user
 body: 
 	{
-	"role":"0", [0=admin,1=teacher,0=student]
+	"role":"0", [0=admin,1=teacher,2=student]
 	"email":"asdfasdf2", [FREE TO CHOOSE, THOUGH NO DUPLICATE IN TABLE]
 	"password":"test205", [FREE TO CHOOSE, IS HASHED]
 	"maxdatabases":"2" [FREE TO CHOOSE]

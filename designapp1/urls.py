@@ -14,7 +14,7 @@ router.register('schemas', views.schemasView)
 urlpatterns = [
 
    #General
-   url('', include(router.urls)),
+   #url('', include(router.urls)),
 
    #Specific databases
 
@@ -43,11 +43,18 @@ urlpatterns = [
    # path('delete_db_with_owner', views.delete_db_with_owner, name='delete_db_with_owner'),
    # path('get_users', views.get_users, name='get_users'),
    path('login', views.login, name="login"),
+   path('login/', views.login, name="login"),
    path('register', views.register, name="register"),
+   path('register/', views.register, name="register"),
    path('logout', views.logout, name="logout"),
+   path('logout/', views.logout, name="logout"),
    path('logout_button', views.logout_button, name='logout_button'),
    path('set_role', views.set_role, name='set_role'),
    path('whoami', views.whoami, name='whoami'),
+   path('whoami/', views.whoami, name='whoami'),
+
+   url('',views.defaultresponse)
+
 ]
 
 
