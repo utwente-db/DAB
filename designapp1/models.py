@@ -61,7 +61,6 @@ class Studentdatabases(models.Model):
     course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
     username = models.CharField(max_length=265)
     password = models.CharField(max_length=265)
-    schema = models.ForeignKey(schemas, on_delete=models.PROTECT, db_column='schema')
 
     class Meta:
         managed = False

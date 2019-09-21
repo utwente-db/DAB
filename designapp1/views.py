@@ -16,7 +16,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 
 from django.db import IntegrityError
-
+from .schemas import write
 from psycopg2.extensions import AsIs
 import psycopg2 as db
 
@@ -85,7 +85,6 @@ def get_base_response(request,dbname,serializer):
                  return JsonResponse(serializer_class.data, safe=False)
         else:
                  return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
 
 def get_single_response(request,pk):
 
@@ -258,7 +257,7 @@ def studentdatabasesbase(request):
                db_name = serializer_class.validated_data['databasename']
                username = serializer_class.validated_data['username']
                password = serializer_class.validated_data['password']
-
+               course_id = serializer_class.validated_data['course']
                try:
 	               with connection.cursor() as cursor:
 	                  cursor.execute("CREATE USER %s WITH UNENCRYPTED PASSWORD '%s';",[AsIs(username),AsIs(password)])
@@ -269,15 +268,21 @@ def studentdatabasesbase(request):
 	               conn = connect(db_name)
 
 	               with conn.cursor() as cur:
-	                  cur.execute("DROP SCHEMA public CASCADE;")
-	                  cur.execute("CREATE SCHEMA %s;", [AsIs(username)])
-	                  cur.execute("ALTER SCHEMA %s OWNER TO %s;",[AsIs(username), AsIs(username)])
+                        cur.execute("DROP SCHEMA public CASCADE;")
+                        cur.execute("CREATE SCHEMA %s;", [AsIs(username)])
+                        cur.execute("ALTER SCHEMA %s OWNER TO %s;",[AsIs(username), AsIs(username)])
+#                        cur.execute("SET search_path TO %s;",[AsIs(db_name)])
 	               conn.commit()
                except Exception as e:
                        logging.debug(e)
                        return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                else:
                        serializer_class.save()
+
+                       all_table_schemas = schemas.objects.filter(course=course_id)
+                       for single_schema in all_table_schemas:
+                         logging.debug(single_schema.sql)
+                         write(databases,single_schema.sql)
                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
             else:        
                return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)

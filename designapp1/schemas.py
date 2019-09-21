@@ -10,5 +10,5 @@ def write(database, schema):
 	if(schema == ""):
 		return
 
-	os.environ["PGPASSWORD"] = database.password
-	process = subprocess.run(["psql", "-h", db_host, "-U", database.username, "-p", db_port, database.databasename], input=schema, encoding='ascii', stdout=subprocess.PIPE)
+	os.environ["PGPASSWORD"] = database['password']
+	process = subprocess.run(["psql", "-h", db_host, "-U", database['username'], "-p", db_port, database['databasename']], input=schema, encoding='ascii', stdout=subprocess.PIPE)
