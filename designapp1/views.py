@@ -8,11 +8,14 @@ from django.http import HttpResponse
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db import connection
+from django.core import serializers
 
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from rest_framework import status
+
+from django.db import IntegrityError
 
 from psycopg2.extensions import AsIs
 import psycopg2 as db
@@ -94,7 +97,7 @@ def get_single_response(request,pk):
                 if "courses" in request.path_info:
                   database = Courses.objects.get(courseid=pk)
                   serializer_class = CoursesSerializer(database, many=False)
-                  db_id = database['fid']
+                  db_id = database.fid.id
                 elif "dbmusers" in request.path_info:
                   database = dbmusers.objects.get(id=pk)
                   serializer_class = dbmusersSerializer(database, many=False)
@@ -102,40 +105,55 @@ def get_single_response(request,pk):
                 elif "tas" in request.path_info:
                   database = TAs.objects.get(taid=pk)
                   serializer_class = TasSerializer(database, many=False)
-                  db_id = pk
+                  db_id = database.studentid.id
                 elif "studentdatabases" in request.path_info:
                   database = Studentdatabases.objects.get(dbid=pk)
                   serializer_class = StudentdatabasesSerializer(database, many=False)
-                  db_id = database['fid']
+                  db_id = database.fid.id
                 elif "schemas" in request.path_info:
                   database = schemas.objects.get(id=pk)
                   serializer_class = schemasserializer(database, many=False)
-          except:
+          except Exception as e:
+                logging.debug(e)
                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
           else:
-                if db_id == str(current_id) or check_role(request,teacher) or "schemas" in request.path_info:
+                if str(db_id) == str(current_id) or check_role(request,teacher) or "schemas" in request.path_info:
                   return JsonResponse(serializer_class.data, safe=False)
                 else:
                   return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 def post_base_response(request,serializer):
-        logging.debug('yup hier')
-        if check_role(request,student):
+        if check_role(request,teacher) or "dbmusers" in request.path_info or ("studentdatabases" in request.path_info and check_role(request,student)):
 
           try:
               databases = JSONParser().parse(request)
               if "dbmusers" in request.path_info:
                  unhashed_password = databases['password']
                  databases['password']   = hash.make(unhashed_password)
-              else:
-                 logging.debug(request.path_info)
+                 if check_role(request,admin):
+                   databases['role'] = databases['role']
+                 elif check_role(request,teacher):
+                   if int(databases['role'])<teacher:
+                    databases['role']=teacher
+                 elif check_role(request,student):
+                   if int(databases['role'])<student:
+                    databases['role']=student
+                 else:
+                   databases['role']=student
               serializer_class = serializer(data=databases)
-          except:
+          except Exception as e:
+              logging.debug(e)
               return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
           else:
               if serializer_class.is_valid():
-                  serializer_class.save()
-                  return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                  try:
+                    serializer_class.save()
+                    return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                  except IntegrityError as e:
+                    if "duplicate key" in str(e.__cause__):
+                      return HttpResponse(status=status.HTTP_409_CONFLICT)
+                    else:
+                      return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
               else:
                   return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
@@ -144,15 +162,22 @@ def post_base_response(request,serializer):
 def delete_single_response(request,dbname,instance_pk):
 
         current_id = request.session['user']
-        if check_role(request,teacher):
+        if check_role(request,admin):
 
           try:
                 instance = dbname.objects.get(pk=instance_pk)
           except:
                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
           else:
-                instance.delete()
-                return HttpResponse(status=status.HTTP_202_ACCEPTED)
+                try:
+                  instance.delete()
+                except Exception as e:
+                  if "protected foreign key" in str(e.__cause__):
+                    return HttpResponse(status=status.HTTP_409_CONFLICT)
+                  else:
+                    return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
+                else:
+                  return HttpResponse(status=status.HTTP_202_ACCEPTED)
         else:
                 return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
@@ -179,7 +204,7 @@ def studentdatabasessingle(request,pk):
         return get_single_response(request,pk)
   elif request.method == 'DELETE':
 
-     if check_role(request,teacher):
+     if check_role(request,admin):
 
         try:
               db_name = Studentdatabases.objects.get(pk=pk)

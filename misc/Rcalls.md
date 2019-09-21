@@ -11,10 +11,14 @@ POST
 	RESPONSE: 	Succes:		201
 			bad request: 	400 [Did you provide the correct fields?]
 			DB del err:	500 [ONLY with studentdatabases-> not good,report]
+			duplicate key:	409 [This combination already exsists]
+			other db err:	406
 DELETE
 	RESPONSE: 	Succes:		202
 			Otherwise: 	404 [Probably the pk is not in the db]
 			DB del err:	500 [ONLY with studentdatabases-> not good,report]
+			protected db:	409 [deleting a user with existing db's]
+			other db err:	406
  
 OTHERWISE [ALSO (e.g.) when trying to post on a particular pk]
 	RESPONSE:	Dont touch that:401 [you have no authorisation to do that action]
@@ -97,8 +101,8 @@ body:
 
 ### /tas/pk
 
-	GET	-> get ta for that ta id
-	DELETE	-> delete ta for that ta id
+GET	-> get ta for that ta id
+DELETE	-> delete ta for that ta id
 
 ## TABLE: Schemas
 
