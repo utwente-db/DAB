@@ -11,12 +11,7 @@ router.register('Tas', views.TasView)
 
 
 urlpatterns = [
-<<<<<<< HEAD
-
-   #General
-=======
-   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabases),
->>>>>>> origin/delete_function_rest
+   # url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabases),
    url('', include(router.urls)),
 
    #Specific databases
@@ -41,6 +36,7 @@ urlpatterns = [
    # path('delete_user', views.delete_user, name='delete_user'),
    # path('delete_db_with_owner', views.delete_db_with_owner, name='delete_db_with_owner'),
    # path('get_users', views.get_users, name='get_users'),
+   path('home', views.home, name="home"),
    path('login', views.login, name="login"),
    path('register', views.register, name="register"),
    path('logout', views.logout, name="logout"),

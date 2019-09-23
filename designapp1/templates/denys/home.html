@@ -50,9 +50,127 @@
             </div>
         </nav>
 
-        <!-- Website title -->
-        <div class="container bg-light">
-            <h1 class="text-center">DB Practicum Manager</h1>
+        <div class="container bg-light p-4">
+            <!-- Website title -->
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1>DB Practicum Manager</h1><hr/>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-4">
+                    <h3 class="text-center mb-5">Courses</h3>
+                    <ul>
+                        <li><a href="#">Pearls of CS</a></li>
+                        <li><a href="#">Data & Information</a></li>
+                        <li><a href="#">Data Science</a></li>
+                    </ul>
+                </div>
+                <div class="col-8">
+                    <!-- <table class="table table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th class="th-sm" scope="col">#</th>
+                                <th class="th-sm" scope="col">Name</th>
+                                <th class="th-sm" scope="col">Student Number</th>
+                                <th class="th-sm" scope="col">Class</th>
+                                <th class="th-sm" scope="col">Start Date</th>
+                                <th class="th-sm" scope="col">Other</th>
+                            </tr>
+                        </thead>
+                        Data
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>Denys</td>
+                                <td>s1855034</td>
+                                <td>Design Project</td>
+                                <td>2-9-'19</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>Denys</td>
+                                <td>s1855034</td>
+                                <td>Design Project</td>
+                                <td>2-9-'19</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">3</th>
+                                <td>Denys</td>
+                                <td>s1855034</td>
+                                <td>Design Project</td>
+                                <td>2-9-'19</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">4</th>
+                                <td>Denys</td>
+                                <td>s1855034</td>
+                                <td>Design Project</td>
+                                <td>2-9-'19</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">5</th>
+                                <td>Denys</td>
+                                <td>s1855034</td>
+                                <td>Design Project</td>
+                                <td>2-9-'19</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">6</th>
+                                <td>Denys</td>
+                                <td>s1855034</td>
+                                <td>Design Project</td>
+                                <td>2-9-'19</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">7</th>
+                                <td>Denys</td>
+                                <td>s1855034</td>
+                                <td>Design Project</td>
+                                <td>2-9-'19</td>
+                                <td>None</td>
+                            </tr>
+                        </tbody>
+                    </table> -->
+                    {% for post in posts %}
+
+
+                    <a class="post" href="#">
+                        <div class="post__title post__item">
+                            {{ post.title }}
+                        </div>
+
+                    {% endfor %}
+
+
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         <!-- Option select -->
@@ -122,118 +240,7 @@
                 </ol>
             </nav>
 
-        <!-- Table -->
-            <table class="table table-hover">
-                <thead class="thead-dark">
-                    <tr>
-                        <th class="th-sm" scope="col">#</th>
-                        <th class="th-sm" scope="col">Name</th>
-                        <th class="th-sm" scope="col">Student Number</th>
-                        <th class="th-sm" scope="col">Class</th>
-                        <th class="th-sm" scope="col">Start Date</th>
-                        <th class="th-sm" scope="col">Other</th>
-                    </tr>
-                </thead>
-                <!-- Data -->
-                <tbody>
-                    <tr>
-                        <th scope="row">1</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">4</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">5</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">6</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">7</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">8</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">9</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">10</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">11</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">12</th>
-                        <td>Denys</td>
-                        <td>s1855034</td>
-                        <td>Design Project</td>
-                        <td>2-9-'19</td>
-                        <td>None</td>
-                    </tr>
-                </tbody>
-            </table>
+
             <!-- Pagination -->
             <nav>
                 <ul class="pagination">

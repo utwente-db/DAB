@@ -3,15 +3,11 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render
 from rest_framework import viewsets
-from rest_framework.views import APIView
 from django.shortcuts import render
 from django.template import loader
 from rest_framework import viewsets
-<<<<<<< HEAD
 
 from rest_framework.views import APIView
-=======
->>>>>>> origin/delete_function_rest
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -19,10 +15,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 from django.db import connection
 from psycopg2.extensions import AsIs
-<<<<<<< HEAD
 import psycopg2 as db
-=======
->>>>>>> origin/delete_function_rest
 
 #DESIGN PROJECT
 
@@ -34,24 +27,15 @@ from .models import TAs
 from .serializers import RolesSerializer
 from .serializers import CoursesSerializer
 from .serializers import StudentdatabasesSerializer
-<<<<<<< HEAD
 from .serializers import TasSerializer
-=======
-from .serializers import StudentdatabasesDeleteSerializer
->>>>>>> origin/delete_function_rest
-
 
 from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator
 
 import json
-<<<<<<< HEAD
 from designapp1 import statements
 from .statements import create_db
-=======
-from .statements import delete_db
-from .statements import delete_user
->>>>>>> origin/delete_function_rest
 
 from .forms import *
 from . import hash
@@ -72,51 +56,10 @@ class CoursesView(viewsets.ModelViewSet):
         queryset = Courses.objects.all()
         serializer_class = CoursesSerializer
 
-<<<<<<< HEAD
-=======
-
-#class StudentgroupView(viewsets.ModelViewSet):
-#        queryset = Studentgroup.objects.all()
-#        serializer_class = StudentgroupSerializer
-#warning: csrf_exempt moet aan in productie, maar noodzakelijk om postman te gebruiken
-@csrf_exempt
-def studentdatabases(request,pk):
-
-   if request.method == 'GET':
-        databases = Studentdatabases.objects.all()
-        serializer_class = StudentdatabasesSerializer(databases, many=True)
-        return JsonResponse(serializer_class.data, safe=False)
-   elif request.method == 'POST':
-        databases = JSONParser().parse(request)
-        serializer_class = StudentdatabasesSerializer(data=databases)
-        if serializer_class.is_valid():
-            serializer_class.save()
-            return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(customer_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-   elif request.method == 'DELETE':
-
-        try:
-              db_name = Studentdatabases.objects.get(pk=pk)
-        except Studentdatabases.DoesNotExist:
-              return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-        logging.debug(db_name.databasename)
-        logging.debug(db_name.username)
-        with connection.cursor() as cursor:
-             cursor.execute("DROP DATABASE %s;",[AsIs(db_name.databasename)])
-             cursor.execute("DROP USER  %s;",[AsIs(db_name.username)])
-        db_name.delete()
-#        delete_user(db_name.username)
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-
-
->>>>>>> origin/delete_function_rest
 class StudentdatabasesView(viewsets.ModelViewSet):
-#        http_method_names = ['GET', 'PUT', 'DELETE']
         queryset = Studentdatabases.objects.all()
         serializer_class = StudentdatabasesSerializer
 
-<<<<<<< HEAD
 class TasView(viewsets.ModelViewSet):
         queryset = TAs.objects.all()
         serializer_class = TasSerializer
@@ -215,13 +158,8 @@ def studentdatabasesbase(request):
 
             serializer_class.save()
             return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-<<<<<<< HEAD
-        return JsonResponse(customer_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-=======
         return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
-     
->>>>>>> master
+
    else:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
@@ -324,34 +262,6 @@ def tassingle(request,pk):
 
 unauthorised = HttpResponse()
 unauthorised.status_code = 401
-=======
-#        def register(request):
-#              form = RegisterForm()
-#              if request.method == "DELETE":
-#                   form = RegisterForm(request.POST) #if no files
-#                   if form.is_valid():
-#                   #do something if form is valid
-#                       context = {
-#                             'form': form
-#                       }
-#              return render(request, "template.html", context)
-
-#        def delete(self, request, pk):
-#              serializer_class = Studentdatabases
-#              for key in request.DELETE:
-#              logging.debug(request.headers['username'])
-#                  value = request.POST[key]
-#                  logging.debug(value)
-
-#              logging.debug(len(request))
-#              db_name = request.headers['databasename']
-#              db_user = request.headers['username']
-#              logging.debug(db_user)
-#              logging.debug(db_name)
-#              delete_db("ywre")
-#              delete_user("ywre")
-#              return HttpResponse("OK")
->>>>>>> origin/delete_function_rest
 
 bad_request = HttpResponse()
 bad_request.status_code = 400
@@ -422,6 +332,16 @@ def get_users(request):
 	answer = json.JSONEncoder().encode(answer)
 	response = HttpResponse(str(answer), content_type="application/json")
 	return response
+
+def home(request):
+    posts = Post.objects.all()
+    paginator = Paginator(posts, 3)
+    page = request.GET.get('page')
+    # ?page=2
+
+    posts = paginator.get_page(page)
+
+    return render(request, 'home.html', {'posts': posts})
 
 @require_http_methods(["GET", "POST"])
 def register(request):
