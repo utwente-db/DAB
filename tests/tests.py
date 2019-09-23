@@ -107,7 +107,7 @@ class testCreateDB(unittest.TestCase):
 			cur.execute("DROP TABLE test")
 			
 	def test2Delete(self):
-		r = student.get(BASE+"/studentdatabases")
+		r = student.get(BASE+"/studentdatabases/")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		id = -1
@@ -121,7 +121,7 @@ class testCreateDB(unittest.TestCase):
 		self.assertEqual(r.status_code, 204)
 
 		#finally, let's see if the db is still there
-		r = student.get(BASE+"/studentdatabases")
+		r = student.get(BASE+"/studentdatabases/")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		for db in body:
@@ -141,6 +141,67 @@ class testCreateDB(unittest.TestCase):
 		except psycopg2.OperationalError as e:
 			pass
 
+class testCourse(unittest.TestCase):
+
+	test_course = {
+		"coursename": "ueoa",
+		"info": "unit_test",
+		"fid": 72
+	}
+
+	course_id = 0
+	db_id = 0
+	tdb = None
+
+	def test0CreateCourse(self):
+		r = teacher.post(BASE+"/courses/", json=self.test_course)
+		self.assertEqual(r.status_code, 201)
+
+		#check if it exists
+		r = teacher.get(BASE+"/courses/")
+		self.assertEqual(r.status_code, 200)
+		body = r.json()
+		for course in body:
+			if course["coursename"] == "ueoa":
+				self.course_id = course["courseid"]
+		self.assertTrue(self.course_id != 0)
+
+	def test1AddDatabase(self):
+		self.tdb = test_db.copy()
+		self.tdb["course"] = self.course_id
+
+		r = student.post(BASE+"/studentdatabases/", json=self.tdb)
+		self.assertEqual(r.status_code, 201)
+
+		r = student.get(BASE+"/studentdatabases/")
+		body = r.json()
+		for db in body:
+			if db["databasename"] == "ueoa":
+				self.db_id=db["dbid"]
+		self.assertTrue(found)
+
+	def test3DeleteCourse(self):
+		r = teacher.delete(BASE+"/courses/"+str(self.course_id))
+		self.assertEqual(r.status_code, 204)
+
+		r = teacher.get(BASE+"/courses/")
+		body = r.json()
+		for course in body:
+			self.assertNotEqual(course["name"], "ueoa")
+
+		#let's check if that deleted the database we made just now
+		try:
+			conn = psycopg2.connect(
+				user = self.tdb["username"],
+				password = self.tdb["password"],
+				host=db_server,
+				port=db_port,
+				databes=this.tdb["database"]
+			)
+			#if we reach this point, the test failed
+			self.assertTrue(False)
+		except psycopg2.OperationalError as e:
+			pass
 
 
 if __name__ == '__main__':
