@@ -1,18 +1,25 @@
 {
   "name": "design",
   "version": "1.0.0",
-  "description": "feets",
+  "description": "description WIP",
   "main": "index.js",
   "dependencies": {
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "jquery": "^3.4.1",
     "popper": "^1.0.1",
-    "popper.js": "^1.15.0"
+    "popper.js": "^1.15.0",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/bootstrap": "^4.3.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch --show-error-details",
+    "build": "webpack && ../venv/bin/python ../manage.py collectstatic --noinput --ignore *.map",
+    "build-win": "webpack && ..\\\"venv\\Scripts\\python.exe\" ..\\manage.py collectstatic --noinput --ignore *.map"
   },
   "repository": {
     "type": "git",

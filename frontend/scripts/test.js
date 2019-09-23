@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-require("bootstrap");
+var bootstrap = require('bootstrap');
 function f() {
     console.log("things work");
 }
