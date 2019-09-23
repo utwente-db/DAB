@@ -2,32 +2,28 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import render
-from rest_framework import viewsets
 from django.shortcuts import render
 from django.template import loader
-from rest_framework import viewsets
-
-from rest_framework.views import APIView
 from django.http import HttpResponse
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db import connection
+from django.core import serializers
+
+from rest_framework.views import APIView
+from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from rest_framework import status
-from django.db import connection
+
+from django.db import IntegrityError
+from .schemas import write
 from psycopg2.extensions import AsIs
 import psycopg2 as db
 
 #DESIGN PROJECT
 
-from .models import Roles
-from .models import Studentdatabases
-from .models import Courses
-from .models import TAs
-
-from .serializers import RolesSerializer
-from .serializers import CoursesSerializer
-from .serializers import StudentdatabasesSerializer
-from .serializers import TasSerializer
+from .models import *
+from .serializers import *
 
 from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
 from django.http import HttpResponse, HttpResponseRedirect
@@ -35,7 +31,6 @@ from django.core.paginator import Paginator
 
 import json
 from designapp1 import statements
-from .statements import create_db
 
 from .forms import *
 from . import hash
@@ -46,29 +41,145 @@ logging.basicConfig(
        format = '%(asctime)s %(levelname)s %(message)s',
 )
 
+admin   = 0
+teacher = 1
+student = 2
+
 # DESIGN PROJECT
 
-class RolesView(viewsets.ModelViewSet):
-	queryset = Roles.objects.all()
-	serializer_class = RolesSerializer
+class dbmusersView(viewsets.ModelViewSet):
+	queryset = dbmusers.objects.all()
+	serializer_class = dbmusersSerializer
 
 class CoursesView(viewsets.ModelViewSet):
-        queryset = Courses.objects.all()
-        serializer_class = CoursesSerializer
+	queryset = Courses.objects.all()
+	serializer_class = CoursesSerializer
 
 class StudentdatabasesView(viewsets.ModelViewSet):
-        queryset = Studentdatabases.objects.all()
-        serializer_class = StudentdatabasesSerializer
+	queryset = Studentdatabases.objects.all()
+	serializer_class = StudentdatabasesSerializer
 
 class TasView(viewsets.ModelViewSet):
-        queryset = TAs.objects.all()
-        serializer_class = TasSerializer
+	queryset = TAs.objects.all()
+	serializer_class = TasSerializer
 
-#Order:
-#studentdatabases
-#courses
-#roles
-#tas
+class schemasView(viewsets.ModelViewSet):
+	queryset = schemas.objects.all()
+	serializer_class = schemasserializer
+
+#REST RESPONSES
+
+def defaultresponse(request):
+        return HttpResponse('welcome')
+
+def get_base_response(request,dbname,serializer):
+        if check_role(request,teacher):
+          try:
+                 logging.debug('in try method')
+                 database = dbname.objects.all()
+                 logging.debug('deze gaat goed')
+                 serializer_class = serializer(database, many=True)
+          except Exception as e:
+                 logging.debug(e)
+                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+          else:
+                 return JsonResponse(serializer_class.data, safe=False)
+        else:
+                 return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+def get_single_response(request,pk):
+
+          db_id = None
+          current_id = request.session['user']
+
+          database = None
+          try:
+                if "courses" in request.path_info:
+                  database = Courses.objects.get(courseid=pk)
+                  serializer_class = CoursesSerializer(database, many=False)
+                  db_id = database.fid.id
+                elif "dbmusers" in request.path_info:
+                  database = dbmusers.objects.get(id=pk)
+                  serializer_class = dbmusersSerializer(database, many=False)
+                  db_id = pk
+                elif "tas" in request.path_info:
+                  database = TAs.objects.get(taid=pk)
+                  serializer_class = TasSerializer(database, many=False)
+                  db_id = database.studentid.id
+                elif "studentdatabases" in request.path_info:
+                  database = Studentdatabases.objects.get(dbid=pk)
+                  serializer_class = StudentdatabasesSerializer(database, many=False)
+                  db_id = database.fid.id
+                elif "schemas" in request.path_info:
+                  database = schemas.objects.get(id=pk)
+                  serializer_class = schemasserializer(database, many=False)
+          except Exception as e:
+                logging.debug(e)
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+          else:
+                if str(db_id) == str(current_id) or check_role(request,teacher) or "schemas" in request.path_info:
+                  return JsonResponse(serializer_class.data, safe=False)
+                else:
+                  return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+def post_base_response(request,serializer):
+        if check_role(request,teacher) or "dbmusers" in request.path_info or ("studentdatabases" in request.path_info and check_role(request,student)):
+
+          try:
+              databases = JSONParser().parse(request)
+              if "dbmusers" in request.path_info:
+                 unhashed_password = databases['password']
+                 databases['password']   = hash.make(unhashed_password)
+                 if check_role(request,admin):
+                   databases['role'] = databases['role']
+                 elif check_role(request,teacher):
+                   if int(databases['role'])<teacher:
+                    databases['role']=teacher
+                 elif check_role(request,student):
+                   if int(databases['role'])<student:
+                    databases['role']=student
+                 else:
+                   databases['role']=student
+              serializer_class = serializer(data=databases)
+          except Exception as e:
+              logging.debug(e)
+              return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+          else:
+              if serializer_class.is_valid():
+                  try:
+                    serializer_class.save()
+                    return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                  except IntegrityError as e:
+                    if "duplicate key" in str(e.__cause__):
+                      return HttpResponse(status=status.HTTP_409_CONFLICT)
+                    else:
+                      return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
+              else:
+                  return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+                return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+def delete_single_response(request,dbname,instance_pk):
+
+        current_id = request.session['user']
+        if check_role(request,admin):
+
+          try:
+                instance = dbname.objects.get(pk=instance_pk)
+          except:
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+          else:
+                try:
+                  instance.delete()
+                except Exception as e:
+                  if "protected foreign key" in str(e.__cause__):
+                    return HttpResponse(status=status.HTTP_409_CONFLICT)
+                  else:
+                    return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
+                else:
+                  return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        else:
+                return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 def connect(db_name):
         #Why
@@ -89,40 +200,43 @@ def connect(db_name):
 @csrf_exempt
 def studentdatabasessingle(request,pk):
 
-  logging.debug('teswt3')
   if request.method == 'GET':
-        databases = Studentdatabases.objects.get(dbid=pk)
-        serializer_class = StudentdatabasesSerializer(databases, many=False)
-        return JsonResponse(serializer_class.data, safe=False)
+        return get_single_response(request,pk)
   elif request.method == 'DELETE':
+
+     if check_role(request,admin):
 
         try:
               db_name = Studentdatabases.objects.get(pk=pk)
-        except Studentdatabases.DoesNotExist:
+        except:
               return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-        logging.debug(db_name.databasename)
-        logging.debug(db_name.username)
-        try:
-            with connection.cursor() as cursor:
-                connection.autocommit = False #want to make sure we can't be outrun
-                #make sure no one can connect to the database
-                cursor.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '%s'", [AsIs(db_name.databasename)])
-                #drop any existing connections
-                cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'", [AsIs(db_name.databasename)])
-                #actually drop the database
-                cursor.execute("DROP DATABASE %s;",[AsIs(db_name.databasename)])
-                #kick out the user just to be sure
-                cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE usename = '%s'", [AsIs(db_name.username)])
-                #Drop the user
-                cursor.execute("DROP USER  %s;",[AsIs(db_name.username)])
-                connection.commit()
-                connection.autocommit = True
-        except Exception:
-            connection.autocommit = False #just in case django doesn't do this properly
-        db_name.delete()
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        else:
+             try:
+                  with connection.cursor() as cursor:
+                        connection.autocommit = False #want to make sure we can't be outrun
+	                #make sure no one can connect to the database
+                        cursor.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '%s'", [AsIs(db_name.databasename)])
+	                #drop any existing connections
+                        cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'", [AsIs(db_name.databasename)])
+	                #actually drop the database
+                        cursor.execute("DROP DATABASE %s;",[AsIs(db_name.databasename)])
+	                #kick out the user just to be sure
+                        cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE usename = '%s'", [AsIs(db_name.username)])
+	                #Drop the user
+                        cursor.execute("DROP USER  %s;",[AsIs(db_name.username)])
+                        connection.commit()
+                        connection.autocommit = True
+             except:
+                  connection.autocommit = False #just in case django doesn't do this properly
+                  return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+             else:
+                  db_name.delete() #ONLY delete the row when the sql is succesfull
+                  return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+     else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
   else:
-        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @csrf_exempt
 def studentdatabasesbase(request):
@@ -130,133 +244,97 @@ def studentdatabasesbase(request):
    global db_host, db_user, db_port, db_password
 
    if request.method == 'GET':
-        databases = Studentdatabases.objects.all()
-        serializer_class = StudentdatabasesSerializer(databases, many=True)
-        return JsonResponse(serializer_class.data, safe=False)
+        return get_base_response(request,Studentdatabases,StudentdatabasesSerializer)
    elif request.method == 'POST':
-        databases = JSONParser().parse(request)
-        serializer_class = StudentdatabasesSerializer(data=databases)
-        if serializer_class.is_valid():
+     if check_role(request,student):
+        try:
+               databases = JSONParser().parse(request)
+               serializer_class = StudentdatabasesSerializer(data=databases)
+        except:
+               return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            if serializer_class.is_valid():
             #CREATE NEW DATABASE
-            db_name = serializer_class.validated_data['databasename']
-            username = serializer_class.validated_data['username']
-            password = serializer_class.validated_data['password']
+               db_name = serializer_class.validated_data['databasename']
+               username = serializer_class.validated_data['username']
+               password = serializer_class.validated_data['password']
+               course_id = serializer_class.validated_data['course']
+               try:
+	               with connection.cursor() as cursor:
+	                  cursor.execute("CREATE USER %s WITH UNENCRYPTED PASSWORD '%s';",[AsIs(username),AsIs(password)])
+	                  cursor.execute("CREATE DATABASE %s WITH OWNER %s;",[AsIs(db_name),AsIs(username)])
+	                  cursor.execute("GRANT ALL PRIVILEGES ON DATABASE %s TO %s;",[AsIs(db_name),AsIs(username)])
+	                  cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE %s FROM public;",[AsIs(db_name)])
 
-            with connection.cursor() as cursor:
-                cursor.execute("CREATE USER %s WITH UNENCRYPTED PASSWORD '%s';",[AsIs(username),AsIs(password)])
-                cursor.execute("CREATE DATABASE %s WITH OWNER %s;",[AsIs(db_name),AsIs(username)])
-                cursor.execute("GRANT ALL PRIVILEGES ON DATABASE %s TO %s;",[AsIs(db_name),AsIs(username)])
-                cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE %s FROM public;",[AsIs(db_name)])
+	               conn = connect(db_name)
 
-            conn = connect(db_name)
+	               with conn.cursor() as cur:
+                        cur.execute("DROP SCHEMA public CASCADE;")
+                        cur.execute("CREATE SCHEMA %s;", [AsIs(username)])
+                        cur.execute("ALTER SCHEMA %s OWNER TO %s;",[AsIs(username), AsIs(username)])
+#                        cur.execute("SET search_path TO %s;",[AsIs(db_name)])
+	               conn.commit()
+               except Exception as e:
+                       logging.debug(e)
+                       return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+               else:
+                       serializer_class.save()
 
-            with conn.cursor() as cur:
-                cur.execute("DROP SCHEMA public CASCADE;")
-                cur.execute("CREATE SCHEMA %s;", [AsIs(username)])
-                cur.execute("ALTER SCHEMA %s OWNER TO %s;",[AsIs(username), AsIs(username)])
-            conn.commit()
-
-            serializer_class.save()
-            return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
-
+                       all_table_schemas = schemas.objects.filter(course=course_id)
+                       for single_schema in all_table_schemas:
+                         logging.debug(single_schema.sql)
+                         write(databases,single_schema.sql)
+                       return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+            else:
+               return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+     else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
    else:
-        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
 @csrf_exempt
-def coursesbase(request):
+def singleview(request,pk):
 
+   if request.method == 'GET':
+        return get_single_response(request,pk)
+   elif request.method == 'DELETE':
+        if "courses" in request.path_info:
+               return delete_single_response(request,Courses,pk)
+        elif "dbmusers" in request.path_info:
+               return delete_single_response(request,dbmusers,pk)
+        elif "tas" in request.path_info:
+               return delete_single_response(request,TAs,pk)
+        elif "schemas" in request.path_info:
+               return delete_single_response(request,schemas,pk)
+   else:
+        return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@csrf_exempt
+def baseview(request):
+  logging.debug('begin')
   if request.method == 'GET':
-        courses = Courses.objects.all()
-        serializer_class = CoursesSerializer(courses, many=True)
-        return JsonResponse(serializer_class.data, safe=False)
+        if "courses" in request.path_info:
+            return get_base_response(request,Courses,CoursesSerializer)
+        if "dbmusers" in request.path_info:
+            return get_base_response(request,dbmusers,dbmusersSerializer)
+        if "tas" in request.path_info:
+            return get_base_response(request,TAs,TasSerializer)
+        if "schemas" in request.path_info:
+            logging.debug('goede if')
+            return get_base_response(request,schemas,schemasserializer)
+
   elif request.method == 'POST':
-        courses = JSONParser().parse(request)
-        serializer_class = CoursesSerializer(data=courses)
-        if serializer_class.is_valid():
-            serializer_class.save()
-            return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@csrf_exempt
-def coursessingle(request,pk):
-
-   if request.method == 'GET':
-        courses = Courses.objects.get(courseid=pk)
-        serializer_class = CoursesSerializer(courses, many=False)
-        return JsonResponse(serializer_class.data, safe=False)
-   elif request.method == 'DELETE':
-
-        try:
-              instance = Courses.objects.get(pk=pk)
-        except Courses.DoesNotExist:
-              return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-        instance.delete()
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-@csrf_exempt
-def rolesbase(request):
-
-    if request.method == 'GET':
-        roles = Roles.objects.all()
-        serializer_class = RolesSerializer(roles, many=True)
-        return JsonResponse(serializer_class.data, safe=False)
-    elif request.method == 'POST':
-        roles = JSONParser().parse(request)
-        serializer_class = RolesSerializer(data=roles)
-        if serializer_class.is_valid():
-            serializer_class.save()
-            return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@csrf_exempt
-def rolessingle(request,pk):
-
-   if request.method == 'GET':
-        roles = Roles.objects.get(id=pk)
-        serializer_class = RolesSerializer(roles, many=False)
-        return JsonResponse(serializer_class.data, safe=False)
-   elif request.method == 'DELETE':
-
-        try:
-              instance = Roles.objects.get(pk=pk)
-        except Roles.DoesNotExist:
-              return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-        instance.delete()
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-@csrf_exempt
-def tasbase(request):
-
-   if request.method == 'GET':
-        tas = TAs.objects.all()
-        serializer_class = TAsSerializer(tas, many=True)
-        return JsonResponse(serializer_class.data, safe=False)
-   elif request.method == 'POST':
-        tas = JSONParser().parse(request)
-        serializer_class = TAsSerializer(data=tas)
-        if serializer_class.is_valid():
-            serializer_class.save()
-            return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-        return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@csrf_exempt
-def tassingle(request,pk):
-
-   if request.method == 'GET':
-        TAs = TAs.objects.get(taid=pk)
-        serializer_class = TAsSerializer(TAs, many=False)
-        return JsonResponse(serializer_class.data, safe=False)
-   elif request.method == 'DELETE':
-
-        try:
-              instance = TAs.objects.get(pk=pk)
-        except TAs.DoesNotExist:
-              return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-        instance.delete()
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        if "courses" in request.path_info:
+            return post_base_response(request,CoursesSerializer)
+        if "dbmusers" in request.path_info:
+            return post_base_response(request,dbmusersSerializer)
+        if "tas" in request.path_info:
+            return post_base_response(request,TasSerializer)
+        if "schemas" in request.path_info:
+            return post_base_response(request,schemasserializer)
+  else:
+        return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 #-----------------------------------------LOGIN-------------------------------------------------
 
@@ -350,7 +428,7 @@ def register(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			password = hash.make(data["password"])
-			role = Roles(role=3, email=data["mail"], password=password, maxdatabases=0)
+			role = dbmusers(role=3, email=data["mail"], password=password, maxdatabases=0)
 			role.save()
 			return render(request, 'login.html', {'form': LoginForm(), 'message': "Registration succesful; try to login"})
 
@@ -365,7 +443,7 @@ def login(request):
 		if form.is_valid():
 			data = form.cleaned_data
 			try:
-				user = Roles.objects.get(email=data["mail"])
+				user = dbmusers.objects.get(email=data["mail"])
 
 				if hash.verify(user.password, data["password"]):
 					request.session["user"] = user.id
@@ -374,7 +452,7 @@ def login(request):
 					return HttpResponseRedirect("/")
 				else:
 					return render(request, 'login.html', {'form': form, 'message': incorrect_message})
-			except Roles.DoesNotExist:
+			except dbmusers.DoesNotExist:
 				return render(request, 'login.html', {'form': form, 'message': incorrect_message})
 
 	form = LoginForm()
@@ -411,19 +489,19 @@ def set_role(request):
 	#if you are not admin, make sure you don't demote an admin or something
 	if request.session["role"] > 0:
 		try:
-			user = Roles.objects.get(email=body["user"], role__gt=request.session["role"])
+			user = dbmusers.objects.get(email=body["user"], role__gt=request.session["role"])
 			user.role = body["role"]
 			user.save()
-		except Roles.DoesNotExist as e:
+		except dbmusers.DoesNotExist as e:
 			#means no user found with low enough permissions that you can edit them
 			return not_found
 	else:
 		#admins don't care
 		try:
-			user = Roles.objects.get(email=body["user"])
+			user = dbmusers.objects.get(email=body["user"])
 			user.role = body["role"]
 			user.save()
-		except Roles.DoesNotExist as e:
+		except dbmusers.DoesNotExist as e:
 			#user may not exist
 			return not_found
 	return HttpResponse()
@@ -433,7 +511,7 @@ def whoami(request):
 	if not check_role(request, 3):
 		return not_found
 
-	user = Roles.objects.get(id=request.session["user"])
+	user = dbmusers.objects.get(id=request.session["user"])
 	response = {
 	"id": user.id,
 	"email": user.email,
@@ -442,5 +520,3 @@ def whoami(request):
 
 	response = json.JSONEncoder().encode(response)
 	return HttpResponse(str(response), content_type="application/json")
-
-from . import schemas

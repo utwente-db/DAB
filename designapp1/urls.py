@@ -4,15 +4,17 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register('Roles', views.RolesView)
+router.register('dbmusers', views.dbmusersView)
 router.register('Courses', views.CoursesView)
 router.register('Studentdatabases', views.StudentdatabasesView)
 router.register('Tas', views.TasView)
+router.register('schemas', views.schemasView)
 
 
 urlpatterns = [
-   # url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabases),
-   url('', include(router.urls)),
+
+   #General
+   #url('', include(router.urls)),
 
    #Specific databases
 
@@ -20,14 +22,18 @@ urlpatterns = [
    url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabasessingle),
    url(r'^studentdatabases/$', views.studentdatabasesbase),
    #Courses
-   url(r'^courses/(?P<pk>[a-z0-9]+)$', views.coursessingle),
-   url(r'^courses/$', views.coursesbase),
+   url(r'^courses/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^courses/$', views.baseview),
    #TAs
-   url(r'^tas/(?P<pk>[a-z0-9]+)$', views.rolessingle),
-   url(r'^tas/$', views.rolesbase),
-   #Roles
-   url(r'^roles/(?P<pk>[a-z0-9]+)$', views.rolessingle),
-   url(r'^roles/$', views.rolesbase),
+   url(r'^tas/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^tas/$', views.baseview),
+   #dbmusers
+   url(r'^dbmusers/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^dbmusers/$', views.baseview),
+   #schemas
+   url(r'^schemas/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^schemas/$', views.baseview),
+
 
    #Login
 
@@ -38,9 +44,16 @@ urlpatterns = [
    # path('get_users', views.get_users, name='get_users'),
    path('home', views.home, name="home"),
    path('login', views.login, name="login"),
+   path('login/', views.login, name="login"),
    path('register', views.register, name="register"),
+   path('register/', views.register, name="register"),
    path('logout', views.logout, name="logout"),
+   path('logout/', views.logout, name="logout"),
    path('logout_button', views.logout_button, name='logout_button'),
    path('set_role', views.set_role, name='set_role'),
    path('whoami', views.whoami, name='whoami'),
+   path('whoami/', views.whoami, name='whoami'),
+
+   url('',views.defaultresponse)
+
 ]
