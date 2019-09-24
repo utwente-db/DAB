@@ -35,35 +35,35 @@ test_db = {
 class TestLogin(unittest.TestCase):
 
 	def testAdmin(self):
-		r = admin.get(BASE+"/whoami")
+		r = admin.get(BASE+"/rest/whoami")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		self.assertEqual(body["email"], "info@sfbtech.nl")
 		self.assertEqual(body["role"], 0)
 
 	def testTeacher(self):
-		r = teacher.get(BASE+"/whoami")
+		r = teacher.get(BASE+"/rest/whoami")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		self.assertEqual(body["email"], "teacher@sfbtech.nl")
 		self.assertEqual(body["role"], 1)
 
 	def testTA(self):
-		r = ta.get(BASE+"/whoami")
+		r = ta.get(BASE+"/rest/whoami")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		self.assertEqual(body["email"], "ta@sfbtech.nl")
 		self.assertEqual(body["role"], 2)
 
 	def testStudent(self):
-		r = student.get(BASE+"/whoami")
+		r = student.get(BASE+"/rest/whoami")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		self.assertEqual(body["email"], "aoeu@sfbtech.nl")
 		self.assertEqual(body["role"], 3)
 
 	def testUnlogged(self):
-		r = unlogged.get(BASE+"/whoami")
+		r = unlogged.get(BASE+"/rest/whoami")
 		self.assertEqual(r.status_code, 404)
 
 class testCreateDB(unittest.TestCase):
@@ -72,11 +72,11 @@ class testCreateDB(unittest.TestCase):
 	#Currently relies of alphabetic sorting
 	def test0Create(self):
 		# create the database
-		r = student.post(BASE+"/studentdatabases/", json=test_db)
+		r = student.post(BASE+"/rest/studentdatabases/", json=test_db)
 		self.assertEqual(r.status_code, 201)
 
 		#check if we can it exists
-		r = student.get(BASE+"/studentdatabases/")
+		r = student.get(BASE+"/rest/studentdatabases/")
 		self.assertEqual(r.status_code, 200)
 		found = False
 		body = r.json()
@@ -107,7 +107,7 @@ class testCreateDB(unittest.TestCase):
 			cur.execute("DROP TABLE test")
 			
 	def test2Delete(self):
-		r = student.get(BASE+"/studentdatabases/")
+		r = student.get(BASE+"/rest/studentdatabases/")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		id = -1
@@ -117,11 +117,11 @@ class testCreateDB(unittest.TestCase):
 		# how we know the db was actually in there before we try to delete
 		self.assertTrue(id>=0)
 
-		r = student.delete(BASE+"/studentdatabases/"+str(id))
+		r = student.delete(BASE+"/rest/studentdatabases/"+str(id))
 		self.assertEqual(r.status_code, 204)
 
 		#finally, let's see if the db is still there
-		r = student.get(BASE+"/studentdatabases/")
+		r = student.get(BASE+"/rest/studentdatabases/")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		for db in body:
@@ -154,11 +154,11 @@ class testCourse(unittest.TestCase):
 	tdb = None
 
 	def test0CreateCourse(self):
-		r = teacher.post(BASE+"/courses/", json=self.test_course)
+		r = teacher.post(BASE+"/rest/courses/", json=self.test_course)
 		self.assertEqual(r.status_code, 201)
 
 		#check if it exists
-		r = teacher.get(BASE+"/courses/")
+		r = teacher.get(BASE+"/rest/courses/")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		for course in body:
@@ -170,10 +170,10 @@ class testCourse(unittest.TestCase):
 		self.tdb = test_db.copy()
 		self.tdb["course"] = self.course_id
 
-		r = student.post(BASE+"/studentdatabases/", json=self.tdb)
+		r = student.post(BASE+"/rest/studentdatabases/", json=self.tdb)
 		self.assertEqual(r.status_code, 201)
 
-		r = student.get(BASE+"/studentdatabases/")
+		r = student.get(BASE+"/rest/studentdatabases/")
 		body = r.json()
 		for db in body:
 			if db["databasename"] == "ueoa":
@@ -181,10 +181,10 @@ class testCourse(unittest.TestCase):
 		self.assertTrue(found)
 
 	def test3DeleteCourse(self):
-		r = teacher.delete(BASE+"/courses/"+str(self.course_id))
+		r = teacher.delete(BASE+"/rest/courses/"+str(self.course_id))
 		self.assertEqual(r.status_code, 204)
 
-		r = teacher.get(BASE+"/courses/")
+		r = teacher.get(BASE+"/rest/courses/")
 		body = r.json()
 		for course in body:
 			self.assertNotEqual(course["name"], "ueoa")

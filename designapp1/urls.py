@@ -44,18 +44,13 @@ urlpatterns = [
    # path('delete_user', views.delete_user, name='delete_user'),
    # path('delete_db_with_owner', views.delete_db_with_owner, name='delete_db_with_owner'),
    # path('get_users', views.get_users, name='get_users'),
-   path('login', views.login, name="login"),
-   path('login/', views.login, name="login"),
-   path('register', views.register, name="register"),
-   path('register/', views.register, name="register"),
-   path('logout', views.logout, name="logout"),
-   path('logout/', views.logout, name="logout"),
-   path('logout_button/', views.logout_button, name='logout_button'),
-   path('logout_button', views.logout_button, name='logout_button'),
+   # path('login/', views.login, name="login"),
+   # path('register', views.register, name="register"),
+   # path('register/', views.register, name="register"),
    path('whoami', views.whoami, name='whoami'),
-   path('set_role/', views.set_role, name='set_role'),
-   path('set_role', views.set_role, name='set_role'),
    path('whoami/', views.whoami, name='whoami'),
+   path('set_role', views.set_role, name='set_role'),
+   path('set_role/', views.set_role, name='set_role'),
 
    url('',views.defaultresponse)
 
