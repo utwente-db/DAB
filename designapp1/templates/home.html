@@ -52,7 +52,10 @@
     </div>
     <div class="row mt-4">
         <div class="col-4">
-            <h3 class="text-center mb-5">Courses</h3>
+            <h3 class="text-center mb-5">
+                {{ context.get("one") }}
+                <!-- Courses -->
+            </h3>
             <ul>
                 <li><a href="#">Pearls of CS</a></li>
                 <li><a href="#">Data & Information</a></li>
@@ -60,21 +63,22 @@
             </ul>
         </div>
         <div class="col-8">
-            {% for post in posts %}
+            {% for c in context %}
+            <h1>{{ context }}</h1>
 
 
-            <a class="post" href="#">
+            <!-- <a class="post" href="#">
                 <div class="post__title post__item">
                     {{ post.title }}
                 </div>
-            </a>
+            </a> -->
 
             {% endfor %}
         </div>
 
         <div class="pagination">
 
-            {% if posts.has_previous %}
+            <!-- {% if posts.has_previous %}
                 <a href="?page=1">First</a>
                 <a href="?page={{ posts.previous_page_number }}">Previous</a>
             {% endif %}
@@ -92,7 +96,7 @@
             {% if posts.has_next %}
                 <a href="?page={{ posts.next_page_number }}">Next</a>
                 <a href="?page={{ posts.paginator.num_pages }}">Last</a>
-            {% endif %}
+            {% endif %} -->
 
 
 
@@ -102,7 +106,7 @@
                 {% elif i > posts.number|add:'-3' and i < posts.number|add:'3' %}
                     {{ i }}
                 {% endif %}
-            {% enfor %} -->
+            {% endfor %} -->
 
             <!-- {{ posts.has_previous }}
 

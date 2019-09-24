@@ -35,6 +35,7 @@ from designapp1 import statements
 from .forms import *
 from . import hash
 import logging
+import requests
 
 logging.basicConfig(
        level = logging.DEBUG,
@@ -367,6 +368,27 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+@require_GET
+def home(request):
+    path = 'http://localhost:'
+    port = '1256'
+    call = '/dbmusers/'
+    response = requests.get(path + port + call)
+    return HttpResponse('wow')
+    # data = response.json()
+    # return render(request, 'home.html', {
+    #     'ids': data['id'],
+    #     'emails': data['email']
+    # })
+    # posts = Post.objects.all()
+    # paginator = Paginator(posts, 3)
+    # page = request.GET.get('page')
+    # # ?page=2
+    #
+    # posts = paginator.get_page(page)
+
+    # return render(request, 'home.html')#, {'posts': posts})
+
 def test(request):
     return HttpResponse("test")
 
@@ -410,16 +432,6 @@ def get_users(request):
 	answer = json.JSONEncoder().encode(answer)
 	response = HttpResponse(str(answer), content_type="application/json")
 	return response
-
-def home(request):
-    posts = Post.objects.all()
-    paginator = Paginator(posts, 3)
-    page = request.GET.get('page')
-    # ?page=2
-
-    posts = paginator.get_page(page)
-
-    return render(request, 'home.html', {'posts': posts})
 
 @require_http_methods(["GET", "POST"])
 def register(request):
