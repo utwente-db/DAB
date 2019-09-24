@@ -19,20 +19,22 @@ urlpatterns = [
    #Specific databases
 
    #Studentdatabases
-   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)$', views.studentdatabasessingle),
+   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)/?$', views.studentdatabasessingle),
    url(r'^studentdatabases/$', views.studentdatabasesbase),
    #Courses
-   url(r'^courses/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^courses/(?P<pk>[a-z0-9]+)/?$', views.singleview),
    url(r'^courses/$', views.baseview),
    #TAs
-   url(r'^tas/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^tas/(?P<pk>[a-z0-9]+)/?$', views.singleview),
    url(r'^tas/$', views.baseview),
    #dbmusers
-   url(r'^dbmusers/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^dbmusers/(?P<pk>[a-z0-9]+)/?$', views.singleview),
    url(r'^dbmusers/$', views.baseview),
    #schemas
-   url(r'^schemas/(?P<pk>[a-z0-9]+)$', views.singleview),
+   url(r'^schemas/(?P<pk>[a-z0-9]+)/?$', views.singleview),
    url(r'^schemas/$', views.baseview),
+   #dump
+   url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),
 
 
    #Login
@@ -49,9 +51,11 @@ urlpatterns = [
    path('register/', views.register, name="register"),
    path('logout', views.logout, name="logout"),
    path('logout/', views.logout, name="logout"),
+   path('logout_button/', views.logout_button, name='logout_button'),
    path('logout_button', views.logout_button, name='logout_button'),
-   path('set_role', views.set_role, name='set_role'),
    path('whoami', views.whoami, name='whoami'),
+   path('set_role/', views.set_role, name='set_role'),
+   path('set_role', views.set_role, name='set_role'),
    path('whoami/', views.whoami, name='whoami'),
 
    url('',views.defaultresponse)

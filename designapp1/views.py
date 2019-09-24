@@ -16,7 +16,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 
 from django.db import IntegrityError
-from .schemas import write
+from . import schemas as schemaWriter
 from psycopg2.extensions import AsIs
 import psycopg2 as db
 
@@ -284,7 +284,7 @@ def studentdatabasesbase(request):
                        all_table_schemas = schemas.objects.filter(course=course_id)
                        for single_schema in all_table_schemas:
                          logging.debug(single_schema.sql)
-                         write(databases,single_schema.sql)
+                         schemaWriter.write(databases,single_schema.sql)
                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
             else:
                return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -336,6 +336,25 @@ def baseview(request):
             return post_base_response(request,schemasserializer)
   else:
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@csrf_exempt
+@require_GET
+def dump(request, pk):
+  if not check_role(request, student):
+    return unauthorised
+
+  try:
+    db = Studentdatabases.objects.get(dbid=pk)
+  #TODO: figure out which exception
+  except Studentdatabases.DoesNotExist as e:
+    return not_found
+
+  if not check_role(request, teacher) and request.session["role"] != db.fid:
+    return unauthorised
+
+  response = schemaWriter.dump(db.__dict__)
+  return HttpResponse(response, content_type="application/sql")
+
 
 #-----------------------------------------LOGIN-------------------------------------------------
 
