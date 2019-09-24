@@ -11,17 +11,20 @@
     "popper.js": "^1.15.0",
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9",
-    "typescript": "^3.6.3"
+    "typescript": "^3.6.3",
+    "node-sass": "^4.12.0"
   },
   "devDependencies": {
     "@types/bootstrap": "^4.3.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack --watch --show-error-details",
-    "build": "webpack && ../venv/bin/python ../manage.py collectstatic --noinput --ignore *.map",
-    "build-win": "webpack && ..\\\"venv\\Scripts\\python.exe\" ..\\manage.py collectstatic --noinput --ignore *.map",
-    "tsc" : "tsc"
+    "compile": "tsc & node-sass src/frontend/sass -o frontend/css",
+    "watch": "tsc -w & node-sass --watch src/frontend/sass -o frontend/css",
+    "watchtsc": "tsc -w",
+    "tsc" : "tsc",
+    "scss": "node-sass src/frontend/sass -o frontend/css",
+    "watchscss": "node-sass --watch src/frontend/sass -o frontend/css"
   },
   "repository": {
     "type": "git",

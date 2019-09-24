@@ -1,6 +1,6 @@
-Compiling all the typescript right now works via "npm run tsc"\n
+Make sure you have node and npm installed via your package manager. 
+Then, run: "npm install"
 
-todo:
-* compile sass as well
-* make this one command
-* make it watch
+To compile, run: "npm run compile"
+
+When developing (you constantly want typescript and scss to compile), run: "npm run watch"
