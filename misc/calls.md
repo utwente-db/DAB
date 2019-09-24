@@ -158,7 +158,7 @@ Each user level has the following permissions
 |               | Get, any      | Get, any      | Get, any      | Get, any     | Get, any         |
 |               | POST          | POST          | POST          | POST         | POST             |
 |---------------|---------------|---------------|---------------|--------------|------------------|
-| Student       | GET, own      | Get, own      | Get, own      |              | Get, own         |
-|               |               |               | POST          | Get, own     | POST             |
+| Student       | GET, own      | Get, own      | Get, own      | Get, own     | Get, own         |
+|               |               |               | POST          |              | POST             |
 |---------------|---------------|---------------|---------------|--------------|------------------|
 | Not logged in |               |               |               |              |                  |
