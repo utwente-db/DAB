@@ -20,7 +20,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack --watch --show-error-details",
     "build": "webpack && ../venv/bin/python ../manage.py collectstatic --noinput --ignore *.map",
-    "build-win": "webpack && ..\\\"venv\\Scripts\\python.exe\" ..\\manage.py collectstatic --noinput --ignore *.map"
+    "build-win": "webpack && ..\\\"venv\\Scripts\\python.exe\" ..\\manage.py collectstatic --noinput --ignore *.map",
+    "tsc" : "tsc"
   },
   "repository": {
     "type": "git",
