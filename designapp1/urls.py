@@ -33,6 +33,8 @@ urlpatterns = [
    #schemas
    url(r'^schemas/(?P<pk>[a-z0-9]+)/?$', views.singleview),
    url(r'^schemas/$', views.baseview),
+   #dump
+   url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),
 
 
    #Login

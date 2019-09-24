@@ -45,6 +45,17 @@ returns:
 Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
 If the user is not logged in, returns a 404.
 
+## /dump/<pk>
+
+Returns a sql dump of the database corresponding to the specified id.
+Note that the content type is application/sql and that most browsers will see it as a file to be downloaded; a simple link with `target="_blank"` would suffice for the front-end.
+
+Only accepts get.
+Permissions:
+
+Teachers and above: allowed for any.
+Students: allowed their own.
+
 ## TABLE: studentdatabases
 
 ### /studentdatabases/
