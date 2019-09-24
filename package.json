@@ -10,7 +10,8 @@
     "popper": "^1.0.1",
     "popper.js": "^1.15.0",
     "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.9",
+    "typescript": "^3.6.3"
   },
   "devDependencies": {
     "@types/bootstrap": "^4.3.1"
