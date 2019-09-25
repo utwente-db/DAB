@@ -3,78 +3,54 @@ const path = require('path');
 const ts_loader = require('ts-loader');
 var glob = require("glob");
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // TODO maybe export some sort of variable when in production to use everywhere
 
-// function getPlugin() {
-//     if (process.env.NODE_ENV === 'production') {
-//         return [
-//             new webpack.optimize.UglifyJsPlugin()
-//         ];
-//     } else {
-//         return [];
-//     }
-// }
-
 module.exports = (env, argv) => {
-const isDevelopment = argv.mode === 'development';
+    const isDevelopment = argv.mode === 'development'; // Boolean for development / production
 
     config = {
         // mode: isDevelopment? 'development' : 'production',
         plugins: [
             new MiniCssExtractPlugin({
-                // Options similar to the same options in webpackOptions.output
-                // all options are optional
+                // Extracts css from javascript
                 filename: './frontend/css/stylesheet.css',
                 chunkFilename: '[id].css',
-                ignoreOrder: false, // Enable to remove warnings about conflicting order
+                ignoreOrder: false,
             })
         ],
         entry: {
-            'frontend/scripts/main.js': glob.sync("./src/frontend/scripts/*.ts")
-            // 'frontend/css/style_webpack.css': glob.sync("./src/frontend/sass/*.s*ss")
+            'frontend/scripts/main.js': glob.sync("./src/frontend/scripts/*.ts") // gathers typescript files
+            // .concat(glob.sync("./src/frontend/sass/*.s*ss"))  // Gathers sass files (not needed when included from ts)
         },
 
         // watch: true,
-        watchOptions: {
+        watchOptions: { // These are needed for watch to work
             poll: true,
-            ignored: /node_modules/
+            ignored: /node_modules/ // improves performance by a ton
         },
-        output: {
+        output: { // Resolves paths locally, a weird hack
             filename: '[name]',
             path: path.resolve(__dirname, './')
         },
-        devtool: isDevelopment ? 'source-map' : '',
+        devtool: isDevelopment ? 'source-map' : '', // Add source mappings when not in production
         resolve: {
-            // Add '.ts' and '.tsx' as a resolvable extension.
+            // Add '.ts' etc. as a resolvable extension.
             extensions: ['.ts', '.tsx', '.js'],
-
-
         },
         module: {
             rules: [
-                // {
-                //     test: /\.js$/,
-                //     include: './src/frontend/scripts',
-                //     use: {
-                //         loader: "babel-loader"
-                //     }
-                // },
-                {
-                    // include: path.resolve(__dirname, '/src/frontend/scripts/'),
+                { // Rule for how to process ts files
                     test: /\.ts$/,
                     use: 'ts-loader'
                 },
-                {
+                { // Rule for how to process sass/scss
                     test: /\.s[ac]ss$/,
                     use: [
-
-
                         {
-                            loader: MiniCssExtractPlugin.loader,
+                            loader: MiniCssExtractPlugin.loader, // Used to extract into seperate file
                             options: {
-
                                 hmr: isDevelopment // enables hot swapping of modules if not in production
                             },
                         },
@@ -85,66 +61,9 @@ const isDevelopment = argv.mode === 'development';
                     ],
 
                 }
-                // {
-                //     // include: path.resolve(__dirname, '/src/frontend/scripts/'),
-                //     test: /\.s.ss$/,
-                //     loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!sass-loader?sourceMap')
-                //     // use: [
-                //     //     'style-loader',
-                //     //     {
-                //     //         loader: 'css-loader',
-                //     //         options: {
-                //     //             minimize: true
-                //     //         }
-                //     //     },
-                //     //     'sass-loader?sourceMap'
-                //     // ]
-                // }
-
-
             ]
         }
     };
 
-// config = {
-//     entry: {
-//         main: ['./src/frontend/scripts/', './src/frontend/sass/']
-//     },
-//     output: {
-//         publicPath: './frontend/scripts',
-//         filename: '[name].js',
-//         path: path.resolve(__dirname, './frontend/scripts/')
-//     },
-//     resolve: {
-//         // Add '.ts' and '.tsx' as a resolvable extension.
-//         extensions:['.ts', '.tsx', '.js'],
-//         alias: {
-//
-//         }
-//     },
-//     module: {
-//         rules: [
-//             // {
-//             //     test: /\.scss$/,
-//             //     use: [
-//             //         'style-loader',
-//             //         {
-//             //             loader: 'css-loader',
-//             //             options: {
-//             //                 minimize: true
-//             //             }
-//             //         },
-//             //         'sass-loader?sourceMap'
-//             //     ]
-//             // },
-//             {
-//                 test: /\.tsx?$/,
-//                 use: 'ts-loader'
-//             }
-//         ]
-//     },
-//     plugins: getPlugin()
-// };
-
-return config;
-}
+    return config;
+};

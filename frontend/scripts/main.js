@@ -2123,9 +2123,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 // import "jquery"
-// import * as $ from "jquery";
-// (<any>window).jQuery = $
 // import "popper.js"
 // import "bootstrap";
 __webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");

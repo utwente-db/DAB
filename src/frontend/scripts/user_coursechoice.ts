@@ -1,11 +1,10 @@
 import axios, {AxiosResponse} from 'axios';
+
+// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 // import "jquery"
-
-// import * as $ from "jquery";
-// (<any>window).jQuery = $
-
 // import "popper.js"
 // import "bootstrap";
+
 import "../sass/desktop.sass"
 
 async function getCoursesPromise(): Promise<string> { // TODO Check type here

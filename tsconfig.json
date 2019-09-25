@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "es5",
 		"module": "commonjs",
-		"sourceMap": true, // TODO disable in production
+		"sourceMap": true,
 		"outDir": "frontend/scripts"
 	},
 	"include": [
