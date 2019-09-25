@@ -390,15 +390,25 @@ def index(request):
 @require_GET
 def home(request):
     path = 'http://localhost:'
-    port = '1256'
+    port = '1402'
     call = '/dbmusers/'
-    response = requests.get(path + port + call)
-    return HttpResponse('wow')
+    # need session cookie
+    # response = requests.get(path + port + call)
     # data = response.json()
-    # return render(request, 'home.html', {
-    #     'ids': data['id'],
-    #     'emails': data['email']
-    # })
+
+    students = ["David", "James", "John", "Robert",
+                "Michael", "Wiliam", "Richard", "Joseph",
+                "Thomas", "Charles", "Christopher", "Daniel",
+                "Matthew", "Anthony", "Donald", "Mark", "Paul",
+                "Steven", "Andrew", "Kenneth", "Joshua", "George",
+                "Kevin", "Brian", "Edward", "Ronald", "Timothy",
+                "Jason", "Jeffrey", "Ryan", "Jacob", "Gary"]
+
+    return render(request, 'home.html', {
+        'students': students,
+        'number': len(students)
+        # , 'email': 'test_email'
+    })
     # posts = Post.objects.all()
     # paginator = Paginator(posts, 3)
     # page = request.GET.get('page')

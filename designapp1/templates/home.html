@@ -53,9 +53,8 @@
     <div class="row mt-4">
         <div class="col-4">
             <h3 class="text-center mb-5">
-                {{ context.get("one") }}
-                <!-- Courses -->
-            </h3>
+                Courses
+                </h3>
             <ul>
                 <li><a href="#">Pearls of CS</a></li>
                 <li><a href="#">Data & Information</a></li>
@@ -63,17 +62,22 @@
             </ul>
         </div>
         <div class="col-8">
-            {% for c in context %}
-            <h1>{{ context }}</h1>
-
-
-            <!-- <a class="post" href="#">
-                <div class="post__title post__item">
-                    {{ post.title }}
-                </div>
-            </a> -->
-
-            {% endfor %}
+            <table class="table table-hover">
+                <thead class="thead dark">
+                    <tr>
+                        <th class="th-sm" scope="col">#</th>
+                        <th class="th-sm" scope="col">Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>{{ student }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
 
         <div class="pagination">
