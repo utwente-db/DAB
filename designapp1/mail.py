@@ -16,7 +16,7 @@ def send_verification(user):
 	addr = Address(user.email, user.email.split("@")[0], user.email)
 
 	salt = user.password.split('$')[1]
-	token = hash.make(user.email, salt)
+	token = hash.make(user.email, salt.encode())
 
 	msg = EmailMessage()
 	msg["Subject"] = "Database - verify you email"
