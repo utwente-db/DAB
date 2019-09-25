@@ -1,9 +1,16 @@
-import axios from 'axios'
+import axios, {AxiosResponse} from 'axios';
+import "jquery"
+
+// import * as $ from "jquery";
+// (<any>window).jQuery = $
+
+import "popper.js"
+import "bootstrap";
 
 async function getCoursesPromise(): Promise<string> { // TODO Check type here
-    let response: object = await axios.get("/courses/")
+    let response: AxiosResponse = await axios.get("/courses/")
     let data: string = response.data;
-    return data
+    return data;
     // let next = JSON.parse(data)
     // TODO actually convert API data to human readble format
 }
