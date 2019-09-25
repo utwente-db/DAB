@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 async function getCoursesPromise(): Promise<string> { // TODO Check type here
-    let response = await axios.get("/courses/")
+    let response: object = await axios.get("/courses/")
     let data: string = response.data;
     return data
     // let next = JSON.parse(data)
@@ -15,6 +15,3 @@ async function displayCourses(): Promise<void> {
 }
 
 nice_div.addEventListener("load", displayCourses);
-console.log(document.URL)
-console.log(document.title)
-

@@ -20,8 +20,8 @@ config = {
     //     new ExtractTextPlugin('[name].css')
     // ],
     entry: {
-        'yeeter/scripts/main.js': glob.sync("./src/frontend/scripts/*.ts"),
-        'yeeter/css/style.css': glob.sync("./src/frontend/sass/*.s*ss")
+        'frontend/scripts/main.js': glob.sync("./src/frontend/scripts/*.ts"),
+        'frontend/css/style_webpack.css': glob.sync("./src/frontend/sass/*.s*ss")
     },
 
     // watch: true,
