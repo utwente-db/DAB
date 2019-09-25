@@ -27,6 +27,7 @@ config = {
     // watch: true,
     watchOptions: {
         poll: true
+        ignored: /node_modules/
     },
     output: {
         filename: '[name]',
