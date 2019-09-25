@@ -370,3 +370,6 @@ static/
 static/*
 /static/
 /static/*
+node_modules/
+node_modules/*
+*.map

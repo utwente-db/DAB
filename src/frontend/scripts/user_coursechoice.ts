@@ -1,11 +1,11 @@
 import axios, {AxiosResponse} from 'axios';
-import "jquery"
+// import "jquery"
 
 // import * as $ from "jquery";
 // (<any>window).jQuery = $
 
-import "popper.js"
-import "bootstrap";
+// import "popper.js"
+// import "bootstrap";
 import "../sass/desktop.sass"
 
 async function getCoursesPromise(): Promise<string> { // TODO Check type here

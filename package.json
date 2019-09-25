@@ -27,14 +27,15 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "compile": "tsc & node-sass src/frontend/sass -o frontend/css",
-    "watch": "tsc -w & node-sass --watch src/frontend/sass -o frontend/css",
+    "compileboth": "tsc & node-sass src/frontend/sass -o frontend/css",
+    "watchboth": "tsc -w & node-sass --watch src/frontend/sass -o frontend/css",
     "watchtsc": "tsc -w",
     "tsc": "tsc",
     "scss": "node-sass src/frontend/sass -o frontend/css",
     "watchscss": "node-sass --watch src/frontend/sass -o frontend/css",
-    "webpack": "webpack",
-    "webpackwatch": "webpack --watch"
+    "build": "webpack --mode=development",
+    "watch": "webpack --watch --mode=development",
+    "production": "webpack --mode=production"
   },
   "repository": {
     "type": "git",
