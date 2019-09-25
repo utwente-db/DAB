@@ -26,7 +26,7 @@ config = {
 
     // watch: true,
     watchOptions: {
-        poll: true
+        poll: true,
         ignored: /node_modules/
     },
     output: {
