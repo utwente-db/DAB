@@ -1,9 +1,17 @@
-import axios from 'axios'
+import axios, {AxiosResponse} from 'axios';
+import "jquery"
+
+// import * as $ from "jquery";
+// (<any>window).jQuery = $
+
+import "popper.js"
+import "bootstrap";
+import "../sass/desktop.sass"
 
 async function getCoursesPromise(): Promise<string> { // TODO Check type here
-    let response = await axios.get("/courses/")
+    let response: AxiosResponse = await axios.get("/courses/")
     let data: string = response.data;
-    return data
+    return data;
     // let next = JSON.parse(data)
     // TODO actually convert API data to human readble format
 }
@@ -15,6 +23,3 @@ async function displayCourses(): Promise<void> {
 }
 
 nice_div.addEventListener("load", displayCourses);
-console.log(document.URL)
-console.log(document.title)
-

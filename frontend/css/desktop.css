@@ -1,50 +1,358 @@
-/*
-Error: File to import not found or unreadable: ~bootstrap.
-        on line 2 of desktop.sass
+@import url("https://fonts.googleapis.com/css?family=Barlow:100,200,300,400,600&display=swap");
+body {
+  font-family: 'Barlow Semi Condensed3', sans-serif; }
 
-1: @import styleguide
-2: @import ~bootstrap
-3: 
-4: body
-5:   font-family: 'Barlow Semi Condensed3', sans-serif
-6: 
-7: .room-name
+.room-name {
+  text-align: left;
+  color: white; }
 
-Backtrace:
-desktop.sass:2
-/usr/lib/ruby/vendor_ruby/sass/tree/import_node.rb:67:in `rescue in import'
-/usr/lib/ruby/vendor_ruby/sass/tree/import_node.rb:44:in `import'
-/usr/lib/ruby/vendor_ruby/sass/tree/import_node.rb:28:in `imported_file'
-/usr/lib/ruby/vendor_ruby/sass/tree/import_node.rb:37:in `css_import?'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:313:in `visit_import'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:36:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:160:in `block in visit'
-/usr/lib/ruby/vendor_ruby/sass/stack.rb:79:in `block in with_base'
-/usr/lib/ruby/vendor_ruby/sass/stack.rb:115:in `with_frame'
-/usr/lib/ruby/vendor_ruby/sass/stack.rb:79:in `with_base'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:160:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:52:in `block in visit_children'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:52:in `map'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:52:in `visit_children'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:169:in `block in visit_children'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:181:in `with_environment'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:168:in `visit_children'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:36:in `block in visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:188:in `visit_root'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/base.rb:36:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:159:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/visitors/perform.rb:8:in `visit'
-/usr/lib/ruby/vendor_ruby/sass/tree/root_node.rb:36:in `css_tree'
-/usr/lib/ruby/vendor_ruby/sass/tree/root_node.rb:29:in `render_with_sourcemap'
-/usr/lib/ruby/vendor_ruby/sass/engine.rb:381:in `_render_with_sourcemap'
-/usr/lib/ruby/vendor_ruby/sass/engine.rb:298:in `render_with_sourcemap'
-/usr/lib/ruby/vendor_ruby/sass/exec/sass_scss.rb:387:in `run'
-/usr/lib/ruby/vendor_ruby/sass/exec/sass_scss.rb:63:in `process_result'
-/usr/lib/ruby/vendor_ruby/sass/exec/base.rb:52:in `parse'
-/usr/lib/ruby/vendor_ruby/sass/exec/base.rb:19:in `parse!'
-/usr/bin/sass:8:in `<main>'
-*/
-body:before {
-  white-space: pre;
-  font-family: monospace;
-  content: "Error: File to import not found or unreadable: ~bootstrap.\A         on line 2 of desktop.sass\A \A 1: @import styleguide\A 2: @import ~bootstrap\A 3: \A 4: body\A 5:   font-family: 'Barlow Semi Condensed3', sans-serif\A 6: \A 7: .room-name"; }
+.available {
+  text-align: right; }
+
+.align-right {
+  text-align: right; }
+
+.room-card-link, .room-card-container {
+  color: black; }
+
+.room-card-link:hover {
+  text-decoration: none; }
+
+.room-card-container {
+  width: 100%;
+  margin: 10px;
+  box-shadow: 3px 3px 3px #CCC;
+  transition: box-shadow linear 0.3s 0s;
+  background-color: #73007A;
+  display: block;
+  height: 150px; }
+  .room-card-container .room-title {
+    font-size: 26px;
+    text-align: center;
+    color: #CCC; }
+  .room-card-container .room-state {
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 12.5px;
+    margin-left: calc(50% - 12.5px);
+    margin-top: 20px; }
+  .room-card-container .book-room {
+    display: block;
+    background-color: #FF7212;
+    width: 70%;
+    margin-top: 20px;
+    margin-left: calc(50% - 35%);
+    border-radius: 17.5px;
+    text-align: center;
+    color: #CCC;
+    line-height: 35px; }
+  .room-card-container .book-room.taken {
+    opacity: 0.6; }
+  .room-card-container .time-info {
+    text-align: center;
+    padding: 5px;
+    color: #AAA; }
+
+.room-card-container:hover {
+  box-shadow: 5px 5px 5px #AAA; }
+
+.free {
+  background-color: #2bd155; }
+
+.taken {
+  background-color: #d8401a; }
+
+.half {
+  color: #e5c00b; }
+
+.booking-details {
+  position: absolute;
+  width: 400px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #EEE;
+  border: 1px solid #CCC;
+  box-shadow: 5px 5px 5px #CCC; }
+  .booking-details .booking-title {
+    text-align: center;
+    border-bottom: 1px solid #CCC;
+    font-size: 30px;
+    padding-bottom: 10px;
+    padding-top: 10px; }
+  .booking-details .booking-date {
+    text-align: center; }
+  .booking-details .booking-time {
+    text-align: center; }
+  .booking-details .close-button {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    left: 360px;
+    top: 5px;
+    color: black;
+    font-size: 20px;
+    line-height: 20px;
+    border: none;
+    text-align: center;
+    opacity: 0.5;
+    transition: opacity linear 0.3s 0s; }
+  .booking-details .close-button:hover {
+    opacity: 1; }
+  .booking-details .booking-date {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    opacity: 0.75; }
+  .booking-details .booking-time {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    opacity: 0.75; }
+  .booking-details .booking-owner {
+    border-top: 1px solid #CCC;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    text-align: center; }
+
+.hide {
+  display: none; }
+
+.create-booking-title {
+  text-align: center; }
+
+input.date {
+  width: 500px; }
+
+.menu-logo {
+  height: 37.5px;
+  margin-top: 6.25px; }
+
+.navbar {
+  padding-bottom: 0;
+  padding-top: 0;
+  height: 50px; }
+
+.nav-item {
+  margin-left: 10px;
+  width: 125px; }
+
+.container {
+  padding-top: 40px; }
+
+.nav-link {
+  width: 100%;
+  height: 100%;
+  border-radius: 20px;
+  display: block;
+  text-align: center; }
+
+a.nav-link:hover {
+  color: white !important;
+  -webkit-animation-name: example;
+  /* Safari 4.0 - 8.0 */
+  -webkit-animation-duration: 1s;
+  /* Safari 4.0 - 8.0 */
+  animation-name: example;
+  animation-duration: 1s;
+  -webkit-animation-fill-mode: forwards;
+  /* Chrome 16+, Safari 4+ */
+  animation-fill-mode: forwards; }
+
+/* When the spec is finished */
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes example {
+  from {
+    background-color: #f8f9fa;
+    color: rgba(0, 0, 0, 0.5); }
+  to {
+    background-color: #FF7212;
+    color: white;
+    border-radius: 100px; } }
+
+/* Standard syntax */
+@keyframes example {
+  from {
+    background-color: #f8f9fa;
+    color: rgba(0, 0, 0, 0.5); }
+  to {
+    background-color: #FF7212;
+    color: white;
+    border-radius: 100px; } }
+
+.logo-container {
+  text-align: center; }
+  .logo-container img {
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto; }
+
+.desktop-link, .room-link {
+  margin-top: 20px;
+  width: 100%;
+  background-color: #5A0064;
+  color: white;
+  font-size: 40px;
+  font-weight: 300;
+  padding: 25px;
+  text-align: center;
+  cursor: pointer; }
+
+.logintable {
+  margin-left: calc(50% - 200px);
+  margin-top: 30vh;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px; }
+
+.login-sqills-logo {
+  width: 400px;
+  margin-left: calc(50% - 200px); }
+
+.filter-container .text-input {
+  width: 100%;
+  outline: none;
+  padding: 5px;
+  border: 1px solid #5A0064;
+  margin-left: 2px; }
+
+.filter-container .date-input {
+  width: 100%;
+  padding: 5px;
+  text-align: center;
+  border: 1px solid #5A0064;
+  margin-left: 2px; }
+
+.filter-container .filter-header {
+  font-size: 24px; }
+
+.filter-container h1 {
+  text-align: center;
+  font-weight: 300; }
+
+.filter-container button {
+  margin-left: 2px;
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  height: 70px;
+  border-radius: 35px;
+  color: #5A0064;
+  border: 2px solid #5A0064;
+  background-color: transparent;
+  font-size: 30px;
+  font-weight: 100;
+  transition: background 0.25s linear 0s, color 0.25s linear 0s; }
+
+.filter-container button:hover {
+  background-color: #5A0064;
+  color: white; }
+
+.booking-row-clickable {
+  cursor: pointer;
+  transition: background 0.25s linear 0s; }
+  .booking-row-clickable td {
+    cursor: pointer; }
+
+.booking-row-clickable:hover {
+  background-color: #CCC; }
+
+.booking-information-field {
+  font-size: 24px;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65); }
+  .booking-information-field .highlight {
+    color: black; }
+
+.booking-information-header {
+  margin-top: 20px;
+  text-align: center;
+  color: #5A0064;
+  font-size: 40px;
+  font-weight: 100; }
+
+.button-container {
+  display: flex;
+  width: 100%; }
+  .button-container .booking-information-button {
+    width: 50%;
+    flex: 1 1 auto;
+    height: 75px;
+    border: 2px solid #5A0064;
+    margin: 10px;
+    font-size: 28px;
+    color: #5A0064;
+    background-color: transparent;
+    transition: background 0.25s linear 0s, color 0.25s linear 0s; }
+  .button-container .booking-information-button:hover {
+    background-color: #5A0064;
+    color: white; }
+  .button-container .booking-information-button.disabled {
+    cursor: not-allowed;
+    color: #CCC;
+    border: 2px solid #CCC; }
+  .button-container .booking-information-button:hover.disabled {
+    background: transparent;
+    color: #CCC; }
+
+.remove-participant {
+  color: #ff4f31;
+  cursor: pointer;
+  transition: color 0.25s linear 0s; }
+
+.remove-participant:hover {
+  color: red; }
+
+.filter {
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto; }
+  .filter .label {
+    font-size: 20px; }
+
+.purple-button {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  width: 100%;
+  background-color: transparent;
+  height: 60px;
+  border-radius: 40px;
+  font-size: 20px;
+  border: 2px solid #5A0064;
+  color: #5A0064;
+  transition: color 0.25s linear 0s, background 0.25s linear 0s; }
+
+.purple-button:hover {
+  color: white;
+  background: #5A0064;
+  border: 2px solid #5A0064; }
+
+.user-row.hide {
+  display: none; }
+
+.user-row {
+  transition: background 0.25s linear 0s;
+  cursor: pointer; }
+
+.user-row:hover {
+  background-color: #CCCCCC; }
+
+.user-data {
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto; }
+  .user-data .label {
+    font-size: 20px; }
+  .user-data .button-container {
+    display: flex; }
+    .user-data .button-container button {
+      flex-grow: 1;
+      height: 50px;
+      background: transparent;
+      border: 1px solid #5A0064;
+      color: #5A0064;
+      margin: 3px;
+      font-size: 20px;
+      transition: color 0.25s linear 0s, background 0.25s linear 0s; }
+    .user-data .button-container button:hover {
+      background: #5A0064;
+      color: white; }
