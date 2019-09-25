@@ -18,20 +18,23 @@
     "sass-loader": "^8.0.0",
     "css-loader": "^3.2.0",
     "style-loader": "^1.0.0",
-    "glob": "latest"
+    "glob": "latest",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0"
   },
   "devDependencies": {
-    "@types/bootstrap": "^4.3.1"
+    "@types/bootstrap": "^4.3.1",
+    "cookies": "^0.7.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc & node-sass src/frontend/sass -o frontend/css",
     "watch": "tsc -w & node-sass --watch src/frontend/sass -o frontend/css",
     "watchtsc": "tsc -w",
-    "tsc" : "tsc",
+    "tsc": "tsc",
     "scss": "node-sass src/frontend/sass -o frontend/css",
     "watchscss": "node-sass --watch src/frontend/sass -o frontend/css",
-    "webpack": "webpack"
+    "webpack": "webpack",
+    "webpackwatch": "webpack --watch"
   },
   "repository": {
     "type": "git",
