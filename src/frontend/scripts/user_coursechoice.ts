@@ -8,12 +8,13 @@ async function getCoursesPromise(): Promise<string> { // TODO Check type here
     // TODO actually convert API data to human readble format
 }
 
-const nice_div: HTMLElement = document.getElementById("dropdown_div"); // TODO actually make dropdown and fill
+const nice_div: HTMLElement = document.getElementById("nice-div"); // TODO actually make dropdown and fill
 async function displayCourses(): Promise<void> {
     let courses: string = await getCoursesPromise();
     nice_div.innerHTML = courses;
 }
 
 nice_div.addEventListener("load", displayCourses);
-
+console.log(document.URL)
+console.log(document.title)
 

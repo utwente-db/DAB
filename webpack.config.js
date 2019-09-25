@@ -22,7 +22,7 @@ config = {
         filename: '[name].js',
         path: path.resolve(__dirname, './yeeter/')
     },
-    devtool: 'inline-source-map', // TODO comment out in production
+    devtool: 'source-map', // TODO comment out in production
     resolve: {
         // Add '.ts' and '.tsx' as a resolvable extension.
         extensions: ['.ts', '.tsx', '.js', '.sass', '.scss'],
