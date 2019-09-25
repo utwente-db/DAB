@@ -14,8 +14,8 @@ def send_verification(user):
 	mailer = smtplib.SMTP('localhost');
 	send_addr = "no-reply@thebias.nl"
 
-	name = user.email.split("@")[0]
-	addr = Address(user.email, name, user.email)
+	a = user.email.split("@")
+	addr = Address(user.email, a[0], a[1])
 
 	salt = user.password.split('$')[1]
 	token = hash.make(user.email, salt.encode())
