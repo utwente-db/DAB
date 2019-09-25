@@ -7,30 +7,28 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-class Roles(models.Model):
-    id = models.IntegerField(primary_key=True)
+class dbmusers(models.Model):
+    id = models.AutoField(db_column='id',primary_key=True)
     role = models.IntegerField()
     email = models.CharField(max_length=265, unique=True)
     password = models.TextField(max_length=265)
     maxdatabases = models.IntegerField()
 
-
     class Meta:
         managed = False
-        db_table = 'roles'
-        verbose_name_plural = 'Roles'
+        db_table = 'dbmusers'
+        verbose_name_plural = 'dbmusers'
 
 
 class Courses(models.Model):
     courseid = models.AutoField(db_column='courseid',primary_key=True)
-    fid = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='fid')
+    fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
     coursename = models.CharField(max_length=256)
-    students = models.IntegerField()
     info = models.TextField()
     assistants = models.ManyToManyField(
-        Roles,
+        dbmusers,
         through='TAs',
-        through_fields=('course', 'role'),
+        through_fields=('courseid', 'studentid'),
         related_name = 'assisting'
     )
 
@@ -44,25 +42,25 @@ class Courses(models.Model):
         verbose_name_plural = 'Courses'
         unique_together = ('fid','coursename')
 
-#class Studentgroup(models.Model):
-#    fid = models.ForeignKey(Roles, on_delete=models.CASCADE)
-#    dbid = models.IntegerField()
-#
-#
-#    class Meta:
-#        managed = False
-#        db_table = 'studentgroup'
-#        verbose_name_plural = 'Studentgroup'
-#        unique_together = ('fid','dbid')
+class schemas(models.Model):
+    id = models.AutoField(db_column='id', primary_key=True)
+    name = models.CharField(max_length=256,db_column='name')
+    course = models.ForeignKey(Courses,on_delete=models.CASCADE, db_column='course')
+    sql = models.TextField(db_column='sql')
 
+    class Meta:
+        managed = False
+        db_table = 'schemas'
+        verbose_name_plural = 'Schemas'
 
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid',primary_key=True)
-    fid = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='fid')
-    databasename = models.TextField()
+    fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
+    databasename = models.TextField(unique=True)
     course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
     username = models.CharField(max_length=265)
-    password = models.TextField(max_length=265)
+    password = models.CharField(max_length=265)
+    schema = models.ForeignKey(schemas, on_delete=models.PROTECT, db_column='schema', null=True)
 
     class Meta:
         managed = False
@@ -70,8 +68,9 @@ class Studentdatabases(models.Model):
         verbose_name_plural = 'StudentDatabases'
 
 class TAs(models.Model):
-    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
-    role = models.ForeignKey(Roles, on_delete=models.CASCADE, db_column='role')
+    taid = models.AutoField(db_column = 'taid', primary_key=True)
+    courseid = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='courseid')
+    studentid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='studentid')
 
     class Meta:
         managed = False

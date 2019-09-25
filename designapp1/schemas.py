@@ -1,0 +1,20 @@
+from django.db import connection
+import os
+import subprocess
+from .models import Studentdatabases
+
+db_host = connection.settings_dict["HOST"]
+db_port = connection.settings_dict["PORT"]
+
+def write(database, schema):
+	if(schema == ""):
+		return
+
+	os.environ["PGPASSWORD"] = database['password']
+	process = subprocess.run(["psql", "-h", db_host, "-U", database['username'], "-p", db_port, database['databasename']], input=schema+";\\n\\q\\n", encoding='ascii', stdout=subprocess.PIPE)
+
+def dump(database):
+	os.environ["PGPASSWORD"] = database['password']
+	process = subprocess.run(["pg_dump", "-h", db_host, "-U", database['username'], "-p", db_port, database["databasename"]], encoding='ascii', stdout=subprocess.PIPE)
+
+	return process.stdout
