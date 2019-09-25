@@ -58,6 +58,23 @@ module.exports = (env, argv) => {
                         'css-loader',
                         // Compiles Sass to CSS
                         'sass-loader',
+
+                        // Use version below for more detailed mapping, maybe needed for debugging..?
+                        // // Translates CSS into CommonJS
+                        // {
+                        //     loader: 'css-loader',
+                        //     options: {
+                        //         sourceMap: isDevelopment
+                        //     }
+                        // },
+                        // // Compiles Sass to CSS
+                        // {
+                        //     loader: 'sass-loader',
+                        //     options: {
+                        //         sourceMap: isDevelopment
+                        //     }
+                        // }
+
                     ],
 
                 }
@@ -66,4 +83,5 @@ module.exports = (env, argv) => {
     };
 
     return config;
-};
+}
+;
