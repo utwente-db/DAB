@@ -71,7 +71,7 @@ class schemasView(viewsets.ModelViewSet):
 #REST RESPONSES
 
 def defaultresponse(request):
-        return HttpResponse('welcome')
+        return index(request=request)
 
 def get_base_response(request,dbname,serializer):
         if check_role(request,teacher):

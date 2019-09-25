@@ -11,6 +11,7 @@ class StudentdatabasesDeleteSerializer(serializers.ModelSerializer):
                 fields = ('dbid','fid','databasename','course','username','password')
 
 class StudentdatabasesSerializer(serializers.ModelSerializer):
+<<<<<<< HEAD
 #       def rest_view(request):
 #                logging.debug("hier2")
 
@@ -31,6 +32,8 @@ class StudentdatabasesSerializer(serializers.ModelSerializer):
 #                delete_db(db_name)
 #                delete_user(db_user)
 #                return "OK"
+=======
+>>>>>>> freek-frontend-beun
        class Meta:
                 model = Studentdatabases
                 fields = '__all__'
