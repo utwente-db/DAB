@@ -14,14 +14,15 @@ var glob = require("glob");
 // }
 
 config = {
-    mode: 'development',
-    entry: {'./yeet/scripts': glob.sync("./src/frontend/scripts/*.ts"),
-        './yeet/css/': glob.sync("./src/frontend/sass/*.s*ss")
-    },
+    mode: 'development', // TODO change to production when in production or let freek add a new "npm run" thing
+    entry:
+        glob.sync("./src/frontend/scripts/*.ts"), //.concat(glob.sync("./src/frontend/sass/*.s*ss")),
+
     output: {
-        // filename: '[name].js',
-        path: path.resolve(__dirname, './')
+        filename: '[name].js',
+        path: path.resolve(__dirname, './yeeter/')
     },
+    devtool: 'inline-source-map', // TODO comment out in production
     resolve: {
         // Add '.ts' and '.tsx' as a resolvable extension.
         extensions: ['.ts', '.tsx', '.js', '.sass', '.scss'],
@@ -42,11 +43,20 @@ config = {
                 test: /\.ts$/,
                 use: 'ts-loader'
             },
-                        {
-                // include: path.resolve(__dirname, '/src/frontend/scripts/'),
-                test: /\.s.ss$/,
-                use: 'sass-loader'
-            }
+            // {
+            //     // include: path.resolve(__dirname, '/src/frontend/scripts/'),
+            //     test: /\.s.ss$/,
+            //     use: [
+            //         'style-loader',
+            //         {
+            //             loader: 'css-loader',
+            //             options: {
+            //                 minimize: true
+            //             }
+            //         },
+            //         'sass-loader?sourceMap'
+            //     ]
+            // }
 
 
         ]

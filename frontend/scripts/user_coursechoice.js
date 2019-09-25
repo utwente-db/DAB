@@ -54,21 +54,20 @@ function getCoursesPromise() {
         });
     });
 }
+var nice_div = document.getElementById("dropdown_div"); // TODO actually make dropdown and fill
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var courses, nice_div;
+        var courses;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getCoursesPromise()];
                 case 1:
                     courses = _a.sent();
-                    nice_div = document.getElementById("dropdown_div");
                     nice_div.innerHTML = courses;
                     return [2 /*return*/];
             }
         });
     });
 }
-window.onload = function () {
-    displayCourses();
-};
+nice_div.addEventListener("load", displayCourses);
+//# sourceMappingURL=user_coursechoice.js.map
