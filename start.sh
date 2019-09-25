@@ -1,2 +1,2 @@
 source venv/bin/activate
-./manage.py runserver localhost:8000
+npm run watch & ./manage.py runserver localhost:8000
