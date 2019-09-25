@@ -32,7 +32,8 @@
     "tsc" : "tsc",
     "scss": "node-sass src/frontend/sass -o frontend/css",
     "watchscss": "node-sass --watch src/frontend/sass -o frontend/css",
-    "webpack": "webpack"
+    "webpack": "webpack",
+    "webpackwatch": "webpack --watch"
   },
   "repository": {
     "type": "git",

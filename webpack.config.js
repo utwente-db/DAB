@@ -24,7 +24,10 @@ config = {
         'yeeter/css/style.css': glob.sync("./src/frontend/sass/*.s*ss")
     },
 
-
+    // watch: true,
+    watchOptions: {
+        poll: true
+    },
     output: {
         filename: '[name]',
         path: path.resolve(__dirname, './')
