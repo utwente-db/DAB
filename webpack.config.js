@@ -20,8 +20,8 @@ config = {
     //     new ExtractTextPlugin('[name].css')
     // ],
     entry: {
-        'frontend/scripts/main.js': glob.sync("./src/frontend/scripts/*.ts"),
-        'frontend/css/style_webpack.css': glob.sync("./src/frontend/sass/*.s*ss")
+        'frontend/scripts/main.js': glob.sync("./src/frontend/scripts/*.ts")
+        // 'frontend/css/style_webpack.css': glob.sync("./src/frontend/sass/*.s*ss")
     },
 
     // watch: true,
@@ -36,7 +36,7 @@ config = {
     devtool: 'source-map', // TODO comment out in production
     resolve: {
         // Add '.ts' and '.tsx' as a resolvable extension.
-        extensions: ['.ts', '.tsx', '.js', '.sass', '.scss'],
+        extensions: ['.ts', '.tsx', '.js'],
 
 
     },

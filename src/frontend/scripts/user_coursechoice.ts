@@ -6,6 +6,7 @@ import "jquery"
 
 import "popper.js"
 import "bootstrap";
+import "../sass/desktop.sass"
 
 async function getCoursesPromise(): Promise<string> { // TODO Check type here
     let response: AxiosResponse = await axios.get("/courses/")
