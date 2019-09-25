@@ -34,5 +34,5 @@ def send_verification(user):
 			</body>
 		<html>""".format(cid=cid[1:-1]), subtype='html')
 
-	sender.send_message(msg)
+	mailer.send_message(msg)
 
