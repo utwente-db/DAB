@@ -51,6 +51,7 @@ urlpatterns = [
    path('whoami/', views.whoami, name='whoami'),
    path('set_role', views.set_role, name='set_role'),
    path('set_role/', views.set_role, name='set_role'),
+   path('test', views.test, name='test'),
 
    url('',views.defaultresponse)
 
