@@ -22,14 +22,15 @@
     "extract-text-webpack-plugin": "^4.0.0-beta.0"
   },
   "devDependencies": {
-    "@types/bootstrap": "^4.3.1"
+    "@types/bootstrap": "^4.3.1",
+    "mini-css-extract-plugin": "^0.8.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc & node-sass src/frontend/sass -o frontend/css",
     "watch": "tsc -w & node-sass --watch src/frontend/sass -o frontend/css",
     "watchtsc": "tsc -w",
-    "tsc" : "tsc",
+    "tsc": "tsc",
     "scss": "node-sass src/frontend/sass -o frontend/css",
     "watchscss": "node-sass --watch src/frontend/sass -o frontend/css",
     "webpack": "webpack",
