@@ -34,6 +34,7 @@ from designapp1 import statements
 from .forms import *
 from . import hash
 import logging
+from . import mail
 
 logging.basicConfig(
        level = logging.DEBUG,
@@ -440,6 +441,8 @@ def login(request):
 			data = form.cleaned_data
 			try:
 				user = dbmusers.objects.get(email=data["mail"])
+				if not user.verified:
+					return render(request, 'login.html', {'form': LoginForm, 'message': "Please verify your email first"})
 
 				if hash.verify(user.password, data["password"]):
 					request.session["user"] = user.id
@@ -516,3 +519,9 @@ def whoami(request):
 	
 	response = json.JSONEncoder().encode(response)
 	return HttpResponse(str(response), content_type="application/json")
+
+@require_GET
+def test(request):
+	user = dbmusers.objects.get(email="info@sfbtech.nl")
+	mail.send_verification(user)
+	return HttpResponse("ok")

@@ -18,8 +18,10 @@ function could be used later on without breaking the existing password hashes.
 generator = hashlib.sha3_256
 method = "sha3_256"
 
-def make(string):
-	salt = urandom(3)
+def make(string, salt=None):
+	if salt == None:
+		salt = urandom(6)
+	
 	h = generator()
 	h.update(string.encode())
 	h.update(salt)
