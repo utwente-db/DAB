@@ -2,10 +2,11 @@
 	"compilerOptions": {
 		"target": "es5",
 		"module": "commonjs",
-		"sourceMap": true,
+		"sourceMap": false,
 		"outDir": "frontend/scripts"
 	},
 	"include": [
 		"src/frontend/scripts"
-	]
+	],
+	"exclude": ["node_modules/@types/node"]
 }

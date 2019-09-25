@@ -1,59 +1,96 @@
-/* Customize these */
-var outputPath = './static';
-var inputPath = './frontend/';
+const webpack = require('webpack');
+const path = require('path');
+const ts_loader = require('ts-loader');
+var glob = require("glob");
 
-/* Webpack dependencies */
-var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+// function getPlugin() {
+//     if (process.env.NODE_ENV === 'production') {
+//         return [
+//             new webpack.optimize.UglifyJsPlugin()
+//         ];
+//     } else {
+//         return [];
+//     }
+// }
 
-module.exports = {
-	// Add an entry here for each unique page to keep things separated
-	entry: {
-		global: inputPath + 'global.ts',
-		index: inputPath + 'index/index.ts',
-		about: inputPath + 'about/about.ts',
-	},
-	// Output everything into the app's static/ directory as individual files
-	output: {
-		filename: '[name].js',
-		path: outputPath
-	},
-	// Generate source maps
-	devtool: 'source-map',
-	resolve: {
-		extensions: ['', '.webpack.js', '.web.js', '.ts', '.js', '.scss', '.sass']
-	},
-	plugins: [
-		// Uglify resulting JS files
-        // TODO Freek maybe remove this
-		new webpack.optimize.UglifyJsPlugin(),
-		// This will extract processed, inlined `scss` files into separate `css` files
-		new ExtractTextPlugin('[name].css')
-	],
-	module: {
-		loaders: [
-			// Handle TypeScript
-			{
-				test: /\.ts$/,
-				loader: 'ts-loader'
-			},
-			// Handle SCSS
-			{
-				test: /\.scss$/,
-				// `?sourceMap` tells sass-loader to output source maps for each css file
-				loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!sass-loader?sourceMap')
-			},
-			{
-				test: /\.sass$/,
-				// `?sourceMap` tells sass-loader to output source maps for each css file
-				loader: ExtractTextPlugin.extract('style-loader', 'css-loader?sourceMap!sass-loader?sourceMap')
-			}
+config = {
+    mode: 'development',
+    entry: {'./yeet/scripts': glob.sync("./src/frontend/scripts/*.ts"),
+        './yeet/css/': glob.sync("./src/frontend/sass/*.s*ss")
+    },
+    output: {
+        // filename: '[name].js',
+        path: path.resolve(__dirname, './')
+    },
+    resolve: {
+        // Add '.ts' and '.tsx' as a resolvable extension.
+        extensions: ['.ts', '.tsx', '.js', '.sass', '.scss'],
 
-		]
-	},
-	// sass-loader settings
-	sassLoader: {
-		outputStyle: "compressed",
-		outFile: outputPath
-	}
-}
+
+    },
+    module: {
+        rules: [
+            // {
+            //     test: /\.js$/,
+            //     include: './src/frontend/scripts',
+            //     use: {
+            //         loader: "babel-loader"
+            //     }
+            // },
+            {
+                // include: path.resolve(__dirname, '/src/frontend/scripts/'),
+                test: /\.ts$/,
+                use: 'ts-loader'
+            },
+                        {
+                // include: path.resolve(__dirname, '/src/frontend/scripts/'),
+                test: /\.s.ss$/,
+                use: 'sass-loader'
+            }
+
+
+        ]
+    }
+};
+
+// config = {
+//     entry: {
+//         main: ['./src/frontend/scripts/', './src/frontend/sass/']
+//     },
+//     output: {
+//         publicPath: './frontend/scripts',
+//         filename: '[name].js',
+//         path: path.resolve(__dirname, './frontend/scripts/')
+//     },
+//     resolve: {
+//         // Add '.ts' and '.tsx' as a resolvable extension.
+//         extensions:['.ts', '.tsx', '.js'],
+//         alias: {
+//
+//         }
+//     },
+//     module: {
+//         rules: [
+//             // {
+//             //     test: /\.scss$/,
+//             //     use: [
+//             //         'style-loader',
+//             //         {
+//             //             loader: 'css-loader',
+//             //             options: {
+//             //                 minimize: true
+//             //             }
+//             //         },
+//             //         'sass-loader?sourceMap'
+//             //     ]
+//             // },
+//             {
+//                 test: /\.tsx?$/,
+//                 use: 'ts-loader'
+//             }
+//         ]
+//     },
+//     plugins: getPlugin()
+// };
+
+module.exports = config;

@@ -1,7 +1,10 @@
 import axios from 'axios'
 
- async function getCoursesPromise(): Promise<string> { // TODO Check type here
-    return await axios.get("/courses/")
+async function getCoursesPromise(): Promise<string> { // TODO Check type here
+    let response = await axios.get("/courses/")
+    let data: string = response.data;
+    return data
+    // let next = JSON.parse(data)
     // TODO actually convert API data to human readble format
 }
 

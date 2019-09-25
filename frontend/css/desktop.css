@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css?family=Barlow:100,200,300,400,600&display=swap");
 body {
-  font-family: "Barlow Semi Condensed3", sans-serif; }
+  font-family: 'Barlow Semi Condensed3', sans-serif; }
 
 .room-name {
   text-align: left;
@@ -168,6 +168,7 @@ a.nav-link:hover {
     background-color: #FF7212;
     color: white;
     border-radius: 100px; } }
+
 /* Standard syntax */
 @keyframes example {
   from {
@@ -177,6 +178,7 @@ a.nav-link:hover {
     background-color: #FF7212;
     color: white;
     border-radius: 100px; } }
+
 .logo-container {
   text-align: center; }
   .logo-container img {
@@ -212,17 +214,21 @@ a.nav-link:hover {
   padding: 5px;
   border: 1px solid #5A0064;
   margin-left: 2px; }
+
 .filter-container .date-input {
   width: 100%;
   padding: 5px;
   text-align: center;
   border: 1px solid #5A0064;
   margin-left: 2px; }
+
 .filter-container .filter-header {
   font-size: 24px; }
+
 .filter-container h1 {
   text-align: center;
   font-weight: 300; }
+
 .filter-container button {
   margin-left: 2px;
   margin-top: 10px;
@@ -236,6 +242,7 @@ a.nav-link:hover {
   font-size: 30px;
   font-weight: 100;
   transition: background 0.25s linear 0s, color 0.25s linear 0s; }
+
 .filter-container button:hover {
   background-color: #5A0064;
   color: white; }
@@ -349,5 +356,3 @@ a.nav-link:hover {
     .user-data .button-container button:hover {
       background: #5A0064;
       color: white; }
-
-/*# sourceMappingURL=desktop.css.map */

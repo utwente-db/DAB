@@ -39,15 +39,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = require("axios");
 function getCoursesPromise() {
     return __awaiter(this, void 0, void 0, function () {
+        var response, data;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, axios_1.default.get("/courses/")
-                    // TODO actually convert API data to human readble format
-                ];
-                case 1: // TODO Check type here
-                return [2 /*return*/, _a.sent()
-                    // TODO actually convert API data to human readble format
-                ];
+                case 0: return [4 /*yield*/, axios_1.default.get("/courses/")];
+                case 1:
+                    response = _a.sent();
+                    data = response.data;
+                    return [2 /*return*/, data
+                        // let next = JSON.parse(data)
+                        // TODO actually convert API data to human readble format
+                    ];
             }
         });
     });
@@ -70,4 +72,3 @@ function displayCourses() {
 window.onload = function () {
     displayCourses();
 };
-//# sourceMappingURL=user_coursechoice.js.map

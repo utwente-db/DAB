@@ -1,8 +1,7 @@
-import axios from 'axios';
-var bootstrap = require('bootstrap');
+import axios from 'axios'
+
 
 
 function f() {
-    console.log("things work3")
+    console.log("things work4");
 }
-
