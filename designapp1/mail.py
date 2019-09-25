@@ -8,12 +8,14 @@ from . import hash
 
 
 
-mailer = smtplib.SMTP('localhost');
-send_addr = "no-reply@thebias.nl"
 #TODO: configure hosts correctly and wire them into here
 #TODO: put the product name in here once we come up with one
 def send_verification(user):
-	addr = Address(user.email, user.email.split("@")[0], user.email)
+	mailer = smtplib.SMTP('localhost');
+	send_addr = "no-reply@thebias.nl"
+
+	name = user.email.split("@")[0]
+	addr = Address(user.email, name, user.email)
 
 	salt = user.password.split('$')[1]
 	token = hash.make(user.email, salt.encode())
