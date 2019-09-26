@@ -4,7 +4,7 @@ from .models import *
 class CoursesSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Courses
-		fields = ('courseid','fid','coursename','students','info')
+		fields = ('courseid','fid','coursename','info')
 class StudentdatabasesDeleteSerializer(serializers.ModelSerializer):
         class Meta:
                 model = Studentdatabases
