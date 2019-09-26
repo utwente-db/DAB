@@ -9,6 +9,24 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = (env, argv) => {
     const isDevelopment = argv.mode === 'development'; // Boolean for development / production
+    const entries = glob.sync("./src/frontend/scripts/*.ts")
+    let fileNames = [];
+
+    for (let i = 0; i < entries.length; i++) {
+        let splitstring = entries[i].split("/");
+        let totalFileName = splitstring[splitstring.length - 1];
+        let filenameSplit = totalFileName.split(".");
+        let fileName = filenameSplit[0];
+        fileNames.push(fileName);
+    }
+
+    let i = 0;
+    const entryObject = fileNames.reduce((accumulator, currentValue) => {
+        accumulator[currentValue] = entries[i];
+        i = i + 1;
+        return accumulator;
+    }, {});
+
 
     config = {
         // mode: isDevelopment? 'development' : 'production',
@@ -20,8 +38,9 @@ module.exports = (env, argv) => {
                 ignoreOrder: false,
             })
         ],
-        entry:  glob.sync("./src/frontend/scripts/*.ts"),  // gathers typescript files
-            // .concat(glob.sync("./src/frontend/sass/*.s*ss"))  // Gathers sass files (not needed when included from ts)
+        entry: entryObject,
+        // entry:  glob.sync("./src/frontend/scripts/*.ts"),  // gathers typescript files all into one
+        // .concat(glob.sync("./src/frontend/sass/*.s*ss"))  // Gathers sass files (not needed when included from ts)
 
 
         // watch: true,
@@ -40,12 +59,12 @@ module.exports = (env, argv) => {
         },
 
         // Uncomment this to split up imports into seperate js file
-        //
-        // optimization: {
-        //     splitChunks: {
-        //         chunks: 'all'
-        //     }
-        // },
+
+        optimization: {
+            splitChunks: {
+                chunks: 'all'
+            }
+        },
 
         module: {
             rules: [
