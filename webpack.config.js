@@ -38,6 +38,15 @@ module.exports = (env, argv) => {
             // Add '.ts' etc. as a resolvable extension.
             extensions: ['.ts', '.tsx', '.js'],
         },
+
+        // Uncomment this to split up imports into seperate js file
+        //
+        // optimization: {
+        //     splitChunks: {
+        //         chunks: 'all'
+        //     }
+        // },
+
         module: {
             rules: [
                 { // Rule for how to process ts files
