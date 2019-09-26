@@ -18,8 +18,9 @@ function could be used later on without breaking the existing password hashes.
 generator = hashlib.sha3_256
 method = "sha3_256"
 
-def make(string):
-	salt = urandom(3)
+def make(string, salt=None):
+	salt = urandom(6)
+	
 	h = generator()
 	h.update(string.encode())
 	h.update(salt)
@@ -46,6 +47,9 @@ def randomNames():
 	name = urandom(18)
 	password = urandom(32)
 	return {"name": base64.b64encode(name).decode(), "password": base64.b64encode(password).decode()}
+
+def token():
+	return base64.b64encode(urandom(16)).decode()
 
 class UnknownHashException(TypeError):
 	def __init__(self, arg):
