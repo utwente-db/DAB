@@ -19,7 +19,7 @@ DELETE
 			DB del err:	500 [ONLY with studentdatabases-> not good,report]
 			protected db:	409 [deleting a user with existing db's]
 			other db err:	406
- 
+
 OTHERWISE [ALSO (e.g.) when trying to post on a particular pk]
 	RESPONSE:	Dont touch that:401 [you have no authorisation to do that action]
 			Any other case:	405
@@ -30,7 +30,7 @@ OTHERWISE [ALSO (e.g.) when trying to post on a particular pk]
 
 GET	-> get info all users
 POST 	-> add user
-	body: 
+	body:
 		{
 		"fid":"5", [FOREIGN KEY, MUST EXIST]
 		"databasename":"test20", [FREE TO CHOOSE]
@@ -44,7 +44,7 @@ NOTE: DO NOT START A DATABASENAME WITH A NUMBER, IT WILL FAIL
 ### /studentdatabases/pk
 
 GET	-> for that pk
-DELETE	-> for that pk	
+DELETE	-> for that pk
 
 
 ## TABLE: Courses
@@ -53,7 +53,7 @@ DELETE	-> for that pk
 
 GET	-> get all courses
 POST	-> add a new course
-body: 
+body:
 
 	{
 	"coursename":"test20", [FREE TO CHOOSE]
@@ -73,7 +73,7 @@ DELETE	-> delete course for that course id
 
 GET	-> get all users
 POST	-> add a new user
-body: 
+body:
 	{
 	"role":"0", [0=admin,1=teacher,2=student]
 	"email":"asdfasdf2", [FREE TO CHOOSE, THOUGH NO DUPLICATE IN TABLE]
@@ -92,7 +92,7 @@ DELETE	-> delete user for that user id
 
 GET	-> get all tas
 POST	-> add a new ta
-body: 
+body:
 
 	{
 	"courseid":"8",  [FOREIGN KEY, MUST EXIST]
@@ -110,11 +110,11 @@ DELETE	-> delete ta for that ta id
 
 GET	-> get all schemas
 POST	-> add a new schema
-body: 
+body:
 	{
 	"name":"test325",  [FREE TO CHOOSE]
 	"course":"16", [FOREIGN KEY, MUST EXISTS]
-	"sql":"sql part" [FREE TO CHOOSE, BUT MUST BE SQL ]	
+	"sql":"sql part" [FREE TO CHOOSE, BUT MUST BE SQL ]
   	}
 
 ### /schemas/pk

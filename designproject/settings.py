@@ -133,10 +133,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+<<<<<<< HEAD
+STATIC_ROOT = '/var/www/db/db/static/'
+=======
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'frontend'),
 ]
 STATIC_ROOT = "static"
+>>>>>>> freek-frontend-beun
 STATIC_URL = '/static/'
 
 DEBUG_PROPAGATE_EXCEPTIONS = True

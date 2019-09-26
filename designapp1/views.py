@@ -16,7 +16,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status
 
 from django.db import IntegrityError
-from .schemas import write
+from . import schemas as schemaWriter
 from psycopg2.extensions import AsIs
 import psycopg2 as db
 
@@ -27,6 +27,7 @@ from .serializers import *
 
 from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator
 
 import json
 from designapp1 import statements
@@ -34,6 +35,7 @@ from designapp1 import statements
 from .forms import *
 from . import hash
 import logging
+import requests
 
 logging.basicConfig(
        level = logging.DEBUG,
@@ -198,7 +200,7 @@ def connect(db_name):
 
 @csrf_exempt
 def studentdatabasessingle(request,pk):
-  
+
   if request.method == 'GET':
         return get_single_response(request,pk)
   elif request.method == 'DELETE':
@@ -282,9 +284,9 @@ def studentdatabasesbase(request):
                        all_table_schemas = schemas.objects.filter(course=course_id)
                        for single_schema in all_table_schemas:
                          logging.debug(single_schema.sql)
-                         write(databases,single_schema.sql)
+                         schemaWriter.write(databases,single_schema.sql)
                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-            else:        
+            else:
                return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
      else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -294,7 +296,7 @@ def studentdatabasesbase(request):
 
 @csrf_exempt
 def singleview(request,pk):
-   
+
    if request.method == 'GET':
         return get_single_response(request,pk)
    elif request.method == 'DELETE':
@@ -335,6 +337,25 @@ def baseview(request):
   else:
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+@csrf_exempt
+@require_GET
+def dump(request, pk):
+  if not check_role(request, student):
+    return unauthorised
+
+  try:
+    db = Studentdatabases.objects.get(dbid=pk)
+  #TODO: figure out which exception
+  except Studentdatabases.DoesNotExist as e:
+    return not_found
+
+  if not check_role(request, teacher) and request.session["role"] != db.fid:
+    return unauthorised
+
+  response = schemaWriter.dump(db.__dict__)
+  return HttpResponse(response, content_type="application/sql")
+
+
 #-----------------------------------------LOGIN-------------------------------------------------
 
 unauthorised = HttpResponse()
@@ -365,6 +386,37 @@ def index(request):
         'range': range(number)
     }
     return HttpResponse(template.render(context, request))
+
+@require_GET
+def home(request):
+    path = 'http://localhost:'
+    port = '1402'
+    call = '/dbmusers/'
+    # need session cookie
+    # response = requests.get(path + port + call)
+    # data = response.json()
+
+    students = ["David", "James", "John", "Robert",
+                "Michael", "Wiliam", "Richard", "Joseph",
+                "Thomas", "Charles", "Christopher", "Daniel",
+                "Matthew", "Anthony", "Donald", "Mark", "Paul",
+                "Steven", "Andrew", "Kenneth", "Joshua", "George",
+                "Kevin", "Brian", "Edward", "Ronald", "Timothy",
+                "Jason", "Jeffrey", "Ryan", "Jacob", "Gary"]
+
+    return render(request, 'home.html', {
+        'students': students,
+        'number': len(students)
+        # , 'email': 'test_email'
+    })
+    # posts = Post.objects.all()
+    # paginator = Paginator(posts, 3)
+    # page = request.GET.get('page')
+    # # ?page=2
+    #
+    # posts = paginator.get_page(page)
+
+    # return render(request, 'home.html')#, {'posts': posts})
 
 def test(request):
     return HttpResponse("test")
@@ -506,6 +558,6 @@ def whoami(request):
 	"email": user.email,
 	"role": user.role
 	}
-	
+
 	response = json.JSONEncoder().encode(response)
 	return HttpResponse(str(response), content_type="application/json")

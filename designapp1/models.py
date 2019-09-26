@@ -24,7 +24,6 @@ class Courses(models.Model):
     courseid = models.AutoField(db_column='courseid',primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
     coursename = models.CharField(max_length=256)
-    students = models.IntegerField()
     info = models.TextField()
     assistants = models.ManyToManyField(
         dbmusers,
@@ -61,6 +60,7 @@ class Studentdatabases(models.Model):
     course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
     username = models.CharField(max_length=265)
     password = models.CharField(max_length=265)
+    schema = models.ForeignKey(schemas, on_delete=models.PROTECT, db_column='schema', null=True)
 
     class Meta:
         managed = False

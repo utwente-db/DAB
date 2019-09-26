@@ -42,7 +42,10 @@ def verify(test, password):
 
 	return h.digest() == test
 
-
+def randomNames():
+	name = urandom(18)
+	password = urandom(32)
+	return {"name": base64.b64encode(name).decode(), "password": base64.b64encode(password).decode()}
 
 class UnknownHashException(TypeError):
 	def __init__(self, arg):
