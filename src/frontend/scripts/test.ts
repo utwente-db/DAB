@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import "jquery"
 
 
 function f() {

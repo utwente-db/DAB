@@ -148,7 +148,7 @@
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push(["./src/frontend/scripts/test.ts","vendors~test~user_coursechoice"]);
+/******/ 	deferredModules.push(["./src/frontend/scripts/test.ts","vendors~test~user_coursechoice","vendors~test"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })
@@ -166,6 +166,7 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+__webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 function f() {
     console.log("things work56788");
     axios_1.default.get("/courses/");
