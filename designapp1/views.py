@@ -27,6 +27,7 @@ from .serializers import *
 
 from django.views.decorators.http import require_http_methods, require_POST, require_GET, require_safe
 from django.http import HttpResponse, HttpResponseRedirect
+from django.core.paginator import Paginator
 
 import json
 from designapp1 import statements
@@ -70,7 +71,7 @@ class schemasView(viewsets.ModelViewSet):
 #REST RESPONSES
 
 def defaultresponse(request):
-        return HttpResponse('welcome')
+        return index(request=request)
 
 def get_base_response(request,dbname,serializer):
         if check_role(request,teacher):
@@ -202,7 +203,7 @@ def connect(db_name):
 
 @csrf_exempt
 def studentdatabasessingle(request,pk):
-  
+
   if request.method == 'GET':
         return get_single_response(request,pk)
   elif request.method == 'DELETE':
@@ -288,7 +289,7 @@ def studentdatabasesbase(request):
                          logging.debug(single_schema.sql)
                          schemaWriter.write(databases,single_schema.sql)
                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-            else:        
+            else:
                return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
      else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -298,7 +299,7 @@ def studentdatabasesbase(request):
 
 @csrf_exempt
 def singleview(request,pk):
-   
+
    if request.method == 'GET':
         return get_single_response(request,pk)
    elif request.method == 'DELETE':
@@ -378,7 +379,50 @@ def check_role(request, role):
 	return False
 
 def get_queryset(self):
-   logging.debug(self.request)              
+   logging.debug(self.request)
+
+def index(request):
+    template = loader.get_template('index.html')
+    number=3
+    context = {
+        'number': number,
+        'range': range(number)
+    }
+    return HttpResponse(template.render(context, request))
+
+@require_GET
+def home(request):
+    path = 'http://localhost:'
+    port = '1402'
+    call = '/dbmusers/'
+    # need session cookie
+    # response = requests.get(path + port + call)
+    # data = response.json()
+
+    students = ["David", "James", "John", "Robert",
+                "Michael", "Wiliam", "Richard", "Joseph",
+                "Thomas", "Charles", "Christopher", "Daniel",
+                "Matthew", "Anthony", "Donald", "Mark", "Paul",
+                "Steven", "Andrew", "Kenneth", "Joshua", "George",
+                "Kevin", "Brian", "Edward", "Ronald", "Timothy",
+                "Jason", "Jeffrey", "Ryan", "Jacob", "Gary"]
+
+    return render(request, 'home.html', {
+        'students': students,
+        'number': len(students)
+        # , 'email': 'test_email'
+    })
+    # posts = Post.objects.all()
+    # paginator = Paginator(posts, 3)
+    # page = request.GET.get('page')
+    # # ?page=2
+    #
+    # posts = paginator.get_page(page)
+
+    # return render(request, 'home.html')#, {'posts': posts})
+
+def test(request):
+    return HttpResponse("test")
 
 @require_POST
 def create_db(request):
@@ -437,7 +481,7 @@ def register(request):
 
 @require_http_methods(["GET", "POST"])
 def login(request):
-	incorrect_message = "No such user/password combination found"
+	incorrect_message = "wrong email or password"
 	if request.method == "POST":
 		form = LoginForm(request.POST)
 		if form.is_valid():
@@ -519,7 +563,7 @@ def whoami(request):
 	"email": user.email,
 	"role": user.role
 	}
-	
+
 	response = json.JSONEncoder().encode(response)
 	return HttpResponse(str(response), content_type="application/json")
 

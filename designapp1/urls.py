@@ -1,60 +1,12 @@
-from django.conf.urls import url, include
 from django.urls import path
+from django.conf.urls import url
 from . import views
-from rest_framework import routers
-
-router = routers.DefaultRouter()
-router.register('dbmusers', views.dbmusersView)
-router.register('Courses', views.CoursesView)
-router.register('Studentdatabases', views.StudentdatabasesView)
-router.register('Tas', views.TasView)
-router.register('schemas', views.schemasView)
-
 
 urlpatterns = [
-
-   #General
-   #url('', include(router.urls)),
-
-   #Specific databases
-
-   #Studentdatabases
-   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)/?$', views.studentdatabasessingle),
-   url(r'^studentdatabases/$', views.studentdatabasesbase),
-   #Courses
-   url(r'^courses/(?P<pk>[a-z0-9]+)/?$', views.singleview),
-   url(r'^courses/$', views.baseview),
-   #TAs
-   url(r'^tas/(?P<pk>[a-z0-9]+)/?$', views.singleview),
-   url(r'^tas/$', views.baseview),
-   #dbmusers
-   url(r'^dbmusers/(?P<pk>[a-z0-9]+)/?$', views.singleview),
-   url(r'^dbmusers/$', views.baseview),
-   #schemas
-   url(r'^schemas/(?P<pk>[a-z0-9]+)/?$', views.singleview),
-   url(r'^schemas/$', views.baseview),
-   #dump
-   url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),
-
-
-   #Login
-
-   # path('create_db', views.create_db, name='create_db'),
-   # path('delete_db', views.delete_db, name='delete_db'),
-   # path('delete_user', views.delete_user, name='delete_user'),
-   # path('delete_db_with_owner', views.delete_db_with_owner, name='delete_db_with_owner'),
-   # path('get_users', views.get_users, name='get_users'),
-   # path('login/', views.login, name="login"),
-   # path('register', views.register, name="register"),
-   # path('register/', views.register, name="register"),
-   path('whoami', views.whoami, name='whoami'),
-   path('whoami/', views.whoami, name='whoami'),
-   path('set_role', views.set_role, name='set_role'),
-   path('set_role/', views.set_role, name='set_role'),
-   # path('test', views.test, name='test'),
-
-   url('',views.defaultresponse)
-
+    path('home', views.home, name="home"),
+    url(r'^login/?$', views.login, name="login"),
+	url(r'^logout/?$', views.logout, name="logout"),
+    url(r'^logout_button/?$', views.logout_button, name='logout_button'),
+    url(r'^verify/(?P<token>(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?)$', views.verify, name='verify'),  #https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data
+    url('', views.defaultresponse)
 ]
-
-

@@ -3,10 +3,10 @@ from os import urandom
 import base64
 
 """This file makes secure and expandable password hashes.
-Inspired by php, the make function returns a string that contains the hash 
+Inspired by php, the make function returns a string that contains the hash
 method, the salt, and the actual hash of those things, separated by dollars.
 This string can then be stored in the database.
-To verify a password attempt, one simply needs to put the string from the 
+To verify a password attempt, one simply needs to put the string from the
 database and the attempted password into the verify function, which will return
 a boolean.
 

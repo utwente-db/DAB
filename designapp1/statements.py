@@ -25,6 +25,7 @@ def connect(db_name):
 #Creates a database owned and administered by a user with a password
 #Also ensures this database does not have a schema public, but instead has a schema private.
 def create_db(db_name, username, password):
+	# TODO @Floris remove global variables here, refactor db.connect bit into a seperate method that accepts db_name as parameter
 	global db_host, db_user, db_port, db_password
 	with connection.cursor() as cursor:
 		#TODO: literally any security of any kind at all
@@ -79,5 +80,3 @@ def get_users():
 		for item in cursor.fetchall():
 			result.append({"username": item[0], "password": item[1]})
 		return result
-
-

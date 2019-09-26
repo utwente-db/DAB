@@ -1,0 +1,46 @@
+{
+  "name": "design",
+  "version": "1.0.0",
+  "description": "description WIP",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "bootstrap": "^4.3.1",
+    "jquery": "^3.4.1",
+    "popper": "^1.0.1",
+    "popper.js": "^1.15.0",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9",
+    "typescript": "^3.6.3",
+    "node-sass": "^4.12.0",
+    "commonjs": "^0.0.1",
+    "ts-loader": "^6.1.2",
+    "sass-loader": "^8.0.0",
+    "css-loader": "^3.2.0",
+    "style-loader": "^1.0.0",
+    "glob": "^7.1.4",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0"
+  },
+  "devDependencies": {
+    "@types/bootstrap": "^4.3.1",
+    "mini-css-extract-plugin": "^0.8.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compileboth": "tsc & node-sass src/frontend/sass -o frontend/css",
+    "watchboth": "tsc -w & node-sass --watch src/frontend/sass -o frontend/css",
+    "watchtsc": "tsc -w",
+    "tsc": "tsc",
+    "scss": "node-sass src/frontend/sass -o frontend/css",
+    "watchscss": "node-sass --watch src/frontend/sass -o frontend/css",
+    "build": "webpack --mode=development",
+    "watch": "webpack --watch --mode=development",
+    "production": "webpack --mode=production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.thebias.nl/floris/design.git"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -365,3 +365,15 @@ $RECYCLE.BIN/
 *.scss.map
 
 # End of https://www.gitignore.io/api/sass
+
+static/
+static/*
+/static/
+/static/*
+node_modules/
+node_modules/*
+node_modules/*.*
+node_modules/**/*
+./node_modules
+node_modules/**/*.*
+*.map

@@ -9,7 +9,7 @@ SET check_function_bodies = false;
 SET client_min_messages = warning;
 
 --
--- Name: acts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: acts; Type: TABLE; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE TABLE acts (
@@ -20,7 +20,7 @@ CREATE TABLE acts (
 
 
 --
--- Name: certification; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: certification; Type: TABLE; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE TABLE certification (
@@ -31,7 +31,7 @@ CREATE TABLE certification (
 
 
 --
--- Name: directs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: directs; Type: TABLE; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE TABLE directs (
@@ -41,7 +41,7 @@ CREATE TABLE directs (
 
 
 --
--- Name: genre; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: genre; Type: TABLE; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE TABLE genre (
@@ -51,7 +51,7 @@ CREATE TABLE genre (
 
 
 --
--- Name: language; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: language; Type: TABLE; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE TABLE language (
@@ -61,7 +61,7 @@ CREATE TABLE language (
 
 
 --
--- Name: movie; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: movie; Type: TABLE; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE TABLE movie (
@@ -74,7 +74,7 @@ CREATE TABLE movie (
 
 
 --
--- Name: person; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: person; Type: TABLE; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE TABLE person (
@@ -84,7 +84,7 @@ CREATE TABLE person (
 
 
 --
--- Name: runtime; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: runtime; Type: TABLE; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE TABLE runtime (
@@ -95,7 +95,7 @@ CREATE TABLE runtime (
 
 
 --
--- Name: writes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: writes; Type: TABLE; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE TABLE writes (
@@ -3543,7 +3543,7 @@ COPY certification (mid, country, certificate) FROM stdin;
 535	Hong Kong	IIB
 535	Iceland	16
 535	Italy	T
-535	Malaysia	
+535	Malaysia
 535	Netherlands	12
 535	Portugal	M
 536	Argentina	Atp
@@ -3687,7 +3687,7 @@ COPY certification (mid, country, certificate) FROM stdin;
 552	Hong Kong	IIB
 552	Iceland	16
 552	Italy	VM14
-552	Malaysia	
+552	Malaysia
 552	Mexico	B
 552	Netherlands	16
 552	New Zealand	R15
@@ -10891,7 +10891,7 @@ COPY writes (mid, pid) FROM stdin;
 
 
 --
--- Name: movie_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: movie_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY movie
@@ -10899,7 +10899,7 @@ ALTER TABLE ONLY movie
 
 
 --
--- Name: person_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: person_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace:
 --
 
 ALTER TABLE ONLY person
@@ -10907,84 +10907,84 @@ ALTER TABLE ONLY person
 
 
 --
--- Name: idx_acts_mid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_acts_mid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_acts_mid ON acts USING btree (mid);
 
 
 --
--- Name: idx_acts_pid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_acts_pid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_acts_pid ON acts USING btree (pid);
 
 
 --
--- Name: idx_certification_mid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_certification_mid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_certification_mid ON certification USING btree (mid);
 
 
 --
--- Name: idx_directs_mid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_directs_mid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_directs_mid ON directs USING btree (mid);
 
 
 --
--- Name: idx_directs_pid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_directs_pid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_directs_pid ON directs USING btree (pid);
 
 
 --
--- Name: idx_genre_mid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_genre_mid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_genre_mid ON genre USING btree (mid);
 
 
 --
--- Name: idx_language_mid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_language_mid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_language_mid ON language USING btree (mid);
 
 
 --
--- Name: idx_movie_mid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_movie_mid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_movie_mid ON movie USING btree (mid);
 
 
 --
--- Name: idx_person_pid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_person_pid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_person_pid ON person USING btree (pid);
 
 
 --
--- Name: idx_runtime_mid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_runtime_mid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_runtime_mid ON runtime USING btree (mid);
 
 
 --
--- Name: idx_writes_mid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_writes_mid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_writes_mid ON writes USING btree (mid);
 
 
 --
--- Name: idx_writes_pid; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: idx_writes_pid; Type: INDEX; Schema: public; Owner: -; Tablespace:
 --
 
 CREATE INDEX idx_writes_pid ON writes USING btree (pid);
@@ -11073,4 +11073,3 @@ ALTER TABLE ONLY writes
 --
 -- PostgreSQL database dump complete
 --
-

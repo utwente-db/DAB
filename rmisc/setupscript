@@ -63,5 +63,4 @@ sudo rm -R design
 sudo python3 manage.py makemigrations
 sudo python3 manage.py migrate
 
-
-
+sudo apt install node npm
