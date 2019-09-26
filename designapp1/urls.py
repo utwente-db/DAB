@@ -47,7 +47,6 @@ urlpatterns = [
    # path('login/', views.login, name="login"),
    # path('register', views.register, name="register"),
    # path('register/', views.register, name="register"),
-   path('home', views.home, name="home"), # TODO remove from rest
    path('whoami', views.whoami, name='whoami'),
    path('whoami/', views.whoami, name='whoami'),
    path('set_role', views.set_role, name='set_role'),
