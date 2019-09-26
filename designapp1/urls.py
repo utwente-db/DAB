@@ -53,10 +53,7 @@ urlpatterns = [
    path('logout/', views.logout, name="logout"),
    path('logout_button/', views.logout_button, name='logout_button'),
    path('logout_button', views.logout_button, name='logout_button'),
-<<<<<<< HEAD
-=======
    path('set_role', views.set_role, name='set_role'),
->>>>>>> freek-frontend-beun
    path('whoami', views.whoami, name='whoami'),
    path('set_role/', views.set_role, name='set_role'),
    path('set_role', views.set_role, name='set_role'),

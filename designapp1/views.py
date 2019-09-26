@@ -35,7 +35,6 @@ from designapp1 import statements
 from .forms import *
 from . import hash
 import logging
-import requests
 
 logging.basicConfig(
        level = logging.DEBUG,
