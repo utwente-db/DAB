@@ -35,7 +35,7 @@ Any pip and npm packages will be installed automatically during the installation
 To install the server for development, simply run init.sh.
 This will create a python virtual environment, and install the required python and node packages within it.
 
-To run the server, simply run init.sh.
+To run the server, simply run start.sh.
 This will compile the typescript, move static files to their correct location, and finally start a development server on port 8000.
 Note that this server can only be approached from the local host.
 
