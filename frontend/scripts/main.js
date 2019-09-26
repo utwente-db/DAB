@@ -2069,8 +2069,10 @@ process.umask = function() { return 0; };
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 function f() {
     console.log("things work56788");
+    axios_1.default.get("/courses/");
 }
 
 
