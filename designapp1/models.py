@@ -14,6 +14,7 @@ class dbmusers(models.Model):
     password = models.TextField(max_length=265)
     maxdatabases = models.IntegerField()
     verified = models.BooleanField(default=False)
+    token = models.TextField(null=True)
 
     class Meta:
         managed = False

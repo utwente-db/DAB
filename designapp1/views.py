@@ -94,6 +94,7 @@ def get_single_response(request,pk):
 
           database = None
           try:
+          		#TODO: stop doing whatever the fuck this is before I jump of the sky
                 if "courses" in request.path_info:
                   database = Courses.objects.get(courseid=pk)
                   serializer_class = CoursesSerializer(database, many=False)
@@ -126,20 +127,22 @@ def post_base_response(request,serializer):
         if check_role(request,teacher) or "dbmusers" in request.path_info or ("studentdatabases" in request.path_info and check_role(request,student)):
 
           try:
-              databases = JSONParser().parse(request)
-              if "dbmusers" in request.path_info:
-                 unhashed_password = databases['password']
-                 databases['password']   = hash.make(unhashed_password)
-                 if check_role(request,admin):
-                   databases['role'] = databases['role']
-                 elif check_role(request,teacher):
-                   if int(databases['role'])<teacher:
-                    databases['role']=teacher
-                 elif check_role(request,student):
-                   if int(databases['role'])<student:
-                    databases['role']=student
-                 else:
-                   databases['role']=student
+            databases = JSONParser().parse(request)
+            if "dbmusers" in request.path_info:
+              unhashed_password = databases['password']
+              databases['password'] = hash.make(unhashed_password)
+              databases["token"] = hash.token()
+              mail.send_verification(databases)
+              if check_role(request,admin):
+                databases['role'] = databases['role'] #TODO: why is this line here
+              elif check_role(request,teacher):
+                if int(databases['role'])<teacher:
+                  databases['role']=teacher
+              elif check_role(request,student): #TODO: why is this if statement here if it does the same as the else?
+                if int(databases['role'])<student:
+                  databases['role']=student
+              else:
+                databases['role']=student
               serializer_class = serializer(data=databases)
           except Exception as e:
               logging.debug(e)
@@ -519,9 +522,3 @@ def whoami(request):
 	
 	response = json.JSONEncoder().encode(response)
 	return HttpResponse(str(response), content_type="application/json")
-
-@require_GET
-def test(request):
-	user = dbmusers.objects.get(email="info@sfbtech.nl")
-	mail.send_verification(user)
-	return HttpResponse("ok")

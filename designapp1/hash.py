@@ -19,8 +19,7 @@ generator = hashlib.sha3_256
 method = "sha3_256"
 
 def make(string, salt=None):
-	if salt == None:
-		salt = urandom(6)
+	salt = urandom(6)
 	
 	h = generator()
 	h.update(string.encode())
@@ -48,6 +47,9 @@ def randomNames():
 	name = urandom(18)
 	password = urandom(32)
 	return {"name": base64.b64encode(name).decode(), "password": base64.b64encode(password).decode()}
+
+def token():
+	return base64.b64encode(urandom(16)).decode()
 
 class UnknownHashException(TypeError):
 	def __init__(self, arg):
