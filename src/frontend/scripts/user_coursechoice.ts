@@ -8,7 +8,7 @@ import axios, {AxiosResponse} from 'axios';
 import "../sass/desktop.sass"
 
 async function getCoursesPromise(): Promise<string> { // TODO Check type here
-    let response: AxiosResponse = await axios.get("/courses/")
+    let response: AxiosResponse = await axios.get("/courses/");
     let data: string = response.data;
     return data;
     // let next = JSON.parse(data)
@@ -21,4 +21,4 @@ async function displayCourses(): Promise<void> {
     nice_div.innerHTML = courses;
 }
 
-nice_div.addEventListener("load", displayCourses);
+window.onload = displayCourses;
