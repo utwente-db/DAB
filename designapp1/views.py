@@ -30,12 +30,15 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.paginator import Paginator
 
 import json
+import re
+
 from designapp1 import statements
 
 from .forms import *
 from . import hash
 import logging
 from . import mail
+
 
 logging.basicConfig(
        level = logging.DEBUG,
@@ -130,6 +133,8 @@ def post_base_response(request,serializer):
           try:
             databases = JSONParser().parse(request)
             if "dbmusers" in request.path_info:
+              if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl', databases["email"]):
+                return HttpResponse("only utwente email address can be used",status=status.HTTP_406_NOT_ACCEPTABLE)
               unhashed_password = databases['password']
               databases['password'] = hash.make(unhashed_password)
               databases["token"] = hash.token()
