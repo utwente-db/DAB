@@ -11,6 +11,7 @@ from . import hash
 #TODO: configure hosts correctly and wire them into here
 #TODO: put the product name in here once we come up with one
 def send_verification(user):
+	#done inside the function to ensure it does not always crash the development server
 	mailer = smtplib.SMTP('localhost');
 	send_addr = "no-reply@thebias.nl"
 
