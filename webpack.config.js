@@ -15,15 +15,14 @@ module.exports = (env, argv) => {
         plugins: [
             new MiniCssExtractPlugin({
                 // Extracts css from javascript
-                filename: './frontend/css/stylesheet.css',
+                filename: './css/stylesheet.css',
                 chunkFilename: '[id].css',
                 ignoreOrder: false,
             })
         ],
-        entry: {
-            'frontend/scripts/main.js': glob.sync("./src/frontend/scripts/*.ts") // gathers typescript files
+        entry:  glob.sync("./src/frontend/scripts/*.ts"),  // gathers typescript files
             // .concat(glob.sync("./src/frontend/sass/*.s*ss"))  // Gathers sass files (not needed when included from ts)
-        },
+
 
         // watch: true,
         watchOptions: { // These are needed for watch to work
@@ -31,8 +30,8 @@ module.exports = (env, argv) => {
             ignored: /node_modules/ // improves performance by a ton
         },
         output: { // Resolves paths locally, a weird hack
-            filename: '[name]',
-            path: path.resolve(__dirname, './')
+            filename: './scripts/[name].js',
+            path: path.resolve(__dirname, './frontend/')
         },
         devtool: isDevelopment ? 'source-map' : '', // Add source mappings when not in production
         resolve: {
