@@ -522,3 +522,11 @@ def whoami(request):
 	
 	response = json.JSONEncoder().encode(response)
 	return HttpResponse(str(response), content_type="application/json")
+
+@require_GET
+def verify(request, token):
+  user = dbmusers.objects.get(token=token)
+  user.verified = True
+  user.token = None
+  user.save()
+  return render(request, 'login.html', {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
