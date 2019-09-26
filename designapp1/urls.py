@@ -54,7 +54,6 @@ urlpatterns = [
 
    # path('test', views.test, name='test'),
 
-   url('',views.defaultresponse)
 
 ]
 
