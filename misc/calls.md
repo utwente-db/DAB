@@ -78,6 +78,9 @@ NOTE: DO NOT START A DATABASENAME WITH A NUMBER, IT WILL FAIL
 GET	-> for that pk
 DELETE	-> for that pk	
 
+### /studentdatabases/name/<value>
+
+GET -> search for the value, based on the studentdatabasename
 
 ## TABLE: Courses
 
@@ -99,6 +102,10 @@ body:
 GET	-> get course for that course id
 DELETE	-> delete course for that course id
 
+### /courses/name/<value>
+
+GET -> search for the value, based on the coursename
+
 ## TABLE: dbmusers
 
 ### /dbmusers/
@@ -118,6 +125,10 @@ body:
 GET	-> get user for that user id
 DELETE	-> delete user for that user id
 
+### /dbmusers/email/<value>
+
+GET -> search for the value, based on emailaddress
+
 ## TABLE: TAs
 
 ### /tas/
@@ -136,6 +147,10 @@ body:
 GET	-> get ta for that ta id
 DELETE	-> delete ta for that ta id
 
+### /tas/name/<value>
+
+-----!!!!!NOT IMPLEMENTED YET!!!!!------
+
 ## TABLE: Schemas
 
 ### /schemas/
@@ -153,6 +168,10 @@ body:
 
 GET	-> get schemas for that schemaid
 DELETE	-> delete schema for that schemaid
+
+### /schemas/name/<value>
+
+GET -> search for the value, based on the schema name
 
 # Permissions
 
