@@ -4,12 +4,6 @@ from . import views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register('dbmusers', views.dbmusersView)
-router.register('Courses', views.CoursesView)
-router.register('Studentdatabases', views.StudentdatabasesView)
-router.register('Tas', views.TasView)
-router.register('schemas', views.schemasView)
-
 
 urlpatterns = [
 
@@ -19,23 +13,22 @@ urlpatterns = [
    #Specific databases
 
    #Studentdatabases
-   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)/?$', views.studentdatabasessingle),
-   url(r'^studentdatabases/$', views.studentdatabasesbase),
+   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)/?$',views.singleview, {"dbname":"studentdatabases"}),
+   url(r'^studentdatabases/$', views.baseview,{"dbname":"studentdatabases"}),
    #Courses
-   url(r'^courses/(?P<pk>[a-z0-9]+)/?$', views.singleview),
-   url(r'^courses/$', views.baseview),
+   url(r'^courses/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname":"courses"}),
+   url(r'^courses/$', views.baseview,{"dbname":"courses"}),
    #TAs
-   url(r'^tas/(?P<pk>[a-z0-9]+)/?$', views.singleview),
-   url(r'^tas/$', views.baseview),
+   url(r'^tas/(?P<pk>[a-z0-9]+)/?$',views.singleview, {"dbname":"tas"}),
+   url(r'^tas/$', views.baseview, {"dbname":"tas"}),
    #dbmusers
-   url(r'^dbmusers/(?P<pk>[a-z0-9]+)/?$', views.singleview),
-   url(r'^dbmusers/$', views.baseview),
+   url(r'^dbmusers/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname":"dbmusers"}),
+   url(r'^dbmusers/$', views.baseview, {"dbname":"dbmusers"}),
    #schemas
-   url(r'^schemas/(?P<pk>[a-z0-9]+)/?$', views.singleview),
-   url(r'^schemas/$', views.baseview),
+   url(r'^schemas/(?P<pk>[a-z0-9]+)/?$', views.singleview ,{"dbname":"schemas"}),
+   url(r'^schemas/$', views.baseview, {"dbname":"schemas"}),
    #dump
    url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),
-
 
    #Login
 
@@ -53,7 +46,6 @@ urlpatterns = [
    path('set_role/', views.set_role, name='set_role'),
 
    # path('test', views.test, name='test'),
-
 
 ]
 
