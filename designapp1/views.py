@@ -56,7 +56,7 @@ def defaultresponse(request):
         return index(request=request)
 
 def get_base_response(request,db_parameters):
-        if check_role(request,teacher):
+        if check_role(request,teacher) or db_parameters["dbname"] == "courses" or db_parameters["dbname"] == "schemas":
           try:
                  database = db_parameters["db"].objects.all()
                  serializer_class = db_parameters["serializer"](database, many=True)
@@ -98,7 +98,7 @@ def get_single_response(request,pk,db_parameters):
           except Exception as e:
                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
           else:
-                if str(db_id) == str(current_id) or check_role(request,teacher) or db_parameters["dbname"]=="schemas":
+                if str(db_id) == str(current_id) or check_role(request,teacher) or db_parameters["dbname"]=="schemas" or db_parameters["dbname"] == "courses":
                   return JsonResponse(serializer_class.data, safe=False)
                 else:
                   return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -193,6 +193,40 @@ def delete_single_response(request,requested_pk,db_parameters):
                   return HttpResponse(status=status.HTTP_202_ACCEPTED)
         else:
                 return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+@csrf_exempt
+def search_on_name(request,search_value,dbname):
+
+  db_parameters = get_db_parameters(dbname)
+
+  results = None
+
+  if check_role(request,teacher) or db_parameters["dbname"] == "courses" or db_parameters["dbname"] == "schemas":
+
+    try:
+
+     if db_parameters["dbname"] == "studentdatabases":
+      results = db_parameters["db"].objects.filter(databasename__icontains=search_value)
+     elif db_parameters["dbname"] == "courses":
+      results = db_parameters["db"].objects.filter(coursename__icontains=search_value)
+     elif db_parameters["dbname"] == "dbmusers":
+      results = db_parameters["db"].objects.filter(email__icontains=search_value)
+#     TODO: requirs foreign key
+#     elif db_parameters["dbname"] == "tas": 
+#      results = db_parameters["db"].objects.filter(databasename__icontains=search_value)
+     elif db_parameters["dbname"] == "schemas":
+      results = db_parameters["db"].objects.filter(name__icontains=search_value)
+
+     #serialize data
+     serializer = db_parameters["serializer"](results,many=True)
+
+    except Exception as e:
+      return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+    else:
+      return JsonResponse(serializer.data , safe=False)
+
+  else:
+    return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 def get_db_parameters(dbname):
 
