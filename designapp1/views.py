@@ -163,6 +163,7 @@ def post_base_response(request,db_parameters):
                     return HttpResponse("The following field(s) should be included:"+str(e),status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
+                        print(e)
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     elif db_parameters["dbname"]=="studentdatabases":
                         logging.debug(type(e))

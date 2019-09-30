@@ -26,7 +26,7 @@ student.post(BASE+"/login", {"mail":"aoeu@sfbtech.nl", "password":"aoeu"})
 
 unlogged = requests.Session()
 
-uname = base64.b64encode(urandom(16)).decode()
+uname = base64.b64encode(urandom(18)).decode()
 test_db = {
 	"fid": 73,
 	"databasename": uname,
@@ -73,7 +73,7 @@ class TestLogin(unittest.TestCase):
 class testCreateDB(unittest.TestCase):
 
 	#Warning: tests need to be ran in order!
-	#Currently relies of alphabetic sorting
+	#Currently relies on alphabetic sorting
 	def test0Create(self):
 		# create the database
 		r = student.post(BASE+"/rest/studentdatabases/", json=test_db)
@@ -152,7 +152,7 @@ tdb = None
 class testCourse(unittest.TestCase):
 
 	test_course = {
-		"coursename": base64.b64encode(urandom(16)).decode(),
+		"coursename": base64.b64encode(urandom(18)).decode(),
 		"info": "unit_test",
 		"fid": 72,
 	}
@@ -176,6 +176,9 @@ class testCourse(unittest.TestCase):
 		global course_id, db_id, tdb, test_db
 		tdb = test_db.copy()
 		tdb["course"] = course_id
+		aaaaa = base64.b64encode(urandom(18)).decode()
+		tdb["username"] = aaaaa
+		tdb["databasename"] = aaaaa
 
 		print(tdb)
 
@@ -183,7 +186,7 @@ class testCourse(unittest.TestCase):
 		print(r.text)
 		self.assertEqual(r.status_code, 201)
 
-		r = student.get(BASE+"/rest/studentdatabases/")
+		r = teacher.get(BASE+"/rest/studentdatabases/")
 		body = r.json()
 		for db in body:
 			if db["databasename"] == tdb["databasename"]:
