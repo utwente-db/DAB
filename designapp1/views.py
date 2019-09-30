@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from rest_framework import status
+from rest_framework.exceptions import ParseError
 
 from django.db import IntegrityError
 from . import schemas as schemaWriter
@@ -60,8 +61,6 @@ def get_base_response(request,db_parameters):
             try:
                 database = db_parameters["db"].objects.all()
                 serializer_class = db_parameters["serializer"](database, many=True)
-            except KeyError as e:
-                return 
             except Exception as e:
                 logging.debug(e)
                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
@@ -141,25 +140,32 @@ def post_base_response(request,db_parameters):
             else:
                 custom_serializer =  db_parameters["serializer"]
                 serializer_class = custom_serializer(data=databases)
+        except ParseError:
+            return HttpResponse("Your JSON is incorrectly formatted",status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logging.debug(e)
+            logging.debug(type(e))
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
         else:
             if serializer_class.is_valid():
                 try:
                     if db_parameters["dbname"]=="studentdatabases":
-                        serializer_class = create_studentdatabase(serializer_class)
-                        setup_student_db(databases,serializer_class,schemas)
-                        serializer_class.save()
-                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                        if "=" in str(databases["databasename"]) or "=" in str(databases["username"]):
+                            return HttpResponse("= is not allowed",status=status.HTTP_400_BAD_REQUEST)
+                        else:
+                            serializer_class = create_studentdatabase(serializer_class)
+                            setup_student_db(databases,serializer_class,schemas)
+                            serializer_class.save()
+                            return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                     else:
-                        serializer_class.save()
-                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                       serializer_class.save()
+                       return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                except KeyError as e:
+                    return HttpResponse("The following field(s) should be included:"+str(e),status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     elif db_parameters["dbname"]=="studentdatabases":
-                        logging.debug(e)
+                        logging.debug(type(e))
                         logging.debug(type(e).__name__)
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
