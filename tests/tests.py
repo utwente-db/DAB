@@ -1,6 +1,8 @@
 import unittest
 import requests
 import psycopg2
+from os import urandom
+import base64
 
 """Testing goes via the requests module; this means that we test the actual
 web responses of the system as unit tests'"""
@@ -24,11 +26,12 @@ student.post(BASE+"/login", {"mail":"aoeu@sfbtech.nl", "password":"aoeu"})
 
 unlogged = requests.Session()
 
+uname = base64.b64encode(urandom(16)).decode()
 test_db = {
-	"fid": 11,
-	"databasename": "ueoa",
-	"course": 7,
-	"username" : "ueoa",
+	"fid": 73,
+	"databasename": uname,
+	"course": 11,
+	"username" : uname,
 	"password" : "aoeu"
 }
 
@@ -60,7 +63,7 @@ class TestLogin(unittest.TestCase):
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		self.assertEqual(body["email"], "aoeu@sfbtech.nl")
-		self.assertEqual(body["role"], 3)
+		self.assertEqual(body["role"], 2)
 
 	def testUnlogged(self):
 		r = unlogged.get(BASE+"/rest/whoami")
@@ -141,19 +144,21 @@ class testCreateDB(unittest.TestCase):
 		except psycopg2.OperationalError as e:
 			pass
 
+
+course_id = 0
+db_id = 0
+tdb = None
 class testCourse(unittest.TestCase):
 
 	test_course = {
-		"coursename": "ueoa",
+		"coursename": base64.b64encode(urandom(16)).decode(),
 		"info": "unit_test",
-		"fid": 72
+		"fid": 72,
 	}
 
-	course_id = 0
-	db_id = 0
-	tdb = None
 
 	def test0CreateCourse(self):
+		global course_id
 		r = teacher.post(BASE+"/rest/courses/", json=self.test_course)
 		self.assertEqual(r.status_code, 201)
 
@@ -162,41 +167,46 @@ class testCourse(unittest.TestCase):
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		for course in body:
-			if course["coursename"] == "ueoa":
-				self.course_id = course["courseid"]
-		self.assertTrue(self.course_id != 0)
+			if course["coursename"] == self.test_course["coursename"]:
+				course_id = course["courseid"]
+		self.assertTrue(course_id != 0)
 
 	def test1AddDatabase(self):
-		self.tdb = test_db.copy()
-		self.tdb["course"] = self.course_id
+		global course_id, db_id, tdb, test_db
+		tdb = test_db.copy()
+		tdb["course"] = course_id
 
-		r = student.post(BASE+"/rest/studentdatabases/", json=self.tdb)
+		print(tdb)
+
+		r = student.post(BASE+"/rest/studentdatabases/", json=tdb)
+		print(r.text)
 		self.assertEqual(r.status_code, 201)
 
 		r = student.get(BASE+"/rest/studentdatabases/")
 		body = r.json()
 		for db in body:
-			if db["databasename"] == "ueoa":
-				self.db_id=db["dbid"]
-		self.assertTrue(found)
+			if db["databasename"] == tdb["databasename"]:
+				db_id=db["dbid"]
+		self.assertTrue(db_id != 0)
 
 	def test3DeleteCourse(self):
-		r = teacher.delete(BASE+"/rest/courses/"+str(self.course_id))
-		self.assertEqual(r.status_code, 204)
+		global course_id, db_id, tdb
+		r = teacher.delete(BASE+"/rest/courses/"+str(course_id))
+		self.assertEqual(r.status_code, 202)
 
 		r = teacher.get(BASE+"/rest/courses/")
 		body = r.json()
 		for course in body:
-			self.assertNotEqual(course["name"], "ueoa")
+			self.assertNotEqual(course["coursename"], self.test_course["coursename"])
 
 		#let's check if that deleted the database we made just now
 		try:
 			conn = psycopg2.connect(
-				user = self.tdb["username"],
-				password = self.tdb["password"],
+				user = tdb["username"],
+				password = tdb["password"],
 				host=db_server,
 				port=db_port,
-				databes=this.tdb["database"]
+				database=tdb["databasename"]
 			)
 			#if we reach this point, the test failed
 			self.assertTrue(False)

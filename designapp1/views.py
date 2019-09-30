@@ -125,50 +125,50 @@ def post_base_dbmusers_response(request,databases,db_parameters):
 
 
 def post_base_response(request,db_parameters):
-        if check_role(request,teacher) or db_parameters["dbname"]=="dbmusers" or (db_parameters["dbname"]=="studentdatabases" and check_role(request,student)):
+    if check_role(request,teacher) or db_parameters["dbname"]=="dbmusers" or (db_parameters["dbname"]=="studentdatabases" and check_role(request,student)):
 
-          serializer_class = None
+        serializer_class = None
 
-          try:
+        try:
             databases = JSONParser().parse(request)
             if db_parameters["dbname"]=="dbmusers":
-              if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl', databases["email"]):
-                return HttpResponse("only utwente email address can be used",status=status.HTTP_406_NOT_ACCEPTABLE)
-              else:
-                serializer_class = post_base_dbmusers_response(request,databases,db_parameters)
+                if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl', databases["email"]):
+                    return HttpResponse("only utwente email address can be used",status=status.HTTP_406_NOT_ACCEPTABLE)
+                else:
+                    serializer_class = post_base_dbmusers_response(request,databases,db_parameters)
             else:
-               custom_serializer =  db_parameters["serializer"]
-               serializer_class = custom_serializer(data=databases)
-          except Exception as e:
-              logging.debug(e)
-              return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-          else:
-              if serializer_class.is_valid():
-                  try:
-                    if db_parameters["dbname"]=="studentdatabases":
-                     serializer_class = create_studentdatabase(serializer_class)
-                     setup_student_db(databases,serializer_class,schemas)
-                     serializer_class.save()
-                     return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-                    else:
-                     serializer_class.save()
-                     return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-                  except Exception as e:
-                    if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
-                      return HttpResponse(status=status.HTTP_409_CONFLICT)
-                    elif db_parameters["dbname"]=="studentdatabases":
-                       return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    else:
-                      return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
-              else:
-                  logging.debug(serializer_class.errors)
-
-                  if "must make a unique set" in str(serializer_class.errors):
-                  	return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
-                  else:
-                  	return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+                custom_serializer =  db_parameters["serializer"]
+                serializer_class = custom_serializer(data=databases)
+        except Exception as e:
+            logging.debug(e)
+            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
         else:
-                return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+            if serializer_class.is_valid():
+                try:
+                    if db_parameters["dbname"]=="studentdatabases":
+                        serializer_class = create_studentdatabase(serializer_class)
+                        setup_student_db(databases,serializer_class,schemas)
+                        serializer_class.save()
+                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                    else:
+                        serializer_class.save()
+                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                except Exception as e:
+                    if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
+                        return HttpResponse(status=status.HTTP_409_CONFLICT)
+                    elif db_parameters["dbname"]=="studentdatabases":
+                        return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    else:
+                        return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
+            else:
+                logging.debug(serializer_class.errors)
+
+                if "must make a unique set" in str(serializer_class.errors):
+                  	return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
+                else:
+                  	return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 def delete_single_response(request,requested_pk,db_parameters):
 
