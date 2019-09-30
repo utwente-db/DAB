@@ -20,7 +20,7 @@
     "sass-loader": "^8.0.0",
     "css-loader": "^3.2.0",
     "style-loader": "^1.0.0",
-    "glob": "^7.1.4",
+    "glob": "^7.1.4"
   },
   "devDependencies": {
     "@types/bootstrap": "^4.3.1",
