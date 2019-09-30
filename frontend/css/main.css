@@ -7377,5 +7377,8 @@ body {
   text-align: right;
   color: white; }
 
+.bootstrap-select .dropdown-item.active, .dropdown-item:active {
+  background-color: #17a2b8; }
+
 
 /*# sourceMappingURL=main.css.map*/

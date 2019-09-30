@@ -21,20 +21,20 @@ async function getCoursesPromise(): Promise<Course[]> { // TODO Check type here
 }
 
 async function displayCourses(): Promise<void> {
-    const coursesDropdown: HTMLSelectElement = <HTMLSelectElement> document.getElementById("courses-dropdown"); // TODO actually make dropdown and fill
+    const coursesDropdown: HTMLSelectElement = <HTMLSelectElement>document.getElementById("courses-dropdown"); // TODO actually make dropdown and fill
     let courses: Course[] = await getCoursesPromise();
-
-    let result: string[] = []
+    let result: string[] = [];
     for (let i = 0; i < courses.length; i++) {
         result.push("<option>" + courses[i].coursename + "</option>")
     }
-    let resultString: string = result.join("\n")
-    coursesDropdown.innerHTML = resultString;
+    let resultString: string = result.join("\n");
+    coursesDropdown.innerHTML += resultString;
 }
 
-window.onload = () => {
-    displayCourses();
-    // $('.my-select').selectpicker();
+window.onload = async () => {
+    // $('select').selectpicker();
+    await displayCourses();
+    $('select').selectpicker(); // Style all selects
 }
 
 // TODO: make group gray

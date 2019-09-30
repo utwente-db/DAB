@@ -22960,6 +22960,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
+var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
@@ -22992,16 +22994,26 @@ function displayCourses() {
                         result.push("<option>" + courses[i].coursename + "</option>");
                     }
                     resultString = result.join("\n");
-                    coursesDropdown.innerHTML = resultString;
+                    coursesDropdown.innerHTML += resultString;
                     return [2 /*return*/];
             }
         });
     });
 }
-window.onload = function () {
-    displayCourses();
-    // $('.my-select').selectpicker();
-};
+window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: 
+            // $('select').selectpicker();
+            return [4 /*yield*/, displayCourses()];
+            case 1:
+                // $('select').selectpicker();
+                _a.sent();
+                $('select').selectpicker(); // Style all selects
+                return [2 /*return*/];
+        }
+    });
+}); };
 // TODO: make group gray
 // TODO on course select: make group no longer gray
 
