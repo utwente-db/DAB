@@ -455,6 +455,17 @@ def logout(request):
 def logout_button(request):
     return HttpResponse("<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
 
+#Function that returns HTML page for choosing courses
+@require_GET
+def courses(request):
+
+    template = 'courses.html'
+    # number = 3
+    context = {
+    }
+
+    return render(request, template, context)
+
 #Function to change the role of users
 #A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.
 @require_POST
@@ -515,3 +526,5 @@ def verify(request, token):
   user.token = None
   user.save()
   return render(request, 'login.html', {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+
+

@@ -33,7 +33,7 @@ module.exports = (env, argv) => {
             new MiniCssExtractPlugin({
                 // Extracts css from javascript
                 filename: './css/[name].css',
-                chunkFilename: '[id].css',
+                chunkFilename: './css/[id].css',
                 ignoreOrder: false,
             })
         ],

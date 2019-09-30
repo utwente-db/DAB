@@ -57,7 +57,7 @@
 /******/ 	// undefined = chunk not loaded, null = chunk preloaded/prefetched
 /******/ 	// Promise = chunk loading, 0 = chunk loaded
 /******/ 	var installedChunks = {
-/******/ 		"user_coursechoice": 0
+/******/ 		"courses": 0
 /******/ 	};
 /******/
 /******/ 	var deferredModules = [];
@@ -148,7 +148,7 @@
 /******/
 /******/
 /******/ 	// add entry module to deferred list
-/******/ 	deferredModules.push(["./src/frontend/scripts/user_coursechoice.ts","vendors~test~user_coursechoice"]);
+/******/ 	deferredModules.push(["./src/frontend/scripts/courses.ts","vendors~courses~test"]);
 /******/ 	// run deferred modules when ready
 /******/ 	return checkDeferredModules();
 /******/ })
@@ -168,10 +168,10 @@
 
 /***/ }),
 
-/***/ "./src/frontend/scripts/user_coursechoice.ts":
-/*!***************************************************!*\
-  !*** ./src/frontend/scripts/user_coursechoice.ts ***!
-  \***************************************************/
+/***/ "./src/frontend/scripts/courses.ts":
+/*!*****************************************!*\
+  !*** ./src/frontend/scripts/courses.ts ***!
+  \*****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -255,4 +255,4 @@ window.onload = displayCourses;
 /***/ })
 
 /******/ });
-//# sourceMappingURL=user_coursechoice.js.map
+//# sourceMappingURL=courses.js.map

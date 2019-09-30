@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["vendors~test~user_coursechoice"],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["vendors~courses~test"],{
 
 /***/ "./node_modules/axios/index.js":
 /*!*************************************!*\
@@ -1961,4 +1961,4 @@ process.umask = function() { return 0; };
 /***/ })
 
 }]);
-//# sourceMappingURL=vendors~test~user_coursechoice.js.map
+//# sourceMappingURL=vendors~courses~test.js.map
