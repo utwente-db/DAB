@@ -502,7 +502,8 @@ def whoami(request):
     response = {
     "id": user.id,
     "email": user.email,
-    "role": user.role
+    "role": user.role,
+    "cached_role": request.session["role"]
     }
 
     response = json.JSONEncoder().encode(response)
