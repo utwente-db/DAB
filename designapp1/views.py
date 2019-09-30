@@ -287,7 +287,6 @@ def dump(request, pk):
 
   try:
     db = Studentdatabases.objects.get(dbid=pk)
-  #TODO: figure out which exception
   except Studentdatabases.DoesNotExist as e:
     return not_found
 

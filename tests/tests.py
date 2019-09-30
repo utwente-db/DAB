@@ -30,9 +30,10 @@ uname = base64.b64encode(urandom(16)).decode()
 test_db = {
 	"fid": 73,
 	"databasename": uname,
-	"course": 11,
+	"course": 12,
 	"username" : uname,
-	"password" : "aoeu"
+	"password" : "aoeu",
+	"schema": 12
 }
 
 class TestLogin(unittest.TestCase):
