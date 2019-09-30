@@ -57,16 +57,18 @@ def defaultresponse(request):
 
 def get_base_response(request,db_parameters):
         if check_role(request,teacher) or db_parameters["dbname"] == "courses" or db_parameters["dbname"] == "schemas":
-          try:
-                 database = db_parameters["db"].objects.all()
-                 serializer_class = db_parameters["serializer"](database, many=True)
-          except Exception as e:
-                 logging.debug(e)
-                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-          else:
-                 return JsonResponse(serializer_class.data, safe=False)
+            try:
+                database = db_parameters["db"].objects.all()
+                serializer_class = db_parameters["serializer"](database, many=True)
+            except KeyError as e:
+                return 
+            except Exception as e:
+                logging.debug(e)
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+            else:
+                return JsonResponse(serializer_class.data, safe=False)
         else:
-                 return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 def get_single_response(request,pk,db_parameters):
 
@@ -157,6 +159,8 @@ def post_base_response(request,db_parameters):
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     elif db_parameters["dbname"]=="studentdatabases":
+                        logging.debug(e)
+                        logging.debug(type(e).__name__)
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
                         return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
