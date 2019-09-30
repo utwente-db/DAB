@@ -44,8 +44,11 @@ def verify(test, password):
 	return h.digest() == test
 
 def randomNames():
+	#WARNING: to prevent issues with the = used in padding being interpreted 
+	#wrongly (especially by psql), make sure the amount of random bytes is a
+	#multiple of 3
 	name = urandom(18)
-	password = urandom(32)
+	password = urandom(33)
 	return {"name": base64.b64encode(name).decode(), "password": base64.b64encode(password).decode()}
 
 def token():
