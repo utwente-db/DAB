@@ -435,7 +435,9 @@ def login(request):
 					return render(request, 'login.html', {'form': form, 'message': incorrect_message})
 			except dbmusers.DoesNotExist:
 				return render(request, 'login.html', {'form': form, 'message': incorrect_message})
-
+        else:
+            form = LoginForm()
+            return render(request, 'login.html', {"form": form, "message": "Could not parse form"})
 	form = LoginForm()
 	return render(request, 'login.html', {'form': form, 'message': ""})
 
