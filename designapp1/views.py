@@ -162,13 +162,17 @@ def post_base_response(request,db_parameters):
                       return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
               else:
                   logging.debug(serializer_class.errors)
-                  return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+
+                  if "must make a unique set" in str(serializer_class.errors):
+                  	return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
+                  else:
+                  	return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
                 return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 def delete_single_response(request,requested_pk,db_parameters):
 
-        if check_role(request,admin):
+        if check_role(request,admin) or (check_role(request,teacher) and db_parameters["dbname"] == "courses" ):
 
           try:
                 db = db_parameters['db']
