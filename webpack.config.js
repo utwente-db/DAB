@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const path = require('path');
 const ts_loader = require('ts-loader');
 var glob = require("glob");
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // TODO maybe export some sort of variable when in production to use everywhere
