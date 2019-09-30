@@ -155,6 +155,7 @@ def post_base_response(request,db_parameters):
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                 except Exception as e:
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
+                        print(e)
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     elif db_parameters["dbname"]=="studentdatabases":
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
