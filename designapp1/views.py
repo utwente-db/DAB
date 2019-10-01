@@ -212,10 +212,10 @@ def delete_single_response(request,requested_pk,db_parameters):
             if o.owner().id == request.session["user"]:
                 owned = True
         except db_parameters["db"].DoesNotExist:
-            return HttpResponse(status=HTTP_404_NOT_FOUND)
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         except AttributeError:
             #object has no owner
-            return HttpResponse(status=HTTP_406_NOT_ACCEPTABLE)
+            return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
 
     if check_role(request,admin) or owned:
 
@@ -460,6 +460,10 @@ def register(request):
 
     form = RegisterForm()
     return render(request, 'register.html', {'form': form})
+
+@require_GET
+def request_db(request):
+    return render(request, 'request_db.html', {})
 
 @require_http_methods(["GET", "POST"])
 def login(request):
