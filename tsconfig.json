@@ -1,12 +1,21 @@
 {
-	"compilerOptions": {
-		"target": "es5",
-		"module": "commonjs",
-		"sourceMap": true,
-		"outDir": "frontend/scripts"
-	},
-	"include": [
-		"src/frontend/scripts"
-	],
-	"exclude": ["node_modules/@types/node"]
+  "compilerOptions": {
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "pretty": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es5",
+    "outDir": "frontend/scripts",
+
+  },
+  "include": [
+    "src/frontend/scripts"
+  ]
 }

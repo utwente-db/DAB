@@ -22966,6 +22966,8 @@ __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.j
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
 __webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");
+var credentialsButton = document.getElementById("credentials-button");
+var coursesDropdown = document.getElementById("courses-dropdown"); // TODO actually make dropdown and fill
 function getCoursesPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -22981,12 +22983,10 @@ function getCoursesPromise() {
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var coursesDropdown, courses, result, i, resultString;
+        var courses, result, i, resultString;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    coursesDropdown = document.getElementById("courses-dropdown");
-                    return [4 /*yield*/, getCoursesPromise()];
+                case 0: return [4 /*yield*/, getCoursesPromise()];
                 case 1:
                     courses = _a.sent();
                     result = [];
@@ -23000,14 +23000,32 @@ function displayCourses() {
         });
     });
 }
+function getCredentials() {
+    var course = coursesDropdown.value;
+    if (course !== "select an option") {
+        axios_1.default.post("/api/user/email/check", "eet");
+    }
+    //         .then(response => {
+    //             let data = response.data;
+    //             if (data.emails.length == 0 && checkAllFieldsFilledIn()) {
+    //                 bookRoom();
+    //             } else if (!checkAllFieldsFilledIn()) {
+    //                 showError("Please fill in all fields");
+    //             } else {
+    //                 showError("one of the emails is invalid");
+    //             }
+    //         });
+    // } else if (checkAllFieldsFilledIn()) {
+    //     bookRoom();
+    // } else {
+    //     showError("Please fill in all fields");
+    // }
+}
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: 
-            // $('select').selectpicker();
-            return [4 /*yield*/, displayCourses()];
+            case 0: return [4 /*yield*/, displayCourses()];
             case 1:
-                // $('select').selectpicker();
                 _a.sent();
                 $('select').selectpicker(); // Style all selects
                 return [2 /*return*/];
