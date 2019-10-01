@@ -38,11 +38,11 @@ def delete_studentdatabase(db_name):
                         #drop any existing connections
                         cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'", [AsIs(db_name.databasename)])
                         #actually drop the database
-                        cursor.execute("DROP DATABASE %s;",[AsIs(db_name.databasename)])
+                        cursor.execute("DROP DATABASE \"%s\";",[AsIs(db_name.databasename)])
                         #kick out the user just to be sure
                         cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE usename = '%s'", [AsIs(db_name.username)])
                         #Drop the user
-                        cursor.execute("DROP USER  %s;",[AsIs(db_name.username)])
+                        cursor.execute("DROP USER \"%s\";",[AsIs(db_name.username)])
                         connection.commit()
                         connection.autocommit = True
    
@@ -57,17 +57,20 @@ def create_studentdatabase(serializer_class):
                logging.debug(schema)
 
                with connection.cursor() as cursor:
-                 cursor.execute("CREATE USER %s WITH UNENCRYPTED PASSWORD '%s';",[AsIs(username),AsIs(password)])
-                 cursor.execute("CREATE DATABASE %s WITH OWNER %s;",[AsIs(db_name),AsIs(username)])
-                 cursor.execute("GRANT ALL PRIVILEGES ON DATABASE %s TO %s;",[AsIs(db_name),AsIs(username)])
-                 cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE %s FROM public;",[AsIs(db_name)])
+                 print("yay0")
+                 cursor.execute("CREATE USER \"%s\" WITH UNENCRYPTED PASSWORD '%s';",[AsIs(username),AsIs(password)])
+                 print("yay1")
+                 cursor.execute("CREATE DATABASE \"%s\" WITH OWNER \"%s\";",[AsIs(db_name),AsIs(username)])
+                 print("yay2")
+                 cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \"%s\" TO \"%s\";",[AsIs(db_name),AsIs(username)])
+                 cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \"%s\" FROM public;",[AsIs(db_name)])
 
                  conn = connect(db_name)
 
                  with conn.cursor() as cur:
                    cur.execute("DROP SCHEMA public CASCADE;")
-                   cur.execute("CREATE SCHEMA %s;", [AsIs(username)])
-                   cur.execute("ALTER SCHEMA %s OWNER TO %s;",[AsIs(username), AsIs(username)])
+                   cur.execute("CREATE SCHEMA \"%s\";", [AsIs(username)])
+                   cur.execute("ALTER SCHEMA \"%s\" OWNER TO \"%s\";",[AsIs(username), AsIs(username)])
                  conn.commit()
                return serializer_class
 

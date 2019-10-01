@@ -14,6 +14,7 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.parsers import JSONParser
 from rest_framework import status
+from rest_framework.exceptions import ParseError
 
 from django.db import IntegrityError
 from . import schemas as schemaWriter
@@ -57,16 +58,16 @@ def defaultresponse(request):
 
 def get_base_response(request,db_parameters):
         if check_role(request,teacher) or db_parameters["dbname"] == "courses" or db_parameters["dbname"] == "schemas":
-          try:
-                 database = db_parameters["db"].objects.all()
-                 serializer_class = db_parameters["serializer"](database, many=True)
-          except Exception as e:
-                 logging.debug(e)
-                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-          else:
-                 return JsonResponse(serializer_class.data, safe=False)
+            try:
+                database = db_parameters["db"].objects.all()
+                serializer_class = db_parameters["serializer"](database, many=True)
+            except Exception as e:
+                logging.debug(e)
+                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+            else:
+                return JsonResponse(serializer_class.data, safe=False)
         else:
-                 return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 def get_single_response(request,pk,db_parameters):
 
@@ -125,50 +126,63 @@ def post_base_dbmusers_response(request,databases,db_parameters):
 
 
 def post_base_response(request,db_parameters):
-        if check_role(request,teacher) or db_parameters["dbname"]=="dbmusers" or (db_parameters["dbname"]=="studentdatabases" and check_role(request,student)):
+    if check_role(request,teacher) or db_parameters["dbname"]=="dbmusers" or (db_parameters["dbname"]=="studentdatabases" and check_role(request,student)):
 
-          serializer_class = None
+        serializer_class = None
 
-          try:
+        try:
             databases = JSONParser().parse(request)
             if db_parameters["dbname"]=="dbmusers":
-              if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl', databases["email"]):
-                return HttpResponse("only utwente email address can be used",status=status.HTTP_406_NOT_ACCEPTABLE)
-              else:
-                serializer_class = post_base_dbmusers_response(request,databases,db_parameters)
+                if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl', databases["email"]):
+                    return HttpResponse("only utwente email address can be used",status=status.HTTP_406_NOT_ACCEPTABLE)
+                else:
+                    serializer_class = post_base_dbmusers_response(request,databases,db_parameters)
             else:
-               custom_serializer =  db_parameters["serializer"]
-               serializer_class = custom_serializer(data=databases)
-          except Exception as e:
-              logging.debug(e)
-              return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
-          else:
-              if serializer_class.is_valid():
-                  try:
-                    if db_parameters["dbname"]=="studentdatabases":
-                     serializer_class = create_studentdatabase(serializer_class)
-                     setup_student_db(databases,serializer_class,schemas)
-                     serializer_class.save()
-                     return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-                    else:
-                     serializer_class.save()
-                     return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
-                  except Exception as e:
-                    if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
-                      return HttpResponse(status=status.HTTP_409_CONFLICT)
-                    elif db_parameters["dbname"]=="studentdatabases":
-                       return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    else:
-                      return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
-              else:
-                  logging.debug(serializer_class.errors)
+                if db_parameters["dbname"] == "studentdatabases":
+                    username, password = hash.randomNames()
+                    databases["username"] = username
+                    databases["databasename"] = username
+                    databases["password"] = password
 
-                  if "must make a unique set" in str(serializer_class.errors):
-                  	return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
-                  else:
-                  	return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+                custom_serializer =  db_parameters["serializer"]
+                serializer_class = custom_serializer(data=databases)
+        except ParseError:
+            return HttpResponse("Your JSON is incorrectly formatted",status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logging.debug(type(e))
+            return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-                return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+            if serializer_class.is_valid():
+                try:
+                    if db_parameters["dbname"]=="studentdatabases":
+                        serializer_class = create_studentdatabase(serializer_class)
+                        setup_student_db(databases,serializer_class,schemas)
+                        serializer_class.save()
+                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                    else:
+                       serializer_class.save()
+                       return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                except KeyError as e:
+                    return HttpResponse("The following field(s) should be included:"+str(e),status=status.HTTP_400_BAD_REQUEST)
+                except Exception as e:
+                    if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
+                        print(e)
+                        return HttpResponse(status=status.HTTP_409_CONFLICT)
+                    elif db_parameters["dbname"]=="studentdatabases":
+                        logging.debug(type(e))
+                        logging.debug(type(e).__name__)
+                        return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    else:
+                        return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
+            else:
+                logging.debug(serializer_class.errors)
+
+                if "must make a unique set" in str(serializer_class.errors):
+                  	return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
+                else:
+                  	return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 def delete_single_response(request,requested_pk,db_parameters):
 
@@ -287,7 +301,6 @@ def dump(request, pk):
 
   try:
     db = Studentdatabases.objects.get(dbid=pk)
-  #TODO: figure out which exception
   except Studentdatabases.DoesNotExist as e:
     return not_found
 
@@ -513,7 +526,8 @@ def whoami(request):
     response = {
     "id": user.id,
     "email": user.email,
-    "role": user.role
+    "role": user.role,
+    "cached_role": request.session["role"]
     }
 
     response = json.JSONEncoder().encode(response)

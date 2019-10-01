@@ -20,6 +20,8 @@ To run the project the following system packages are required (may not be actual
 - python3-dev
 - postgresql-python-venv
 - libpq-dev
+- postgresql-client-common
+- postgresql-client-<VERSION>
 - npm (required for installation only)
 
 Additionally, the following software is needed for the recommended production server setup:
