@@ -137,22 +137,22 @@ class testCreateDB(unittest.TestCase):
 		r = student.get(BASE+"/rest/studentdatabases/")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
-		id = -1
+		id = 0
 		for db in body:
-			if db["databasename"] == "ueoa":
+			if db["databasename"] == test_db["databasename"]:
 				id = db["dbid"]
 		# how we know the db was actually in there before we try to delete
-		self.assertTrue(id>=0)
+		self.assertTrue(id>0)
 
 		r = student.delete(BASE+"/rest/studentdatabases/"+str(id))
-		self.assertEqual(r.status_code, 204)
+		self.assertEqual(r.status_code, 202)
 
 		#finally, let's see if the db is still there
 		r = student.get(BASE+"/rest/studentdatabases/")
 		self.assertEqual(r.status_code, 200)
 		body = r.json()
 		for db in body:
-			self.assertNotEqual(db["databasename"], "ueoa")
+			self.assertNotEqual(db["databasename"], test_db["databasename"])
 
 		#and also if we can not connect to it
 		try:

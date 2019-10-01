@@ -200,32 +200,42 @@ def post_base_response(request,db_parameters):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 def delete_single_response(request,requested_pk,db_parameters):
+    owned = False
+    if check_role(request, student):
+        o = db_parameters["db"].objects.get(pk=requested_pk)
+        try:
+            if o.owner().id == request.session["user"]:
+                owned = True
+        except db_parameters["db"].DoesNotExist:
+            return HttpResponse(status=HTTP_404_NOT_FOUND)
+        except AttributeError:
+            #object has no owner
+            return HttpResponse(status=HTTP_406_NOT_ACCEPTABLE)
 
-        if check_role(request,admin) or (check_role(request,teacher) and db_parameters["dbname"] == "courses" ):
+    if check_role(request,admin) or owned:
 
-          try:
-                db = db_parameters['db']
-                instance = db.objects.get(pk=requested_pk)
-          except:
-                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-          else:
-                try:
-                  if db_parameters["dbname"] == "studentdatabases":
+        try:
+            db = db_parameters['db']
+            instance = db.objects.get(pk=requested_pk)
+        except:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        else:
+            try:
+                if db_parameters["dbname"] == "studentdatabases":
                     delete_studentdatabase(instance)
                     instance.delete()
-                  else:
-                    instance.delete()
-                except Exception as e:
-                  logging.debug(e)
-                  connection.autocommit = False # in case django does not do this properly
-                  if "protected foreign key" in str(e.__cause__):
-                    return HttpResponse(status=status.HTTP_409_CONFLICT)
-                  elif db_parameters["dbname"] == "studentdatabases":
-                    return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
-                  return HttpResponse(status=status.HTTP_202_ACCEPTED)
-        else:
-                return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+                    instance.delete()
+            except Exception as e:
+                logging.debug(e)
+                if "protected foreign key" in str(e.__cause__):
+                    return HttpResponse(status=status.HTTP_409_CONFLICT)
+                elif db_parameters["dbname"] == "studentdatabases":
+                    return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return HttpResponse(status=status.HTTP_202_ACCEPTED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 @csrf_exempt
 def search_on_name(request,search_value,dbname):
