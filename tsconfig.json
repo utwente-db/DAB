@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "declaration": true,
+    "declaration": false,
     "forceConsistentCasingInFileNames": true,
     "module": "commonjs",
     "noEmitOnError": true,
@@ -12,8 +12,7 @@
     "sourceMap": true,
     "strict": true,
     "target": "es5",
-    "outDir": "frontend/scripts",
-
+    "outDir": "frontend/scripts"
   },
   "include": [
     "src/frontend/scripts"

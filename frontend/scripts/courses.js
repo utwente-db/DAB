@@ -22991,7 +22991,7 @@ function displayCourses() {
                     courses = _a.sent();
                     result = [];
                     for (i = 0; i < courses.length; i++) {
-                        result.push("<option>" + courses[i].coursename + "</option>");
+                        result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>");
                     }
                     resultString = result.join("\n");
                     coursesDropdown.innerHTML += resultString;
@@ -23001,9 +23001,12 @@ function displayCourses() {
     });
 }
 function getCredentials() {
-    var course = coursesDropdown.value;
-    if (course !== "select an option") {
-        axios_1.default.post("/api/user/email/check", "eet");
+    var courseID = Number(coursesDropdown.value);
+    if (courseID !== 0) {
+        var data = {
+            "courseid": courseID
+        };
+        axios_1.default.post("/rest/", data);
     }
     //         .then(response => {
     //             let data = response.data;

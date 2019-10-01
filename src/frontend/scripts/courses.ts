@@ -27,16 +27,20 @@ async function displayCourses(): Promise<void> {
     const courses: Course[] = await getCoursesPromise();
     const result: string[] = [];
     for (let i = 0; i < courses.length; i++) {
-        result.push("<option>" + courses[i].coursename + "</option>")
+        result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
     }
     const resultString: string = result.join("\n");
     coursesDropdown.innerHTML += resultString;
 }
 
 function getCredentials() {
-    const course: string = coursesDropdown.value;
-    if (course !== "select an option") {
-        axios.post("/api/user/email/check", "eet")
+    const courseID: number = Number(coursesDropdown.value);
+    if (courseID !== 0) {
+        const data = {
+            "courseid": courseID
+        };
+        axios.post("/rest/", data)
+
     }
     //         .then(response => {
     //             let data = response.data;
