@@ -82,6 +82,10 @@ DELETE	-> for that pk
 
 GET -> search for the value, based on the studentdatabasename
 
+### /studentdatabases/own/
+
+GET -> gives back all the studentdatabases owned by the user currently logged in
+
 ## TABLE: Courses
 
 ### /courses/
@@ -106,6 +110,10 @@ DELETE	-> delete course for that course id
 
 GET -> search for the value, based on the coursename
 
+### /courses/own/
+
+GET -> gives back all the courses owned by the user currently logged in
+
 ## TABLE: dbmusers
 
 ### /dbmusers/
@@ -129,6 +137,10 @@ DELETE	-> delete user for that user id
 
 GET -> search for the value, based on emailaddress
 
+### /dbmusers/own/
+
+GET -> gives back the info about the currently logged in user
+
 ## TABLE: TAs
 
 ### /tas/
@@ -151,6 +163,10 @@ DELETE	-> delete ta for that ta id
 
 -----!!!!!NOT IMPLEMENTED YET!!!!!------
 
+### /tas/own/
+
+GET -> gives back the ta information about the currently logged in ta
+
 ## TABLE: Schemas
 
 ### /schemas/
@@ -172,6 +188,10 @@ DELETE	-> delete schema for that schemaid
 ### /schemas/name/value
 
 GET -> search for the value, based on the schema name
+
+### /schemas/own/
+
+GET -> gives back all the schemas owned by the user currently logged in
 
 # Permissions
 
