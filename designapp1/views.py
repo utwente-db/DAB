@@ -138,24 +138,27 @@ def post_base_response(request,db_parameters):
                 else:
                     serializer_class = post_base_dbmusers_response(request,databases,db_parameters)
             else:
+                if db_parameters["dbname"] == "studentdatabases":
+                    username, password = hash.randomNames()
+                    databases["username"] = username
+                    databases["databasename"] = username
+                    databases["password"] = password
+
                 custom_serializer =  db_parameters["serializer"]
                 serializer_class = custom_serializer(data=databases)
         except ParseError:
             return HttpResponse("Your JSON is incorrectly formatted",status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logging.debug(type(e))
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             if serializer_class.is_valid():
                 try:
                     if db_parameters["dbname"]=="studentdatabases":
-                        if "=" in str(databases["databasename"]) or "=" in str(databases["username"]):
-                            return HttpResponse("= is not allowed",status=status.HTTP_400_BAD_REQUEST)
-                        else:
-                            serializer_class = create_studentdatabase(serializer_class)
-                            setup_student_db(databases,serializer_class,schemas)
-                            serializer_class.save()
-                            return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                        serializer_class = create_studentdatabase(serializer_class)
+                        setup_student_db(databases,serializer_class,schemas)
+                        serializer_class.save()
+                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                     else:
                        serializer_class.save()
                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)

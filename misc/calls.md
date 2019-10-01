@@ -62,16 +62,27 @@ Students: allowed their own.
 
 GET	-> get info all users
 POST 	-> add user
+
 	body: 
 		{
 		"fid":"5", [FOREIGN KEY, MUST EXIST]
-		"databasename":"test20", [FREE TO CHOOSE]
 		"course":"3", [FOREIGN KEY, MUST EXIST]
-		"username":"test20", [FREE TO CHOOSE]
-		"password":"test20", [FREE TO CHOOSE]
 		"schema":"1"[FOREIGN KEY, MUST EXIST]
 		}
-NOTE: DO NOT START A DATABASENAME WITH A NUMBER, IT WILL FAIL
+
+Note: on success you will get the following object back:
+
+	body:
+		{
+		"fid":<your value>
+		"course":<your value>
+		"schema":<your value>
+		"databasename":<GENERATED VALUE>
+		"username":<GENERATED VALUE (same as databasename)
+		"password":<GENERATED VALUE (long)>
+		}
+
+Note that the student will want to know the generated values
 
 ### /studentdatabases/pk
 

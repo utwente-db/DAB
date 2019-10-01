@@ -49,7 +49,7 @@ def randomNames():
 	#multiple of 3
 	name = urandom(18)
 	password = urandom(33)
-	return {"name": base64.b64encode(name).decode(), "password": base64.b64encode(password).decode()}
+	return (base64.b64encode(name).decode(), base64.b64encode(password).decode())
 
 def token():
 	return base64.b64encode(urandom(16)).decode()
