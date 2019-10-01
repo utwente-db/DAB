@@ -37,6 +37,8 @@ class Courses(models.Model):
     def __str__(self):
        return self.coursename
 
+    def owner(self):
+        return self.fid
 
     class Meta(object):
         managed = False
@@ -50,6 +52,9 @@ class schemas(models.Model):
     course = models.ForeignKey(Courses,on_delete=models.CASCADE, db_column='course')
     sql = models.TextField(db_column='sql')
 
+    def owner(self):
+        return self.course.owner()
+
     class Meta:
         managed = False
         db_table = 'schemas'
@@ -57,12 +62,15 @@ class schemas(models.Model):
 
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid',primary_key=True)
-    fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
+    fid = models.ForeignKey(dbmusers, on_delete=models.PROTECT, db_column='fid')
     databasename = models.TextField(unique=True)
-    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
+    course = models.ForeignKey(Courses, on_delete=models.PROTECT, db_column='course')
     username = models.CharField(max_length=265)
     password = models.CharField(max_length=265)
     schema = models.ForeignKey(schemas, on_delete=models.PROTECT, db_column='schema', null=True)
+
+    def owner(self):
+        return self.fid
 
     class Meta:
         managed = False
@@ -73,6 +81,9 @@ class TAs(models.Model):
     taid = models.AutoField(db_column = 'taid', primary_key=True)
     courseid = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='courseid')
     studentid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='studentid')
+
+    def owner(self):
+        return self.courseid.owner()
 
     class Meta:
         managed = False

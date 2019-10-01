@@ -57,11 +57,8 @@ def create_studentdatabase(serializer_class):
                logging.debug(schema)
 
                with connection.cursor() as cursor:
-                 print("yay0")
                  cursor.execute("CREATE USER \"%s\" WITH UNENCRYPTED PASSWORD '%s';",[AsIs(username),AsIs(password)])
-                 print("yay1")
                  cursor.execute("CREATE DATABASE \"%s\" WITH OWNER \"%s\";",[AsIs(db_name),AsIs(username)])
-                 print("yay2")
                  cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \"%s\" TO \"%s\";",[AsIs(db_name),AsIs(username)])
                  cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \"%s\" FROM public;",[AsIs(db_name)])
 

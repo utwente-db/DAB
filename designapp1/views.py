@@ -61,9 +61,18 @@ def get_base_response(request,db_parameters):
             try:
                 database = db_parameters["db"].objects.all()
                 serializer_class = db_parameters["serializer"](database, many=True)
-            except Exception as e:
+            except db_parameters["db"].DoesNotExist as e:
                 logging.debug(e)
                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+            else:
+                return JsonResponse(serializer_class.data, safe=False)
+        elif check_role(request, student) and db_parameters["dbname"] == "studentdatabases":
+            #student should be able to view own databases
+            try:
+                database = db_parameters["db"].objects.filter(fid=request.session["user"]).all()
+                serializer_class = db_parameters["serializer"](database, many=True)
+            except db_parameters["db"].DoesNotExist as e:
+                return JsonResponse([], safe=False)
             else:
                 return JsonResponse(serializer_class.data, safe=False)
         else:
@@ -187,24 +196,33 @@ def post_base_response(request,db_parameters):
                 else:
                     serializer_class = post_base_dbmusers_response(request,databases,db_parameters)
             else:
+                if db_parameters["dbname"] == "studentdatabases":
+                    #generate data for student
+                    username, password = hash.randomNames()
+                    databases["username"] = username
+                    databases["databasename"] = username
+                    databases["password"] = password
+                    if not "fid" in databases:
+                        databases["fid"] = request.session["user"]
+                    elif not check_role(request, teacher) and databases["fid"] != request.session["user"]:
+                        #you should not be able to request a db for somebody else if you are a student...
+                        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
                 custom_serializer =  db_parameters["serializer"]
                 serializer_class = custom_serializer(data=databases)
         except ParseError:
             return HttpResponse("Your JSON is incorrectly formatted",status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logging.debug(type(e))
-            return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             if serializer_class.is_valid():
                 try:
                     if db_parameters["dbname"]=="studentdatabases":
-                        if "=" in str(databases["databasename"]) or "=" in str(databases["username"]):
-                            return HttpResponse("= is not allowed",status=status.HTTP_400_BAD_REQUEST)
-                        else:
-                            serializer_class = create_studentdatabase(serializer_class)
-                            setup_student_db(databases,serializer_class,schemas)
-                            serializer_class.save()
-                            return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+                        serializer_class = create_studentdatabase(serializer_class)
+                        setup_student_db(databases,serializer_class,schemas)
+                        serializer_class.save()
+                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                     else:
                        serializer_class.save()
                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
@@ -212,7 +230,6 @@ def post_base_response(request,db_parameters):
                     return HttpResponse("The following field(s) should be included:"+str(e),status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
-                        print(e)
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     elif db_parameters["dbname"]=="studentdatabases":
                         logging.debug(type(e))
@@ -232,33 +249,40 @@ def post_base_response(request,db_parameters):
 
 def delete_single_response(request,requested_pk,db_parameters):
 
-        current_id = request.session['user']
+    current_id = request.session['user']
 
-        if check_role(request,admin) or (check_role(request,teacher) and db_parameters["dbname"] == "courses" ) or do_i_own_this_item(current_id,requested_pk,db_parameters):
+    if check_role(request,admin) or (check_role(request,teacher) and db_parameters["dbname"] == "courses" ) or do_i_own_this_item(current_id,requested_pk,db_parameters):
 
-          try:
-                db = db_parameters['db']
-                instance = db.objects.get(pk=requested_pk)
-          except:
-                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-          else:
-                try:
-                  if db_parameters["dbname"] == "studentdatabases":
+        try:
+            db = db_parameters['db']
+            instance = db.objects.get(pk=requested_pk)
+        except:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        else:
+            try:
+                if db_parameters["dbname"] == "studentdatabases":
                     delete_studentdatabase(instance)
                     instance.delete()
-                  else:
+                elif db_parameters["dbname"] == "courses":
+                    #when you delete a course, make sure to first delete all the student databases
+                    instance = db.objects.get(pk=requested_pk)
+                    dbs = Studentdatabases.objects.filter(course=instance.courseid).all()
+                    for db in dbs:
+                        delete_studentdatabase(db)
+                        db.delete()
                     instance.delete()
-                except Exception as e:
-                  logging.debug(e)
-                  connection.autocommit = False # in case django does not do this properly
-                  if "protected foreign key" in str(e.__cause__):
-                    return HttpResponse(status=status.HTTP_409_CONFLICT)
-                  elif db_parameters["dbname"] == "studentdatabases":
-                    return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
-                  return HttpResponse(status=status.HTTP_202_ACCEPTED)
-        else:
-                return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+                    instance.delete()
+            except Exception as e:
+                logging.debug(e)
+                if "protected foreign key" in str(e.__cause__):
+                    return HttpResponse(status=status.HTTP_409_CONFLICT)
+                elif db_parameters["dbname"] == "studentdatabases":
+                    return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            else:
+                return HttpResponse(status=status.HTTP_202_ACCEPTED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 @csrf_exempt
 def search_on_name(request,search_value,dbname):
@@ -344,19 +368,19 @@ def baseview(request,dbname):
 @csrf_exempt
 @require_GET
 def dump(request, pk):
-  if not check_role(request, student):
-    return unauthorised
+    if not check_role(request, student):
+        return unauthorised
 
-  try:
-    db = Studentdatabases.objects.get(dbid=pk)
-  except Studentdatabases.DoesNotExist as e:
-    return not_found
+    try:
+        db = Studentdatabases.objects.get(dbid=pk)
+    except Studentdatabases.DoesNotExist as e:
+        return not_found
 
-  if not check_role(request, teacher) and request.session["role"] != db.fid:
-    return unauthorised
+    if not check_role(request, teacher) and request.session["user"] != db.owner().id:
+        return unauthorised
 
-  response = schemaWriter.dump(db.__dict__)
-  return HttpResponse(response, content_type="application/sql")
+    response = schemaWriter.dump(db.__dict__)
+    return HttpResponse(response, content_type="application/sql")
 
 
 #-----------------------------------------LOGIN-------------------------------------------------
@@ -516,6 +540,17 @@ def logout(request):
 def logout_button(request):
     return HttpResponse("<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>", content_type='text/html')
 
+#Function that returns HTML page for choosing courses
+@require_GET
+def courses(request):
+
+    template = 'courses.html'
+    # number = 3
+    context = {
+    }
+
+    return render(request, template, context)
+
 #Function to change the role of users
 #A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.
 @require_POST
@@ -577,3 +612,5 @@ def verify(request, token):
   user.token = None
   user.save()
   return render(request, 'login.html', {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+
+

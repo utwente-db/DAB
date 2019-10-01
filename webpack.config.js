@@ -2,7 +2,6 @@ const webpack = require('webpack');
 const path = require('path');
 const ts_loader = require('ts-loader');
 var glob = require("glob");
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // TODO maybe export some sort of variable when in production to use everywhere
@@ -34,7 +33,7 @@ module.exports = (env, argv) => {
             new MiniCssExtractPlugin({
                 // Extracts css from javascript
                 filename: './css/[name].css',
-                chunkFilename: '[id].css',
+                chunkFilename: './css/[id].css',
                 ignoreOrder: false,
             })
         ],
@@ -49,6 +48,7 @@ module.exports = (env, argv) => {
             ignored: /node_modules/ // improves performance by a ton
         },
         output: { // Resolves paths locally, a weird hack
+            chunkFilename: './scripts/[name].js',
             filename: './scripts/[name].js',
             path: path.resolve(__dirname, './frontend/')
         },
@@ -59,12 +59,13 @@ module.exports = (env, argv) => {
         },
 
         // Uncomment this to split up imports into seperate js file
+        // TODO Freek fix that split chunks are not imported
 
-        optimization: {
-            splitChunks: {
-                chunks: 'all'
-            }
-        },
+        // optimization: {
+        //     splitChunks: {
+        //         chunks: 'all'
+        //     }
+        // },
 
         module: {
             rules: [
