@@ -45,8 +45,7 @@ urlpatterns = [
    # path('delete_db_with_owner', views.delete_db_with_owner, name='delete_db_with_owner'),
    # path('get_users', views.get_users, name='get_users'),
    # path('login/', views.login, name="login"),
-   # path('register', views.register, name="register"),
-   # path('register/', views.register, name="register"),
+
    path('whoami', views.whoami, name='whoami'),
    path('whoami/', views.whoami, name='whoami'),
    path('set_role', views.set_role, name='set_role'),
