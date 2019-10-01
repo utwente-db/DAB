@@ -2,20 +2,19 @@
 
 {% block head %}
     <title>Front page</title>
-    <button onclick="displayCourses()"></button>
-{#    favicon ?#}
+    {#    favicon ?#}
 {% endblock %}
 
 {% block content %}
-{% if number > 2 %}
-    Listing numbers up to {{ number }}
-    <ul>
-    {% for i in range %}
-        <li>The number {{ i }}</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>Number is low.</p>
-{% endif %}
+    {% if number > 2 %}
+        Listing numbers up to {{ number }}
+        <ul>
+            {% for i in range %}
+                <li>The number {{ i }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Number is low.</p>
+    {% endif %}
     <div id="nice-div"></div>
 {% endblock %}
