@@ -321,19 +321,19 @@ def baseview(request,dbname):
 @csrf_exempt
 @require_GET
 def dump(request, pk):
-  if not check_role(request, student):
-    return unauthorised
+    if not check_role(request, student):
+        return unauthorised
 
-  try:
-    db = Studentdatabases.objects.get(dbid=pk)
-  except Studentdatabases.DoesNotExist as e:
-    return not_found
+    try:
+        db = Studentdatabases.objects.get(dbid=pk)
+    except Studentdatabases.DoesNotExist as e:
+        return not_found
 
-  if not check_role(request, teacher) and request.session["role"] != db.fid:
-    return unauthorised
+    if not check_role(request, teacher) and request.session["user"] != db.owner().id:
+        return unauthorised
 
-  response = schemaWriter.dump(db.__dict__)
-  return HttpResponse(response, content_type="application/sql")
+    response = schemaWriter.dump(db.__dict__)
+    return HttpResponse(response, content_type="application/sql")
 
 
 #-----------------------------------------LOGIN-------------------------------------------------

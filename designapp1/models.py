@@ -62,9 +62,9 @@ class schemas(models.Model):
 
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid',primary_key=True)
-    fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
+    fid = models.ForeignKey(dbmusers, on_delete=models.PROTECT, db_column='fid')
     databasename = models.TextField(unique=True)
-    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
+    course = models.ForeignKey(Courses, on_delete=models.PROTECT, db_column='course')
     username = models.CharField(max_length=265)
     password = models.CharField(max_length=265)
     schema = models.ForeignKey(schemas, on_delete=models.PROTECT, db_column='schema', null=True)

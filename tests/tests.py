@@ -126,12 +126,12 @@ class testCreateDB(unittest.TestCase):
 			database=test_db["databasename"]
 		)
 		with conn.cursor() as cur:
-			cur.execute("CREATE TABLE test(id SERIAL PRIMARY KEY, val TEXT)")
+			cur.execute("CREATE TABLE test(id SERIAL PRIMARY KEY, val TEXT);")
+			conn.commit()
 
 			r = student.get(BASE+"/rest/dump/"+str(test_db["dbid"]))
 			self.assertEqual(r.status_code, 200)
-			
-			self.assertTrue(re.match(r'.*CREATE TABLE .*\.test.*', r.text))
+			self.assertTrue(re.search(r'.*CREATE TABLE .*\.test.*', r.text))
 
 	def test3Delete(self):
 		r = student.get(BASE+"/rest/studentdatabases/")
