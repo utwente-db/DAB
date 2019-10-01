@@ -66,7 +66,6 @@ class TestLogin(unittest.TestCase):
 		self.assertEqual(r.status_code, 404)
 
 test_db = {
-	"fid": 73,
 	"course": 12,
 	"schema": 12
 }
@@ -91,7 +90,7 @@ class testCreateDB(unittest.TestCase):
 		found = False
 		body = r.json()
 		for db in body:
-			if db["databasename"] == "ueoa":
+			if db["databasename"] == test_db["databasename"]:
 				found = True
 		self.assertTrue(found)
 
