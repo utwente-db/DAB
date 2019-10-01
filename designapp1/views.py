@@ -181,7 +181,6 @@ def post_base_response(request,db_parameters):
                     return HttpResponse("The following field(s) should be included:"+str(e),status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
-                        print(e)
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     elif db_parameters["dbname"]=="studentdatabases":
                         logging.debug(type(e))
@@ -223,6 +222,14 @@ def delete_single_response(request,requested_pk,db_parameters):
             try:
                 if db_parameters["dbname"] == "studentdatabases":
                     delete_studentdatabase(instance)
+                    instance.delete()
+                elif db_parameters["dbname"] == "courses":
+                    #when you delete a course, make sure to first delete all the student databases
+                    instance = db.objects.get(pk=requested_pk)
+                    dbs = Studentdatabases.objects.filter(course=instance.courseid).all()
+                    for db in dbs:
+                        delete_studentdatabase(db)
+                        db.delete()
                     instance.delete()
                 else:
                     instance.delete()
