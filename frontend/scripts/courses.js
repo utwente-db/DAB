@@ -23001,28 +23001,40 @@ function displayCourses() {
     });
 }
 function getCredentials() {
-    var courseID = Number(coursesDropdown.value);
-    if (courseID !== 0) {
-        var data = {
-            "courseid": courseID
-        };
-        axios_1.default.post("/rest/", data);
-    }
-    //         .then(response => {
-    //             let data = response.data;
-    //             if (data.emails.length == 0 && checkAllFieldsFilledIn()) {
-    //                 bookRoom();
-    //             } else if (!checkAllFieldsFilledIn()) {
-    //                 showError("Please fill in all fields");
-    //             } else {
-    //                 showError("one of the emails is invalid");
-    //             }
-    //         });
-    // } else if (checkAllFieldsFilledIn()) {
-    //     bookRoom();
-    // } else {
-    //     showError("Please fill in all fields");
-    // }
+    return __awaiter(this, void 0, void 0, function () {
+        var courseID, data, response, database, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    courseID = Number(coursesDropdown.value);
+                    if (!(courseID !== 0)) return [3 /*break*/, 6];
+                    data = {
+                        "course": courseID,
+                        "schema": courseID // TODO you should not need to pass schemas
+                    };
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, axios_1.default.post("/rest/studentdatabases/", data)];
+                case 2:
+                    response = _a.sent();
+                    console.log(response);
+                    return [4 /*yield*/, response.data];
+                case 3:
+                    database = _a.sent();
+                    console.log(database);
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_1 = _a.sent();
+                    console.error(error_1);
+                    return [3 /*break*/, 5];
+                case 5:
+                    console.log("got to the end");
+                    _a.label = 6;
+                case 6: return [2 /*return*/];
+            }
+        });
+    });
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -23031,6 +23043,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
             case 1:
                 _a.sent();
                 $('select').selectpicker(); // Style all selects
+                credentialsButton.addEventListener("click", getCredentials);
                 return [2 /*return*/];
         }
     });

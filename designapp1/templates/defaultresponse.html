@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <title>Front page</title>
+    <title>Default response</title>
     {#    favicon ?#}
 {% endblock %}
 
 {% block content %}
+    This is the default response page. Here we would normally give a 404, or something like it. <br>
     {% if number > 2 %}
         Listing numbers up to {{ number }}
         <ul>

@@ -54,7 +54,13 @@ student = 2
 #REST RESPONSES
 
 def defaultresponse(request):
-        return index(request=request)
+    template = loader.get_template('defaultresponse.html')
+    number = 3
+    context = {
+        'number': number,
+        'range': range(number)
+    }
+    return HttpResponse(template.render(context, request))
 
 def get_base_response(request,db_parameters):
         if check_role(request,teacher) or db_parameters["dbname"] == "courses" or db_parameters["dbname"] == "schemas":
@@ -365,14 +371,6 @@ def check_role(request, role):
 def get_queryset(self):
    logging.debug(self.request)
 
-def index(request):
-    template = loader.get_template('index.html')
-    number=3
-    context = {
-        'number': number,
-        'range': range(number)
-    }
-    return HttpResponse(template.render(context, request))
 
 @require_GET
 def home(request):
