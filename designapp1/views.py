@@ -61,9 +61,18 @@ def get_base_response(request,db_parameters):
             try:
                 database = db_parameters["db"].objects.all()
                 serializer_class = db_parameters["serializer"](database, many=True)
-            except Exception as e:
+            except db_parameters["db"].DoesNotExist as e:
                 logging.debug(e)
                 return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+            else:
+                return JsonResponse(serializer_class.data, safe=False)
+        elif check_role(request, student) and db_parameters["dbname"] == "studentdatabases":
+            #student should be able to view own databases
+            try:
+                database = db_parameters["db"].objects.filter(fid=request.session["user"]).all()
+                serializer_class = db_parameters["serializer"](database, many=True)
+            except db_parameters["db"].DoesNotExist as e:
+                return JsonResponse([], safe=False)
             else:
                 return JsonResponse(serializer_class.data, safe=False)
         else:
@@ -139,10 +148,16 @@ def post_base_response(request,db_parameters):
                     serializer_class = post_base_dbmusers_response(request,databases,db_parameters)
             else:
                 if db_parameters["dbname"] == "studentdatabases":
+                    #generate data for student
                     username, password = hash.randomNames()
                     databases["username"] = username
                     databases["databasename"] = username
                     databases["password"] = password
+                    if not "fid" in databases:
+                        databases["fid"] = request.session["user"]
+                    elif not check_role(request, teacher) and databases["fid"] != request.session["user"]:
+                        #you should not be able to request a db for somebody else if you are a student...
+                        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
                 custom_serializer =  db_parameters["serializer"]
                 serializer_class = custom_serializer(data=databases)

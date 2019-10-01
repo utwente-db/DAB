@@ -65,7 +65,7 @@ POST 	-> add user
 
 	body: 
 		{
-		"fid":"5", [FOREIGN KEY, MUST EXIST]
+		"fid":"5", [FOREIGN KEY, MUST EXIST. Optional, if not specified, your current user id]
 		"course":"3", [FOREIGN KEY, MUST EXIST]
 		"schema":"1"[FOREIGN KEY, MUST EXIST]
 		}
