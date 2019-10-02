@@ -216,6 +216,10 @@ def post_base_response(request, db_parameters):
                         serializer_class.save()
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                     else:
+                        if db_parameters["dbname"] == "courses":
+                            check = schemaWriter.check(serializer_class.validated_data["schema"])
+                            if not check[0]:
+                                return HttpResponse(check[1], status=status.HTTP_406_NOT_ACCEPTABLE)
                         serializer_class.save()
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                 except KeyError as e:

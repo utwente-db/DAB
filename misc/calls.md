@@ -112,6 +112,9 @@ body:
 	"schema": <sql> [OPTIONAL, DEFAULT=""]
 	}
 
+NB: Schemas are verified for properties such as assigning ownership and creating schemas.
+This code is not very well tested; if you ever encounter an error that relates to it, please notify Floris immediately
+
 ### /courses/pk
 
 GET	-> get course for that course id
