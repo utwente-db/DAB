@@ -5,84 +5,86 @@
 {% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown">
-                        Dropdown
-                    </a>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#" tabindex="-1">Disabled</a>
-                </li>
-            </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search">
-                <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
-            </form>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown">
+                            Dropdown
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="#" tabindex="-1">Disabled</a>
+                    </li>
+                </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search">
+                    <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="container bg-light p-4">
-    <!-- Website title -->
-    <div class="row">
-        <div class="col-12 text-center">
-            <h1>DB Practicum Manager</h1><hr/>
+    <div class="container bg-light p-4">
+        <!-- Website title -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>DB Practicum Manager</h1>
+                <hr/>
+            </div>
         </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-4">
-            <h3 class="text-center mb-5">
-                Courses
+        <div class="row mt-4">
+            <div class="col-4">
+                <h3 class="text-center mb-5">
+                    Courses
                 </h3>
-            <ul>
-                <li><a href="#">Pearls of CS</a></li>
-                <li><a href="#">Data & Information</a></li>
-                <li><a href="#">Data Science</a></li>
-            </ul>
-        </div>
-        <div class="col-8">
-            <table class="table table-hover">
-                <thead class="thead dark">
+                <ul>
+                    <li><a href="#">Pearls of CS</a></li>
+                    <li><a href="#">Data & Information</a></li>
+                    <li><a href="#">Data Science</a></li>
+                </ul>
+            </div>
+            <div class="col-8">
+                <table class="table table-hover">
+                    <thead class="thead dark">
                     <tr>
                         <th class="th-sm" scope="col">#</th>
                         <th class="th-sm" scope="col">Name</th>
                     </tr>
-                </thead>
-                <tbody>
+                    </thead>
+                    <tbody>
                     {% for student in students %}
                         <tr>
                             <th scope="row">1</th>
                             <td>{{ student }}</td>
                         </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="pagination">
+            <div class="pagination">
 
-            <!-- {% if posts.has_previous %}
+                <!-- {% if posts.has_previous %}
                 <a href="?page=1">First</a>
                 <a href="?page={{ posts.previous_page_number }}">Previous</a>
             {% endif %}
@@ -103,8 +105,7 @@
             {% endif %} -->
 
 
-
-            <!-- {% for i in posts.paginator.page_range %}
+                <!-- {% for i in posts.paginator.page_range %}
                 {% if posts.number == i %}
                     <strong>{{ num }}</strong>
                 {% elif i > posts.number|add:'-3' and i < posts.number|add:'3' %}
@@ -112,7 +113,7 @@
                 {% endif %}
             {% endfor %} -->
 
-            <!-- {{ posts.has_previous }}
+                <!-- {{ posts.has_previous }}
 
             {{ posts.number }}
 
@@ -124,9 +125,9 @@
 
             {{ posts.has_next }} -->
 
-        </div>
+            </div>
 
+        </div>
     </div>
-</div>
 
 {% endblock %}

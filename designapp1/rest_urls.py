@@ -1,64 +1,63 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.urls import path
-from . import views
 from rest_framework import routers
+
+from . import views
 
 router = routers.DefaultRouter()
 
 urlpatterns = [
 
-   #General
-   #url('', include(router.urls)),
+    # General
+    # url('', include(router.urls)),
 
-   #Specific databases
+    # Specific databases
 
-   #Studentdatabases
-   url(r'^studentdatabases/own/$', views.get_own_response,{"dbname":"studentdatabases"}),
-   url(r'^studentdatabases/(?P<pk>[a-z0-9]+)/?$',views.singleview, {"dbname":"studentdatabases"}),
-   url(r'^studentdatabases/$', views.baseview,{"dbname":"studentdatabases"}),
-   url(r'^studentdatabases/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name,{"dbname":"studentdatabases"}),
-   #Courses
-   url(r'^courses/own/$', views.get_own_response,{"dbname":"courses"}),
-   url(r'^courses/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname":"courses"}),
-   url(r'^courses/$', views.baseview,{"dbname":"courses"}),
-   url(r'^courses/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name,{"dbname":"courses"}),
-   #TAs
-   url(r'^tas/own/$', views.get_own_response,{"dbname":"tas"}),
-   url(r'^tas/(?P<pk>[a-z0-9]+)/?$',views.singleview, {"dbname":"tas"}),
-   url(r'^tas/$', views.baseview, {"dbname":"tas"}),
+    # Studentdatabases
+    url(r'^studentdatabases/own/$', views.get_own_response, {"dbname": "studentdatabases"}),
+    url(r'^studentdatabases/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "studentdatabases"}),
+    url(r'^studentdatabases/$', views.baseview, {"dbname": "studentdatabases"}),
+    url(r'^studentdatabases/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name, {"dbname": "studentdatabases"}),
+    # Courses
+    url(r'^courses/own/$', views.get_own_response, {"dbname": "courses"}),
+    url(r'^courses/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "courses"}),
+    url(r'^courses/$', views.baseview, {"dbname": "courses"}),
+    url(r'^courses/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name, {"dbname": "courses"}),
+    # TAs
+    url(r'^tas/own/$', views.get_own_response, {"dbname": "tas"}),
+    url(r'^tas/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "tas"}),
+    url(r'^tas/$', views.baseview, {"dbname": "tas"}),
 
-# NOT YET IMPLEMENTED, REQUIRES FOREIGN KEY, NOT DIFFICULT, JUST HAS TO BE DONE
-#  url(r'^studentdatabases/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name,{"dbname":"tas"}),
-   #dbmusers
-   url(r'^dbmusers/own/$', views.get_own_response,{"dbname":"dbmusers"}),
-   url(r'^dbmusers/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname":"dbmusers"}),
-   url(r'^dbmusers/$', views.baseview, {"dbname":"dbmusers"}),
-   url(r'^dbmusers/email/(?P<search_value>[a-z0-9@.]+)/?$', views.search_on_name,{"dbname":"dbmusers"}),
-   #schemas
-   url(r'^schemas/own/$', views.get_own_response,{"dbname":"schemas"}),
-   url(r'^schemas/(?P<pk>[a-z0-9]+)/?$', views.singleview ,{"dbname":"schemas"}),
-   url(r'^schemas/$', views.baseview, {"dbname":"schemas"}),
-   url(r'^schemas/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name,{"dbname":"schemas"}),
+    # NOT YET IMPLEMENTED, REQUIRES FOREIGN KEY, NOT DIFFICULT, JUST HAS TO BE DONE
+    #  url(r'^studentdatabases/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name,{"dbname":"tas"}),
+    # dbmusers
+    url(r'^dbmusers/own/$', views.get_own_response, {"dbname": "dbmusers"}),
+    url(r'^dbmusers/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "dbmusers"}),
+    url(r'^dbmusers/$', views.baseview, {"dbname": "dbmusers"}),
+    url(r'^dbmusers/email/(?P<search_value>[a-z0-9@.]+)/?$', views.search_on_name, {"dbname": "dbmusers"}),
+    # schemas
+    url(r'^schemas/own/$', views.get_own_response, {"dbname": "schemas"}),
+    url(r'^schemas/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "schemas"}),
+    url(r'^schemas/$', views.baseview, {"dbname": "schemas"}),
+    url(r'^schemas/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name, {"dbname": "schemas"}),
 
-   #dump
-   url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),
+    # dump
+    url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),
 
-   #Login
+    # Login
 
-   # path('create_db', views.create_db, name='create_db'),
-   # path('delete_db', views.delete_db, name='delete_db'),
-   # path('delete_user', views.delete_user, name='delete_user'),
-   # path('delete_db_with_owner', views.delete_db_with_owner, name='delete_db_with_owner'),
-   # path('get_users', views.get_users, name='get_users'),
-   # path('login/', views.login, name="login"),
+    # path('create_db', views.create_db, name='create_db'),
+    # path('delete_db', views.delete_db, name='delete_db'),
+    # path('delete_user', views.delete_user, name='delete_user'),
+    # path('delete_db_with_owner', views.delete_db_with_owner, name='delete_db_with_owner'),
+    # path('get_users', views.get_users, name='get_users'),
+    # path('login/', views.login, name="login"),
 
-   path('whoami', views.whoami, name='whoami'),
-   path('whoami/', views.whoami, name='whoami'),
-   path('set_role', views.set_role, name='set_role'),
-   path('set_role/', views.set_role, name='set_role'),
+    path('whoami', views.whoami, name='whoami'),
+    path('whoami/', views.whoami, name='whoami'),
+    path('set_role', views.set_role, name='set_role'),
+    path('set_role/', views.set_role, name='set_role'),
 
-   # path('test', views.test, name='test'),
+    # path('test', views.test, name='test'),
 
 ]
-
-

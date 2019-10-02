@@ -7,8 +7,9 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
+
 class dbmusers(models.Model):
-    id = models.AutoField(db_column='id',primary_key=True)
+    id = models.AutoField(db_column='id', primary_key=True)
     role = models.IntegerField()
     email = models.CharField(max_length=265, unique=True)
     password = models.TextField(max_length=265)
@@ -23,7 +24,7 @@ class dbmusers(models.Model):
 
 
 class Courses(models.Model):
-    courseid = models.AutoField(db_column='courseid',primary_key=True)
+    courseid = models.AutoField(db_column='courseid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
     coursename = models.CharField(max_length=256)
     info = models.TextField()
@@ -31,11 +32,11 @@ class Courses(models.Model):
         dbmusers,
         through='TAs',
         through_fields=('courseid', 'studentid'),
-        related_name = 'assisting'
+        related_name='assisting'
     )
 
     def __str__(self):
-       return self.coursename
+        return self.coursename
 
     def owner(self):
         return self.fid
@@ -44,12 +45,13 @@ class Courses(models.Model):
         managed = False
         db_table = 'courses'
         verbose_name_plural = 'Courses'
-        unique_together = ('fid','coursename')
+        unique_together = ('fid', 'coursename')
+
 
 class schemas(models.Model):
     id = models.AutoField(db_column='id', primary_key=True)
-    name = models.CharField(max_length=256,db_column='name')
-    course = models.ForeignKey(Courses,on_delete=models.CASCADE, db_column='course')
+    name = models.CharField(max_length=256, db_column='name')
+    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
     sql = models.TextField(db_column='sql')
 
     def owner(self):
@@ -60,8 +62,9 @@ class schemas(models.Model):
         db_table = 'schemas'
         verbose_name_plural = 'Schemas'
 
+
 class Studentdatabases(models.Model):
-    dbid = models.AutoField(db_column='dbid',primary_key=True)
+    dbid = models.AutoField(db_column='dbid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.PROTECT, db_column='fid')
     databasename = models.TextField(unique=True)
     course = models.ForeignKey(Courses, on_delete=models.PROTECT, db_column='course')
@@ -77,8 +80,9 @@ class Studentdatabases(models.Model):
         db_table = 'studentdatabases'
         verbose_name_plural = 'StudentDatabases'
 
+
 class TAs(models.Model):
-    taid = models.AutoField(db_column = 'taid', primary_key=True)
+    taid = models.AutoField(db_column='taid', primary_key=True)
     courseid = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='courseid')
     studentid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='studentid')
 
