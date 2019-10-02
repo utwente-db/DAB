@@ -22983,7 +22983,7 @@ function getCoursesPromise() {
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var courses, result, i, resultString;
+        var courses, result, i, optionNode;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getCoursesPromise()];
@@ -22991,10 +22991,12 @@ function displayCourses() {
                     courses = _a.sent();
                     result = [];
                     for (i = 0; i < courses.length; i++) {
-                        result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>");
+                        optionNode = document.createElement("option");
+                        optionNode.setAttribute("value", String(courses[i].courseid));
+                        optionNode.appendChild(document.createTextNode(courses[i].coursename));
+                        coursesDropdown.appendChild(optionNode);
+                        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
                     }
-                    resultString = result.join("\n");
-                    coursesDropdown.innerHTML += resultString;
                     return [2 /*return*/];
             }
         });
@@ -23002,7 +23004,7 @@ function displayCourses() {
 }
 function getCredentials() {
     return __awaiter(this, void 0, void 0, function () {
-        var courseID, data, response, database, error_1;
+        var courseID, data, response, database, resultDiv, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -23022,6 +23024,8 @@ function getCredentials() {
                 case 3:
                     database = _a.sent();
                     console.log(database);
+                    resultDiv = document.getElementById("result-div");
+                    resultDiv.appendChild(document.createTextNode(JSON.stringify(database)));
                     return [3 /*break*/, 5];
                 case 4:
                     error_1 = _a.sent();

@@ -39,10 +39,14 @@ async function displayCourses(): Promise<void> {
     const courses: Course[] = await getCoursesPromise();
     const result: string[] = [];
     for (let i = 0; i < courses.length; i++) {
-        result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+        const optionNode = document.createElement("option");
+        optionNode.setAttribute("value",String(courses[i].courseid));
+        optionNode.appendChild(document.createTextNode(courses[i].coursename));
+        coursesDropdown.appendChild(optionNode)
+        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
     }
-    const resultString: string = result.join("\n");
-    coursesDropdown.innerHTML += resultString;
+    // const resultString: string = result.join("\n");
+    // coursesDropdown.innerHTML += resultString;
 }
 
 async function getCredentials() {
@@ -57,6 +61,8 @@ async function getCredentials() {
             // TODO if !reponse error..?
             const database: Database = await response.data;
             console.log(database)
+            const resultDiv: HTMLDivElement = document.getElementById("result-div") as HTMLDivElement;
+            resultDiv.appendChild(document.createTextNode(JSON.stringify(database)))
         } catch (error) {
             console.error(error)
         }
