@@ -22900,19 +22900,6 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./src/frontend/sass/desktop.sass":
-/*!****************************************!*\
-  !*** ./src/frontend/sass/desktop.sass ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-// extracted by mini-css-extract-plugin
-    if(false) { var cssReload; }
-  
-
-/***/ }),
-
 /***/ "./src/frontend/scripts/admin.ts":
 /*!***************************************!*\
   !*** ./src/frontend/scripts/admin.ts ***!
@@ -22963,8 +22950,23 @@ var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
-__webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");
-var coursesDropdown = document.getElementById("courses-dropdown");
+// import "../sass/desktop.sass"
+var usersHtml = document.getElementById("users");
+var coursesNavHtml = document.getElementById("courses-nav");
+var coursesContentHtml = document.getElementById("courses-content");
+function getCoursesPromise() {
+    return __awaiter(this, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, axios_1.default.get("/rest/courses/")];
+                case 1:
+                    response = _a.sent();
+                    return [2 /*return*/, response.data];
+            }
+        });
+    });
+}
 function getUsersPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -22978,9 +22980,40 @@ function getUsersPromise() {
         });
     });
 }
+function displayCourses() {
+    return __awaiter(this, void 0, void 0, function () {
+        var courses, resultNav, resultContent, i, active, resultNavString, resultContentString;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getCoursesPromise()];
+                case 1:
+                    courses = _a.sent();
+                    resultNav = [];
+                    resultContent = [];
+                    for (i = 0; i < courses.length; i++) {
+                        active = "";
+                        if (i == 0) {
+                            active = " active";
+                        }
+                        resultNav.push("<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + i + "\">" + courses[i].coursename + "</a>");
+                        resultContent.push("<div class=\"tab-pane\" id=\"course" + i + "\">"
+                            + "<ul><li>" + courses[i].courseid + "</li>"
+                            + "<li>" + courses[i].fid + "</li>"
+                            + "<li>" + courses[i].coursename + "</li>"
+                            + "<li>" + courses[i].info + "</li></ul></div>");
+                    }
+                    resultNavString = resultNav.join("\n");
+                    resultContentString = resultContent.join("\n");
+                    coursesNavHtml.innerHTML += resultNavString;
+                    coursesContentHtml.innerHTML += resultContentString;
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 function displayUsers() {
     return __awaiter(this, void 0, void 0, function () {
-        var users, result, i, resultString;
+        var users, result, i, role, verified, resultString;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getUsersPromise()];
@@ -22988,10 +23021,27 @@ function displayUsers() {
                     users = _a.sent();
                     result = [];
                     for (i = 0; i < users.length; i++) {
-                        result.push("<option value='" + users[i].id + "'>" + users[i].email + "</option>");
+                        role = void 0;
+                        if (users[i].role == 0) {
+                            role = "Admin";
+                        }
+                        else if (users[i].role == 1) {
+                            role = "TA";
+                        }
+                        else if (users[i].role == 2) {
+                            role = "Student";
+                        }
+                        else {
+                            role = "Unknown";
+                        }
+                        verified = users[i].verified;
+                        result.push("<tr><th scope=\"row\">" + users[i].id + "</th>"
+                            + "<td>" + role + "</td>"
+                            + "<td>" + users[i].email + "</td>"
+                            + "<td>" + verified + "</td></tr>");
                     }
                     resultString = result.join("\n");
-                    coursesDropdown.innerHTML += resultString;
+                    usersHtml.innerHTML += resultString;
                     return [2 /*return*/];
             }
         });
@@ -23002,6 +23052,9 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
         switch (_a.label) {
             case 0: return [4 /*yield*/, displayUsers()];
             case 1:
+                _a.sent();
+                return [4 /*yield*/, displayCourses()];
+            case 2:
                 _a.sent();
                 return [2 /*return*/];
         }
