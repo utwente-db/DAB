@@ -178,48 +178,26 @@ DELETE	-> delete ta for that ta id
 
 GET -> gives back the ta information about the currently logged in ta
 
-## TABLE: Schemas
-
-### /schemas/
-
-GET	-> get all schemas
-POST	-> add a new schema
-body: 
-	{
-	"name":"test325",  [FREE TO CHOOSE]
-	"course":"16", [FOREIGN KEY, MUST EXISTS]
-	"sql":"sql part" [FREE TO CHOOSE, BUT MUST BE SQL ]	
-  	}
-
-### /schemas/pk
-
-GET	-> get schemas for that schemaid
-DELETE	-> delete schema for that schemaid
-
-### /schemas/name/value
-
-GET -> search for the value, based on the schema name
-
-### /schemas/own/
-
-GET -> gives back all the schemas owned by the user currently logged in
-
 # Permissions
 
 Each user level has the following permissions
 
-|               | Schemas       | Tas           | dbmusers      | Courses      | Studentdatabases |
-|---------------|---------------|---------------|---------------|--------------|------------------|
-| Admin         | Get, all      | Get, all      | Get, all      | Get, all     | Get, all         |
-|               | Get, any      | Get, any      | Get, any      | Get, any     | Get, any         |
-|               | POST          | POST          | POST          | POST         | POST             |
-|               | DELETE, any   | DELETE, any   | DELETE, any   | DELETE, any  | DELETE, any      |
-|---------------|---------------|---------------|---------------|--------------|------------------|
-| Teacher       | Get, all      | Get, all      | Get, all      | Get, all     | Get, all         |
-|               | Get, any      | Get, any      | Get, any      | Get, any     | Get, any         |
-|               | POST          | POST          | POST          | POST         | POST             |
-|---------------|---------------|---------------|---------------|--------------|------------------|
-| Student       | GET, all      | Get, own      | Get, own      | Get, all     | Get, own         |
-|               | Get, any      |               | POST          | Get, any     | POST             |
-|---------------|---------------|---------------|---------------|--------------|------------------|
-| Not logged in |               |               | POST          |              |                  |
+|               | Tas           | dbmusers      | Courses      | Studentdatabases |
+|---------------|---------------|---------------|--------------|------------------|
+| Admin         | Get, all      | Get, all      | Get, all     | Get, all         |
+|               | Get, any      | Get, any      | Get, any     | Get, any         |
+|               | POST          | POST          | POST         | POST             |
+|               | DELETE, any   | DELETE, any   | DELETE, any  | DELETE, any      |
+|---------------|---------------|---------------|--------------|------------------|
+| Teacher       | Get, all      | Get, all      | Get, all     | Get, all         |
+|               | Get, any      | Get, any      | Get, any     | Get, any         |
+|               | POST          | POST          | POST         | POST             |
+|               | Delete, own*  | Delete, own   | Delete, own  | Delete, own      |
+|---------------|---------------|---------------|--------------|------------------|
+| Student       | Get, own      | Get, own      | Get, all     | Get, own         |
+|               |               | POST          | Get, any     | POST             |
+|               |               | Delete, own   |              | Delete, own      |
+|---------------|---------------|---------------|--------------|------------------|
+| Not logged in |               | POST          |              |                  |
+
+\*own here refers to ta's added to courses owned by the teacher
