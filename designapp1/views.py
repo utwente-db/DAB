@@ -212,7 +212,7 @@ def post_base_response(request, db_parameters):
                 try:
                     if db_parameters["dbname"] == "studentdatabases":
                         serializer_class = create_studentdatabase(serializer_class)
-                        setup_student_db(databases, serializer_class, schemas)
+                        setup_student_db(databases, serializer_class)
                         serializer_class.save()
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                     else:
@@ -225,8 +225,7 @@ def post_base_response(request, db_parameters):
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     elif db_parameters["dbname"] == "studentdatabases":
-                        logging.debug(type(e))
-                        logging.debug(type(e).__name__)
+                        raise e
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
                         return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)

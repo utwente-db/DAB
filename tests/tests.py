@@ -69,7 +69,7 @@ class TestLogin(unittest.TestCase):
 
 test_db = {
     "course": 12,
-    "schema": 12
+    # "schema": 12
 }
 
 
@@ -179,6 +179,7 @@ test_course = {
     "coursename": base64.b64encode(urandom(18)).decode(),
     "info": "unit_test",
     "fid": 72,
+    "schema": "CREATE TABLE test (id SERIAL PRIMARY KEY, name TEXT);"
 }
 ta_id = 0
 
@@ -248,7 +249,22 @@ class testCourse(unittest.TestCase):
                 test_db2["dbid"] = db["dbid"]
         self.assertTrue(test_db2["dbid"] != 0)
 
-    def test3DeleteCourse(self):
+    def test3Schema(self):
+    	global test_db2
+
+    	conn = psycopg2.connect(
+    		user=test_db2["username"],
+    		password=test_db2["password"],
+    		host=db_server,
+    		port=db_port,
+    		database=test_db2["databasename"]
+    	)
+    	with conn.cursor() as cur:
+    		#this throws an error if the schema was not created correctly
+    		cur.execute("INSERT INTO test(name) VALUES('aoeu')");
+
+
+    def test4DeleteCourse(self):
         global test_course, test_db2
         r = teacher.delete(BASE + "/rest/courses/" + str(test_course["courseid"]))
         self.assertEqual(r.status_code, 202)

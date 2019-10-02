@@ -67,16 +67,15 @@ POST 	-> add user
 		{
 		"fid":"5", [FOREIGN KEY, MUST EXIST. Optional, if not specified, your current user id]
 		"course":"3", [FOREIGN KEY, MUST EXIST]
-		"schema":"1"[FOREIGN KEY, MUST EXIST]
 		}
 
 Note: on success you will get the following object back:
 
 	body:
 		{
+		"dbid":<GENERATED VALUE, used as primary key>
 		"fid":<your value>
 		"course":<your value>
-		"schema":<your value>
 		"databasename":<GENERATED VALUE>
 		"username":<GENERATED VALUE (same as databasename)
 		"password":<GENERATED VALUE (long)>
@@ -110,6 +109,7 @@ body:
 	"students":"2", [FREE TO CHOOSE]
 	"info":"test200", [FREE TO CHOOSE]
 	"fid":"7" [FOREIGN KEY, MUST EXIST]
+	"schema": <sql> [OPTIONAL, DEFAULT=""]
 	}
 
 ### /courses/pk

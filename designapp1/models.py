@@ -34,6 +34,7 @@ class Courses(models.Model):
         through_fields=('courseid', 'studentid'),
         related_name='assisting'
     )
+    schema = models.TextField(null=False, blank=True, default="", db_column="schema")
 
     def __str__(self):
         return self.coursename
@@ -48,21 +49,6 @@ class Courses(models.Model):
         unique_together = ('fid', 'coursename')
 
 
-class schemas(models.Model):
-    id = models.AutoField(db_column='id', primary_key=True)
-    name = models.CharField(max_length=256, db_column='name')
-    course = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='course')
-    sql = models.TextField(db_column='sql')
-
-    def owner(self):
-        return self.course.owner()
-
-    class Meta:
-        managed = False
-        db_table = 'schemas'
-        verbose_name_plural = 'Schemas'
-
-
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.PROTECT, db_column='fid')
@@ -70,7 +56,7 @@ class Studentdatabases(models.Model):
     course = models.ForeignKey(Courses, on_delete=models.PROTECT, db_column='course')
     username = models.CharField(max_length=265)
     password = models.CharField(max_length=265)
-    schema = models.ForeignKey(schemas, on_delete=models.PROTECT, db_column='schema', null=True)
+    # schema = models.ForeignKey(schemas, on_delete=models.PROTECT, db_column='schema', null=True)
 
     def owner(self):
         return self.fid

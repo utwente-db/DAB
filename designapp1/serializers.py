@@ -6,7 +6,7 @@ from .models import *
 class CoursesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Courses
-        fields = ('courseid', 'fid', 'coursename', 'info')
+        fields = ('courseid', 'fid', 'coursename', 'info', 'schema')
 
 
 class StudentdatabasesDeleteSerializer(serializers.ModelSerializer):
@@ -32,8 +32,3 @@ class TasSerializer(serializers.ModelSerializer):
         model = TAs
         fields = '__all__'
 
-
-class schemasserializer(serializers.ModelSerializer):
-    class Meta:
-        model = schemas
-        fields = '__all__'

@@ -3,6 +3,7 @@ import logging
 import psycopg2 as db
 from django.db import connection
 from psycopg2.extensions import AsIs
+from . import models
 
 from . import schemas as schemaWriter
 
@@ -51,10 +52,8 @@ def create_studentdatabase(serializer_class):
     db_name = serializer_class.validated_data['databasename']
     username = serializer_class.validated_data['username']
     password = serializer_class.validated_data['password']
-    course_id = serializer_class.validated_data['course']
-    schema = serializer_class.validated_data['schema']
+    course = serializer_class.validated_data['course']
 
-    logging.debug(schema)
 
     with connection.cursor() as cursor:
         cursor.execute("CREATE USER \"%s\" WITH UNENCRYPTED PASSWORD '%s';", [AsIs(username), AsIs(password)])
@@ -72,7 +71,6 @@ def create_studentdatabase(serializer_class):
     return serializer_class
 
 
-def setup_student_db(databases, serializer_class, schemas):
-    used_schema = serializer_class.initial_data.get("schema")
-    single_schema = schemas.objects.get(pk=int(used_schema))
-    schemaWriter.write(databases, single_schema.sql)
+def setup_student_db(databases, serializer_class):
+    course = serializer_class.validated_data["course"]
+    schemaWriter.write(databases, course.schema)
