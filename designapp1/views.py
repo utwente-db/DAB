@@ -107,7 +107,7 @@ def get_single_response(request, pk, db_parameters):
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
     else:
         am_i_the_owner = do_i_own_this_item(current_id, pk, db_parameters)
-        if am_i_the_owner or check_role(request, teacher) or db_parameters["dbname"] == "schemas" or db_parameters[
+        if am_i_the_owner or check_role(request, teacher) or db_parameters[
             "dbname"] == "courses":
             return JsonResponse(serializer_class.data, safe=False)
         else:
@@ -173,6 +173,9 @@ def post_base_dbmusers_response(request, databases, db_parameters):
 
 
 def post_base_response(request, db_parameters):
+    if db_parameters["dbname"] == "courses":
+        db_parameters["serializer"] = CoursesCreateSerializer
+
     if check_role(request, teacher) or db_parameters["dbname"] == "dbmusers" or (
             db_parameters["dbname"] == "studentdatabases" and check_role(request, student)):
 
@@ -301,8 +304,6 @@ def search_on_name(request, search_value, dbname):
             #     TODO: requirs foreign key
             #     elif db_parameters["dbname"] == "tas":
             #      results = db_parameters["db"].objects.filter(databasename__icontains=search_value)
-            elif db_parameters["dbname"] == "schemas":
-                results = db_parameters["db"].objects.filter(name__icontains=search_value)
 
             # serialize data
             serializer = db_parameters["serializer"](results, many=True)
@@ -376,8 +377,10 @@ def dump(request, pk):
     if not check_role(request, teacher) and request.session["user"] != db.owner().id:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-    response = schemaWriter.dump(db.__dict__)
-    return HttpResponse(response, content_type="application/sql")
+    schema = schemaWriter.dump(db.__dict__)
+    response =  HttpResponse(schema, content_type="application/sql")
+    response['Content-Disposition'] = "inline; filename=%s" % (db.databasename+".sql")
+    return response
 
 @csrf_exempt
 @require_POST
@@ -399,6 +402,34 @@ def reset(request, pk):
     except Exception as e:
         raise e
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+#TODO: investigate file uploads for this, together with front-end team
+def schema(request, pk):
+    if not check_role(request, student):
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+    try: 
+        course = Courses.objects.get(courseid=pk)
+        if request.method == "GET":
+            response =  HttpResponse(course.schema, content_type="application/sql")
+            response['Content-Disposition'] = "inline; filename=%s" % (course.coursename+".sql")
+            return response
+        else:
+            if course.owner().id == request.session["user"] or check_role(request, admin):
+                schema = request.body.decode("utf-8")
+                check = schemaWriter.check(schema)
+                if not check[0]:
+                    return HttpResponse(check[1], status=status.HTTP_406_NOT_ACCEPTABLE)
+                course.schema = schema
+                course.save()
+                return HttpResponse(status=status.HTTP_202_ACCEPTED)
+            else:
+                return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+    except Courses.DoesNotExist:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
 
 
 

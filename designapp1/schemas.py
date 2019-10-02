@@ -12,6 +12,7 @@ Returns a tuple of whether it passed or not, and the reason why as a string"""
 
 
 def check(schema):
+    #TODO: check if the schema actually parses
     schema = schema.lower()  # remove case sensitivity
     # Schema should not set ownership
     if "owner to" in schema:
