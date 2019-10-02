@@ -92,7 +92,7 @@ def do_i_own_this_item(current_id,pk,db_parameters):
                 db_id = pk
             elif  db_parameters["dbname"]=="tas":
                 database = TAs.objects.get(taid=pk)
-                db_id = database.studentid.id
+                db_id = database.courseid.fid.id
             elif  db_parameters["dbname"]=="studentdatabases":
                 database = Studentdatabases.objects.get(dbid=pk)
                 db_id = database.fid.id
@@ -326,7 +326,6 @@ def get_db_parameters(dbname):
             db_parameters["serializer"] = CoursesSerializer
             db_parameters["db"] = Courses
         elif dbname=="dbmusers":
-            logging.debug("yup hier wel")
             db_parameters["serializer"] = dbmusersSerializer
             db_parameters["db"] =dbmusers
         elif dbname=="tas":
