@@ -6,7 +6,7 @@
 
 {% block scripts %}
     <link rel="stylesheet" href="/static/css/main.css">
-    <script defer src="/static/scripts/admin.js"></script>
+    <script defer src="/static/scripts/admin.js"/>
 {% endblock %}
 
 {% block content %}
@@ -33,83 +33,15 @@
         <div class="row mt-4">
             <div class="col-4">
                 <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
-                    <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#pearls">Pearls of
-                        Computer Science</a>
-                    <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#di">Data & Information</a>
-                    <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#ds">Data Science</a>
-                    <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#test">Test</a>
+                    <!-- <a class="nav-link active" data-toggle="pill" href="#pearls">Pearls of Computer Science</a>
+                    <a class="nav-link" data-toggle="pill" href="#di">Data & Information</a>
+                    <a class="nav-link" data-toggle="pill" href="#ds">Data Science</a>
+                    <a class="nav-link" data-toggle="pill" href="#test">Test</a> -->
                 </div>
             </div>
             <div class="col-8">
-                <div class="tab-content overflow-auto" style="height: 400px;" id="courses-content">
-                    <div class="tab-pane show active" id="pearls">
-                        <table class="table table-hover">
-                            <thead class="thead dark">
-                            <tr>
-                                <th class="th-sm" scope="col">#</th>
-                                <th class="th-sm" scope="col">Course</th>
-                                <th class="th-sm" scope="col">Name</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for student in students %}
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Pearls of Computer Science</td>
-                                    <td>{{ student }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="tab-pane" id="di">
-                        <table class="table table-hover">
-                            <thead class="thead dark">
-                            <tr>
-                                <th class="th-sm" scope="col">#</th>
-                                <th class="th-sm" scope="col">Course</th>
-                                <th class="th-sm" scope="col">Name</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for student in students %}
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Data & Information</td>
-                                    <td>{{ student }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="tab-pane" id="ds">
-                        <table class="table table-hover">
-                            <thead class="thead dark">
-                            <tr>
-                                <th class="th-sm" scope="col">#</th>
-                                <th class="th-sm" scope="col">Course</th>
-                                <th class="th-sm" scope="col">Name</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for student in students %}
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Data Science</td>
-                                    <td>{{ student }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="tab-pane" id="test">
-                        <div class="form-group">
-                            <label for="courses-dropdown">Select a course</label>
-                            <select class="form-control" id="courses-dropdown">
-                                <option disabled selected value="0"> select an option</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="tab-content" id="courses-content">
+
                 </div>
             </div>
         </div>
@@ -135,16 +67,19 @@
                         <thead class="thead dark">
                         <tr>
                             <th class="th-sm" scope="col">#</th>
-                            <th class="th-sm" scope="col">Name</th>
+                            <th class="th-sm" scope="col">Role</th>
+                            <th class="th-sm" scope="col">E-Mail</th>
+                            <th class="th-sm" scope="col">Verified</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% for student in students %}
+                        <div id="users"/>
+                        <!-- {% for student in students %}
                             <tr>
-                                <th scope="row">1</th>
+                                <td scope="row">1</td>
                                 <td>{{ student }}</td>
                             </tr>
-                        {% endfor %}
+                        {% endfor %} -->
                         </tbody>
                     </table>
                 </div>
