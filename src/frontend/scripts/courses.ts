@@ -16,6 +16,18 @@ interface Course {
     info: string
 }
 
+interface Database {
+
+
+    "fid": number,
+    "course": number,
+    "schema": number,
+    "databasename": string,
+    "username": string,
+    "password": string
+
+}
+
 async function getCoursesPromise(): Promise<Course[]> { // TODO Check type here
     const response: AxiosResponse = await axios.get("/rest/courses/");
     return response.data;
@@ -33,14 +45,23 @@ async function displayCourses(): Promise<void> {
     coursesDropdown.innerHTML += resultString;
 }
 
-function getCredentials() {
+async function getCredentials() {
     const courseID: number = Number(coursesDropdown.value);
     if (courseID !== 0) {
         const data = {
-            "courseid": courseID
+            "course": courseID,
+            "schema": 12 // TODO you should not need to pass schemas
         };
-        axios.post("/rest/", data)
-
+        try {
+            const response: AxiosResponse = await axios.post("/rest/studentdatabases/", data);
+            console.log(response)
+            // TODO if !reponse error..?
+            const database: Database = await response.data;
+            console.log(database)
+        } catch (error) {
+            console.error(error)
+        }
+        console.log("got to the end")
     }
     //         .then(response => {
     //             let data = response.data;
@@ -63,7 +84,7 @@ function getCredentials() {
 window.onload = async () => {
     await displayCourses();
     $('select').selectpicker(); // Style all selects
-    // credentialsButton.addEventListener("click", getCredentials);
+    credentialsButton.addEventListener("click", getCredentials);
 };
 
 // TODO: make group gray

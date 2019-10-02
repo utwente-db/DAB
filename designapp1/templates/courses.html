@@ -14,8 +14,8 @@
         <div class="row">
             <div class="col-lg-10 offset-lg-1  border border-dark rounded-lg shadow-lg bg-white">
                 <!-- Login Form -->
-                <form class="text-center p-5" action="login" method="POST">
-                    {% csrf_token %}
+                <div class="text-center p-5">
+{#                    {% csrf_token %}#}
                     <p class="h4 mb-4">Select a course</p>
                     <!-- Username -->
                     <!-- <input type="username" id="loginId" class="form-control mb-4" placeholder="Database id" required autofocus> -->
@@ -42,9 +42,9 @@
                     </div>
 
 
-                    <button class="btn btn-info my-4" id="credentials-button" type="submit">Get credentials</button>
+                    <button class="btn btn-info my-4" id="credentials-button">Get credentials</button>
 
-                </form>
+                </div>
             </div>
         </div>
     </div>
