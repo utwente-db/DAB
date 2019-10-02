@@ -23010,7 +23010,6 @@ function getCredentials() {
                     if (!(courseID !== 0)) return [3 /*break*/, 6];
                     data = {
                         "course": courseID,
-                        "schema": 12 // TODO you should not need to pass schemas
                     };
                     _a.label = 1;
                 case 1:

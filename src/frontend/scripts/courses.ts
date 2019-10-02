@@ -50,7 +50,6 @@ async function getCredentials() {
     if (courseID !== 0) {
         const data = {
             "course": courseID,
-            "schema": 12 // TODO you should not need to pass schemas
         };
         try {
             const response: AxiosResponse = await axios.post("/rest/studentdatabases/", data);
