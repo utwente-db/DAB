@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <title>Home - DB Practicum Manager</title>
+    <title>Admin Home</title>
 {% endblock %}
 
 {% block scripts %}
     <link rel="stylesheet" href="/static/css/main.css">
-    <script defer src="/static/scripts/admin.js"/>
+    <script defer src="/static/scripts/admin.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -33,6 +33,7 @@
         <div class="row mt-4">
             <div class="col-4">
                 <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
+                    <div></div>
                     <!-- <a class="nav-link active" data-toggle="pill" href="#pearls">Pearls of Computer Science</a>
                     <a class="nav-link" data-toggle="pill" href="#di">Data & Information</a>
                     <a class="nav-link" data-toggle="pill" href="#ds">Data Science</a>
@@ -41,7 +42,7 @@
             </div>
             <div class="col-8">
                 <div class="tab-content" id="courses-content">
-
+                    <div></div>
                 </div>
             </div>
         </div>
@@ -73,7 +74,9 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <div id="users"/>
+                            <div id="users">
+                                <div></div>
+                            </div>
                         <!-- {% for student in students %}
                             <tr>
                                 <td scope="row">1</td>

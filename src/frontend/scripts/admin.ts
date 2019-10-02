@@ -1,9 +1,11 @@
 import axios, {AxiosResponse} from 'axios';
 
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
-// import * as $ from "jquery";
-// import "popper.js"
-// import "bootstrap"
+import * as $ from "jquery";
+import "popper.js"
+import "bootstrap"
+import "bootstrap-select"
+import "../sass/desktop.sass"
 
 const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
 

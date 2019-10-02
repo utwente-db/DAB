@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/courses.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/admin.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -22913,10 +22913,10 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./src/frontend/scripts/courses.ts":
-/*!*****************************************!*\
-  !*** ./src/frontend/scripts/courses.ts ***!
-  \*****************************************/
+/***/ "./src/frontend/scripts/admin.ts":
+/*!***************************************!*\
+  !*** ./src/frontend/scripts/admin.ts ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22960,20 +22960,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
-var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
 __webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");
-var credentialsButton = document.getElementById("credentials-button");
-var coursesDropdown = document.getElementById("courses-dropdown"); // TODO actually make dropdown and fill
-function getCoursesPromise() {
+var coursesDropdown = document.getElementById("courses-dropdown");
+function getUsersPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, axios_1.default.get("/rest/courses/")];
+                case 0: return [4 /*yield*/, axios_1.default.get("/rest/dbmusers/")];
                 case 1:
                     response = _a.sent();
                     return [2 /*return*/, response.data];
@@ -22981,17 +22978,17 @@ function getCoursesPromise() {
         });
     });
 }
-function displayCourses() {
+function displayUsers() {
     return __awaiter(this, void 0, void 0, function () {
-        var courses, result, i, resultString;
+        var users, result, i, resultString;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, getCoursesPromise()];
+                case 0: return [4 /*yield*/, getUsersPromise()];
                 case 1:
-                    courses = _a.sent();
+                    users = _a.sent();
                     result = [];
-                    for (i = 0; i < courses.length; i++) {
-                        result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>");
+                    for (i = 0; i < users.length; i++) {
+                        result.push("<option value='" + users[i].id + "'>" + users[i].email + "</option>");
                     }
                     resultString = result.join("\n");
                     coursesDropdown.innerHTML += resultString;
@@ -23000,59 +22997,19 @@ function displayCourses() {
         });
     });
 }
-function getCredentials() {
-    return __awaiter(this, void 0, void 0, function () {
-        var courseID, data, response, database, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    courseID = Number(coursesDropdown.value);
-                    if (!(courseID !== 0)) return [3 /*break*/, 6];
-                    data = {
-                        "course": courseID,
-                        "schema": 12 // TODO you should not need to pass schemas
-                    };
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 4, , 5]);
-                    return [4 /*yield*/, axios_1.default.post("/rest/studentdatabases/", data)];
-                case 2:
-                    response = _a.sent();
-                    console.log(response);
-                    return [4 /*yield*/, response.data];
-                case 3:
-                    database = _a.sent();
-                    console.log(database);
-                    return [3 /*break*/, 5];
-                case 4:
-                    error_1 = _a.sent();
-                    console.error(error_1);
-                    return [3 /*break*/, 5];
-                case 5:
-                    console.log("got to the end");
-                    _a.label = 6;
-                case 6: return [2 /*return*/];
-            }
-        });
-    });
-}
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, displayCourses()];
+            case 0: return [4 /*yield*/, displayUsers()];
             case 1:
                 _a.sent();
-                $('select').selectpicker(); // Style all selects
-                credentialsButton.addEventListener("click", getCredentials);
                 return [2 /*return*/];
         }
     });
 }); };
-// TODO: make group gray
-// TODO on course select: make group no longer gray
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=courses.js.map
+//# sourceMappingURL=admin.js.map
