@@ -68,16 +68,66 @@ class TestLogin(unittest.TestCase):
 
 
 test_db = {
-    "course": 12,
-    # "schema": 12
 }
+test_course = {
+    "coursename": base64.b64encode(urandom(18)).decode(),
+    "info": "unit_test",
+    "fid": 72,
+    "schema": "CREATE TABLE test (id SERIAL PRIMARY KEY, name TEXT);"
+}
+ta_id = 0
 
 
-class testCreateDB(unittest.TestCase):
-
+class testCourse(unittest.TestCase):
     # Warning: tests need to be ran in order!
     # Currently relies on alphabetic sorting
-    def test0Create(self):
+
+    def test0CreateCourse(self):
+        global test_course, test_db
+        r = teacher.post(BASE + "/rest/courses/", json=test_course)
+        self.assertEqual(r.status_code, 201)
+
+        # check if it exists
+        r = teacher.get(BASE + "/rest/courses/")
+        self.assertEqual(r.status_code, 200)
+        body = r.json()
+        for course in body:
+            if course["coursename"] == test_course["coursename"]:
+                test_course["courseid"] = course["courseid"]
+        self.assertTrue(test_course["courseid"] != 0)
+        test_db["course"] = test_course["courseid"]
+
+    def test1AddTA(self):
+        global test_course, ta_id
+        body = {
+            "courseid": test_course["courseid"],
+            "studentid": ta_id
+        }
+
+        r = teacher.post(BASE + "/rest/tas/", json=body)
+        self.assertEqual(r.status_code, 201)
+
+        r = teacher.get(BASE + "/rest/tas/")
+        body = r.json()
+        relation_id = 0
+        for entry in body:
+            if entry["studentid"] == ta_id and entry["courseid"] == test_course["courseid"]:
+                relation_id = entry["taid"]
+        self.assertNotEqual(0, relation_id)
+
+        # TODO: make the TA do something
+
+        r = teacher.delete(BASE + "/rest/tas/" + str(relation_id))
+        self.assertEqual(r.status_code, 202)
+
+        r = teacher.get(BASE + "/rest/tas/")
+        self.assertEqual(r.status_code, 200)
+        body = r.json()
+        for entry in body:
+            if entry["studentid"] == ta_id and entry["courseid"] == test_course["courseid"]:
+                self.assertTrue(False)
+
+    def test2CreateDatabase(self):
         global test_db
         # create the database
         r = student.post(BASE + "/rest/studentdatabases/", json=test_db)
@@ -89,7 +139,7 @@ class testCreateDB(unittest.TestCase):
         test_db["password"] = body["password"]
 
         # check if it exists
-        r = student.get(BASE + "/rest/studentdatabases/")
+        r = student.get(BASE + "/rest/studentdatabases/own/")
         self.assertEqual(r.status_code, 200)
         found = False
         body = r.json()
@@ -99,7 +149,7 @@ class testCreateDB(unittest.TestCase):
         self.assertTrue(found)
 
     # let's test if the credentials work!
-    def test1Connect(self):
+    def test3ConnectToDatabase(self):
         conn = psycopg2.connect(
             user=test_db["username"],
             password=test_db["password"],
@@ -113,14 +163,14 @@ class testCreateDB(unittest.TestCase):
             cur.execute("CREATE SCHEMA public")
             cur.execute("DROP SCHEMA public")
             # check that we have rights to do stuff
-            cur.execute("CREATE TABLE test(id INT PRIMARY KEY, val TEXT)")
-            cur.execute("INSERT INTO test(id, val) VALUES(0, 'aoeu')")
-            cur.execute("SELECT * FROM test;")
-            cur.execute("DELETE FROM test WHERE id=0")
-            cur.execute("DROP TABLE test")
+            cur.execute("CREATE TABLE test_2(id INT PRIMARY KEY, val TEXT)")
+            cur.execute("INSERT INTO test_2(id, val) VALUES(0, 'aoeu')")
+            cur.execute("SELECT * FROM test_2;")
+            cur.execute("DELETE FROM test_2 WHERE id=0")
+            cur.execute("DROP TABLE test_2")
         conn.close()
 
-    def test2Dump(self):
+    def test4DumpDatabase(self):
         global test_db
         conn = psycopg2.connect(
             user=test_db["username"],
@@ -130,14 +180,51 @@ class testCreateDB(unittest.TestCase):
             database=test_db["databasename"]
         )
         with conn.cursor() as cur:
-            cur.execute("CREATE TABLE test(id SERIAL PRIMARY KEY, val TEXT);")
+            cur.execute("CREATE TABLE dump(id SERIAL PRIMARY KEY, val TEXT);")
             conn.commit()
 
             r = student.get(BASE + "/rest/dump/" + str(test_db["dbid"]))
             self.assertEqual(r.status_code, 200)
-            self.assertTrue(re.search(r'.*CREATE TABLE .*\.test.*', r.text))
+            self.assertTrue(re.search(r'.*CREATE TABLE .*\.dump.*', r.text))
 
-    def test3Delete(self):
+    def test5ResetDatabase(self):
+        global test_db
+
+        conn = psycopg2.connect(
+            user=test_db["username"],
+            password=test_db["password"],
+            host=db_server,
+            port=db_port,
+            database=test_db["databasename"]
+        )
+        with conn.cursor() as cur:
+            #delete a table from the original schema
+            #bonus points: throws error if the schema was not correctly instantiated
+            cur.execute("DROP TABLE test;")
+        conn.close()
+
+        r = student.post(BASE+"/rest/reset/"+str(test_db["dbid"]))
+        self.assertEqual(r.status_code, 202)
+
+        conn = psycopg2.connect(
+            user=test_db["username"],
+            password=test_db["password"],
+            host=db_server,
+            port=db_port,
+            database=test_db["databasename"]
+        )
+        with conn.cursor() as cur:
+            #this is from the schema, and should exist
+            cur.execute("INSERT INTO test(name) VALUES('test');")
+            try:
+                #this is not from the schema, and should not exist
+                cur.execute("INSERT INTO dump(val) VALUES('test');")
+                self.assertTrue(False)
+            except psycopg2.ProgrammingError:
+                pass
+        conn.close()
+
+    def test6DeleteDatabase(self):
         r = student.get(BASE + "/rest/studentdatabases/")
         self.assertEqual(r.status_code, 200)
         body = r.json()
@@ -172,100 +259,8 @@ class testCreateDB(unittest.TestCase):
         except psycopg2.OperationalError as e:
             pass
 
-
-test_db2 = test_db.copy()
-
-test_course = {
-    "coursename": base64.b64encode(urandom(18)).decode(),
-    "info": "unit_test",
-    "fid": 72,
-    "schema": "CREATE TABLE test (id SERIAL PRIMARY KEY, name TEXT);"
-}
-ta_id = 0
-
-
-class testCourse(unittest.TestCase):
-
-    def test0CreateCourse(self):
-        global test_course
-        r = teacher.post(BASE + "/rest/courses/", json=test_course)
-        self.assertEqual(r.status_code, 201)
-
-        # check if it exists
-        r = teacher.get(BASE + "/rest/courses/")
-        self.assertEqual(r.status_code, 200)
-        body = r.json()
-        for course in body:
-            if course["coursename"] == test_course["coursename"]:
-                test_course["courseid"] = course["courseid"]
-        self.assertTrue(test_course["courseid"] != 0)
-
-    def test1AddTA(self):
-        global test_course, ta_id
-        body = {
-            "courseid": test_course["courseid"],
-            "studentid": ta_id
-        }
-
-        r = teacher.post(BASE + "/rest/tas/", json=body)
-        self.assertEqual(r.status_code, 201)
-
-        r = teacher.get(BASE + "/rest/tas/")
-        body = r.json()
-        relation_id = 0
-        for entry in body:
-            if entry["studentid"] == ta_id and entry["courseid"] == test_course["courseid"]:
-                relation_id = entry["taid"]
-        self.assertNotEqual(0, relation_id)
-
-        # TODO: make the TA do something
-
-        r = teacher.delete(BASE + "/rest/tas/" + str(relation_id))
-        self.assertEqual(r.status_code, 202)
-
-        r = teacher.get(BASE + "/rest/tas/")
-        self.assertEqual(r.status_code, 200)
-        body = r.json()
-        for entry in body:
-            if entry["studentid"] == ta_id and entry["courseid"] == test_course["courseid"]:
-                self.assertTrue(False)
-
-    def test2AddDatabase(self):
-        global test_course, test_db2
-        test_db2["course"] = test_course["courseid"]
-
-        r = student.post(BASE + "/rest/studentdatabases/", json=test_db2)
-        self.assertEqual(r.status_code, 201)
-        body = r.json()
-        test_db2["databasename"] = body["databasename"]
-        test_db2["username"] = body["username"]
-        test_db2["password"] = body["password"]
-        test_db2["dbid"] = body["dbid"]
-
-        r = teacher.get(BASE + "/rest/studentdatabases/")
-        body = r.json()
-        for db in body:
-            if db["databasename"] == test_db2["databasename"]:
-                test_db2["dbid"] = db["dbid"]
-        self.assertTrue(test_db2["dbid"] != 0)
-
-    def test3Schema(self):
-    	global test_db2
-
-    	conn = psycopg2.connect(
-    		user=test_db2["username"],
-    		password=test_db2["password"],
-    		host=db_server,
-    		port=db_port,
-    		database=test_db2["databasename"]
-    	)
-    	with conn.cursor() as cur:
-    		#this throws an error if the schema was not created correctly
-    		cur.execute("INSERT INTO test(name) VALUES('aoeu')");
-
-
-    def test4DeleteCourse(self):
-        global test_course, test_db2
+    def test7DeleteCourse(self):
+        global test_course, test_db
         r = teacher.delete(BASE + "/rest/courses/" + str(test_course["courseid"]))
         self.assertEqual(r.status_code, 202)
 
@@ -277,11 +272,11 @@ class testCourse(unittest.TestCase):
         # let's check if that deleted the database we made just now
         try:
             conn = psycopg2.connect(
-                user=test_db2["username"],
-                password=test_db2["password"],
+                user=test_db["username"],
+                password=test_db["password"],
                 host=db_server,
                 port=db_port,
-                database=test_db2["databasename"]
+                database=test_db["databasename"]
             )
             # if we reach this point, the test failed
             self.assertTrue(False)

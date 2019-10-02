@@ -27,6 +27,27 @@ def connect(db_name):
 
     return conn
 
+def reset_studentdatabase(db):
+    with connection.cursor() as cursor:
+        connection.autocommit = False
+        cursor.execute("DROP DATABASE \"%s\";", [AsIs(db.databasename)])
+        cursor.execute("CREATE DATABASE \"%s\" WITH OWNER \"%s\";", [AsIs(db.databasename), AsIs(db.username)])
+        cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \"%s\" TO \"%s\";", [AsIs(db.databasename), AsIs(db.username)])
+        cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \"%s\" FROM public;", [AsIs(db.databasename)])
+        connection.commit()
+        conn = connect(db.databasename)
+        conn.autocommit = False
+
+        with conn.cursor() as cur:
+            cur.execute("DROP SCHEMA public CASCADE;")
+            cur.execute("CREATE SCHEMA \"%s\";", [AsIs(db.username)])
+            cur.execute("ALTER SCHEMA \"%s\" OWNER TO \"%s\";", [AsIs(db.username), AsIs(db.username)])
+        conn.commit()
+        connection.autocommit = True
+
+        schema = db.course.schema
+        schemaWriter.write(db.__dict__, schema)
+
 
 def delete_studentdatabase(db_name):
     with connection.cursor() as cursor:

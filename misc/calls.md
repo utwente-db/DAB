@@ -56,6 +56,13 @@ Permissions:
 Teachers and above: allowed for any.
 Students: allowed their own.
 
+## /reset/<pk>
+
+Resets the table to the original schema from the course.
+
+Only accepts post
+Permissions same as DELETE for database
+
 ## TABLE: studentdatabases
 
 ### /studentdatabases/
@@ -204,3 +211,5 @@ Each user level has the following permissions
 | Not logged in |               | POST          |              |                  |
 
 \*own here refers to ta's added to courses owned by the teacher
+
+NB: dump has the same permissions as GET for that database, and /reset the same as DELETE

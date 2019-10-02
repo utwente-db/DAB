@@ -38,6 +38,7 @@ urlpatterns = [
 
     # dump
     url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),
+    url(r'^reset/(?P<pk>[0-9]+)/?', views.reset),
 
     # Login
 

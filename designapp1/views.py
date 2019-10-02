@@ -91,9 +91,7 @@ def do_i_own_this_item(current_id, pk, db_parameters):
     except Exception as e:
         return False
     else:
-        logging.debug(db_id)
-        logging.debug(current_id)
-        if str(db_id) == str(current_id):
+        if db_id == current_id:
             return True
         else:
             return False
@@ -368,18 +366,40 @@ def baseview(request, dbname):
 @require_GET
 def dump(request, pk):
     if not check_role(request, student):
-        return unauthorised
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
     try:
         db = Studentdatabases.objects.get(dbid=pk)
     except Studentdatabases.DoesNotExist as e:
-        return not_found
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     if not check_role(request, teacher) and request.session["user"] != db.owner().id:
-        return unauthorised
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
     response = schemaWriter.dump(db.__dict__)
     return HttpResponse(response, content_type="application/sql")
+
+@csrf_exempt
+@require_POST
+def reset(request, pk):
+    if not check_role(request, student):
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        db = Studentdatabases.objects.get(dbid=pk)
+    except Studentdatabases.DoesNotExist as e:
+        return HttpResponse(status=HTTP_404_NOT_FOUND)
+
+    if not check_role(request, teacher) and request.session["user"] != db.owner().id:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+    #we are now authorised
+    try:
+        reset_studentdatabase(db)
+    except Exception as e:
+        raise e
+    return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
 
 
 # -----------------------------------------LOGIN-------------------------------------------------
