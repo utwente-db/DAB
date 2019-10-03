@@ -22954,6 +22954,21 @@ __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dis
 var usersHtml = document.getElementById("users");
 var coursesNavHtml = document.getElementById("courses-nav");
 var coursesContentHtml = document.getElementById("courses-content");
+var whoamiWelcomeHtml = document.getElementById("whoamiWelcome");
+var whoamiButtonHtml = document.getElementById("whoamiButton");
+function getWhoamiPromise() {
+    return __awaiter(this, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, axios_1.default.get("/rest/whoami/")];
+                case 1:
+                    response = _a.sent();
+                    return [2 /*return*/, response.data];
+            }
+        });
+    });
+}
 function getCoursesPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -22980,6 +22995,21 @@ function getUsersPromise() {
         });
     });
 }
+function displayWhoami() {
+    return __awaiter(this, void 0, void 0, function () {
+        var whoami;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getWhoamiPromise()];
+                case 1:
+                    whoami = _a.sent();
+                    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email;
+                    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary my-2 my-sm-0\" href=\"#settings" + whoami.id + "\">Settings</button>";
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
         var courses, resultNav, resultContent, i, active, resultNavString, resultContentString;
@@ -22996,11 +23026,11 @@ function displayCourses() {
                             active = " active";
                         }
                         resultNav.push("<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + i + "\">" + courses[i].coursename + "</a>");
-                        resultContent.push("<div class=\"tab-pane\" id=\"course" + i + "\">"
-                            + "<ul><li>" + courses[i].courseid + "</li>"
-                            + "<li>" + courses[i].fid + "</li>"
-                            + "<li>" + courses[i].coursename + "</li>"
-                            + "<li>" + courses[i].info + "</li></ul></div>");
+                        resultContent.push("<div class=\"tab-pane" + active + "\" id=\"course" + i + "\">"
+                            + "<ul><li>ID: " + courses[i].courseid + "</li>"
+                            + "<li>FID: " + courses[i].fid + "</li>"
+                            + "<li>Coursename: " + courses[i].coursename + "</li>"
+                            + "<li>Info: " + courses[i].info + "</li></ul></div>");
                     }
                     resultNavString = resultNav.join("\n");
                     resultContentString = resultContent.join("\n");
@@ -23036,9 +23066,9 @@ function displayUsers() {
                         }
                         verified = users[i].verified;
                         result.push("<tr><th scope=\"row\">" + users[i].id + "</th>"
-                            + "<td>" + role + "</td>"
-                            + "<td>" + users[i].email + "</td>"
-                            + "<td>" + verified + "</td></tr>");
+                            + "<td><a style=\"height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
+                            + "<td><a style=\"height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
+                            + "<td><a style=\"height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>");
                     }
                     resultString = result.join("\n");
                     usersHtml.innerHTML += resultString;
@@ -23050,11 +23080,14 @@ function displayUsers() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, displayUsers()];
+            case 0: return [4 /*yield*/, displayWhoami()];
             case 1:
                 _a.sent();
-                return [4 /*yield*/, displayCourses()];
+                return [4 /*yield*/, displayUsers()];
             case 2:
+                _a.sent();
+                return [4 /*yield*/, displayCourses()];
+            case 3:
                 _a.sent();
                 return [2 /*return*/];
         }

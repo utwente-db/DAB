@@ -6,6 +6,7 @@
 
 {% block scripts %}
     <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
     <script defer src="/static/scripts/admin.js"></script>
 {% endblock %}
 
@@ -14,8 +15,12 @@
         <div class="container">
             <a class="navbar-brand" href="#">DBM</a>
             <ul class="navbar-nav mr-auto text-white">
-                <li>Welcome { user }</li>
+                <div id="whoamiWelcome">
+                </div>
             </ul>
+            <div class="my-2 my-lg-0" id="whoamiButton">
+
+            </div>
             <div class="my-2 my-lg-0">
                 <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Log out</button>
             </div>
@@ -31,38 +36,62 @@
             </div>
         </div>
         <div class="row mt-4">
-            <div class="col-4">
-                <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
-                    <!-- <a class="nav-link active" data-toggle="pill" href="#pearls">Pearls of Computer Science</a>
-                    <a class="nav-link" data-toggle="pill" href="#di">Data & Information</a>
-                    <a class="nav-link" data-toggle="pill" href="#ds">Data Science</a>
-                    <a class="nav-link" data-toggle="pill" href="#test">Test</a> -->
+            <div class="col-5">
+                <div class="overflow-auto" style="height: 300px;">
+                    <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
                 </div>
             </div>
-            <div class="col-8">
-                <div class="tab-content" id="courses-content">
-                </div>
+            <div class="col-7">
+                <div class="tab-content" id="courses-content"></div>
             </div>
         </div>
+        <hr/>
         <div class="row mt-4">
             <div class="col-4">
                 <div class="text-center">
                     <h1>Filters</h1>
                 </div>
-                <ul>
-                    <li>Role (0, 1, 2)</li>
-                    <li>Seach for name</li>
-                    <li>Course</li>
-                    <li>Year/date/time</li>
-                    <li>etc...</li>
-                    <li>etc...</li>
-                    <li>etc...</li>
-                </ul>
+                <!-- Search -->
+                <input class="form-control" type="text" placeholder="Search E-Mail">
+                <!-- Checkboxes -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="adminCheck">
+                    <label class="form-check-label" for="adminCheck">Admins</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="TACheck">
+                    <label class="form-check-label" for="TACheck">TAs</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="studentCheck">
+                    <label class="form-check-label" for="studentCheck">Students</label>
+                </div>
+                <!-- Sort by -->
+                <!-- TODO: fix double arrows -->
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <select class="custom-select">
+                            <option selected>Sort by...</option>
+                            <option value="1">Identifier</<option>
+                            <option value="2">Role</option>
+                            <option valie="3">E-Mail</option>
+                        </select>
+                    </div>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button">
+                            &#8645
+                        </button>
+                    </div>
+                </div>
+                <!-- Apply filters -->
+                <div class="text-center">
+                    <button class="btn btn-primary" type="submit">Apply Filters</button>
+                </div>
             </div>
             <div class="col-8">
                 <h1 class="text-center">table with all users</h1>
                 <div class="overflow-auto" style="height: 800px;">
-                    <table class="table table-hover">
+                    <table class="table table-sm table-hover table-fixed">
                         <thead class="thead dark">
                         <tr>
                             <th class="th-sm" scope="col">#</th>
@@ -71,14 +100,8 @@
                             <th class="th-sm" scope="col">Verified</th>
                         </tr>
                         </thead>
-                        <tbody id="users">
-                            <!-- {% for student in students %}
-                            <tr>
-                                <td scope="row">1</td>
-                                <td>{{ student }}</td>
-                            </tr>
-                        {% endfor %} -->
-                        </tbody>
+                        <tbody id="users"></tbody>
+                        <!-- TODO make entire cell clickable link -->
                     </table>
                 </div>
             </div>
