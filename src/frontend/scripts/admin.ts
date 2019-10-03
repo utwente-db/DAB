@@ -55,7 +55,7 @@ async function getUsersPromise(): Promise<User[]> {
 async function displayWhoami(): Promise<void> {
     const whoami: Whoami = await getWhoamiPromise();
     whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email;
-    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary my-2 my-sm-0\" href=\"#settings" + whoami.id + "\">Settings</button>";
+    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary my-2 my-sm-0\" href=\"/settings" + whoami.id + "\">Settings</button>";
 }
 
 async function displayCourses(): Promise<void> {
@@ -76,7 +76,8 @@ async function displayCourses(): Promise<void> {
             + "<ul><li>ID: " + courses[i].courseid + "</li>"
             + "<li>FID: " + courses[i].fid + "</li>"
             + "<li>Coursename: " + courses[i].coursename + "</li>"
-            + "<li>Info: " + courses[i].info + "</li></ul></div>"
+            + "<li>Info: " + courses[i].info + "</li></ul>"
+            + "<button class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\">Edit Course</button></div>"
         );
     }
     const resultNavString: string = resultNav.join("\n");
@@ -103,9 +104,9 @@ async function displayUsers(): Promise<void> {
         const verified: boolean = users[i].verified;
         result.push(
             "<tr><th scope=\"row\">" + users[i].id + "</th>"
-            + "<td><a style=\"height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
-            + "<td><a style=\"height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
-            + "<td><a style=\"height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>"
         );
 
     }

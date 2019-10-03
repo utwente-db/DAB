@@ -23004,7 +23004,7 @@ function displayWhoami() {
                 case 1:
                     whoami = _a.sent();
                     whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email;
-                    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary my-2 my-sm-0\" href=\"#settings" + whoami.id + "\">Settings</button>";
+                    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary my-2 my-sm-0\" href=\"/settings" + whoami.id + "\">Settings</button>";
                     return [2 /*return*/];
             }
         });
@@ -23030,7 +23030,8 @@ function displayCourses() {
                             + "<ul><li>ID: " + courses[i].courseid + "</li>"
                             + "<li>FID: " + courses[i].fid + "</li>"
                             + "<li>Coursename: " + courses[i].coursename + "</li>"
-                            + "<li>Info: " + courses[i].info + "</li></ul></div>");
+                            + "<li>Info: " + courses[i].info + "</li></ul>"
+                            + "<button class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\">Edit Course</button></div>");
                     }
                     resultNavString = resultNav.join("\n");
                     resultContentString = resultContent.join("\n");
@@ -23066,9 +23067,9 @@ function displayUsers() {
                         }
                         verified = users[i].verified;
                         result.push("<tr><th scope=\"row\">" + users[i].id + "</th>"
-                            + "<td><a style=\"height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
-                            + "<td><a style=\"height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
-                            + "<td><a style=\"height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>");
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>");
                     }
                     resultString = result.join("\n");
                     usersHtml.innerHTML += resultString;
