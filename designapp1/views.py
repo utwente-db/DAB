@@ -156,13 +156,8 @@ def post_base_dbmusers_response(request, databases, db_parameters):
     databases['password'] = hash.make(unhashed_password)
     databases["token"] = hash.token()
     if check_role(request, admin):
-        databases['role'] = databases['role']
-    elif check_role(request, teacher):
-        if int(databases['role']) < teacher:
-            databases['role'] = teacher
-    elif check_role(request, student):
-        if int(databases['role']) < student:
-            databases['role'] = student
+        pass
+        # databases['role'] = databases['role']
     else:
         databases['role'] = student
     custom_serializer = db_parameters["serializer"]

@@ -13,7 +13,6 @@ class dbmusers(models.Model):
     role = models.IntegerField()
     email = models.CharField(max_length=265, unique=True)
     password = models.TextField(max_length=265)
-    maxdatabases = models.IntegerField()
     verified = models.BooleanField(default=False)
     token = models.TextField(null=True)
 
