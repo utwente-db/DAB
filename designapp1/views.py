@@ -20,6 +20,8 @@ from . import hash
 from .forms import *
 from .serializers import *
 from .studentdb_functions import *
+from . import schemaCheck
+from . import schemas as schemaWriter
 
 # DESIGN PROJECT
 
@@ -171,16 +173,17 @@ def post_base_response(request, db_parameters):
                     serializer_class = post_base_dbmusers_response(request, databases, db_parameters)
             else:
                 if db_parameters["dbname"] == "studentdatabases":
-                    # generate data for student
-                    username, password = hash.randomNames()
-                    databases["username"] = username
-                    databases["databasename"] = username
-                    databases["password"] = password
                     if not "fid" in databases:
                         databases["fid"] = request.session["user"]
                     elif not check_role(request, teacher) and databases["fid"] != request.session["user"]:
                         # you should not be able to request a db for somebody else if you are a student...
                         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+                    # generate data for student
+                    username, password = hash.randomNames()
+                    databases["username"] = username
+                    databases["databasename"] = username
+                    databases["password"] = password
 
                 custom_serializer = db_parameters["serializer"]
                 serializer_class = custom_serializer(data=databases)
@@ -193,13 +196,18 @@ def post_base_response(request, db_parameters):
             if serializer_class.is_valid():
                 try:
                     if db_parameters["dbname"] == "studentdatabases":
-                        serializer_class = create_studentdatabase(serializer_class)
-                        setup_student_db(databases, serializer_class)
-                        serializer_class.save()
+                        create_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"], serializer_class.validated_data["password"])
+                        try:
+                            setup_student_db(databases, serializer_class)
+                            serializer_class.save()
+                        except Exception as e:
+                            #rollback db creation
+                            delete_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"])
+                            return HttpResponse(e.__cause__, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                     else:
                         if db_parameters["dbname"] == "courses":
-                            check = schemaWriter.check(serializer_class.validated_data["schema"])
+                            check = schemaCheck.check(serializer_class.validated_data["schema"])
                             if not check[0]:
                                 return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
                         serializer_class.save()
@@ -216,6 +224,7 @@ def post_base_response(request, db_parameters):
                     elif db_parameters["dbname"] == "studentdatabases":
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
+                        raise e
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 logging.debug(serializer_class.errors)
@@ -244,14 +253,14 @@ def delete_single_response(request, requested_pk, db_parameters):
         else:
             try:
                 if db_parameters["dbname"] == "studentdatabases":
-                    delete_studentdatabase(instance)
+                    delete_studentdatabase(instance.databasename, instance.username)
                     instance.delete()
                 elif db_parameters["dbname"] == "courses":
                     # when you delete a course, make sure to first delete all the student databases
                     instance = db.objects.get(pk=requested_pk)
                     dbs = Studentdatabases.objects.filter(course=instance.courseid).all()
                     for db in dbs:
-                        delete_studentdatabase(db)
+                        delete_studentdatabase(db.databasename, db.username)
                         db.delete()
                     instance.delete()
                 else:
@@ -398,7 +407,7 @@ def schema(request, pk):
         else:
             if course.owner().id == request.session["user"] or check_role(request, admin):
                 schema = request.body.decode("utf-8")
-                check = schemaWriter.check(schema)
+                check = schemaCheck.check(schema)
                 if not check[0]:
                     return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
                 course.schema = schema
