@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/courses.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/admin.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -22913,10 +22913,10 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./src/frontend/scripts/courses.ts":
-/*!*****************************************!*\
-  !*** ./src/frontend/scripts/courses.ts ***!
-  \*****************************************/
+/***/ "./src/frontend/scripts/admin.ts":
+/*!***************************************!*\
+  !*** ./src/frontend/scripts/admin.ts ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22959,26 +22959,33 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");
-__webpack_require__(/*! ./error */ "./src/frontend/scripts/error.ts");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
-var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
-var error_1 = __webpack_require__(/*! ./error */ "./src/frontend/scripts/error.ts");
-var credentialsButton = document.getElementById("credentials-button");
-var coursesDropdown = document.getElementById("courses-dropdown"); // TODO actually make dropdown and fill
-var errorDismissButton = document.getElementById("error-dismiss-button");
-var errorText = document.getElementById("error-text");
-var errorDiv = document.getElementById("error-div");
+__webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");
+var usersHtml = document.getElementById("users");
+var coursesNavHtml = document.getElementById("courses-nav");
+var coursesContentHtml = document.getElementById("courses-content");
 function getCoursesPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, axios_1.default.get("/rest/courses/")];
+                case 0: return [4 /*yield*/, axios_1.default.get("/rest/courses")];
+                case 1:
+                    response = _a.sent();
+                    return [2 /*return*/, response.data];
+            }
+        });
+    });
+}
+function getUsersPromise() {
+    return __awaiter(this, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, axios_1.default.get("/rest/dbmusers/")];
                 case 1:
                     response = _a.sent();
                     return [2 /*return*/, response.data];
@@ -22988,55 +22995,66 @@ function getCoursesPromise() {
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var courses, result, i, optionNode;
+        var courses, resultNav, resultContent, i, active, resultNavString, resultContentString;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getCoursesPromise()];
                 case 1:
                     courses = _a.sent();
-                    result = [];
+                    resultNav = [];
+                    resultContent = [];
                     for (i = 0; i < courses.length; i++) {
-                        optionNode = document.createElement("option");
-                        optionNode.setAttribute("value", String(courses[i].courseid));
-                        optionNode.appendChild(document.createTextNode(courses[i].coursename));
-                        coursesDropdown.appendChild(optionNode);
-                        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+                        active = "";
+                        if (i == 0) {
+                            active = " active";
+                        }
+                        resultNav.push("<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + i + "\">" + courses[i].coursename + "</a>");
+                        resultContent.push("<ul><li>" + courses[i].courseid + "</li>"
+                            + "<li>" + courses[i].fid + "</li>"
+                            + "<li>" + courses[i].coursename + "</li>"
+                            + "<li>" + courses[i].info + "</li></ul>");
                     }
+                    resultNavString = resultNav.join("\n");
+                    resultContentString = resultContent.join("\n");
+                    coursesNavHtml.innerHTML += resultNavString;
+                    coursesContentHtml.innerHTML += resultContentString;
                     return [2 /*return*/];
             }
         });
     });
 }
-function getCredentials() {
+function displayUsers() {
     return __awaiter(this, void 0, void 0, function () {
-        var courseID, resultDiv, data, response, database, error_2;
+        var users, result, i, role, verified, resultString;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    courseID = Number(coursesDropdown.value);
-                    resultDiv = document.getElementById("result-div");
-                    if (!(courseID !== 0)) return [3 /*break*/, 5];
-                    data = {
-                        "course": courseID,
-                    };
-                    _a.label = 1;
+                case 0: return [4 /*yield*/, getUsersPromise()];
                 case 1:
-                    _a.trys.push([1, 4, , 5]);
-                    return [4 /*yield*/, axios_1.default.post("/rest/studentdatabases/", data)];
-                case 2:
-                    response = _a.sent();
-                    console.log(response);
-                    return [4 /*yield*/, response.data];
-                case 3:
-                    database = _a.sent();
-                    console.log(database);
-                    resultDiv.innerHTML += error_1.generateAlertHTML("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", error_1.Alert.success);
-                    return [3 /*break*/, 5];
-                case 4:
-                    error_2 = _a.sent();
-                    errorDiv.innerHTML += error_1.generateAlertHTML(error_2, error_1.Alert.danger);
-                    return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                    users = _a.sent();
+                    result = [];
+                    for (i = 0; i < users.length; i++) {
+                        role = void 0;
+                        if (users[i].role == 0) {
+                            role = "Admin";
+                        }
+                        else if (users[i].role == 1) {
+                            role = "TA";
+                        }
+                        else if (users[i].role == 2) {
+                            role = "Student";
+                        }
+                        else {
+                            role = "Unknown";
+                        }
+                        verified = users[i].verified;
+                        result.push("<tr><th scope=\"row\">" + users[i].id + "</th>"
+                            + "<td>" + role + "</td>"
+                            + "<td>" + users[i].email + "</td>"
+                            + "<td>" + verified + "</td></tr>");
+                    }
+                    resultString = result.join("\n");
+                    usersHtml.innerHTML += resultString;
+                    return [2 /*return*/];
             }
         });
     });
@@ -23044,46 +23062,19 @@ function getCredentials() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, displayCourses()];
+            case 0: return [4 /*yield*/, displayUsers()];
             case 1:
                 _a.sent();
-                $('select').selectpicker(); // Style all selects
-                credentialsButton.addEventListener("click", getCredentials);
+                return [4 /*yield*/, displayCourses()];
+            case 2:
+                _a.sent();
                 return [2 /*return*/];
         }
     });
 }); };
-// TODO: make group gray
-// TODO on course select: make group no longer gray
-
-
-/***/ }),
-
-/***/ "./src/frontend/scripts/error.ts":
-/*!***************************************!*\
-  !*** ./src/frontend/scripts/error.ts ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-function generateAlertHTML(errorMessage, alertType) {
-    return "<div class=\"alert " + alertType + " alert-dismissible fade show\"  role=\"alert\">\n            <div id=\"error-text\">" + errorMessage + "</div>\n            <button type=\"button\" id=\"error-dismiss-button\" class=\"close\" data-dismiss=\"alert\"\n            aria-label=\"Close\">\n            <span aria-hidden=\"true\">&times;</span>\n            </button>\n            </div>";
-}
-exports.generateAlertHTML = generateAlertHTML;
-;
-var Alert;
-(function (Alert) {
-    Alert["primary"] = "alert-primary";
-    Alert["secondary"] = "alert-secondary";
-    Alert["danger"] = "alert-danger";
-    Alert["success"] = "alert-success";
-})(Alert = exports.Alert || (exports.Alert = {}));
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=courses.js.map
+//# sourceMappingURL=admin.js.map

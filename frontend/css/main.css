@@ -7408,6 +7408,9 @@ select.selectpicker {
 body {
   font-family: 'Barlow Semi Condensed3', sans-serif; }
 
+.cookiealert {
+  position: absolute !important; }
+
 a {
   color: #17a2b8; }
 
