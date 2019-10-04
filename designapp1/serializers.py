@@ -6,6 +6,10 @@ from .models import *
 class CoursesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Courses
+        fields = ('courseid', 'fid', 'coursename', 'info')
+class CoursesCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Courses
         fields = ('courseid', 'fid', 'coursename', 'info', 'schema')
 
 

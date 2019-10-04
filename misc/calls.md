@@ -56,6 +56,13 @@ Permissions:
 Teachers and above: allowed for any.
 Students: allowed their own.
 
+## /reset/<pk>
+
+Resets the table to the original schema from the course.
+
+Only accepts post
+Permissions same as DELETE for database
+
 ## TABLE: studentdatabases
 
 ### /studentdatabases/
@@ -101,6 +108,7 @@ GET -> gives back all the studentdatabases owned by the user currently logged in
 ### /courses/
 
 GET	-> get all courses
+NB: to save data, schemas are not mentioned in GET!
 POST	-> add a new course
 body: 
 
@@ -111,6 +119,9 @@ body:
 	"fid":"7" [FOREIGN KEY, MUST EXIST]
 	"schema": <sql> [OPTIONAL, DEFAULT=""]
 	}
+
+NB: Schemas are verified for properties such as assigning ownership and creating schemas.
+This code is not very well tested; if you ever encounter an error that relates to it, please notify Floris immediately
 
 ### /courses/pk
 
@@ -124,6 +135,11 @@ GET -> search for the value, based on the coursename
 ### /courses/own/
 
 GET -> gives back all the courses owned by the user currently logged in
+
+### /courses/<pk>/schema
+
+GET -> returns the schema for that database as a sql file
+POST -> Takes the **plaintext** body, and makes it the schema of the database (if it passes verification).
 
 ## TABLE: dbmusers
 
@@ -178,48 +194,28 @@ DELETE	-> delete ta for that ta id
 
 GET -> gives back the ta information about the currently logged in ta
 
-## TABLE: Schemas
-
-### /schemas/
-
-GET	-> get all schemas
-POST	-> add a new schema
-body: 
-	{
-	"name":"test325",  [FREE TO CHOOSE]
-	"course":"16", [FOREIGN KEY, MUST EXISTS]
-	"sql":"sql part" [FREE TO CHOOSE, BUT MUST BE SQL ]	
-  	}
-
-### /schemas/pk
-
-GET	-> get schemas for that schemaid
-DELETE	-> delete schema for that schemaid
-
-### /schemas/name/value
-
-GET -> search for the value, based on the schema name
-
-### /schemas/own/
-
-GET -> gives back all the schemas owned by the user currently logged in
-
 # Permissions
 
 Each user level has the following permissions
 
-|               | Schemas       | Tas           | dbmusers      | Courses      | Studentdatabases |
-|---------------|---------------|---------------|---------------|--------------|------------------|
-| Admin         | Get, all      | Get, all      | Get, all      | Get, all     | Get, all         |
-|               | Get, any      | Get, any      | Get, any      | Get, any     | Get, any         |
-|               | POST          | POST          | POST          | POST         | POST             |
-|               | DELETE, any   | DELETE, any   | DELETE, any   | DELETE, any  | DELETE, any      |
-|---------------|---------------|---------------|---------------|--------------|------------------|
-| Teacher       | Get, all      | Get, all      | Get, all      | Get, all     | Get, all         |
-|               | Get, any      | Get, any      | Get, any      | Get, any     | Get, any         |
-|               | POST          | POST          | POST          | POST         | POST             |
-|---------------|---------------|---------------|---------------|--------------|------------------|
-| Student       | GET, all      | Get, own      | Get, own      | Get, all     | Get, own         |
-|               | Get, any      |               | POST          | Get, any     | POST             |
-|---------------|---------------|---------------|---------------|--------------|------------------|
-| Not logged in |               |               | POST          |              |                  |
+|               | Tas           | dbmusers      | Courses      | Studentdatabases |
+|---------------|---------------|---------------|--------------|------------------|
+| Admin         | Get, all      | Get, all      | Get, all     | Get, all         |
+|               | Get, any      | Get, any      | Get, any     | Get, any         |
+|               | POST          | POST          | POST         | POST             |
+|               | DELETE, any   | DELETE, any   | DELETE, any  | DELETE, any      |
+|---------------|---------------|---------------|--------------|------------------|
+| Teacher       | Get, all      | Get, all      | Get, all     | Get, all         |
+|               | Get, any      | Get, any      | Get, any     | Get, any         |
+|               | POST          | POST          | POST         | POST             |
+|               | Delete, own*  | Delete, own   | Delete, own  | Delete, own      |
+|---------------|---------------|---------------|--------------|------------------|
+| Student       | Get, own      | Get, own      | Get, all     | Get, own         |
+|               |               | POST          | Get, any     | POST             |
+|               |               | Delete, own   |              | Delete, own      |
+|---------------|---------------|---------------|--------------|------------------|
+| Not logged in |               | POST          |              |                  |
+
+\*own here refers to ta's added to courses owned by the teacher
+
+NB: dump has the same permissions as GET for that database, and /reset the same as DELETE
