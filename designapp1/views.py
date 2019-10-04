@@ -169,7 +169,7 @@ def post_base_dbmusers_response(request, databases, db_parameters):
     serializer_class = custom_serializer(data=databases)
     # send confirmation mail
     # mail.send_verification(databases)
-    logging.debug("Created user; verify at /verify/"+databasename["token"])
+    logging.debug("Created user; verify at /verify/"+databases["token"])
     return serializer_class
 
 
@@ -539,17 +539,17 @@ def get_users(request):
     return response
 
 
-@require_http_methods(["GET", "POST"])
+@require_GET
 def register(request):
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            password = hash.make(data["password"])
-            role = dbmusers(role=3, email=data["mail"], password=password, maxdatabases=0)
-            role.save()
-            return render(request, 'login.html',
-                          {'form': LoginForm(), 'message': "Registration succesful; try to login"})
+    # if request.method == "POST":
+    #     form = RegisterForm(request.POST)
+    #     if form.is_valid():
+    #         data = form.cleaned_data
+    #         password = hash.make(data["password"])
+    #         role = dbmusers(role=3, email=data["mail"], password=password, maxdatabases=0)
+    #         role.save()
+    #         return render(request, 'login.html',
+    #                       {'form': LoginForm(), 'message': "Registration succesful; try to login"})
 
     form = RegisterForm()
     return render(request, 'register.html', {'form': form})
