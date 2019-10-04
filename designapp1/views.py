@@ -55,17 +55,8 @@ def get_base_response(request, db_parameters):
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
             return JsonResponse(serializer_class.data, safe=False)
-    elif check_role(request, student) and db_parameters["dbname"] == "studentdatabases":
-        # student should be able to view own databases
-        try:
-            database = db_parameters["db"].objects.filter(fid=request.session["user"]).all()
-            serializer_class = db_parameters["serializer"](database, many=True)
-        except db_parameters["db"].DoesNotExist as e:
-            return JsonResponse([], safe=False)
-        else:
-            return JsonResponse(serializer_class.data, safe=False)
     else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
 def do_i_own_this_item(current_id, pk, db_parameters):
@@ -160,7 +151,7 @@ def post_base_dbmusers_response(request, databases, db_parameters):
         # databases['role'] = databases['role']
     else:
         databases['role'] = student
-    custom_serializer = db_parameters["serializer"]
+    custom_serializer = dbmusersCreateSerializer
     serializer_class = custom_serializer(data=databases)
     # send confirmation mail
     # mail.send_verification(databases)
@@ -218,6 +209,9 @@ def post_base_response(request, db_parameters):
                             if not check[0]:
                                 return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
                         serializer_class.save()
+                        if db_parameters["dbname"] == "dbmusers":
+                            #we DON'T want to return the password and token
+                            serializer_class = dbmusersSerializer(serializer_class.data)
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                 except KeyError as e:
                     return HttpResponse("The following field(s) should be included:" + str(e),
@@ -486,68 +480,6 @@ def home(request):
 
 def test(request):
     return HttpResponse("test")
-
-
-@require_POST
-def create_db(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    body = json.loads(request.body.decode("utf-8"))
-    statements.create_db(body["name"], body["owner"], body["password"])
-    return HttpResponse("")
-
-
-@require_POST
-def delete_db(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    body = json.loads(request.body.decode("utf-8"))
-    statements.delete_db(body["name"])
-    return HttpResponse("")
-
-
-@require_POST
-def delete_user(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    body = json.loads(request.body.decode("utf-8"))
-    statements.delete_user(body["name"])
-    return HttpResponse("")
-
-
-@require_POST
-def delete_db_with_owner(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    body = json.loads(request.body.decode("utf-8"))
-    statements.delete_db_with_owner(body["name"])
-    return HttpResponse("")
-
-
-@require_GET
-def get_users(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    answer = statements.get_users()
-    answer = json.JSONEncoder().encode(answer)
-    response = HttpResponse(str(answer), content_type="application/json")
-    return response
-
-
-@require_http_methods(["GET", "POST"])
-def register(request):
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            password = hash.make(data["password"])
-            role = dbmusers(role=3, email=data["mail"], password=password, maxdatabases=0)
-            role.save()
-            return render(request, 'login.html',
-                          {'form': LoginForm(), 'message': "Registration succesful; try to login"})
-
-    form = RegisterForm()
-    return render(request, 'register.html', {'form': form})
 
 
 @require_GET
