@@ -169,7 +169,7 @@ def post_base_dbmusers_response(request, databases, db_parameters):
     serializer_class = custom_serializer(data=databases)
     # send confirmation mail
     # mail.send_verification(databases)
-    logging.debug("Created user; verify at /verify/"+databasename["token"])
+    logging.debug("Created user; verify at /verify/"+databases["token"])
     return serializer_class
 
 
