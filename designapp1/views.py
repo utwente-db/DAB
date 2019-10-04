@@ -27,15 +27,22 @@ from .studentdb_functions import *
 # DESIGN PROJECT
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s %(levelname)s %(message)s',
 )
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("request_logger")
 
 admin = 0
 teacher = 1
 student = 2
+
+# LOGGING
+
+def log_message(userid,message):
+    info_message = 'User: '+userid+' has executed: ' + message
+    logger.info(info_message)
+
 
 
 # REST RESPONSES
@@ -47,7 +54,8 @@ def defaultresponse(request):
         'number': number,
         'range': range(number)
     }
-    logger.debug("TEST TEST")
+#    current_id = request.session['user']
+    log_message('16','TEST')
 #    username = pwd.getpwuid( os.getuid() )[ 0 ]
 #    logging.debug(username)
     return HttpResponse(template.render(context, request))
@@ -59,9 +67,10 @@ def get_base_response(request, db_parameters):
             database = db_parameters["db"].objects.all()
             serializer_class = db_parameters["serializer"](database, many=True)
         except db_parameters["db"].DoesNotExist as e:
-            logging.debug(e)
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
+            message = "From database: " + db_parameters["dbname"] + " a base response is requested"
+            log_message(request.session['user'],message) #LOG THIS ACTION
             return JsonResponse(serializer_class.data, safe=False)
     elif check_role(request, student) and db_parameters["dbname"] == "studentdatabases":
         # student should be able to view own databases
@@ -71,6 +80,9 @@ def get_base_response(request, db_parameters):
         except db_parameters["db"].DoesNotExist as e:
             return JsonResponse([], safe=False)
         else:
+            logging.debug("hier?")
+            message = "From database: " + db_parameters["dbname"] + " a base response is requested"
+            log_message(request.session['user'],message) #LOG THIS ACTION
             return JsonResponse(serializer_class.data, safe=False)
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -128,13 +140,13 @@ def get_own_response(request, dbname):
 
         db_parameters = get_db_parameters(dbname)
 
-        logging.debug("hier")
+        #logging.debug("hier")
         db_id = None
         serializer_class = None
         database = None
 
         current_id = request.session['user']
-        logging.debug(current_id)
+        #logging.debug(current_id)
         try:
             if db_parameters["dbname"] == "courses":
                 database = Courses.objects.filter(fid__id=current_id)
@@ -214,7 +226,7 @@ def post_base_response(request, db_parameters):
         except ParseError:
             return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logging.debug(type(e))
+            #logging.debug(type(e))
             return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             if serializer_class.is_valid():
@@ -242,7 +254,7 @@ def post_base_response(request, db_parameters):
                     else:
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
-                logging.debug(serializer_class.errors)
+                #logging.debug(serializer_class.errors)
 
                 if "must make a unique set" in str(serializer_class.errors):
                     return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
@@ -281,7 +293,7 @@ def delete_single_response(request, requested_pk, db_parameters):
                 else:
                     instance.delete()
             except Exception as e:
-                logging.debug(e)
+                #logging.debug(e)
                 if "protected foreign key" in str(e.__cause__):
                     return HttpResponse(status=status.HTTP_409_CONFLICT)
                 elif db_parameters["dbname"] == "studentdatabases":
@@ -460,8 +472,8 @@ def check_role(request, role):
     return False
 
 
-def get_queryset(self):
-    logging.debug(self.request)
+#def get_queryset(self):
+    #logging.debug(self.request)
 
 
 @require_GET
