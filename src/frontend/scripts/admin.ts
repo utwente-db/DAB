@@ -5,11 +5,20 @@ import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import "../sass/desktop.sass"
+// import "../sass/desktop.sass"
 
-const usersHtml: HTMLDivElement = document.getElementById("users") as HTMLDivElement;
+const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
+const whoamiWelcomeHtml: HTMLDivElement = document.getElementById("whoamiWelcome") as HTMLDivElement;
+const whoamiButtonHtml: HTMLDivElement = document.getElementById("whoamiButton") as HTMLDivElement;
+
+interface Whoami {
+    id: number;
+    email: string;
+    role: number;
+    cached_role: number;
+}
 
 interface User {
     id: number;
@@ -28,14 +37,25 @@ interface Course {
     info: string;
 }
 
+async function getWhoamiPromise(): Promise<Whoami> {
+    const response: AxiosResponse = await axios.get("/rest/whoami/");
+    return response.data;
+}
+
 async function getCoursesPromise(): Promise<Course[]> {
-    const response: AxiosResponse = await axios.get("/rest/courses");
+    const response: AxiosResponse = await axios.get("/rest/courses/");
     return response.data;
 }
 
 async function getUsersPromise(): Promise<User[]> {
     const response: AxiosResponse = await axios.get("/rest/dbmusers/");
     return response.data;
+}
+
+async function displayWhoami(): Promise<void> {
+    const whoami: Whoami = await getWhoamiPromise();
+    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email;
+    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary my-2 my-sm-0\" href=\"/settings" + whoami.id + "\">Settings</button>";
 }
 
 async function displayCourses(): Promise<void> {
@@ -52,10 +72,12 @@ async function displayCourses(): Promise<void> {
             "<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + i + "\">" + courses[i].coursename + "</a>"
         );
         resultContent.push(
-            "<ul><li>" + courses[i].courseid + "</li>"
-            + "<li>" + courses[i].fid + "</li>"
-            + "<li>" + courses[i].coursename + "</li>"
-            + "<li>" + courses[i].info + "</li></ul>"
+            "<div class=\"tab-pane" + active + "\" id=\"course" + i + "\">"
+            + "<ul><li>ID: " + courses[i].courseid + "</li>"
+            + "<li>FID: " + courses[i].fid + "</li>"
+            + "<li>Coursename: " + courses[i].coursename + "</li>"
+            + "<li>Info: " + courses[i].info + "</li></ul>"
+            + "<button class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\">Edit Course</button></div>"
         );
     }
     const resultNavString: string = resultNav.join("\n");
@@ -82,17 +104,20 @@ async function displayUsers(): Promise<void> {
         const verified: boolean = users[i].verified;
         result.push(
             "<tr><th scope=\"row\">" + users[i].id + "</th>"
-            + "<td>" + role + "</td>"
-            + "<td>" + users[i].email + "</td>"
-            + "<td>" + verified + "</td></tr>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>"
         );
 
     }
+
     const resultString: string = result.join("\n");
     usersHtml.innerHTML += resultString;
 }
 
 window.onload = async () => {
+    await displayWhoami();
     await displayUsers();
     await displayCourses();
+
 };
