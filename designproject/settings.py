@@ -142,7 +142,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} From file:{module}, {message}',
+            'format': '{levelname} {asctime} , {message}',
             'style': '{',
         },
         'simple': {
