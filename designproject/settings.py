@@ -134,3 +134,25 @@ STATIC_ROOT = "static"
 STATIC_URL = '/static/'
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
+
+#LOGGING
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/django/backend.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+

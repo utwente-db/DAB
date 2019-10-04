@@ -4,6 +4,9 @@ from __future__ import unicode_literals
 import json
 import logging
 import re
+#import os
+#import pwd
+
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
@@ -28,6 +31,8 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s',
 )
 
+logger = logging.getLogger(__name__)
+
 admin = 0
 teacher = 1
 student = 2
@@ -42,6 +47,9 @@ def defaultresponse(request):
         'number': number,
         'range': range(number)
     }
+    logger.debug("TEST TEST")
+#    username = pwd.getpwuid( os.getuid() )[ 0 ]
+#    logging.debug(username)
     return HttpResponse(template.render(context, request))
 
 
