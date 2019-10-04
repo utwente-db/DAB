@@ -9,7 +9,7 @@
         <div class="row">
             <div class="col-md-8 offset-md-2 border border-dark rounded-lg shadow-lg bg-white">
                 <!-- Register Form -->
-                <form class="p-5" action="register" method="POST">
+                <div class="p-5">
                     {% csrf_token %}
                     <p class="text-center h4 mb-4">Register</p>
                     <hr/>
@@ -33,7 +33,7 @@
                     </div>
                     <button class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3" type="submit">Register
                     </button>
-                </form>
+                </div>
             </div>
         </div>
     </div>
