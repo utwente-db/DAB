@@ -63,6 +63,7 @@ class Studentdatabases(models.Model):
 
     class Meta:
         managed = False
+        unique_together = ('course', 'fid')
         db_table = 'studentdatabases'
         verbose_name_plural = 'StudentDatabases'
 
