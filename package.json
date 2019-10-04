@@ -11,6 +11,7 @@
     "@types/popper.js": "^1.11.0",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
+    "bootstrap-cookie-alert": "^1.1.1",
     "bootstrap-select": "^1.13.11",
     "commonjs": "^0.0.1",
     "css-loader": "^3.2.0",
