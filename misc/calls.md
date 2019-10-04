@@ -152,7 +152,6 @@ body:
 	"role":"0", [0=admin,1=teacher,2=student]
 	"email":"asdfasdf2", [FREE TO CHOOSE, THOUGH NO DUPLICATE IN TABLE]
 	"password":"test205", [FREE TO CHOOSE, IS HASHED]
-	"maxdatabases":"2" [FREE TO CHOOSE]
 	}
 
 ### /dbmusers/pk

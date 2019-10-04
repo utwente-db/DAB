@@ -46,7 +46,7 @@ def defaultresponse(request):
 
 
 def get_base_response(request, db_parameters):
-    if check_role(request, teacher) or db_parameters["dbname"] == "courses" or db_parameters["dbname"] == "schemas":
+    if check_role(request, teacher) or db_parameters["dbname"] == "courses":
         try:
             database = db_parameters["db"].objects.all()
             serializer_class = db_parameters["serializer"](database, many=True)
@@ -76,9 +76,6 @@ def do_i_own_this_item(current_id, pk, db_parameters):
         elif db_parameters["dbname"] == "studentdatabases":
             database = Studentdatabases.objects.get(dbid=pk)
             db_id = database.fid.id
-        elif db_parameters["dbname"] == "schemas":
-            database = schemas.objects.get(id=pk)
-            db_id = database.course.fid.id
     except Exception as e:
         return False
     else:
@@ -131,9 +128,6 @@ def get_own_response(request, dbname):
             elif db_parameters["dbname"] == "studentdatabases":
                 database = Studentdatabases.objects.filter(fid__id=current_id)
                 serializer_class = StudentdatabasesSerializer(database, many=True)
-            elif db_parameters["dbname"] == "schemas":
-                database = schemas.objects.filter(course__fid__id=current_id)
-                serializer_class = schemasserializer(database, many=True)
         except Exception as e:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
@@ -280,7 +274,7 @@ def search_on_name(request, search_value, dbname):
 
     results = None
 
-    if check_role(request, teacher) or db_parameters["dbname"] == "courses" or db_parameters["dbname"] == "schemas":
+    if check_role(request, teacher) or db_parameters["dbname"] == "courses":
 
         try:
 
@@ -318,9 +312,6 @@ def get_db_parameters(dbname):
     elif dbname == "tas":
         db_parameters["serializer"] = TasSerializer
         db_parameters["db"] = TAs
-    elif dbname == "schemas":
-        db_parameters["serializer"] = schemasserializer
-        db_parameters["db"] = schemas
     elif dbname == "studentdatabases":
         db_parameters["serializer"] = StudentdatabasesSerializer
         db_parameters["db"] = Studentdatabases
