@@ -185,7 +185,7 @@ def post_base_response(request, db_parameters):
             databases = JSONParser().parse(request)
             if db_parameters["dbname"] == "dbmusers":
                 if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl', databases["email"]):
-                    return HttpResponse("only utwente email address can be used", status=status.HTTP_406_NOT_ACCEPTABLE)
+                    return HttpResponse("only utwente email address can be used", status=status.HTTP_400_BAD_REQUEST)
                 else:
                     serializer_class = post_base_dbmusers_response(request, databases, db_parameters)
             else:
@@ -220,7 +220,7 @@ def post_base_response(request, db_parameters):
                         if db_parameters["dbname"] == "courses":
                             check = schemaWriter.check(serializer_class.validated_data["schema"])
                             if not check[0]:
-                                return HttpResponse(check[1], status=status.HTTP_406_NOT_ACCEPTABLE)
+                                return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
                         serializer_class.save()
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                 except KeyError as e:
@@ -230,10 +230,9 @@ def post_base_response(request, db_parameters):
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     elif db_parameters["dbname"] == "studentdatabases":
-                        raise e
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
-                        return HttpResponse(status=status.HTTP_406_NOT_ACCEPTABLE)
+                        return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 logging.debug(serializer_class.errors)
 
@@ -354,7 +353,6 @@ def singleview(request, pk, dbname):
 @csrf_exempt
 def baseview(request, dbname):
     db_parameters = get_db_parameters(dbname)
-
     if request.method == 'GET':
         return get_base_response(request, db_parameters)
     elif request.method == 'POST':
@@ -421,7 +419,7 @@ def schema(request, pk):
                 schema = request.body.decode("utf-8")
                 check = schemaWriter.check(schema)
                 if not check[0]:
-                    return HttpResponse(check[1], status=status.HTTP_406_NOT_ACCEPTABLE)
+                    return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
                 course.schema = schema
                 course.save()
                 return HttpResponse(status=status.HTTP_202_ACCEPTED)

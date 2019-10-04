@@ -259,7 +259,22 @@ class testCourse(unittest.TestCase):
         except psycopg2.OperationalError as e:
             pass
 
-    def test7DeleteCourse(self):
+    def test7SchemaVerifier(self):
+        global test_course
+        #doesn't test correctness of update, but of verifier
+        nonsense_schema = "CREATE TABEL test(id SERIAL PRIMARY KEY, val TEXT);"
+        r = teacher.post(BASE+"/rest/courses/"+str(test_course["courseid"])+"/schema", data=nonsense_schema)
+        self.assertEqual(r.status_code, 400)
+
+        wrong_schema = "CREATE TABLE admin.test(id SERIAL PRIMARY KEY, val TEXT);"
+        r = teacher.post(BASE+"/rest/courses/"+str(test_course["courseid"])+"/schema", data=wrong_schema)
+        self.assertEqual(r.status_code, 400)
+
+        owned_schema = "CREATE TABLE test(id SERIAL PRIMARY KEY, val TEXT); ALTER TABLE test OWNER TO admin;"
+        r = teacher.post(BASE+"/rest/courses/"+str(test_course["courseid"])+"/schema", data=owned_schema)
+        self.assertEqual(r.status_code, 400)
+
+    def test8DeleteCourse(self):
         global test_course, test_db
         r = teacher.delete(BASE + "/rest/courses/" + str(test_course["courseid"]))
         self.assertEqual(r.status_code, 202)
