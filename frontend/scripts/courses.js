@@ -22959,15 +22959,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+__webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");
+__webpack_require__(/*! ./error */ "./src/frontend/scripts/error.ts");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
-__webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");
+var error_1 = __webpack_require__(/*! ./error */ "./src/frontend/scripts/error.ts");
 var credentialsButton = document.getElementById("credentials-button");
 var coursesDropdown = document.getElementById("courses-dropdown"); // TODO actually make dropdown and fill
+var errorDismissButton = document.getElementById("error-dismiss-button");
+var errorText = document.getElementById("error-text");
+var errorDiv = document.getElementById("error-div");
 function getCoursesPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -22983,7 +22988,7 @@ function getCoursesPromise() {
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var courses, result, i, resultString;
+        var courses, result, i, optionNode;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getCoursesPromise()];
@@ -22991,10 +22996,12 @@ function displayCourses() {
                     courses = _a.sent();
                     result = [];
                     for (i = 0; i < courses.length; i++) {
-                        result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>");
+                        optionNode = document.createElement("option");
+                        optionNode.setAttribute("value", String(courses[i].courseid));
+                        optionNode.appendChild(document.createTextNode(courses[i].coursename));
+                        coursesDropdown.appendChild(optionNode);
+                        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
                     }
-                    resultString = result.join("\n");
-                    coursesDropdown.innerHTML += resultString;
                     return [2 /*return*/];
             }
         });
@@ -23002,15 +23009,15 @@ function displayCourses() {
 }
 function getCredentials() {
     return __awaiter(this, void 0, void 0, function () {
-        var courseID, data, response, database, error_1;
+        var courseID, resultDiv, data, response, database, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     courseID = Number(coursesDropdown.value);
-                    if (!(courseID !== 0)) return [3 /*break*/, 6];
+                    resultDiv = document.getElementById("result-div");
+                    if (!(courseID !== 0)) return [3 /*break*/, 5];
                     data = {
                         "course": courseID,
-                        "schema": 12 // TODO you should not need to pass schemas
                     };
                     _a.label = 1;
                 case 1:
@@ -23023,15 +23030,13 @@ function getCredentials() {
                 case 3:
                     database = _a.sent();
                     console.log(database);
+                    resultDiv.innerHTML += error_1.generateAlertHTML("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", error_1.Alert.success);
                     return [3 /*break*/, 5];
                 case 4:
-                    error_1 = _a.sent();
-                    console.error(error_1);
+                    error_2 = _a.sent();
+                    errorDiv.innerHTML += error_1.generateAlertHTML(error_2, error_1.Alert.danger);
                     return [3 /*break*/, 5];
-                case 5:
-                    console.log("got to the end");
-                    _a.label = 6;
-                case 6: return [2 /*return*/];
+                case 5: return [2 /*return*/];
             }
         });
     });
@@ -23050,6 +23055,32 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
 }); };
 // TODO: make group gray
 // TODO on course select: make group no longer gray
+
+
+/***/ }),
+
+/***/ "./src/frontend/scripts/error.ts":
+/*!***************************************!*\
+  !*** ./src/frontend/scripts/error.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function generateAlertHTML(errorMessage, alertType) {
+    return "<div class=\"alert " + alertType + " alert-dismissible fade show\"  role=\"alert\">\n            <div id=\"error-text\">" + errorMessage + "</div>\n            <button type=\"button\" id=\"error-dismiss-button\" class=\"close\" data-dismiss=\"alert\"\n            aria-label=\"Close\">\n            <span aria-hidden=\"true\">&times;</span>\n            </button>\n            </div>";
+}
+exports.generateAlertHTML = generateAlertHTML;
+;
+var Alert;
+(function (Alert) {
+    Alert["primary"] = "alert-primary";
+    Alert["secondary"] = "alert-secondary";
+    Alert["danger"] = "alert-danger";
+    Alert["success"] = "alert-success";
+})(Alert = exports.Alert || (exports.Alert = {}));
 
 
 /***/ })

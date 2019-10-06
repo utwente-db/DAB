@@ -7,6 +7,10 @@ class CoursesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Courses
         fields = ('courseid', 'fid', 'coursename', 'info')
+class CoursesCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Courses
+        fields = ('courseid', 'fid', 'coursename', 'info', 'schema')
 
 
 class StudentdatabasesDeleteSerializer(serializers.ModelSerializer):
@@ -21,10 +25,14 @@ class StudentdatabasesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class dbmusersSerializer(serializers.ModelSerializer):
+class dbmusersCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = dbmusers
         fields = '__all__'
+class dbmusersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = dbmusers
+        fields = ('id', 'role', 'email', 'verified')
 
 
 class TasSerializer(serializers.ModelSerializer):
@@ -32,8 +40,3 @@ class TasSerializer(serializers.ModelSerializer):
         model = TAs
         fields = '__all__'
 
-
-class schemasserializer(serializers.ModelSerializer):
-    class Meta:
-        model = schemas
-        fields = '__all__'

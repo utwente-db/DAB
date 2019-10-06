@@ -81,21 +81,36 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/admin.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/error.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/frontend/scripts/admin.ts":
+/***/ "./src/frontend/scripts/error.ts":
 /*!***************************************!*\
-  !*** ./src/frontend/scripts/admin.ts ***!
+  !*** ./src/frontend/scripts/error.ts ***!
   \***************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/ts-loader/index.js):\nError: TypeScript emitted no output for /home/denys/design/src/frontend/scripts/admin.ts.\n    at makeSourceMapAndFinish (/home/denys/design/node_modules/ts-loader/dist/index.js:80:15)\n    at successLoader (/home/denys/design/node_modules/ts-loader/dist/index.js:68:9)\n    at Object.loader (/home/denys/design/node_modules/ts-loader/dist/index.js:22:12)");
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function generateAlertHTML(errorMessage, alertType) {
+    return "<div class=\"alert " + alertType + " alert-dismissible fade show\"  role=\"alert\">\n            <div id=\"error-text\">" + errorMessage + "</div>\n            <button type=\"button\" id=\"error-dismiss-button\" class=\"close\" data-dismiss=\"alert\"\n            aria-label=\"Close\">\n            <span aria-hidden=\"true\">&times;</span>\n            </button>\n            </div>";
+}
+exports.generateAlertHTML = generateAlertHTML;
+;
+var Alert;
+(function (Alert) {
+    Alert["primary"] = "alert-primary";
+    Alert["secondary"] = "alert-secondary";
+    Alert["danger"] = "alert-danger";
+    Alert["success"] = "alert-success";
+})(Alert = exports.Alert || (exports.Alert = {}));
+
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=admin.js.map
+//# sourceMappingURL=error.js.map

@@ -91,11 +91,9 @@
   !*** ./src/frontend/sass/main.sass ***!
   \*************************************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-// extracted by mini-css-extract-plugin
-    if(false) { var cssReload; }
-  
+throw new Error("Module build failed (from ./node_modules/mini-css-extract-plugin/dist/loader.js):\nModuleNotFoundError: Module not found: Error: Can't resolve 'bootstrap-cookie-alert/cookiealert.css' in '/home/denys/design/src/frontend/sass'\n    at /home/denys/design/node_modules/webpack/lib/Compilation.js:925:10\n    at /home/denys/design/node_modules/webpack/lib/NormalModuleFactory.js:401:22\n    at /home/denys/design/node_modules/webpack/lib/NormalModuleFactory.js:130:21\n    at /home/denys/design/node_modules/webpack/lib/NormalModuleFactory.js:224:22\n    at /home/denys/design/node_modules/neo-async/async.js:2830:7\n    at /home/denys/design/node_modules/neo-async/async.js:6877:13\n    at /home/denys/design/node_modules/webpack/lib/NormalModuleFactory.js:214:25\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:184:12\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/UnsafeCachePlugin.js:37:5\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:27:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/DescriptionFilePlugin.js:42:38\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:28:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/ModuleKindPlugin.js:23:37\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/forEachBail.js:30:14\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/UnsafeCachePlugin.js:37:5\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5");
 
 /***/ }),
 
@@ -110,6 +108,7 @@
 
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
+__webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'bootstrap-cookie-alert/cookiealert.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 function f() {
     console.log("Main file loaded");
 }
