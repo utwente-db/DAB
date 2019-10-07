@@ -9,7 +9,7 @@ import {Alert, generateAlertHTML} from "./error";
 
 
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
-const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement; // TODO actually make dropdown and fill
+const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
 const errorDismissButton: HTMLButtonElement = document.getElementById("error-dismiss-button") as HTMLButtonElement;
 const errorText: HTMLDivElement = document.getElementById("error-text") as HTMLDivElement;
 const errorDiv: HTMLDivElement = document.getElementById("error-div") as HTMLDivElement;
@@ -33,11 +33,10 @@ interface Database {
 
 }
 
-async function getCoursesPromise(): Promise<Course[]> { // TODO Check type here
+async function getCoursesPromise(): Promise<Course[]> {
     const response: AxiosResponse = await axios.get("/rest/courses/");
     return response.data;
-    // let next = JSON.parse(data)
-    // TODO actually convert API data to human readable format
+
 }
 
 async function displayCourses(): Promise<void> {
@@ -64,10 +63,7 @@ async function getCredentials() {
         };
         try {
             const response: AxiosResponse = await axios.post("/rest/studentdatabases/", data);
-            console.log(response);
-            // TODO if !reponse error..?
             const database: Database = await response.data;
-            console.log(database);
 
             resultDiv.innerHTML += generateAlertHTML(`Database generated for course "${database.course}".<br>
                                                                    Username: "${database.username}"<br>
@@ -84,5 +80,4 @@ window.onload = async () => {
         credentialsButton.addEventListener("click", getCredentials)]);
 };
 
-// TODO: make group gray
 // TODO on course select: make group no longer gray
