@@ -474,6 +474,7 @@ def schema(request, pk):
     except Courses.DoesNotExist:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
+@require_POST
 def transferSchema(request, course, database):
     if not check_role(request, teacher):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -513,6 +514,60 @@ def transferSchema(request, course, database):
     log_message(log_schema, message)
 
     return HttpResponse()
+
+
+@require_POST
+def generate_migration(request):
+    if not check_role(request, admin):
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+    script_file = "/tmp/dab_backups.tar.gz"
+
+    from django.db import connection
+    host = connection.settings_dict["HOST"]
+    port = connection.settings_dict["PORT"]
+    user = connection.settings_dict["USER"]
+    password = connection.settings_dict["PASSWORD"]
+    database = connection.settings_dict["NAME"]
+
+    #setup
+    output = "#!/bin/sh\necho 'Creating structure...';\nmkdir dab_backups;\nmv /tmp/restore.sh dab_backups/;\ncd dab_backups;\nexport PGPASSWORD=\""+password+"\";\n"
+    #dump the current database
+    output += "echo 'Backing up main database...';\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" \""+database+"\" > "+database+".sql;\n"
+
+    #dump all of the student databases
+    dbs = Studentdatabases.objects.all();
+    for db in dbs:
+        #escape / from the filename by replacing it by ?
+        db_name = db.databasename
+        db_name = re.sub(r'\/', "?", db_name)
+        output += "echo 'Backing up "+db.databasename+"';\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" \""+db.databasename+"\" > "+db_name+".sql;\n"
+
+    output += "echo 'Compressing...';\ncd ..;\ntar -czf dab_backup.tar.gz dab_backups;\nrm -R dab_backups;\n"
+    output += "echo 'Done generating dab_backup.tar.gz'"
+
+    filename = script_file
+    f = open(filename, "w+")
+    f.write(output)
+    f.close()
+
+    #start the restore script
+    output = "#!/bin/sh\nexport PGPASSWORD=\""+password+"\";\n"
+    #restore the main database
+    output += "echo 'Restoring main database...';\ncat "+database+".sql | psql -h "+host+" -p "+port+" -U \""+user+"\" \""+database+"\";\n"
+
+    for db in dbs:
+        db_name = db.databasename
+        db_name = re.sub(r'\/', "?", db_name)
+        output += "echo 'Restoring "+db.databasename+"';\ncat "+db_name+".sql | psql -h "+host+" -p "+port+" -U \""+user+"\" \""+db.databasename+"\";\n"
+
+    filename = "/tmp/restore.sh"
+    f = open(filename, "w+")
+    f.write(output)
+    f.close()
+
+    return HttpResponse("Migration generated at "+script_file)
+
 
 
 

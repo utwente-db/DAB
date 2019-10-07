@@ -213,6 +213,12 @@ Only works if the database belongs to the course or to your user personally, unl
 
 Default schema (named after the user) is preserved from the target database
 
+## /generate_migration
+
+POST -> Generates the backup script. Returns the location of said script.
+
+Only accessible to admins
+
 # Permissions
 
 Each user level has the following permissions

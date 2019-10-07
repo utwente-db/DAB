@@ -44,6 +44,9 @@ urlpatterns = [
     url(r'^reset/(?P<pk>[0-9]+)/?', views.reset),
     url(r'^schematransfer/(?P<course>[0-9]+)/(?P<database>[0-9]+)/?', views.transferSchema),
 
+    # Migration
+    url(r'^generate_migration/?$', views.generate_migration),
+
     # Login
 
     # path('create_db', views.create_db, name='create_db'),
