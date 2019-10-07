@@ -22960,7 +22960,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");
-__webpack_require__(/*! ./error */ "./src/frontend/scripts/error.ts");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
@@ -23042,13 +23041,17 @@ function getCredentials() {
     });
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, displayCourses()];
-            case 1:
-                _a.sent();
-                $('select').selectpicker(); // Style all selects
-                credentialsButton.addEventListener("click", getCredentials);
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _b = (_a = Promise).all;
+                return [4 /*yield*/, displayCourses()];
+            case 1: return [4 /*yield*/, _b.apply(_a, [[_c.sent(),
+                        $('select').selectpicker(),
+                        credentialsButton.addEventListener("click", getCredentials)]])];
+            case 2:
+                _c.sent();
                 return [2 /*return*/];
         }
     });

@@ -8,7 +8,6 @@ import "bootstrap-select"
 import {Alert, generateAlertHTML} from "./error";
 
 
-
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
 const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement; // TODO actually make dropdown and fill
 const errorDismissButton: HTMLButtonElement = document.getElementById("error-dismiss-button") as HTMLButtonElement;
@@ -77,34 +76,12 @@ async function getCredentials() {
             errorDiv.innerHTML += generateAlertHTML(error, Alert.danger)
         }
     }
-    //         .then(response => {
-    //             let data = response.data;
-    //             if (data.emails.length == 0 && checkAllFieldsFilledIn()) {
-    //                 bookRoom();
-    //             } else if (!checkAllFieldsFilledIn()) {
-    //                 showError("Please fill in all fields");
-    //             } else {
-    //                 showError("one of the emails is invalid");
-    //             }
-    //         });
-    // } else if (checkAllFieldsFilledIn()) {
-    //     bookRoom();
-    // } else {0:10] "GET /static/scripts/courses.js HTTP/1.1" 200 685245
-    // [04/Oct/2019 12:20:10] "GET /static/css/main.css HTTP/1.1" 200 200937
-    // [04/Oct/2019 12:20:11] "GET /favicon.ico HTTP/1.1" 200 741
-    // [04/Oct/2019 12:20:11] "GET /rest/courses/ HTTP/1.1" 200 3066
-    // [04/Oct/2019
-    //     showError("Please fill in all fields");
-    // }
-
 }
 
 window.onload = async () => {
-    await displayCourses();
-    $('select').selectpicker(); // Style all selects
-    credentialsButton.addEventListener("click", getCredentials);
-    // errorDismissButton.addEventListener("click", () => {
-    // });// TODO hide
+    await Promise.all([await displayCourses(),
+        $('select').selectpicker(), // Style all selects
+        credentialsButton.addEventListener("click", getCredentials)]);
 };
 
 // TODO: make group gray
