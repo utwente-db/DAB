@@ -109,6 +109,12 @@ GET -> gives back all the studentdatabases owned by the user with the id of the 
 
 Only accessible to admins
 
+### /studentdatabases/course/value
+
+GET -> gives back all teh studentdatabases belonging to the course.
+
+Only accessible to admins and the owners of said course
+
 ## TABLE: Courses
 
 ### /courses/

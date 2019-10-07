@@ -342,7 +342,23 @@ def search_on_owner(request, search_value, dbname):
 
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-    
+
+@csrf_exempt
+@require_GET
+def search_db_on_course(request, search_value):
+    if check_role(request, teacher):
+        try:
+            course = Courses.objects.get(courseid=search_value)
+            if not check_role(request, admin) and request.session["user"] != course.owner().id:
+                return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+            results = Studentdatabases.objects.filter(course=search_value)
+            serializer = StudentdatabasesSerializer(results, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        except Courses.DoesNotExist as e:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
 def get_db_parameters(dbname):
