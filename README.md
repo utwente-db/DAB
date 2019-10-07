@@ -30,6 +30,10 @@ Additionally, the following software is needed for the recommended production se
 - a web server (e.g. nginx)
 - an SMTP server (e.g. postfix)
 
+Logging:
+
+- the file /var/log/django/backend.log needs to exist in order to get log messages from the application
+
 Any pip and npm packages will be installed automatically during the installation steps
 
 ## Installation and running for development

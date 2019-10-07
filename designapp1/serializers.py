@@ -25,10 +25,14 @@ class StudentdatabasesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class dbmusersSerializer(serializers.ModelSerializer):
+class dbmusersCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = dbmusers
         fields = '__all__'
+class dbmusersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = dbmusers
+        fields = ('id', 'role', 'email', 'verified')
 
 
 class TasSerializer(serializers.ModelSerializer):

@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 import json
 import logging
 import re
+#import os
+#import pwd
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
@@ -20,18 +22,17 @@ from . import hash
 from .forms import *
 from .serializers import *
 from .studentdb_functions import *
+from . import schemaCheck
+from . import schemas as schemaWriter
+from .settings import *
+from .log_functions import *
 
 # DESIGN PROJECT
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s %(levelname)s %(message)s',
 )
-
-admin = 0
-teacher = 1
-student = 2
-
 
 # REST RESPONSES
 
@@ -42,30 +43,22 @@ def defaultresponse(request):
         'number': number,
         'range': range(number)
     }
+    log_message(log_default,' default page has been requested')
     return HttpResponse(template.render(context, request))
 
 
 def get_base_response(request, db_parameters):
-    if check_role(request, teacher) or db_parameters["dbname"] == "courses" or db_parameters["dbname"] == "schemas":
+    if check_role(request, teacher) or db_parameters["dbname"] == "courses":
         try:
             database = db_parameters["db"].objects.all()
             serializer_class = db_parameters["serializer"](database, many=True)
         except db_parameters["db"].DoesNotExist as e:
-            logging.debug(e)
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
-            return JsonResponse(serializer_class.data, safe=False)
-    elif check_role(request, student) and db_parameters["dbname"] == "studentdatabases":
-        # student should be able to view own databases
-        try:
-            database = db_parameters["db"].objects.filter(fid=request.session["user"]).all()
-            serializer_class = db_parameters["serializer"](database, many=True)
-        except db_parameters["db"].DoesNotExist as e:
-            return JsonResponse([], safe=False)
-        else:
+            log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_base," has requested all rows from this db") #LOG THIS ACTION
             return JsonResponse(serializer_class.data, safe=False)
     else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
 def do_i_own_this_item(current_id, pk, db_parameters):
@@ -85,9 +78,6 @@ def do_i_own_this_item(current_id, pk, db_parameters):
         elif db_parameters["dbname"] == "studentdatabases":
             database = Studentdatabases.objects.get(dbid=pk)
             db_id = database.fid.id
-        elif db_parameters["dbname"] == "schemas":
-            database = schemas.objects.get(id=pk)
-            db_id = database.course.fid.id
     except Exception as e:
         return False
     else:
@@ -109,6 +99,8 @@ def get_single_response(request, pk, db_parameters):
         am_i_the_owner = do_i_own_this_item(current_id, pk, db_parameters)
         if am_i_the_owner or check_role(request, teacher) or db_parameters[
             "dbname"] == "courses":
+            message = " a single response is requested on pk:" + str(pk)
+            log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_single,message) #LOG THIS ACTION
             return JsonResponse(serializer_class.data, safe=False)
         else:
             return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -120,13 +112,13 @@ def get_own_response(request, dbname):
 
         db_parameters = get_db_parameters(dbname)
 
-        logging.debug("hier")
+        #logging.debug("hier")
         db_id = None
         serializer_class = None
         database = None
 
         current_id = request.session['user']
-        logging.debug(current_id)
+        #logging.debug(current_id)
         try:
             if db_parameters["dbname"] == "courses":
                 database = Courses.objects.filter(fid__id=current_id)
@@ -140,12 +132,10 @@ def get_own_response(request, dbname):
             elif db_parameters["dbname"] == "studentdatabases":
                 database = Studentdatabases.objects.filter(fid__id=current_id)
                 serializer_class = StudentdatabasesSerializer(database, many=True)
-            elif db_parameters["dbname"] == "schemas":
-                database = schemas.objects.filter(course__fid__id=current_id)
-                serializer_class = schemasserializer(database, many=True)
         except Exception as e:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
+            log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_own," this user has requested its own info in this db") #LOG THIS ACTION
             return JsonResponse(serializer_class.data, safe=False)
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -160,11 +150,14 @@ def post_base_dbmusers_response(request, databases, db_parameters):
         # databases['role'] = databases['role']
     else:
         databases['role'] = student
-    custom_serializer = db_parameters["serializer"]
+    custom_serializer = dbmusersCreateSerializer
     serializer_class = custom_serializer(data=databases)
     # send confirmation mail
     # mail.send_verification(databases)
     logging.debug("Created user; verify at /verify/"+databases["token"])
+    message = " a user has been created with the email: " + str(databases['email'])
+    log_message_with_db(request.session['user'],db_parameters["dbname"],log_post_base_dbmusers,message) #LOG THIS ACTION
+
     return serializer_class
 
 
@@ -186,38 +179,49 @@ def post_base_response(request, db_parameters):
                     serializer_class = post_base_dbmusers_response(request, databases, db_parameters)
             else:
                 if db_parameters["dbname"] == "studentdatabases":
-                    # generate data for student
-                    username, password = hash.randomNames()
-                    databases["username"] = username
-                    databases["databasename"] = username
-                    databases["password"] = password
                     if not "fid" in databases:
                         databases["fid"] = request.session["user"]
                     elif not check_role(request, teacher) and databases["fid"] != request.session["user"]:
                         # you should not be able to request a db for somebody else if you are a student...
                         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+                    # generate data for student
+                    username, password = hash.randomNames()
+                    databases["username"] = username
+                    databases["databasename"] = username
+                    databases["password"] = password
+
                 custom_serializer = db_parameters["serializer"]
                 serializer_class = custom_serializer(data=databases)
         except ParseError:
             return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            logging.debug(type(e))
+            #logging.debug(type(e))
             return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             if serializer_class.is_valid():
                 try:
                     if db_parameters["dbname"] == "studentdatabases":
-                        serializer_class = create_studentdatabase(serializer_class)
-                        setup_student_db(databases, serializer_class)
-                        serializer_class.save()
+                        create_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"], serializer_class.validated_data["password"])
+                        try:
+                            setup_student_db(databases, serializer_class)
+                            serializer_class.save()
+                        except Exception as e:
+                            #rollback db creation
+                            delete_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"])
+                            return HttpResponse(e.__cause__, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        log_message_with_db(request.session['user'],db_parameters["dbname"],log_post_base," a new studentdatabases has been added (row including entire database)") # LOG THIS ACTION
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                     else:
                         if db_parameters["dbname"] == "courses":
-                            check = schemaWriter.check(serializer_class.validated_data["schema"])
+                            check = schemaCheck.check(serializer_class.validated_data["schema"])
                             if not check[0]:
                                 return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
+                        log_message_with_db(request.session['user'],db_parameters["dbname"],log_post_base," a new row has been added") # LOG THIS ACTION
                         serializer_class.save()
+                        if db_parameters["dbname"] == "dbmusers":
+                            #we DON'T want to return the password and token
+                            serializer_class = dbmusersSerializer(serializer_class.data)
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                 except KeyError as e:
                     return HttpResponse("The following field(s) should be included:" + str(e),
@@ -228,9 +232,10 @@ def post_base_response(request, db_parameters):
                     elif db_parameters["dbname"] == "studentdatabases":
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
+                        raise e
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
-                logging.debug(serializer_class.errors)
+                #logging.debug(serializer_class.errors)
 
                 if "must make a unique set" in str(serializer_class.errors):
                     return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
@@ -256,25 +261,26 @@ def delete_single_response(request, requested_pk, db_parameters):
         else:
             try:
                 if db_parameters["dbname"] == "studentdatabases":
-                    delete_studentdatabase(instance)
+                    delete_studentdatabase(instance.databasename, instance.username)
                     instance.delete()
                 elif db_parameters["dbname"] == "courses":
                     # when you delete a course, make sure to first delete all the student databases
                     instance = db.objects.get(pk=requested_pk)
                     dbs = Studentdatabases.objects.filter(course=instance.courseid).all()
                     for db in dbs:
-                        delete_studentdatabase(db)
+                        delete_studentdatabase(db.databasename, db.username)
                         db.delete()
                     instance.delete()
                 else:
                     instance.delete()
             except Exception as e:
-                logging.debug(e)
+                #logging.debug(e)
                 if "protected foreign key" in str(e.__cause__):
                     return HttpResponse(status=status.HTTP_409_CONFLICT)
                 elif db_parameters["dbname"] == "studentdatabases":
                     return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
+                log_message_with_db(request.session['user'],db_parameters["dbname"],log_delete_single, " a row has been deleted by this user. in case of courses or studentdatabases, additional databases may have been deleted") #LOG THIS ACTION
                 return HttpResponse(status=status.HTTP_202_ACCEPTED)
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -286,7 +292,7 @@ def search_on_name(request, search_value, dbname):
 
     results = None
 
-    if check_role(request, teacher) or db_parameters["dbname"] == "courses" or db_parameters["dbname"] == "schemas":
+    if check_role(request, teacher) or db_parameters["dbname"] == "courses":
 
         try:
 
@@ -306,6 +312,8 @@ def search_on_name(request, search_value, dbname):
         except Exception as e:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
+            message = " a search has been done on the term:" + str(search_value)
+            log_message_with_db(request.session['user'],db_parameters["dbname"],log_search, message) #LOG THIS ACTION
             return JsonResponse(serializer.data, safe=False)
 
     else:
@@ -324,9 +332,6 @@ def get_db_parameters(dbname):
     elif dbname == "tas":
         db_parameters["serializer"] = TasSerializer
         db_parameters["db"] = TAs
-    elif dbname == "schemas":
-        db_parameters["serializer"] = schemasserializer
-        db_parameters["db"] = schemas
     elif dbname == "studentdatabases":
         db_parameters["serializer"] = StudentdatabasesSerializer
         db_parameters["db"] = Studentdatabases
@@ -374,6 +379,8 @@ def dump(request, pk):
     schema = schemaWriter.dump(db.__dict__)
     response =  HttpResponse(schema, content_type="application/sql")
     response['Content-Disposition'] = "inline; filename=%s" % (db.databasename+".sql")
+    message = "a dump has been made on:" + str(pk)
+    log_message_with_db(request.session['user'],"Studentdatabases",log_dump, message) #LOG THIS ACTION
     return response
 
 @csrf_exempt
@@ -395,6 +402,8 @@ def reset(request, pk):
         reset_studentdatabase(db)
     except Exception as e:
         raise e
+    message = "a reset has been done on:" + str(pk)
+    log_message_with_db(request.session['user'],"Studentdatabases",log_reset, message) #LOG THIS ACTION
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
 @csrf_exempt
@@ -413,7 +422,7 @@ def schema(request, pk):
         else:
             if course.owner().id == request.session["user"] or check_role(request, admin):
                 schema = request.body.decode("utf-8")
-                check = schemaWriter.check(schema)
+                check = schemaCheck.check(schema)
                 if not check[0]:
                     return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
                 course.schema = schema
@@ -448,8 +457,8 @@ def check_role(request, role):
     return False
 
 
-def get_queryset(self):
-    logging.debug(self.request)
+#def get_queryset(self):
+    #logging.debug(self.request)
 
 
 @require_GET
@@ -486,53 +495,6 @@ def home(request):
 
 def test(request):
     return HttpResponse("test")
-
-
-@require_POST
-def create_db(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    body = json.loads(request.body.decode("utf-8"))
-    statements.create_db(body["name"], body["owner"], body["password"])
-    return HttpResponse("")
-
-
-@require_POST
-def delete_db(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    body = json.loads(request.body.decode("utf-8"))
-    statements.delete_db(body["name"])
-    return HttpResponse("")
-
-
-@require_POST
-def delete_user(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    body = json.loads(request.body.decode("utf-8"))
-    statements.delete_user(body["name"])
-    return HttpResponse("")
-
-
-@require_POST
-def delete_db_with_owner(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    body = json.loads(request.body.decode("utf-8"))
-    statements.delete_db_with_owner(body["name"])
-    return HttpResponse("")
-
-
-@require_GET
-def get_users(request):
-    if not check_role(request, 0):
-        return unauthorised;
-    answer = statements.get_users()
-    answer = json.JSONEncoder().encode(answer)
-    response = HttpResponse(str(answer), content_type="application/json")
-    return response
-
 
 @require_GET
 def register(request):

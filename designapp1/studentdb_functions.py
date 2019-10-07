@@ -5,7 +5,7 @@ from django.db import connection
 from psycopg2.extensions import AsIs
 from . import models
 
-from . import schemas as schemaWriter
+from .schemas import write as writeSchema
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -46,36 +46,30 @@ def reset_studentdatabase(db):
         connection.autocommit = True
 
         schema = db.course.schema
-        schemaWriter.write(db.__dict__, schema)
+        writeSchema(db.__dict__, schema)
 
 
-def delete_studentdatabase(db_name):
+def delete_studentdatabase(databasename, username):
     with connection.cursor() as cursor:
         connection.autocommit = False  # want to make sure we can't be outrun
         # make sure no one can connect to the database
         cursor.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '%s'",
-                       [AsIs(db_name.databasename)])
+                       [AsIs(databasename)])
         # drop any existing connections
         cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'",
-                       [AsIs(db_name.databasename)])
+                       [AsIs(databasename)])
         # actually drop the database
-        cursor.execute("DROP DATABASE \"%s\";", [AsIs(db_name.databasename)])
+        cursor.execute("DROP DATABASE \"%s\";", [AsIs(databasename)])
         # kick out the user just to be sure
         cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE usename = '%s'",
-                       [AsIs(db_name.username)])
+                       [AsIs(username)])
         # Drop the user
-        cursor.execute("DROP USER \"%s\";", [AsIs(db_name.username)])
+        cursor.execute("DROP USER \"%s\";", [AsIs(username)])
         connection.commit()
         connection.autocommit = True
 
 
-def create_studentdatabase(serializer_class):
-    db_name = serializer_class.validated_data['databasename']
-    username = serializer_class.validated_data['username']
-    password = serializer_class.validated_data['password']
-    course = serializer_class.validated_data['course']
-
-
+def create_studentdatabase(db_name, username, password):
     with connection.cursor() as cursor:
         cursor.execute("CREATE USER \"%s\" WITH UNENCRYPTED PASSWORD '%s';", [AsIs(username), AsIs(password)])
         cursor.execute("CREATE DATABASE \"%s\" WITH OWNER \"%s\";", [AsIs(db_name), AsIs(username)])
@@ -89,9 +83,8 @@ def create_studentdatabase(serializer_class):
             cur.execute("CREATE SCHEMA \"%s\";", [AsIs(username)])
             cur.execute("ALTER SCHEMA \"%s\" OWNER TO \"%s\";", [AsIs(username), AsIs(username)])
         conn.commit()
-    return serializer_class
 
 
 def setup_student_db(databases, serializer_class):
     course = serializer_class.validated_data["course"]
-    schemaWriter.write(databases, course.schema)
+    writeSchema(databases, course.schema)

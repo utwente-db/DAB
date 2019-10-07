@@ -225,7 +225,7 @@ class testCourse(unittest.TestCase):
         conn.close()
 
     def test6DeleteDatabase(self):
-        r = student.get(BASE + "/rest/studentdatabases/")
+        r = student.get(BASE + "/rest/studentdatabases/own")
         self.assertEqual(r.status_code, 200)
         body = r.json()
         id = 0
@@ -239,7 +239,7 @@ class testCourse(unittest.TestCase):
         self.assertEqual(r.status_code, 202)
 
         # finally, let's see if the db is still there
-        r = student.get(BASE + "/rest/studentdatabases/")
+        r = student.get(BASE + "/rest/studentdatabases/own")
         self.assertEqual(r.status_code, 200)
         body = r.json()
         for db in body:
