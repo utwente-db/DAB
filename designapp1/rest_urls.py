@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^studentdatabases/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "studentdatabases"}),
     url(r'^studentdatabases/$', views.baseview, {"dbname": "studentdatabases"}),
     url(r'^studentdatabases/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name, {"dbname": "studentdatabases"}),
+    url(r'^studentdatabases/owner/(?P<search_value>[0-9]+)/?$', views.search_on_owner, {"dbname": "studentdatabases"}),
     # Courses
     url(r'^courses/own/?$', views.get_own_response, {"dbname": "courses"}),
     url(r'^courses/(?P<pk>[0-9]+)/schema/?', views.schema),

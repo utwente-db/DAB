@@ -323,6 +323,27 @@ def search_on_name(request, search_value, dbname):
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
+@csrf_exempt
+@require_GET
+def search_on_owner(request, search_value, dbname):
+    db_parameters = get_db_parameters(dbname)
+
+    if check_role(request, admin):
+        try:
+            results = None
+            if db_parameters["dbname"] == "studentdatabases":
+                results = db_parameters["db"].objects.filter(fid=search_value)
+            else:
+                return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
+            serializer = db_parameters["serializer"](results, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        except db_parameters["db"].DoesNotExist as e:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+    
+
 
 def get_db_parameters(dbname):
     db_parameters = {"dbname": dbname}

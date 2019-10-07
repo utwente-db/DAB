@@ -103,6 +103,12 @@ GET -> search for the value, based on the studentdatabasename
 
 GET -> gives back all the studentdatabases owned by the user currently logged in
 
+### /studentdatabases/owner/value
+
+GET -> gives back all the studentdatabases owned by the user with the id of the value
+
+Only accessible to admins
+
 ## TABLE: Courses
 
 ### /courses/
