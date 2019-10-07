@@ -8,6 +8,7 @@ urlpatterns = [
     path('home', views.home, name="home"),
     url(r'^login/?$', views.login, name="login"),
     url(r'^logout/?$', views.logout, name="logout"),
+    url(r'^register/?$', views.register, name="register"),
     url(r'^request_db/?$', views.request_db, name="request_db"),
     url(r'^logout_button/?$', views.logout_button, name='logout_button'),
     url(r'^courses/?$', views.courses, name='courses'),

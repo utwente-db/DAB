@@ -4,6 +4,10 @@
     <title>Register</title>
 {% endblock %}
 
+{% block scripts %}
+    <script defer src="/static/scripts/register.js"></script>
+{% endblock %}
+
 {% block content %}
     <div class="container mt-5">
         <div class="row">
@@ -31,7 +35,7 @@
                             {{ form.passwordConfirm }}
                         </div>
                     </div>
-                    <button class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3" type="submit">Register
+                    <button class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3" id="register-button">Register
                     </button>
                 </div>
             </div>
