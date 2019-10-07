@@ -380,7 +380,7 @@ def dump(request, pk):
     response =  HttpResponse(schema, content_type="application/sql")
     response['Content-Disposition'] = "inline; filename=%s" % (db.databasename+".sql")
     message = "a dump has been made on:" + str(pk)
-    log_message_with_db(request.session['user'],db_parameters["dbname"],log_dump, message) #LOG THIS ACTION
+    log_message_with_db(request.session['user'],"Studentdatabases",log_dump, message) #LOG THIS ACTION
     return response
 
 @csrf_exempt
@@ -403,7 +403,7 @@ def reset(request, pk):
     except Exception as e:
         raise e
     message = "a reset has been done on:" + str(pk)
-    log_message_with_db(request.session['user'],db_parameters["dbname"],log_reset, message) #LOG THIS ACTION
+    log_message_with_db(request.session['user'],"Studentdatabases",log_reset, message) #LOG THIS ACTION
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
 @csrf_exempt
