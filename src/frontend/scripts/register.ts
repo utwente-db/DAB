@@ -16,11 +16,23 @@ const registerJSON = {
 function setValid(input: HTMLInputElement): void {
     input.classList.remove("is-invalid");
     input.classList.add("is-valid")
+        if (input.nextElementSibling) {
+        const errorField: Element = input.nextElementSibling;
+        errorField.textContent = "";
+    } else {
+        console.error("No sibling element for input. Contact the front-end devs with this error")
+    }
 }
 
 function setInvalid(input: HTMLInputElement, error: string): void {
     input.classList.remove("is-valid");
     input.classList.add("is-invalid")
+    if (input.nextElementSibling) {
+        const errorField: Element = input.nextElementSibling;
+        errorField.textContent = error;
+    } else {
+        console.error("No sibling element for input. Contact the front-end devs with this error")
+    }
     // TODO add error
 }
 
@@ -40,6 +52,7 @@ function validEmail(): boolean {
     const email: string = registerEmailField.value;
     if (emailPattern.test(email)) {
         if (utwentePattern.test(email)) {
+            setValid(registerEmailField);
             return true;
         } else {
             setInvalid(registerEmailField, "Not a valid utwente.nl address");
@@ -51,7 +64,9 @@ function validEmail(): boolean {
 }
 
 function validPassword(): boolean {
-
+    const passwordRegex: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
+    // TODO add placeholder to password with hints
+    setInvalid(registerPasswordField,"Invalid password")
     return false;
     // TODO Password check
     // todo error message
@@ -59,7 +74,10 @@ function validPassword(): boolean {
 }
 
 function checkFields(): boolean {
-    return validEmail() && validPassword() && passwordsEqual()
+    const a =validEmail() // Can't use
+    const b = validPassword()
+    const c = passwordsEqual();
+    return a && b && c
 }
 
 function register(): void {

@@ -18,7 +18,8 @@ class RegisterForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control mb-2',
-                'id': 'register-password-field'
+                'id': 'register-password-field',
+
             }
         ), required=True, label='password')
 
@@ -26,7 +27,7 @@ class RegisterForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'id': 'register-password-confirm-field'
+                'id': 'register-password-confirm-field mb-0'
             }
         ), required=True, label="confirm password")
 
