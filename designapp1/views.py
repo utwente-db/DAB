@@ -521,7 +521,7 @@ def generate_migration(request):
     if not check_role(request, admin):
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-    script_file = "/tmp/dab_backups.tar.gz"
+    script_file = "/tmp/dab_backup.sh"
 
     from django.db import connection
     host = connection.settings_dict["HOST"]
@@ -538,10 +538,11 @@ def generate_migration(request):
     #dump all of the student databases
     dbs = Studentdatabases.objects.all();
     for db in dbs:
+        create_command = "CREATE USER \""+db.username+"\" WITH UNENCRYPTED PASSWORD \""+db.password+"\";"
         #escape / from the filename by replacing it by ?
         db_name = db.databasename
         db_name = re.sub(r'\/', "?", db_name)
-        output += "echo 'Backing up "+db.databasename+"';\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" \""+db.databasename+"\" > "+db_name+".sql;\n"
+        output += "echo 'Backing up "+db.databasename+"';\necho '"+create_command+"' >> "+database+".sql;\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" -C \""+db.databasename+"\" > "+db_name+".sql;\n"
 
     output += "echo 'Compressing...';\ncd ..;\ntar -czf dab_backup.tar.gz dab_backups;\nrm -R dab_backups;\n"
     output += "echo 'Done generating dab_backup.tar.gz'"
