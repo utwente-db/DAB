@@ -36,122 +36,122 @@ logging.basicConfig(
 
     # REST RESPONSES
 
-    def defaultresponse(request):
-        template = loader.get_template('defaultresponse.html')
-        number = 3
-        context = {
-            'number': number,
-            'range': range(number)
-        }
-        log_message(log_default,' default page has been requested')
-        return HttpResponse(template.render(context, request))
+def defaultresponse(request):
+    template = loader.get_template('defaultresponse.html')
+    number = 3
+    context = {
+        'number': number,
+        'range': range(number)
+    }
+    log_message(log_default,' default page has been requested')
+    return HttpResponse(template.render(context, request))
 
 
-    def get_base_response(request, db_parameters):
-        if check_role(request, teacher) or db_parameters["dbname"] == "courses":
-            try:
-                database = db_parameters["db"].objects.all()
-                serializer_class = db_parameters["serializer"](database, many=True)
-            except db_parameters["db"].DoesNotExist as e:
-                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-            else:
-                log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_base," has requested all rows from this db") #LOG THIS ACTION
-                return JsonResponse(serializer_class.data, safe=False)
+def get_base_response(request, db_parameters):
+    if check_role(request, teacher) or db_parameters["dbname"] == "courses":
+        try:
+            database = db_parameters["db"].objects.all()
+            serializer_class = db_parameters["serializer"](database, many=True)
+        except db_parameters["db"].DoesNotExist as e:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
-            return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+            log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_base," has requested all rows from this db") #LOG THIS ACTION
+            return JsonResponse(serializer_class.data, safe=False)
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
-    def do_i_own_this_item(current_id, pk, db_parameters):
+def do_i_own_this_item(current_id, pk, db_parameters):
+    db_id = None
+    serializer_class = None
+    database = None
+
+    try:
+        if db_parameters["dbname"] == "courses":
+            database = Courses.objects.get(courseid=pk)
+            db_id = database.fid.id
+        elif db_parameters["dbname"] == "dbmusers":
+            db_id = pk
+        elif db_parameters["dbname"] == "tas":
+            database = TAs.objects.get(taid=pk)
+            db_id = database.courseid.fid.id
+        elif db_parameters["dbname"] == "studentdatabases":
+            database = Studentdatabases.objects.get(dbid=pk)
+            db_id = database.fid.id
+    except Exception as e:
+        return False
+    else:
+        if db_id == current_id:
+            return True
+        else:
+            return False
+
+
+def get_single_response(request, pk, db_parameters):
+    current_id = request.session['user']
+
+    try:
+        database = db_parameters["db"].objects.get(pk=pk)
+        serializer_class = db_parameters["serializer"](database, many=False)
+    except Exception as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+    else:
+        am_i_the_owner = do_i_own_this_item(current_id, pk, db_parameters)
+        if am_i_the_owner or check_role(request, teacher) or db_parameters[
+            "dbname"] == "courses":
+            message = " a single response is requested on pk:" + str(pk)
+            log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_single,message) #LOG THIS ACTION
+            return JsonResponse(serializer_class.data, safe=False)
+        else:
+            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+@csrf_exempt
+def get_own_response(request, dbname):
+    if check_role(request, student):
+
+        db_parameters = get_db_parameters(dbname)
+
+        #logging.debug("hier")
         db_id = None
         serializer_class = None
         database = None
 
+        current_id = request.session['user']
+        #logging.debug(current_id)
         try:
             if db_parameters["dbname"] == "courses":
-                database = Courses.objects.get(courseid=pk)
-                db_id = database.fid.id
+                database = Courses.objects.filter(fid__id=current_id)
+                serializer_class = CoursesSerializer(database, many=True)
             elif db_parameters["dbname"] == "dbmusers":
-                db_id = pk
+                database = dbmusers.objects.filter(id=current_id)
+                serializer_class = dbmusersSerializer(database, many=True)
             elif db_parameters["dbname"] == "tas":
-                database = TAs.objects.get(taid=pk)
-                db_id = database.courseid.fid.id
+                database = TAs.objects.filter(studentid__id=current_id)
+                serializer_class = TasSerializer(database, many=True)
             elif db_parameters["dbname"] == "studentdatabases":
-                database = Studentdatabases.objects.get(dbid=pk)
-                db_id = database.fid.id
-        except Exception as e:
-            return False
-        else:
-            if db_id == current_id:
-                return True
-            else:
-                return False
-
-
-    def get_single_response(request, pk, db_parameters):
-        current_id = request.session['user']
-
-        try:
-            database = db_parameters["db"].objects.get(pk=pk)
-            serializer_class = db_parameters["serializer"](database, many=False)
+                database = Studentdatabases.objects.filter(fid__id=current_id)
+                serializer_class = StudentdatabasesSerializer(database, many=True)
         except Exception as e:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
-            am_i_the_owner = do_i_own_this_item(current_id, pk, db_parameters)
-            if am_i_the_owner or check_role(request, teacher) or db_parameters[
-                "dbname"] == "courses":
-                message = " a single response is requested on pk:" + str(pk)
-                log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_single,message) #LOG THIS ACTION
-                return JsonResponse(serializer_class.data, safe=False)
-            else:
-                return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
-
-    @csrf_exempt
-    def get_own_response(request, dbname):
-        if check_role(request, student):
-
-            db_parameters = get_db_parameters(dbname)
-
-            #logging.debug("hier")
-            db_id = None
-            serializer_class = None
-            database = None
-
-            current_id = request.session['user']
-            #logging.debug(current_id)
-            try:
-                if db_parameters["dbname"] == "courses":
-                    database = Courses.objects.filter(fid__id=current_id)
-                    serializer_class = CoursesSerializer(database, many=True)
-                elif db_parameters["dbname"] == "dbmusers":
-                    database = dbmusers.objects.filter(id=current_id)
-                    serializer_class = dbmusersSerializer(database, many=True)
-                elif db_parameters["dbname"] == "tas":
-                    database = TAs.objects.filter(studentid__id=current_id)
-                    serializer_class = TasSerializer(database, many=True)
-                elif db_parameters["dbname"] == "studentdatabases":
-                    database = Studentdatabases.objects.filter(fid__id=current_id)
-                    serializer_class = StudentdatabasesSerializer(database, many=True)
-            except Exception as e:
-                return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-            else:
-                log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_own," this user has requested its own info in this db") #LOG THIS ACTION
-                return JsonResponse(serializer_class.data, safe=False)
-        else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+            log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_own," this user has requested its own info in this db") #LOG THIS ACTION
+            return JsonResponse(serializer_class.data, safe=False)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 
-    def post_base_dbmusers_response(request, databases, db_parameters):
-        unhashed_password = databases['password']
-        databases['password'] = hash.make(unhashed_password)
-        databases["token"] = hash.token()
-        if check_role(request, admin):
-            pass
-            # databases['role'] = databases['role']
-        else:
-            databases['role'] = student
-        custom_serializer = dbmusersCreateSerializer
-        serializer_class = custom_serializer(data=databases)
-        # send confirmation mail
+def post_base_dbmusers_response(request, databases, db_parameters):
+    unhashed_password = databases['password']
+    databases['password'] = hash.make(unhashed_password)
+    databases["token"] = hash.token()
+    if check_role(request, admin):
+        pass
+        # databases['role'] = databases['role']
+    else:
+        databases['role'] = student
+    custom_serializer = dbmusersCreateSerializer
+    serializer_class = custom_serializer(data=databases)
+    # send confirmation mail
     mail.send_verification(databases)
     # logging.debug("Created user; verify at /verify/"+databases["token"])
     message = " a user has been created with the email: " + str(databases['email'])
