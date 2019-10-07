@@ -162,9 +162,6 @@ def post_base_dbmusers_response(request, databases, db_parameters):
 
 
 def post_base_response(request, db_parameters):
-    if db_parameters["dbname"] == "courses":
-        db_parameters["serializer"] = CoursesCreateSerializer
-
     if check_role(request, teacher) or db_parameters["dbname"] == "dbmusers" or (
             db_parameters["dbname"] == "studentdatabases" and check_role(request, student)):
 
@@ -173,10 +170,17 @@ def post_base_response(request, db_parameters):
         try:
             databases = JSONParser().parse(request)
             if db_parameters["dbname"] == "dbmusers":
-                if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl', databases["email"]):
+                if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', databases["email"]):
                     return HttpResponse("only utwente email address can be used", status=status.HTTP_400_BAD_REQUEST)
                 else:
                     serializer_class = post_base_dbmusers_response(request, databases, db_parameters)
+            elif db_parameters["dbname"] == "courses":
+                #teacher should not be able to create courses for each other
+                if request.session["role"] < admin or "fid" not in databases:
+                    databases["fid"] = request.session["user"]
+                if "schema" not in databases:
+                    databases["schema"] = ""
+                serializer_class = CoursesCreateSerializer(data=databases)
             else:
                 if db_parameters["dbname"] == "studentdatabases":
                     if not "fid" in databases:
@@ -392,7 +396,7 @@ def reset(request, pk):
     try:
         db = Studentdatabases.objects.get(dbid=pk)
     except Studentdatabases.DoesNotExist as e:
-        return HttpResponse(status=HTTP_404_NOT_FOUND)
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     if not check_role(request, teacher) and request.session["user"] != db.owner().id:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
@@ -433,6 +437,45 @@ def schema(request, pk):
     except Courses.DoesNotExist:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
+def transferSchema(request, course, database):
+    if not check_role(request, teacher):
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        course = Courses.objects.get(courseid=course)
+    except Courses.DoesNotExist as e:
+        return HttpResponse("No such course", status=status.HTTP_404_NOT_FOUND)
+
+    if course.owner().id != request.session["user"] and request.session["role"] < admin:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        db = Studentdatabases.objects.get(dbid=database)
+    except Studentdatabases.DoesNotExist as e:
+        return HttpResponse("No such database", status=status.HTTP_404_NOT_FOUND)
+
+    if db.course.courseid != course.courseid and db.owner != request.session["user"]:
+        return HttpResponse("You don't own this database", status=status.HTTP_403_FORBIDDEN)
+
+    #we are now authorised, and the objects exist
+    schema = schemaWriter.dump(db.__dict__)
+    #make sure the default schema is not included as such
+    name = re.escape(db.username)
+    #We want a default schema to be used
+    schema = re.sub(r'CREATE SCHEMA "?'+name+r'"?;', "", schema)
+    schema = re.sub(r'"?'+name+r'"?\.', "", schema)
+    search_path_setter = re.escape("SELECT pg_catalog.set_config('search_path', '', false);")
+    schema = re.sub(search_path_setter, "", schema) 
+    #verify just in case
+    check = schemaCheck.check(schema)
+    if not check[0]:
+        return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
+    course.schema = schema
+    course.save()
+    message = "Course "+str(course)+" has schema from "+str(database)
+    log_message(log_schema, message)
+
+    return HttpResponse()
 
 
 

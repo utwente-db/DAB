@@ -116,7 +116,7 @@ body:
 	"coursename":"test20", [FREE TO CHOOSE]
 	"students":"2", [FREE TO CHOOSE]
 	"info":"test200", [FREE TO CHOOSE]
-	"fid":"7" [FOREIGN KEY, MUST EXIST]
+	"fid":"7" [FOREIGN KEY, MUST EXIST; OPTIONAL, defaults to own]
 	"schema": <sql> [OPTIONAL, DEFAULT=""]
 	}
 
@@ -192,6 +192,14 @@ DELETE	-> delete ta for that ta id
 ### /tas/own/
 
 GET -> gives back the ta information about the currently logged in ta
+
+## /schematransfer/[course]/[database]
+
+Transfers the schema from the database to the course. 
+
+Only works if the database belongs to the course or to your user personally, unless you are an admin.
+
+Default schema (named after the user) is preserved from the target database
 
 # Permissions
 

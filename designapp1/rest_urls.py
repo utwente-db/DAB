@@ -40,6 +40,7 @@ urlpatterns = [
     # dump
     url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),
     url(r'^reset/(?P<pk>[0-9]+)/?', views.reset),
+    url(r'^schematransfer/(?P<course>[0-9]+)/(?P<database>[0-9]+)/?', views.transferSchema),
 
     # Login
 
