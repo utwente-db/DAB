@@ -392,7 +392,7 @@ def reset(request, pk):
     try:
         db = Studentdatabases.objects.get(dbid=pk)
     except Studentdatabases.DoesNotExist as e:
-        return HttpResponse(status=HTTP_404_NOT_FOUND)
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     if not check_role(request, teacher) and request.session["user"] != db.owner().id:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
