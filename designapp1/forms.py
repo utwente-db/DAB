@@ -4,7 +4,7 @@ from django import forms
 class RegisterForm(forms.Form):
     # TODO: validate emails are emails via regex (possibly do this in frontend)
     mail = forms.CharField(
-        widget=forms.TextInput(
+        widget=forms.EmailInput(
             attrs={
                 'class': 'form-control mb-2',
                 # 'placeholder': 'your.name@student.utwente.nl'
