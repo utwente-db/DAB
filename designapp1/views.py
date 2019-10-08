@@ -370,26 +370,14 @@ def update_single_response(request, requested_pk, db_parameters):
     if check_role(request, teacher) and db_parameters["dbname"] == "courses":
         try:
 
-            db = db_parameters['db']
-#            current_row = db.objects.get(pk=requested_pk) #get current row
-
             data = JSONParser().parse(request)
 
-#            current_row = db.objects.filter(pk=requested_pk).update(coursename = databases["coursename"],
-#                                                                    info = databases["info"],
-#                                                                    active = databases["active"],
-#                                                                    schema = databases["schema"]) #get current row
+            data.pop("fid", None) #in case this exist remove it
+            data.pop("courseid", None) #in case this exist remove it
 
-            current_row = db.objects.get(pk=requested_pk)
+            current_row = db_parameters['db'].objects.get(pk=requested_pk)
             current_row.__dict__.update(data)
             current_row.save()
-
-#            current_row.coursename  =   databases["coursename"]
-#            current_row.info        =   databases["info"]
-#            current_row.active      =   databases["active"]
-#            current_row.schema      =   databases["schema"]
-
-#            current_row.save()
 
         except ParseError as e:
             return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
