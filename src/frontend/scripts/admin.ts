@@ -4,28 +4,16 @@ import axios, {AxiosResponse} from 'axios';
 import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
-import "bootstrap-select"
-// import "../sass/desktop.sass"
 
 const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
-const whoamiWelcomeHtml: HTMLDivElement = document.getElementById("whoamiWelcome") as HTMLDivElement;
-const whoamiButtonHtml: HTMLDivElement = document.getElementById("whoamiButton") as HTMLDivElement;
-
-interface Whoami {
-    id: number;
-    email: string;
-    role: number;
-    cached_role: number;
-}
 
 interface User {
     id: number;
     role: number;
     email: string;
     password: string;
-    maxdatabases: number;
     verified: boolean;
     token: string;
 }
@@ -37,11 +25,6 @@ interface Course {
     info: string;
 }
 
-async function getWhoamiPromise(): Promise<Whoami> {
-    const response: AxiosResponse = await axios.get("/rest/whoami/");
-    return response.data;
-}
-
 async function getCoursesPromise(): Promise<Course[]> {
     const response: AxiosResponse = await axios.get("/rest/courses/");
     return response.data;
@@ -50,12 +33,6 @@ async function getCoursesPromise(): Promise<Course[]> {
 async function getUsersPromise(): Promise<User[]> {
     const response: AxiosResponse = await axios.get("/rest/dbmusers/");
     return response.data;
-}
-
-async function displayWhoami(): Promise<void> {
-    const whoami: Whoami = await getWhoamiPromise();
-    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email;
-    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary my-2 my-sm-0\" href=\"/settings" + whoami.id + "\">Settings</button>";
 }
 
 async function displayCourses(): Promise<void> {
@@ -89,12 +66,13 @@ async function displayCourses(): Promise<void> {
 async function displayUsers(): Promise<void> {
     const users: User[] = await getUsersPromise();
     const result: string[] = [];
+
     for (let i = 0; i < users.length; i++) {
         let role: string;
         if (users[i].role == 0) {
             role = "Admin";
         } else if (users[i].role == 1) {
-            role = "TA";
+            role = "Teacher";
         } else if (users[i].role == 2) {
             role = "Student";
         } else {
@@ -104,9 +82,13 @@ async function displayUsers(): Promise<void> {
         const verified: boolean = users[i].verified;
         result.push(
             "<tr><th scope=\"row\">" + users[i].id + "</th>"
-            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
-            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
-            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + role + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + users[i].email + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + verified + "</td></tr></a>"
+            // "<tr><th scope=\"row\">" + users[i].id + "</th>"
+            // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
+            // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
+            // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>"
         );
 
     }
@@ -116,7 +98,6 @@ async function displayUsers(): Promise<void> {
 }
 
 window.onload = async () => {
-    await displayWhoami();
     await displayUsers();
     await displayCourses();
 

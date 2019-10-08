@@ -649,36 +649,12 @@ not_found.status_code = 404
     #logging.debug(self.request)
 
 
+def userpage(request):
+    return render(request, 'userpage.html')
+
 @require_GET
-def home(request):
-    path = 'http://localhost:'
-    port = '1402'
-    call = '/dbmusers/'
-    # need session cookie
-    # response = requests.get(path + port + call)
-    # data = response.json()
-
-    students = ["David", "James", "John", "Robert",
-                "Michael", "Wiliam", "Richard", "Joseph",
-                "Thomas", "Charles", "Christopher", "Daniel",
-                "Matthew", "Anthony", "Donald", "Mark", "Paul",
-                "Steven", "Andrew", "Kenneth", "Joshua", "George",
-                "Kevin", "Brian", "Edward", "Ronald", "Timothy",
-                "Jason", "Jeffrey", "Ryan", "Jacob", "Gary"]
-
-    return render(request, 'home.html', {
-        'students': students,
-        'number': len(students)
-        # , 'email': 'test_email'
-    })
-    # posts = Post.objects.all()
-    # paginator = Paginator(posts, 3)
-    # page = request.GET.get('page')
-    # # ?page=2
-    #
-    # posts = paginator.get_page(page)
-
-    # return render(request, 'home.html')#, {'posts': posts})
+def admin(request):
+    return render(request, 'admin.html')
 
 
 def test(request):
@@ -723,6 +699,8 @@ def login(request):
                     request.session["role"] = user.role
                     request.session.modified = True
                     return HttpResponseRedirect("/")
+
+
                 else:
                     return render(request, 'login.html', {'form': form, 'message': incorrect_message})
             except dbmusers.DoesNotExist:

@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/admin.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/userpage.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -19750,10 +19750,10 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./src/frontend/scripts/admin.ts":
-/*!***************************************!*\
-  !*** ./src/frontend/scripts/admin.ts ***!
-  \***************************************/
+/***/ "./src/frontend/scripts/userpage.ts":
+/*!******************************************!*\
+  !*** ./src/frontend/scripts/userpage.ts ***!
+  \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -19799,15 +19799,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
-var usersHtml = document.getElementById("users");
-var coursesNavHtml = document.getElementById("courses-nav");
-var coursesContentHtml = document.getElementById("courses-content");
-function getCoursesPromise() {
+//todo: change to selected user ofcourse
+var hardcoded_userid = 73;
+var pageTitleHtml = document.getElementById("page-title");
+var userInfoHtml = document.getElementById("user-info");
+function getUserPromise() {
     return __awaiter(this, void 0, void 0, function () {
-        var response;
+        var path, response;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, axios_1.default.get("/rest/courses/")];
+                case 0:
+                    path = "/rest/dbmusers/" + hardcoded_userid + "/";
+                    return [4 /*yield*/, axios_1.default.get(path)];
                 case 1:
                     response = _a.sent();
                     return [2 /*return*/, response.data];
@@ -19815,87 +19818,32 @@ function getCoursesPromise() {
         });
     });
 }
-function getUsersPromise() {
+function displayUserDetails() {
     return __awaiter(this, void 0, void 0, function () {
-        var response;
+        var user, role;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, axios_1.default.get("/rest/dbmusers/")];
+                case 0: return [4 /*yield*/, getUserPromise()];
                 case 1:
-                    response = _a.sent();
-                    return [2 /*return*/, response.data];
-            }
-        });
-    });
-}
-function displayCourses() {
-    return __awaiter(this, void 0, void 0, function () {
-        var courses, resultNav, resultContent, i, active, resultNavString, resultContentString;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getCoursesPromise()];
-                case 1:
-                    courses = _a.sent();
-                    resultNav = [];
-                    resultContent = [];
-                    for (i = 0; i < courses.length; i++) {
-                        active = "";
-                        if (i == 0) {
-                            active = " active";
-                        }
-                        resultNav.push("<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + i + "\">" + courses[i].coursename + "</a>");
-                        resultContent.push("<div class=\"tab-pane" + active + "\" id=\"course" + i + "\">"
-                            + "<ul><li>ID: " + courses[i].courseid + "</li>"
-                            + "<li>FID: " + courses[i].fid + "</li>"
-                            + "<li>Coursename: " + courses[i].coursename + "</li>"
-                            + "<li>Info: " + courses[i].info + "</li></ul>"
-                            + "<button class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\">Edit Course</button></div>");
+                    user = _a.sent();
+                    pageTitleHtml.innerHTML += "Admin - User " + user.id;
+                    if (user.role == 0) {
+                        role = "Admin";
                     }
-                    resultNavString = resultNav.join("\n");
-                    resultContentString = resultContent.join("\n");
-                    coursesNavHtml.innerHTML += resultNavString;
-                    coursesContentHtml.innerHTML += resultContentString;
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
-function displayUsers() {
-    return __awaiter(this, void 0, void 0, function () {
-        var users, result, i, role, verified, resultString;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getUsersPromise()];
-                case 1:
-                    users = _a.sent();
-                    result = [];
-                    for (i = 0; i < users.length; i++) {
-                        role = void 0;
-                        if (users[i].role == 0) {
-                            role = "Admin";
-                        }
-                        else if (users[i].role == 1) {
-                            role = "Teacher";
-                        }
-                        else if (users[i].role == 2) {
-                            role = "Student";
-                        }
-                        else {
-                            role = "Unknown";
-                        }
-                        verified = users[i].verified;
-                        result.push("<tr><th scope=\"row\">" + users[i].id + "</th>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + role + "</td>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + users[i].email + "</td>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + verified + "</td></tr></a>"
-                        // "<tr><th scope=\"row\">" + users[i].id + "</th>"
-                        // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
-                        // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
-                        // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>"
-                        );
+                    else if (user.role == 1) {
+                        role = "Teacher";
                     }
-                    resultString = result.join("\n");
-                    usersHtml.innerHTML += resultString;
+                    else if (user.role == 2) {
+                        role = "Student";
+                    }
+                    else {
+                        role = "Unknown";
+                    }
+                    userInfoHtml.innerHTML +=
+                        "id: " + user.id + "<br>" +
+                            "role: " + role + "<br>" +
+                            "email: " + user.email + "<br>" +
+                            "verified:" + user.verified + "<br>";
                     return [2 /*return*/];
             }
         });
@@ -19904,11 +19852,8 @@ function displayUsers() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, displayUsers()];
+            case 0: return [4 /*yield*/, displayUserDetails()];
             case 1:
-                _a.sent();
-                return [4 /*yield*/, displayCourses()];
-            case 2:
                 _a.sent();
                 return [2 /*return*/];
         }
@@ -19919,4 +19864,4 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=admin.js.map
+//# sourceMappingURL=userpage.js.map
