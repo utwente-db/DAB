@@ -23147,18 +23147,15 @@ function displayCourses() {
         });
     });
 }
-function getCredentials() {
+function tryGetCredentials() {
     return __awaiter(this, void 0, void 0, function () {
-        var courseID, resultDiv, data, tempAlert, response, database, error_1;
+        var courseID, data, tempAlert, response, database, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     courseID = Number(coursesDropdown.value);
-                    resultDiv = document.getElementById("result-div");
-                    if (!(courseID !== 0)) return [3 /*break*/, 5];
-                    data = {
-                        "course": courseID,
-                    };
+                    if (!(courseID !== 0)) return [3 /*break*/, 6];
+                    data = { "course": courseID };
                     tempAlert = alert_1.addTempAlert();
                     _a.label = 1;
                 case 1:
@@ -23175,7 +23172,11 @@ function getCredentials() {
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1, tempAlert);
                     return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                case 5: return [3 /*break*/, 7];
+                case 6:
+                    alert_1.addAlert("Please select a course", alert_1.AlertType.danger);
+                    _a.label = 7;
+                case 7: return [2 /*return*/];
             }
         });
     });
@@ -23189,7 +23190,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                 return [4 /*yield*/, displayCourses()];
             case 1: return [4 /*yield*/, _b.apply(_a, [[_c.sent(),
                         $('select').selectpicker(),
-                        credentialsButton.addEventListener("click", getCredentials),
+                        credentialsButton.addEventListener("click", tryGetCredentials),
                         navbar_1.displayWhoami()]])];
             case 2:
                 _c.sent();

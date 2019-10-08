@@ -52,14 +52,10 @@ async function displayCourses(): Promise<void> {
     // coursesDropdown.innerHTML += resultString;
 }
 
-async function getCredentials() {
+async function tryGetCredentials() {
     const courseID: number = Number(coursesDropdown.value);
-    const resultDiv: HTMLDivElement = document.getElementById("result-div") as HTMLDivElement;
-
     if (courseID !== 0) {
-        const data = {
-            "course": courseID,
-        };
+        const data = {"course": courseID};
         const tempAlert: ChildNode | null = addTempAlert();
         try {
             const response: AxiosResponse<Database> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<Database>;
@@ -70,13 +66,15 @@ async function getCredentials() {
         } catch (error) {
             addErrorAlert(error, tempAlert)
         }
+    } else {
+        addAlert("Please select a course", AlertType.danger)
     }
 }
 
 window.onload = async () => {
     await Promise.all([await displayCourses(),
         $('select').selectpicker(), // Style all selects
-        credentialsButton.addEventListener("click", getCredentials),
+        credentialsButton.addEventListener("click", tryGetCredentials),
         displayWhoami()]);
 };
 
