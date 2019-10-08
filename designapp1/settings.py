@@ -17,3 +17,4 @@ log_dump                =   True
 log_reset               =   True
 log_schema              =   True
 log_default             =   True
+log_update_single       =   True

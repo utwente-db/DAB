@@ -169,6 +169,7 @@ def post_base_response(request, db_parameters):
 
         try:
             databases = JSONParser().parse(request)
+            logging.debug(databases)
             if db_parameters["dbname"] == "dbmusers":
                 if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', databases["email"]):
                     return HttpResponse("only utwente email address can be used", status=status.HTTP_400_BAD_REQUEST)
@@ -289,6 +290,40 @@ def delete_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
+def update_single_response(request, requested_pk, db_parameters):
+    logging.debug("sadf")
+    #UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES, THIS FUNCTION COULD BE EXPANDED FOR OTHER DB'S
+    if check_role(request, teacher) and db_parameters["dbname"] == "courses":
+        try:
+
+            db = db_parameters['db']
+            logging.debug(str(db))
+            current_row = db.objects.get(pk=requested_pk) #get current row
+            logging.debug(current_row.pk)
+
+            databases = JSONParser().parse(request)
+            databases["courseid"] = current_row.pk
+            logging.debug(databases)
+            custom_serializer = db_parameters["serializer"]
+            logging.debug("uioasdf")
+            serializer_class = custom_serializer(data=databases)
+            if serializer_class.is_valid():
+                logging.debug("hier")
+                current_row = serializer_class
+                current_row.save()
+            else:
+                raise ParseError
+        except ParseError as e:
+            logging.debug(e)
+            return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            message = "a row has been updated with pk:"+str(pk)
+            log_message_with_db(request.session['user'],db_parameters["dbname"],log_update_single, message) #LOG THIS ACTION
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 @csrf_exempt
 def search_on_name(request, search_value, dbname):
@@ -388,6 +423,8 @@ def singleview(request, pk, dbname):
         return get_single_response(request, pk, db_parameters)
     elif request.method == 'DELETE':
         return delete_single_response(request, pk, db_parameters)
+    elif request.method == 'PUT':
+        return update_single_response(request, pk, db_parameters)
     else:
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 

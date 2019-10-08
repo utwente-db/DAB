@@ -27,6 +27,7 @@ class Courses(models.Model):
     fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
     coursename = models.CharField(max_length=256)
     info = models.TextField()
+    active = models.BooleanField(null=False)
     assistants = models.ManyToManyField(
         dbmusers,
         through='TAs',

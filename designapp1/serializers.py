@@ -6,11 +6,11 @@ from .models import *
 class CoursesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Courses
-        fields = ('courseid', 'fid', 'coursename', 'info')
+        fields = ('courseid', 'fid', 'coursename', 'info','active','schema')
 class CoursesCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Courses
-        fields = ('courseid', 'fid', 'coursename', 'info', 'schema')
+        fields = ('courseid', 'fid', 'coursename', 'info', 'schema','active')
 
 
 class StudentdatabasesDeleteSerializer(serializers.ModelSerializer):
