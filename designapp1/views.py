@@ -209,8 +209,8 @@ def post_base_dbmusers_response(request):
             # databases['role'] = databases['role']
         else:
             databases['role'] = student
-        custom_serializer = dbmusersCreateSerializer
-        serializer_class = custom_serializer(data=databases)
+        custom_serializer = dbmusersSerializer
+        serializer_class = custom_serializer(data=databases, create=True)
         # send confirmation mail
         # mail.send_verification(databases)
         logging.debug("Created user; verify at /verify/"+databases["token"])
@@ -250,7 +250,7 @@ def post_base_response(request, db_parameters):
                     databases["fid"] = request.session["user"]
                 if "schema" not in databases:
                     databases["schema"] = ""
-                serializer_class = CoursesCreateSerializer(data=databases)
+                serializer_class = CoursesSerializer(data=databases, create=True)
             else:
                 if db_parameters["dbname"] == "studentdatabases":
                     if not "fid" in databases:
@@ -293,6 +293,10 @@ def post_base_response(request, db_parameters):
                                 return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
                         log_message_with_db(request.session['user'],db_parameters["dbname"],log_post_base," a new row has been added") # LOG THIS ACTION
                         serializer_class.save()
+                        if db_parameters["dbname"] == "courses":
+                            data = serializer_class.data.copy()
+                            del data["schema"]
+                            return JsonResponse(data, status=status.HTTP_201_CREATED)
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                 except KeyError as e:
                     return HttpResponse("The following field(s) should be included:" + str(e),
@@ -301,6 +305,7 @@ def post_base_response(request, db_parameters):
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     else:
+                        raise
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 #logging.debug(serializer_class.errors)
