@@ -1,4 +1,3 @@
-import "../sass/desktop.sass"
 import "./error"
 import axios, {AxiosResponse} from 'axios';
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js

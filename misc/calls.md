@@ -19,7 +19,7 @@ DELETE
 			DB del err:	500 [ONLY with studentdatabases-> not good,report]
 			protected db:	409 [deleting a user with existing db's]
 			other db err:	406
- 
+
 OTHERWISE [ALSO (e.g.) when trying to post on a particular pk]
 	RESPONSE:	Dont touch that:401 [you have no authorisation to do that action]
 			Any other case:	405
@@ -35,8 +35,8 @@ Body: JSON, containing:
 - role: the role the user should be set to
 - user: the users email. Possibly change to user id?
 
-returns: 
-- 200 if succesful
+returns:
+- 200 if successful
 - 401 if user does not have permission
 - 404 if the user that should be modified does not exist, or already has too low of a role.
 
@@ -70,7 +70,7 @@ Permissions same as DELETE for database
 GET	-> get info all users
 POST 	-> add user
 
-	body: 
+	body:
 		{
 		"fid":"5", [FOREIGN KEY, MUST EXIST. Optional, if not specified, your current user id]
 		"course":"3", [FOREIGN KEY, MUST EXIST]
@@ -93,7 +93,7 @@ Note that the student will want to know the generated values
 ### /studentdatabases/pk
 
 GET	-> for that pk
-DELETE	-> for that pk	
+DELETE	-> for that pk
 
 ### /studentdatabases/name/value
 
@@ -110,7 +110,7 @@ GET -> gives back all the studentdatabases owned by the user currently logged in
 GET	-> get all courses
 NB: to save data, schemas are not mentioned in GET!
 POST	-> add a new course
-body: 
+body:
 
 	{
 	"coursename":"test20", [FREE TO CHOOSE]
@@ -147,7 +147,7 @@ POST -> Takes the **plaintext** body, and makes it the schema of the database (i
 
 GET	-> get all users
 POST	-> add a new user
-body: 
+body:
 	{
 	"role":"0", [0=admin,1=teacher,2=student]
 	"email":"asdfasdf2", [FREE TO CHOOSE, THOUGH NO DUPLICATE IN TABLE]
@@ -173,7 +173,7 @@ GET -> gives back the info about the currently logged in user
 
 GET	-> get all tas
 POST	-> add a new ta
-body: 
+body:
 
 	{
 	"courseid":"8",  [FOREIGN KEY, MUST EXIST]

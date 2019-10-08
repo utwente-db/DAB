@@ -86,14 +86,76 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/bootstrap-cookie-alert/cookiealert.js":
+/*!************************************************************!*\
+  !*** ./node_modules/bootstrap-cookie-alert/cookiealert.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+ * Bootstrap Cookie Alert by Wruczek
+ * https://github.com/Wruczek/Bootstrap-Cookie-Alert
+ * Released under MIT license
+ */
+(function () {
+    "use strict";
+
+    var cookieAlert = document.querySelector(".cookiealert");
+    var acceptCookies = document.querySelector(".acceptcookies");
+
+    cookieAlert.offsetHeight; // Force browser to trigger reflow (https://stackoverflow.com/a/39451131)
+
+    // Show the alert if we cant find the "acceptCookies" cookie
+    if (!getCookie("acceptCookies")) {
+        cookieAlert.classList.add("show");
+    }
+
+    // When clicking on the agree button, create a 1 year
+    // cookie to remember user's choice and close the banner
+    acceptCookies.addEventListener("click", function () {
+        setCookie("acceptCookies", true, 365);
+        cookieAlert.classList.remove("show");
+    });
+
+    // Cookie functions from w3schools
+    function setCookie(cname, cvalue, exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+        var expires = "expires=" + d.toUTCString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+
+    function getCookie(cname) {
+        var name = cname + "=";
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) === ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) === 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+})();
+
+
+/***/ }),
+
 /***/ "./src/frontend/sass/main.sass":
 /*!*************************************!*\
   !*** ./src/frontend/sass/main.sass ***!
   \*************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/mini-css-extract-plugin/dist/loader.js):\nModuleNotFoundError: Module not found: Error: Can't resolve 'bootstrap-cookie-alert/cookiealert.css' in '/home/denys/design/src/frontend/sass'\n    at /home/denys/design/node_modules/webpack/lib/Compilation.js:925:10\n    at /home/denys/design/node_modules/webpack/lib/NormalModuleFactory.js:401:22\n    at /home/denys/design/node_modules/webpack/lib/NormalModuleFactory.js:130:21\n    at /home/denys/design/node_modules/webpack/lib/NormalModuleFactory.js:224:22\n    at /home/denys/design/node_modules/neo-async/async.js:2830:7\n    at /home/denys/design/node_modules/neo-async/async.js:6877:13\n    at /home/denys/design/node_modules/webpack/lib/NormalModuleFactory.js:214:25\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:184:12\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/UnsafeCachePlugin.js:37:5\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:27:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/DescriptionFilePlugin.js:42:38\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:28:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/ModuleKindPlugin.js:23:37\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/forEachBail.js:30:14\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/UnsafeCachePlugin.js:37:5\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5\n    at eval (eval at create (/home/denys/design/node_modules/tapable/lib/HookCodeFactory.js:33:10), <anonymous>:15:1)\n    at /home/denys/design/node_modules/enhanced-resolve/lib/Resolver.js:238:5");
+// extracted by mini-css-extract-plugin
+    if(false) { var cssReload; }
+  
 
 /***/ }),
 
@@ -108,7 +170,7 @@ throw new Error("Module build failed (from ./node_modules/mini-css-extract-plugi
 
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
-__webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module 'bootstrap-cookie-alert/cookiealert.js'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+__webpack_require__(/*! bootstrap-cookie-alert/cookiealert.js */ "./node_modules/bootstrap-cookie-alert/cookiealert.js");
 function f() {
     console.log("Main file loaded");
 }

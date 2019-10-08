@@ -413,7 +413,7 @@ def schema(request, pk):
     if not check_role(request, student):
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
-    try: 
+    try:
         course = Courses.objects.get(courseid=pk)
         if request.method == "GET":
             response =  HttpResponse(course.schema, content_type="application/sql")
@@ -460,6 +460,9 @@ def check_role(request, role):
 #def get_queryset(self):
     #logging.debug(self.request)
 
+
+def userpage(request):
+    return render(request, 'userpage.html')
 
 @require_GET
 def admin(request):
