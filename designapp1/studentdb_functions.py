@@ -2,6 +2,7 @@ import logging
 
 import psycopg2 as db
 from django.db import connection
+from django.db import transaction
 from psycopg2.extensions import AsIs
 from . import models
 
@@ -26,6 +27,16 @@ def connect(db_name):
                       database=db_name)
 
     return conn
+
+# https://stackoverflow.com/questions/1598932/atomic-increment-of-a-counter-in-django
+@transaction.atomic
+def get_studentdatabase_name(courseid):
+    course = models.Courses.objects.select_for_update().get(courseid=courseid)
+    username = course.coursename + "_" + str(course.databases)
+    course.databases += 1
+    course.save()
+
+    return username
 
 def reset_studentdatabase(db):
     with connection.cursor() as cursor:

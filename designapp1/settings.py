@@ -15,4 +15,5 @@ log_delete_single       =   True
 log_search              =   False
 log_dump                =   True
 log_reset               =   True
+log_schema              =   True
 log_default             =   True

@@ -19,7 +19,7 @@ DELETE
 			DB del err:	500 [ONLY with studentdatabases-> not good,report]
 			protected db:	409 [deleting a user with existing db's]
 			other db err:	406
- 
+
 OTHERWISE [ALSO (e.g.) when trying to post on a particular pk]
 	RESPONSE:	Dont touch that:401 [you have no authorisation to do that action]
 			Any other case:	405
@@ -35,8 +35,8 @@ Body: JSON, containing:
 - role: the role the user should be set to
 - user: the users email. Possibly change to user id?
 
-returns: 
-- 200 if succesful
+returns:
+- 200 if successful
 - 401 if user does not have permission
 - 404 if the user that should be modified does not exist, or already has too low of a role.
 
@@ -70,7 +70,7 @@ Permissions same as DELETE for database
 GET	-> get info all users
 POST 	-> add user
 
-	body: 
+	body:
 		{
 		"fid":"5", [FOREIGN KEY, MUST EXIST. Optional, if not specified, your current user id]
 		"course":"3", [FOREIGN KEY, MUST EXIST]
@@ -93,7 +93,7 @@ Note that the student will want to know the generated values
 ### /studentdatabases/pk
 
 GET	-> for that pk
-DELETE	-> for that pk	
+DELETE	-> for that pk
 
 ### /studentdatabases/name/value
 
@@ -103,6 +103,18 @@ GET -> search for the value, based on the studentdatabasename
 
 GET -> gives back all the studentdatabases owned by the user currently logged in
 
+### /studentdatabases/owner/value
+
+GET -> gives back all the studentdatabases owned by the user with the id of the value
+
+Only accessible to admins
+
+### /studentdatabases/course/value
+
+GET -> gives back all teh studentdatabases belonging to the course.
+
+Only accessible to admins and the owners of said course
+
 ## TABLE: Courses
 
 ### /courses/
@@ -110,13 +122,13 @@ GET -> gives back all the studentdatabases owned by the user currently logged in
 GET	-> get all courses
 NB: to save data, schemas are not mentioned in GET!
 POST	-> add a new course
-body: 
+body:
 
 	{
 	"coursename":"test20", [FREE TO CHOOSE]
 	"students":"2", [FREE TO CHOOSE]
 	"info":"test200", [FREE TO CHOOSE]
-	"fid":"7" [FOREIGN KEY, MUST EXIST]
+	"fid":"7" [FOREIGN KEY, MUST EXIST; OPTIONAL, defaults to own]
 	"schema": <sql> [OPTIONAL, DEFAULT=""]
 	}
 
@@ -147,9 +159,9 @@ POST -> Takes the **plaintext** body, and makes it the schema of the database (i
 
 GET	-> get all users
 POST	-> add a new user
-body: 
+body:
 	{
-	"role":"0", [0=admin,1=teacher,2=student]
+	"role":"0", [0=admin,1=teacher,2=student] [set to 2 if not included]
 	"email":"asdfasdf2", [FREE TO CHOOSE, THOUGH NO DUPLICATE IN TABLE]
 	"password":"test205", [FREE TO CHOOSE, IS HASHED]
 	}
@@ -173,7 +185,7 @@ GET -> gives back the info about the currently logged in user
 
 GET	-> get all tas
 POST	-> add a new ta
-body: 
+body:
 
 	{
 	"courseid":"8",  [FOREIGN KEY, MUST EXIST]
@@ -192,6 +204,20 @@ DELETE	-> delete ta for that ta id
 ### /tas/own/
 
 GET -> gives back the ta information about the currently logged in ta
+
+## /schematransfer/[course]/[database]
+
+Transfers the schema from the database to the course. 
+
+Only works if the database belongs to the course or to your user personally, unless you are an admin.
+
+Default schema (named after the user) is preserved from the target database
+
+## /generate_migration
+
+POST -> Generates the backup script. Returns the location of said script.
+
+Only accessible to admins
 
 # Permissions
 
