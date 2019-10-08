@@ -22964,7 +22964,7 @@ function generateAlertHTML(errorMessage, alertType, dismissable) {
     if (dismissable === void 0) { dismissable = true; }
     var dismissableString = dismissable ? "alert-dismissible" : "temp-alert";
     var buttonString = dismissable ? " <button type=\"button\" class=\"close error-dismiss-button\" data-dismiss=\"alert\"\n            aria-label=\"Close\">\n            <span aria-hidden=\"true\">&times;</span>\n            </button>" : "";
-    return "<div class=\"alert " + alertType + " " + dismissableString + " fade show\"  role=\"alert\">\n            <div class=\"error-text\">" + errorMessage + "</div>\n            " + buttonString + "\n            </div>";
+    return "<div class=\"alert " + alertType + " " + dismissableString + " fade show col-12\"  role=\"alert\">\n            <div class=\"error-text\">" + errorMessage + "</div>\n            " + buttonString + "\n            </div>";
 }
 exports.generateAlertHTML = generateAlertHTML;
 ;
@@ -22984,7 +22984,7 @@ function removeTempAlerts() {
         alert_1.remove();
     }
 }
-function removeAlertOnTimeout(tempAlert, ms) {
+function removeAlertOnTimeout(tempAlert, ms, timeOutError) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -22993,19 +22993,24 @@ function removeAlertOnTimeout(tempAlert, ms) {
                     _a.sent();
                     if (tempAlert && document.body.contains(tempAlert)) {
                         tempAlert.remove();
-                        addAlert("Request timed out", AlertType.danger);
+                        if (timeOutError) {
+                            addAlert("Request timed out", AlertType.danger);
+                        }
                     }
                     return [2 /*return*/];
             }
         });
     });
 }
-function addTempAlert(errorMessage, alertType, ms) {
+function addTempAlert(errorMessage, alertType, timeOutError, ms) {
+    if (errorMessage === void 0) { errorMessage = "Please wait..."; }
+    if (alertType === void 0) { alertType = AlertType.secondary; }
+    if (timeOutError === void 0) { timeOutError = true; }
     if (ms === void 0) { ms = 10000; }
     var alertDiv = document.getElementById("alert-div");
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     var tempAlert = alertDiv.lastChild;
-    removeAlertOnTimeout(tempAlert, ms);
+    removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert;
     // TODO maybe don't remove all temp alerts
 }
@@ -23154,7 +23159,7 @@ function getCredentials() {
                     data = {
                         "course": courseID,
                     };
-                    tempAlert = alert_1.addTempAlert("Please wait...", alert_1.AlertType.secondary);
+                    tempAlert = alert_1.addTempAlert();
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 4, , 5]);

@@ -8,7 +8,7 @@ export function generateAlertHTML(errorMessage: string, alertType: AlertType, di
             aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>` : ``
-    return `<div class="alert ${alertType} ${dismissableString} fade show"  role="alert">
+    return `<div class="alert ${alertType} ${dismissableString} fade show col-12"  role="alert">
             <div class="error-text">${errorMessage}</div>
             ${buttonString}
             </div>`
@@ -30,19 +30,21 @@ function removeTempAlerts(): void {
     }
 }
 
-async function removeAlertOnTimeout(tempAlert: ChildNode | null, ms: number) {
+async function removeAlertOnTimeout(tempAlert: ChildNode | null, ms: number, timeOutError: boolean) {
     await delay(ms);
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
-        addAlert("Request timed out", AlertType.danger)
+        if (timeOutError) {
+            addAlert("Request timed out", AlertType.danger)
+        }
     }
 }
 
-export function addTempAlert(errorMessage: string, alertType: AlertType, ms = 10000): ChildNode | null {
+export function addTempAlert(errorMessage = "Please wait...", alertType = AlertType.secondary, timeOutError = true, ms = 10000): ChildNode | null {
     const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     const tempAlert: ChildNode | null = alertDiv.lastChild;
-    removeAlertOnTimeout(tempAlert, ms)
+    removeAlertOnTimeout(tempAlert, ms, timeOutError)
     return tempAlert
 
 

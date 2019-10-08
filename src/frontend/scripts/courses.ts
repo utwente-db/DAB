@@ -60,7 +60,7 @@ async function getCredentials() {
         const data = {
             "course": courseID,
         };
-        const tempAlert: ChildNode | null = addTempAlert("Please wait...", AlertType.secondary);
+        const tempAlert: ChildNode | null = addTempAlert();
         try {
             const response: AxiosResponse<Database> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<Database>;
             const database: Database = await response.data;

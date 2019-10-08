@@ -83,7 +83,7 @@ function checkFields(): boolean {
 }
 
 function register(): void {
-    addTempAlert("Please wait...",AlertType.secondary)
+    addTempAlert()
 }
 
 function tryRegister(): void {
