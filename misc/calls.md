@@ -7,6 +7,9 @@ IN GENERAL IF YOU GET A 500 ERROR -> YOU FIND A BUG, PLEASE REPORT
 GET
 	RESPONSE: 	Succes:		data
 			Otherwise: 	404
+PUT 
+    RESPOSNE:   Sucess:     202
+            bad request:    400 [is the JSON object correct?]
 POST
 	RESPONSE: 	Succes:		201
 			bad request: 	400 [Did you provide the correct fields?]
