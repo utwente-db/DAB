@@ -23038,13 +23038,17 @@ function getCredentials() {
     });
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, displayCourses()];
-            case 1:
-                _a.sent();
-                $('select').selectpicker(); // Style all selects
-                credentialsButton.addEventListener("click", getCredentials);
+    var _a, _b;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _b = (_a = Promise).all;
+                return [4 /*yield*/, displayCourses()];
+            case 1: return [4 /*yield*/, _b.apply(_a, [[_c.sent(),
+                        $('select').selectpicker(),
+                        credentialsButton.addEventListener("click", getCredentials)]])];
+            case 2:
+                _c.sent();
                 return [2 /*return*/];
         }
     });

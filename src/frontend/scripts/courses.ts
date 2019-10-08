@@ -74,9 +74,9 @@ async function getCredentials() {
 }
 
 window.onload = async () => {
-    await displayCourses()
-        $('select').selectpicker() // Style all selects
-        credentialsButton.addEventListener("click", getCredentials)
+    await Promise.all([await displayCourses(),
+        $('select').selectpicker(), // Style all selects
+        credentialsButton.addEventListener("click", getCredentials)]);
 };
 
 // TODO on course select: make group no longer gray
