@@ -138,6 +138,7 @@ This code is not very well tested; if you ever encounter an error that relates t
 ### /courses/pk
 
 GET	-> get course for that course id
+PUT -> update information (updating the fid or courseid is not allowed)
 DELETE	-> delete course for that course id
 
 ### /courses/name/value
