@@ -55,10 +55,10 @@ function validEmail(): boolean {
             setValid(registerEmailField);
             return true;
         } else {
-            setInvalid(registerEmailField, "Not a valid utwente.nl address");
+            setInvalid(registerEmailField, "Please enter a valid utwente.nl address");
         }
     } else {
-        setInvalid(registerEmailField, "Not a valid email address");
+        setInvalid(registerEmailField, "Please enter a valid email address");
     }
     return false;
 }

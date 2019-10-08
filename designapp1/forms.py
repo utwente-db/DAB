@@ -10,7 +10,6 @@ class RegisterForm(forms.Form):
                 # 'placeholder': 'your.name@student.utwente.nl'
                 'id': 'register-email-field',
                 'autofocus': 'True',
-                'placeholder': 'Any address that ends with utwente.nl'
             }
         ), required=True, label='email', max_length=256
     )

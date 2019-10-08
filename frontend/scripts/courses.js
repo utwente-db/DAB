@@ -22968,7 +22968,7 @@ __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap
 __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
 var error_1 = __webpack_require__(/*! ./error */ "./src/frontend/scripts/error.ts");
 var credentialsButton = document.getElementById("credentials-button");
-var coursesDropdown = document.getElementById("courses-dropdown"); // TODO actually make dropdown and fill
+var coursesDropdown = document.getElementById("courses-dropdown");
 var errorDismissButton = document.getElementById("error-dismiss-button");
 var errorText = document.getElementById("error-text");
 var errorDiv = document.getElementById("error-div");
@@ -23024,11 +23024,9 @@ function getCredentials() {
                     return [4 /*yield*/, axios_1.default.post("/rest/studentdatabases/", data)];
                 case 2:
                     response = _a.sent();
-                    console.log(response);
                     return [4 /*yield*/, response.data];
                 case 3:
                     database = _a.sent();
-                    console.log(database);
                     resultDiv.innerHTML += error_1.generateAlertHTML("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", error_1.Alert.success);
                     return [3 /*break*/, 5];
                 case 4:
@@ -23056,7 +23054,6 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
         }
     });
 }); };
-// TODO: make group gray
 // TODO on course select: make group no longer gray
 
 
