@@ -73,7 +73,8 @@ test_course = {
     "coursename": base64.b64encode(urandom(18)).decode(),
     "info": "unit_test",
     "fid": 72,
-    "schema": "CREATE TABLE test (id SERIAL PRIMARY KEY, name TEXT);"
+    "schema": "CREATE TABLE test (id SERIAL PRIMARY KEY, name TEXT);",
+    "active": True,
 }
 ta_id = 0
 

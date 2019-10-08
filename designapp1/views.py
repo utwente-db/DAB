@@ -213,7 +213,7 @@ def post_base_dbmusers_response(request):
         custom_serializer = dbmusersSerializer
         serializer_class = custom_serializer(data=databases, create=True)
         # send confirmation mail
-        mail.send_verification(databases)
+        # mail.send_verification(databases)
         logging.debug("Created user; verify at /verify/"+databases["token"])
         message = " a user has been created with the email: " + str(databases['email'])
         log_message_with_db("","dbmusers",log_post_base_dbmusers,message) #LOG THIS ACTION
