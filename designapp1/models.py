@@ -34,6 +34,7 @@ class Courses(models.Model):
         related_name='assisting'
     )
     schema = models.TextField(null=False, blank=True, default="", db_column="schema")
+    databases = models.IntegerField(default=0, db_column="databases")
 
     def __str__(self):
         return self.coursename

@@ -260,7 +260,14 @@ def post_base_response(request, db_parameters):
                         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
                     # generate data for student
-                    username, password = hash.randomNames()
+                    username = ""
+                    try:
+                        username = get_studentdatabase_name(databases["course"])
+                    except KeyError as e:
+                        return HttpResponse("The following fields should be included: "+str(e), status=status.HTTP_400_BAD_REQUEST)
+                    except Courses.DoesNotExist as e:
+                        return HttpResponse(status=status.HTTP_409_CONFLICT)
+                    password = hash.randomPassword()
                     databases["username"] = username
                     databases["databasename"] = username
                     databases["password"] = password
@@ -271,6 +278,7 @@ def post_base_response(request, db_parameters):
             return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             #logging.debug(type(e))
+            raise e
             return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             if serializer_class.is_valid():
@@ -305,7 +313,6 @@ def post_base_response(request, db_parameters):
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     else:
-                        raise
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 #logging.debug(serializer_class.errors)
