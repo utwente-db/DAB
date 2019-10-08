@@ -1,11 +1,11 @@
 import "../sass/main.sass"
-import axios, {AxiosResponse} from 'axios';
+import axios, {AxiosError, AxiosResponse} from 'axios';
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import {addAlert, addTempAlert, Alert, generateAlertHTML} from "./error";
+import {addAlert, addErrorAlert, addTempAlert, Alert} from "./error";
 import {displayWhoami} from "./navbar";
 
 
@@ -61,7 +61,7 @@ async function getCredentials() {
             "course": courseID,
         };
         try {
-            addTempAlert("Please wait...",Alert.secondary);
+            addTempAlert("Please wait...", Alert.secondary);
             const response: AxiosResponse = await axios.post("/rest/studentdatabases/", data);
             const database: Database = await response.data;
 
@@ -69,7 +69,7 @@ async function getCredentials() {
                                                                    Username: "${database.username}"<br>
                                                                    Password: "${database.password}"`, Alert.success)
         } catch (error) {
-            addAlert(error, Alert.danger)
+            addErrorAlert(error)
         }
     }
 }

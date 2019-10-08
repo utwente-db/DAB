@@ -23031,7 +23031,7 @@ function getCredentials() {
                     return [3 /*break*/, 5];
                 case 4:
                     error_2 = _a.sent();
-                    error_1.addAlert(error_2, error_1.Alert.danger);
+                    error_1.addErrorAlert(error_2);
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/];
             }
@@ -23146,6 +23146,28 @@ function addTempAlert(errorMessage, alertType) {
     });
 }
 exports.addTempAlert = addTempAlert;
+function addErrorAlert(error) {
+    var responseError = error;
+    var response = responseError.response;
+    if (response) {
+        var errorKeys = Object.keys(response.data);
+        var errorMessages = Object.values(response.data);
+        if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
+            addAlert("You already have database credentials for this course", Alert.danger);
+        }
+        else {
+            var alertMessage = "";
+            for (var i = 0; i < errorKeys.length; i++) {
+                alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>");
+            }
+            addAlert(error + "<br><br>" + alertMessage, Alert.danger);
+        }
+    }
+    else {
+        addAlert(error.message, Alert.danger);
+    }
+}
+exports.addErrorAlert = addErrorAlert;
 var Alert;
 (function (Alert) {
     Alert["primary"] = "alert-primary";
