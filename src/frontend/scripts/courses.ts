@@ -6,6 +6,7 @@ import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
 import {addAlert, addTempAlert, Alert, generateAlertHTML} from "./error";
+import {displayWhoami} from "./navbar";
 
 
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
@@ -76,7 +77,8 @@ async function getCredentials() {
 window.onload = async () => {
     await Promise.all([await displayCourses(),
         $('select').selectpicker(), // Style all selects
-        credentialsButton.addEventListener("click", getCredentials)]);
+        credentialsButton.addEventListener("click", getCredentials),
+        displayWhoami()]);
 };
 
 // TODO on course select: make group no longer gray

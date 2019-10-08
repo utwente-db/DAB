@@ -2,9 +2,12 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export function generateAlertHTML(errorMessage: string, alertType: Alert, dismissable = true): string {
     const dismissableString = dismissable ? "alert-dismissable" : "temp-alert";
-    const buttonString = dismissable ? `<button type="button" id="error-dismiss-button" class="close" data-dismiss="alert" aria-label="Close"/>` : ``
+    const buttonString = dismissable ? ` <button type="button" class="close error-dismiss-button" data-dismiss="alert"
+            aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>` : ``
     return `<div class="alert ${alertType} ${dismissableString} fade show"  role="alert">
-            <div id="error-text">${errorMessage}</div>
+            <div class="error-text">${errorMessage}</div>
             ${buttonString}
             </div>`
 };
