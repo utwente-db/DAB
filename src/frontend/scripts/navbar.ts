@@ -18,22 +18,18 @@ async function getWhoamiPromise(): Promise<Whoami> {
     return response.data;
 }
 
-async function displayWhoami(): Promise<void> {
+export async function displayWhoami(): Promise<void> {
     const whoami: Whoami = await getWhoamiPromise();
     let role: string;
-    if (whoami.role == 0) {
+    if (whoami.role === 0) {
         role = "an Admin";
-    } else if (whoami.role == 1) {
+    } else if (whoami.role === 1) {
         role = "a Teacher";
-    } else if (whoami.role == 2) {
+    } else if (whoami.role === 2) {
         role = "a Student";
     } else {
         role = "Unknown";
     }
     whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + "\t You are " + role;
     whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary\" href=\"/settings\">Settings</button>";
-}
-
-window.onload = async () => {
-    await displayWhoami();
 }

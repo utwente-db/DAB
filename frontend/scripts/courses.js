@@ -22900,10 +22900,10 @@ module.exports = g;
 
 /***/ }),
 
-/***/ "./src/frontend/sass/desktop.sass":
-/*!****************************************!*\
-  !*** ./src/frontend/sass/desktop.sass ***!
-  \****************************************/
+/***/ "./src/frontend/sass/main.sass":
+/*!*************************************!*\
+  !*** ./src/frontend/sass/main.sass ***!
+  \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -22959,7 +22959,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__webpack_require__(/*! ../sass/desktop.sass */ "./src/frontend/sass/desktop.sass");
+__webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");

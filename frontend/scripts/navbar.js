@@ -19822,13 +19822,13 @@ function displayWhoami() {
                 case 0: return [4 /*yield*/, getWhoamiPromise()];
                 case 1:
                     whoami = _a.sent();
-                    if (whoami.role == 0) {
+                    if (whoami.role === 0) {
                         role = "an Admin";
                     }
-                    else if (whoami.role == 1) {
+                    else if (whoami.role === 1) {
                         role = "a Teacher";
                     }
-                    else if (whoami.role == 2) {
+                    else if (whoami.role === 2) {
                         role = "a Student";
                     }
                     else {
@@ -19841,16 +19841,7 @@ function displayWhoami() {
         });
     });
 }
-window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, displayWhoami()];
-            case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); };
+exports.displayWhoami = displayWhoami;
 
 
 /***/ })
