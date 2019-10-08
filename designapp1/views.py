@@ -720,6 +720,7 @@ def login(request):
 
 
 @require_POST
+@authenticated
 def logout(request):
     request.session.flush()
     return render(request, 'login.html', {'form': LoginForm(), 'message': "You have been logged out"})
@@ -747,19 +748,15 @@ def courses(request):
 # Function to change the role of users
 # A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.
 @require_POST
+@require_role(admin)
 def set_role(request):
     # Always check in case session is not set
-    if not check_role(request, 1):
-        return unauthorised
     body = json.loads(request.body.decode("utf-8"))
     # Check if the request is formed correctly
     if not ("role" in body and "user" in body):
         return bad_request
-    # Check if you have the permission to do this in principle
-    if body["role"] <= request.session["role"] and request.session["role"] > 0:
-        return unauthorised
     # Check if the user role you are trying to assign exists
-    if not (3 >= body["role"] >= 0):
+    if not (student >= body["role"] >= admin):
         return bad_request
 
     # if you are not admin, make sure you don't demote an admin or something
@@ -784,10 +781,8 @@ def set_role(request):
 
 
 @require_GET
+@authenticated
 def whoami(request):
-    if not check_role(request, 3):
-        return not_found
-
     user = dbmusers.objects.get(id=request.session["user"])
     response = {
         "id": user.id,
