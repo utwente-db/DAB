@@ -103,6 +103,18 @@ GET -> search for the value, based on the studentdatabasename
 
 GET -> gives back all the studentdatabases owned by the user currently logged in
 
+### /studentdatabases/owner/value
+
+GET -> gives back all the studentdatabases owned by the user with the id of the value
+
+Only accessible to admins
+
+### /studentdatabases/course/value
+
+GET -> gives back all teh studentdatabases belonging to the course.
+
+Only accessible to admins and the owners of said course
+
 ## TABLE: Courses
 
 ### /courses/
@@ -116,7 +128,7 @@ body:
 	"coursename":"test20", [FREE TO CHOOSE]
 	"students":"2", [FREE TO CHOOSE]
 	"info":"test200", [FREE TO CHOOSE]
-	"fid":"7" [FOREIGN KEY, MUST EXIST]
+	"fid":"7" [FOREIGN KEY, MUST EXIST; OPTIONAL, defaults to own]
 	"schema": <sql> [OPTIONAL, DEFAULT=""]
 	}
 
@@ -192,6 +204,20 @@ DELETE	-> delete ta for that ta id
 ### /tas/own/
 
 GET -> gives back the ta information about the currently logged in ta
+
+## /schematransfer/[course]/[database]
+
+Transfers the schema from the database to the course. 
+
+Only works if the database belongs to the course or to your user personally, unless you are an admin.
+
+Default schema (named after the user) is preserved from the target database
+
+## /generate_migration
+
+POST -> Generates the backup script. Returns the location of said script.
+
+Only accessible to admins
 
 # Permissions
 
