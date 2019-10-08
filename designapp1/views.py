@@ -31,9 +31,9 @@ from .log_functions import *
 # DESIGN PROJECT
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s %(levelname)s %(message)s',
-)
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s %(message)s',
+    )
 
 # AUTHENTICATION CHECKERS
 
@@ -69,8 +69,10 @@ def require_role_redirect(role):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(request, *args, **kwargs):
-            if not check_role(request, role):
+            if not check_role(request, student):
                 return HttpResponseRedirect("/login")
+            elif not check_role(request, role):
+                return HttpResponse("You are not authorised", status=status.HTTP_403_FORBIDDEN)
             return func(request, *args, **kwargs)
         return wrapper
     return decorator
@@ -155,7 +157,6 @@ def get_single_response(request, pk, db_parameters):
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-
 @csrf_exempt
 @authenticated
 def get_own_response(request, dbname):
@@ -212,7 +213,7 @@ def post_base_dbmusers_response(request):
         custom_serializer = dbmusersSerializer
         serializer_class = custom_serializer(data=databases, create=True)
         # send confirmation mail
-        # mail.send_verification(databases)
+        mail.send_verification(databases)
         logging.debug("Created user; verify at /verify/"+databases["token"])
         message = " a user has been created with the email: " + str(databases['email'])
         log_message_with_db("","dbmusers",log_post_base_dbmusers,message) #LOG THIS ACTION
@@ -682,11 +683,12 @@ not_found.status_code = 404
 #def get_queryset(self):
     #logging.debug(self.request)
 
-
+@require_role_redirect(admin)
 def userpage(request):
     return render(request, 'userpage.html')
 
 @require_GET
+@require_role_redirect(admin)
 def admin_view(request):
     return render(request, 'admin.html')
 
@@ -732,7 +734,10 @@ def login(request):
                     request.session["user"] = user.id
                     request.session["role"] = user.role
                     request.session.modified = True
-                    return HttpResponseRedirect("/")
+                    if user.role < 2:
+                        return HttpResponseRedirect("/admin")
+                    else:
+                        return HttpResponseRedirect("/courses")
 
 
                 else:
@@ -763,6 +768,7 @@ def logout_button(request):
 
 # Function that returns HTML page for choosing courses
 @require_GET
+@auth_redirect
 def courses(request):
     template = 'courses.html'
     # number = 3
