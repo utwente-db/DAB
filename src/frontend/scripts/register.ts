@@ -2,7 +2,7 @@ import "../sass/main.sass"
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import {addAlert, addTempAlert, Alert} from "./error";
+import {addAlert, addTempAlert, AlertType} from "./alert";
 
 const registerButton: HTMLButtonElement = document.getElementById("register-button") as HTMLButtonElement;
 const registerEmailField: HTMLInputElement = document.getElementById("register-email-field") as HTMLInputElement;
@@ -83,7 +83,7 @@ function checkFields(): boolean {
 }
 
 function register(): void {
-    addTempAlert("Please wait...",Alert.secondary)
+    addTempAlert("Please wait...",AlertType.secondary)
 }
 
 function tryRegister(): void {

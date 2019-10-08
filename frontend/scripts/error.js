@@ -200,7 +200,7 @@ var Alert;
     Alert["secondary"] = "alert-secondary";
     Alert["danger"] = "alert-danger";
     Alert["success"] = "alert-success";
-})(Alert = exports.Alert || (exports.Alert = {}));
+})(Alert = exports.Alert || (exports.AlertType = {}));
 
 
 /***/ })

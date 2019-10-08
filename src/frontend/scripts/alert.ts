@@ -2,7 +2,7 @@ import {AxiosError, AxiosResponse} from "axios";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-export function generateAlertHTML(errorMessage: string, alertType: Alert, dismissable = true): string {
+export function generateAlertHTML(errorMessage: string, alertType: AlertType, dismissable = true): string {
     const dismissableString = dismissable ? "alert-dismissable" : "temp-alert";
     const buttonString = dismissable ? ` <button type="button" class="close error-dismiss-button" data-dismiss="alert"
             aria-label="Close">
@@ -14,7 +14,7 @@ export function generateAlertHTML(errorMessage: string, alertType: Alert, dismis
             </div>`
 };
 
-export function addAlert(errorMessage: string, alertType: Alert): void {
+export function addAlert(errorMessage: string, alertType: AlertType): void {
     removeTempAlerts();
     const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType);
@@ -28,7 +28,7 @@ function removeTempAlerts(): void {
     }
 }
 
-export async function addTempAlert(errorMessage: string, alertType: Alert): Promise<void> {
+export async function addTempAlert(errorMessage: string, alertType: AlertType): Promise<void> {
     const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     await delay(5000);
@@ -44,20 +44,20 @@ export function addErrorAlert(error: Error) {
         const errorKeys: string[] = Object.keys(response.data);
         const errorMessages: string[][] = Object.values(response.data);
         if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
-            addAlert("You already have database credentials for this course", Alert.danger)
+            addAlert("You already have database credentials for this course", AlertType.danger)
         } else {
             let alertMessage = "";
             for (let i = 0; i < errorKeys.length; i++) {
                 alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>")
             }
-            addAlert(error + "<br><br>" + alertMessage, Alert.danger)
+            addAlert(error + "<br><br>" + alertMessage, AlertType.danger)
         }
     } else {
-        addAlert(error.message, Alert.danger)
+        addAlert(error.message, AlertType.danger)
     }
 }
 
-export enum Alert {
+export enum AlertType {
     primary = "alert-primary",
     secondary = "alert-secondary",
     danger = "alert-danger",

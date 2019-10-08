@@ -5,7 +5,7 @@ import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import {addAlert, addErrorAlert, addTempAlert, Alert} from "./error";
+import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import {displayWhoami} from "./navbar";
 
 
@@ -61,13 +61,13 @@ async function getCredentials() {
             "course": courseID,
         };
         try {
-            addTempAlert("Please wait...", Alert.secondary);
+            addTempAlert("Please wait...", AlertType.secondary);
             const response: AxiosResponse = await axios.post("/rest/studentdatabases/", data);
             const database: Database = await response.data;
 
             addAlert(`Database generated for course "${database.course}".<br>
                                                                    Username: "${database.username}"<br>
-                                                                   Password: "${database.password}"`, Alert.success)
+                                                                   Password: "${database.password}"`, AlertType.success)
         } catch (error) {
             addErrorAlert(error)
         }
