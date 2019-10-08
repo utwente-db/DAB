@@ -55,6 +55,7 @@ def auth_redirect(func):
 
 def require_role(role):
     def decorator(func):
+        @functools.wraps(func)
         def wrapper(request, *args, **kwargs):
             if not check_role(request, student):
                 return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
@@ -66,6 +67,7 @@ def require_role(role):
 
 def require_role_redirect(role):
     def decorator(func):
+        @functools.wraps(func)
         def wrapper(request, *args, **kwargs):
             if not check_role(request, role):
                 return HttpResponseRedirect("/login")
@@ -151,7 +153,7 @@ def get_single_response(request, pk, db_parameters):
             log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_single,message) #LOG THIS ACTION
             return JsonResponse(serializer_class.data, safe=False)
         else:
-            return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
 @csrf_exempt
@@ -331,7 +333,7 @@ def delete_single_response(request, requested_pk, db_parameters):
                 log_message_with_db(request.session['user'],db_parameters["dbname"],log_delete_single, " a row has been deleted by this user. in case of courses or studentdatabases, additional databases may have been deleted") #LOG THIS ACTION
                 return HttpResponse(status=status.HTTP_202_ACCEPTED)
     else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
 @csrf_exempt
@@ -366,7 +368,7 @@ def search_on_name(request, search_value, dbname):
             return JsonResponse(serializer.data, safe=False)
 
     else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 @csrf_exempt
 @require_GET
