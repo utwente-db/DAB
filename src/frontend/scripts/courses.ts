@@ -1,5 +1,5 @@
 import "../sass/main.sass"
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios, {AxiosResponse} from 'axios';
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import * as $ from "jquery";
 import "popper.js"
@@ -60,16 +60,15 @@ async function getCredentials() {
         const data = {
             "course": courseID,
         };
+        const tempAlert: ChildNode | null = addTempAlert("Please wait...", AlertType.secondary);
         try {
-            addTempAlert("Please wait...", AlertType.secondary);
-            const response: AxiosResponse = await axios.post("/rest/studentdatabases/", data);
+            const response: AxiosResponse<Database> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<Database>;
             const database: Database = await response.data;
-
             addAlert(`Database generated for course "${database.course}".<br>
                                                                    Username: "${database.username}"<br>
-                                                                   Password: "${database.password}"`, AlertType.success)
+                                                                   Password: "${database.password}"`, AlertType.success, tempAlert)
         } catch (error) {
-            addErrorAlert(error)
+            addErrorAlert(error, tempAlert)
         }
     }
 }

@@ -22968,8 +22968,11 @@ function generateAlertHTML(errorMessage, alertType, dismissable) {
 }
 exports.generateAlertHTML = generateAlertHTML;
 ;
-function addAlert(errorMessage, alertType) {
-    removeTempAlerts();
+function addAlert(errorMessage, alertType, tempAlert) {
+    if (tempAlert === void 0) { tempAlert = null; }
+    if (tempAlert && document.body.contains(tempAlert)) {
+        tempAlert.remove();
+    }
     var alertDiv = document.getElementById("alert-div");
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType);
 }
@@ -22981,34 +22984,48 @@ function removeTempAlerts() {
         alert_1.remove();
     }
 }
-function addTempAlert(errorMessage, alertType) {
+function removeAlertOnTimeout(tempAlert, ms) {
     return __awaiter(this, void 0, void 0, function () {
-        var alertDiv;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    alertDiv = document.getElementById("alert-div");
-                    alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
-                    return [4 /*yield*/, delay(5000)];
+                case 0: return [4 /*yield*/, delay(ms)];
                 case 1:
                     _a.sent();
-                    removeTempAlerts();
+                    if (tempAlert && document.body.contains(tempAlert)) {
+                        tempAlert.remove();
+                        addAlert("Request timed out", AlertType.danger);
+                    }
                     return [2 /*return*/];
             }
         });
     });
 }
+function addTempAlert(errorMessage, alertType, ms) {
+    if (ms === void 0) { ms = 10000; }
+    var alertDiv = document.getElementById("alert-div");
+    alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
+    var tempAlert = alertDiv.lastChild;
+    removeAlertOnTimeout(tempAlert, ms);
+    return tempAlert;
+    // TODO maybe don't remove all temp alerts
+}
 exports.addTempAlert = addTempAlert;
-function addErrorAlert(error) {
+function addErrorAlert(error, tempAlert) {
+    if (tempAlert === void 0) { tempAlert = null; }
+    if (tempAlert && document.body.contains(tempAlert)) {
+        tempAlert.remove();
+    }
     var responseError = error;
     var response = responseError.response;
     if (response) {
         var errorKeys = Object.keys(response.data);
         var errorMessages = Object.values(response.data);
         if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
+            // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
             addAlert("You already have database credentials for this course", AlertType.danger);
         }
         else {
+            // This is a response error (4XX or 5XX etc)
             var alertMessage = "";
             for (var i = 0; i < errorKeys.length; i++) {
                 alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>");
@@ -23017,6 +23034,7 @@ function addErrorAlert(error) {
         }
     }
     else {
+        // This is a generic javascript error
         addAlert(error.message, AlertType.danger);
     }
 }
@@ -23126,7 +23144,7 @@ function displayCourses() {
 }
 function getCredentials() {
     return __awaiter(this, void 0, void 0, function () {
-        var courseID, resultDiv, data, response, database, error_1;
+        var courseID, resultDiv, data, tempAlert, response, database, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -23136,21 +23154,21 @@ function getCredentials() {
                     data = {
                         "course": courseID,
                     };
+                    tempAlert = alert_1.addTempAlert("Please wait...", alert_1.AlertType.secondary);
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 4, , 5]);
-                    alert_1.addTempAlert("Please wait...", alert_1.AlertType.secondary);
                     return [4 /*yield*/, axios_1.default.post("/rest/studentdatabases/", data)];
                 case 2:
                     response = _a.sent();
                     return [4 /*yield*/, response.data];
                 case 3:
                     database = _a.sent();
-                    alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success);
+                    alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success, tempAlert);
                     return [3 /*break*/, 5];
                 case 4:
                     error_1 = _a.sent();
-                    alert_1.addErrorAlert(error_1);
+                    alert_1.addErrorAlert(error_1, tempAlert);
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/];
             }
