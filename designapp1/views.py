@@ -188,39 +188,63 @@ def get_own_response(request, dbname):
         return JsonResponse(serializer_class.data, safe=False)
 
 
-def post_base_dbmusers_response(request, databases, db_parameters):
-    unhashed_password = databases['password']
-    databases['password'] = hash.make(unhashed_password)
-    databases["token"] = hash.token()
-    if check_role(request, admin):
-        pass
-        # databases['role'] = databases['role']
-    else:
-        databases['role'] = student
-    custom_serializer = dbmusersCreateSerializer
-    serializer_class = custom_serializer(data=databases)
-    # send confirmation mail
-    # mail.send_verification(databases)
-    logging.debug("Created user; verify at /verify/"+databases["token"])
-    message = " a user has been created with the email: " + str(databases['email'])
-    log_message_with_db(request.session['user'],db_parameters["dbname"],log_post_base_dbmusers,message) #LOG THIS ACTION
+def post_base_dbmusers_response(request):
+    databases = None
+    try:
+        databases = JSONParser().parse(request)
+    except ParseError:
+        return HttpResponse("Your JSON is incorrectly formatted")
 
-    return serializer_class
+    try:
 
+        if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', databases["email"]):
+            return HttpResponse("only utwente email address can be used", status=status.HTTP_400_BAD_REQUEST)
+    
+    
+        unhashed_password = databases['password']
+        databases['password'] = hash.make(unhashed_password)
+        databases["token"] = hash.token()
+        if check_role(request, admin):
+            pass
+            # databases['role'] = databases['role']
+        else:
+            databases['role'] = student
+        custom_serializer = dbmusersCreateSerializer
+        serializer_class = custom_serializer(data=databases)
+        # send confirmation mail
+        # mail.send_verification(databases)
+        logging.debug("Created user; verify at /verify/"+databases["token"])
+        message = " a user has been created with the email: " + str(databases['email'])
+        log_message_with_db("","dbmusers",log_post_base_dbmusers,message) #LOG THIS ACTION
+    
+        if serializer_class.is_valid():
+            serializer_class.save()
+            #We don't want to return hashed password and verification tokens
+            serializer_class = dbmusersSerializer(serializer_class.data)
+            return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
+        else:
+            if "must make a unique set" in str(serializer_class.errors):
+                return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
+            else:
+                return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
+    except KeyError as e:
+        return HttpResponse("The following field(s) should be included:" + str(e),
+                            status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
+            return HttpResponse(status=status.HTTP_409_CONFLICT)
+        raise e
+
+@authenticated
 def post_base_response(request, db_parameters):
-    if check_role(request, teacher) or db_parameters["dbname"] == "dbmusers" or (
+    if check_role(request, teacher) or (
             db_parameters["dbname"] == "studentdatabases" and check_role(request, student)):
 
         serializer_class = None
 
         try:
             databases = JSONParser().parse(request)
-            if db_parameters["dbname"] == "dbmusers":
-                if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', databases["email"]):
-                    return HttpResponse("only utwente email address can be used", status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    serializer_class = post_base_dbmusers_response(request, databases, db_parameters)
-            elif db_parameters["dbname"] == "courses":
+            if db_parameters["dbname"] == "courses":
                 #teacher should not be able to create courses for each other
                 if request.session["role"] < admin or "fid" not in databases:
                     databases["fid"] = request.session["user"]
@@ -269,9 +293,6 @@ def post_base_response(request, db_parameters):
                                 return HttpResponse(check[1], status=status.HTTP_400_BAD_REQUEST)
                         log_message_with_db(request.session['user'],db_parameters["dbname"],log_post_base," a new row has been added") # LOG THIS ACTION
                         serializer_class.save()
-                        if db_parameters["dbname"] == "dbmusers":
-                            #we DON'T want to return the password and token
-                            serializer_class = dbmusersSerializer(serializer_class.data)
                         return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                 except KeyError as e:
                     return HttpResponse("The following field(s) should be included:" + str(e),
@@ -279,10 +300,7 @@ def post_base_response(request, db_parameters):
                 except Exception as e:
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
-                    elif db_parameters["dbname"] == "studentdatabases":
-                        return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     else:
-                        raise e
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 #logging.debug(serializer_class.errors)
@@ -292,7 +310,7 @@ def post_base_response(request, db_parameters):
                 else:
                     return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
     else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 @authenticated
 def delete_single_response(request, requested_pk, db_parameters):
@@ -441,6 +459,8 @@ def baseview(request, dbname):
     if request.method == 'GET':
         return get_base_response(request, db_parameters)
     elif request.method == 'POST':
+        if dbname == "dbmusers":
+            return post_base_dbmusers_response(request)
         return post_base_response(request, db_parameters)
     else:
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
