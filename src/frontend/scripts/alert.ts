@@ -3,7 +3,7 @@ import {AxiosError, AxiosResponse} from "axios";
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export function generateAlertHTML(errorMessage: string, alertType: AlertType, dismissable = true): string {
-    const dismissableString = dismissable ? "alert-dismissable" : "temp-alert";
+    const dismissableString = dismissable ? "alert-dismissible" : "temp-alert";
     const buttonString = dismissable ? ` <button type="button" class="close error-dismiss-button" data-dismiss="alert"
             aria-label="Close">
             <span aria-hidden="true">&times;</span>

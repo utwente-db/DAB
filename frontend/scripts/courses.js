@@ -22962,7 +22962,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var delay = function (ms) { return new Promise(function (res) { return setTimeout(res, ms); }); };
 function generateAlertHTML(errorMessage, alertType, dismissable) {
     if (dismissable === void 0) { dismissable = true; }
-    var dismissableString = dismissable ? "alert-dismissable" : "temp-alert";
+    var dismissableString = dismissable ? "alert-dismissible" : "temp-alert";
     var buttonString = dismissable ? " <button type=\"button\" class=\"close error-dismiss-button\" data-dismiss=\"alert\"\n            aria-label=\"Close\">\n            <span aria-hidden=\"true\">&times;</span>\n            </button>" : "";
     return "<div class=\"alert " + alertType + " " + dismissableString + " fade show\"  role=\"alert\">\n            <div class=\"error-text\">" + errorMessage + "</div>\n            " + buttonString + "\n            </div>";
 }
