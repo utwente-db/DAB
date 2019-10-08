@@ -730,7 +730,7 @@ def logout(request):
 @require_GET
 def logout_button(request):
     return HttpResponse(
-        "<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>",
+        "<!DOCTYPE html><html><body><form action='/logout' method='POST'><input type='submit' value='logout'/></form></body></html>",
         content_type='text/html')
 
 
