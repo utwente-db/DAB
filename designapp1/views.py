@@ -660,7 +660,7 @@ def userpage(request):
     return render(request, 'userpage.html')
 
 @require_GET
-def admin(request):
+def admin_view(request):
     return render(request, 'admin.html')
 
 
