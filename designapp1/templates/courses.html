@@ -5,14 +5,15 @@
 {% endblock %}
 
 {% block scripts %}
-    <link rel="stylesheet" href="/static/css/main.css">
     <script defer src="/static/scripts/courses.js"></script>
 {% endblock %}
 
 {% block content %}
-    <div class="container mt-5">
+    {% include 'navbar.html' %}
+    <div class="container-fluid py-3 py-md-5">
         <div class="row">
-            <div class="col-lg-10 offset-lg-1  border border-dark rounded-lg shadow-lg bg-white">
+            <div class="col-11 col-md-7 center-block
+    container border border-dark rounded-lg shadow-lg bg-white">
                 <!-- Login Form -->
                 <div class="text-center p-5">
                     {#                    {% csrf_token %}#}
@@ -44,8 +45,7 @@
 
                     <button class="btn btn-info my-4" id="credentials-button">Get credentials</button>
 
-                    <div id="result-div"></div>
-                    <div id="error-div"></div>
+                    <div id="alert-div"></div>
 
 
                 </div>

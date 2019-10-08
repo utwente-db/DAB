@@ -64,7 +64,7 @@ class TestLogin(unittest.TestCase):
 
     def testUnlogged(self):
         r = unlogged.get(BASE + "/rest/whoami")
-        self.assertEqual(r.status_code, 404)
+        self.assertEqual(r.status_code, 401)
 
 
 test_db = {

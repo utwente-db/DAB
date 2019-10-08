@@ -5,11 +5,12 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container mt-5 mb-5">
+    <div class="container-fluid py-3 py-md-5">
         <div class="row">
-            <div class="col-md-6 offset-md-3 col-lg-4 offset-lg-4 border border-dark rounded-lg shadow-lg bg-white">
+            <div class="col-11 col-md-7 col-xl-4 center-block
+    container border border-dark rounded-lg shadow-lg bg-white">
                 <!-- Login Form -->
-                <form class="text-center p-5" action="login" method="POST">
+                <form class="text-center p-5" action="/login" method="POST">
                     {% csrf_token %}
                     <p class="h4 mb-4">Sign in</p>
                     {{ form }}
@@ -23,7 +24,7 @@
                     <!-- Forgot Password -->
                     <a href="missing">Forgot password?</a>
                     <!-- Sign in button -->
-                    <button class="btn btn-info btn-block my-4" type="submit" onclick="f()">Sign in</button>
+                    <button class="btn btn-info btn-block my-4" type="submit">Sign in</button>
                     <!-- Register -->
                     No account? <a href="register">Register here</a>
                 </form>
@@ -33,7 +34,8 @@
 
 
     <div class="text-center cookiealert alert" role="alert">
-    We use cookies to ensure you get the best experience on our website. <a href="https://cookiesandyou.com/" target="_blank">Learn more</a>
+        We use cookies to ensure you get the best experience on our website. <a href="https://cookiesandyou.com/"
+                                                                                target="_blank">Learn more</a>
 
         <button type="button" class="btn btn-info btn-sm acceptcookies" aria-label="Close">
             I agree

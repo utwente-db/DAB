@@ -12,7 +12,14 @@
     "sourceMap": true,
     "strict": true,
     "target": "es5",
-    "outDir": "frontend/scripts"
+    "outDir": "frontend/scripts",
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "es2015.promise",
+      "esnext"
+    ]
   },
   "include": [
     "src/frontend/scripts"

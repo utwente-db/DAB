@@ -260,7 +260,14 @@ def post_base_response(request, db_parameters):
                         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
                     # generate data for student
-                    username, password = hash.randomNames()
+                    username = ""
+                    try:
+                        username = get_studentdatabase_name(databases["course"])
+                    except KeyError as e:
+                        return HttpResponse("The following fields should be included: "+str(e), status=status.HTTP_400_BAD_REQUEST)
+                    except Courses.DoesNotExist as e:
+                        return HttpResponse(status=status.HTTP_409_CONFLICT)
+                    password = hash.randomPassword()
                     databases["username"] = username
                     databases["databasename"] = username
                     databases["password"] = password
@@ -271,6 +278,7 @@ def post_base_response(request, db_parameters):
             return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             #logging.debug(type(e))
+            raise e
             return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             if serializer_class.is_valid():
@@ -305,7 +313,6 @@ def post_base_response(request, db_parameters):
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     else:
-                        raise
                         return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:
                 #logging.debug(serializer_class.errors)
@@ -688,40 +695,31 @@ not_found.status_code = 404
     #logging.debug(self.request)
 
 
+def userpage(request):
+    return render(request, 'userpage.html')
+
 @require_GET
-def home(request):
-    path = 'http://localhost:'
-    port = '1402'
-    call = '/dbmusers/'
-    # need session cookie
-    # response = requests.get(path + port + call)
-    # data = response.json()
-
-    students = ["David", "James", "John", "Robert",
-                "Michael", "Wiliam", "Richard", "Joseph",
-                "Thomas", "Charles", "Christopher", "Daniel",
-                "Matthew", "Anthony", "Donald", "Mark", "Paul",
-                "Steven", "Andrew", "Kenneth", "Joshua", "George",
-                "Kevin", "Brian", "Edward", "Ronald", "Timothy",
-                "Jason", "Jeffrey", "Ryan", "Jacob", "Gary"]
-
-    return render(request, 'home.html', {
-        'students': students,
-        'number': len(students)
-        # , 'email': 'test_email'
-    })
-    # posts = Post.objects.all()
-    # paginator = Paginator(posts, 3)
-    # page = request.GET.get('page')
-    # # ?page=2
-    #
-    # posts = paginator.get_page(page)
-
-    # return render(request, 'home.html')#, {'posts': posts})
+def admin_view(request):
+    return render(request, 'admin.html')
 
 
 def test(request):
     return HttpResponse("test")
+
+@require_GET
+def register(request):
+    # if request.method == "POST":
+    #     form = RegisterForm(request.POST)
+    #     if form.is_valid():
+    #         data = form.cleaned_data
+    #         password = hash.make(data["password"])
+    #         role = dbmusers(role=3, email=data["mail"], password=password, maxdatabases=0)
+    #         role.save()
+    #         return render(request, 'login.html',
+    #                       {'form': LoginForm(), 'message': "Registration succesful; try to login"})
+
+    form = RegisterForm()
+    return render(request, 'register.html', {'form': form})
 
 
 @require_GET
@@ -747,6 +745,8 @@ def login(request):
                     request.session["role"] = user.role
                     request.session.modified = True
                     return HttpResponseRedirect("/")
+
+
                 else:
                     return render(request, 'login.html', {'form': form, 'message': incorrect_message})
             except dbmusers.DoesNotExist:
@@ -759,6 +759,7 @@ def login(request):
 
 
 @require_POST
+@authenticated
 def logout(request):
     request.session.flush()
     return render(request, 'login.html', {'form': LoginForm(), 'message': "You have been logged out"})
@@ -768,7 +769,7 @@ def logout(request):
 @require_GET
 def logout_button(request):
     return HttpResponse(
-        "<!DOCTYPE html><html><body><form action='logout' method='POST'><input type='submit' value='logout'/></form></body></html>",
+        "<!DOCTYPE html><html><body><form action='/logout' method='POST'><input type='submit' value='logout'/></form></body></html>",
         content_type='text/html')
 
 
@@ -786,19 +787,15 @@ def courses(request):
 # Function to change the role of users
 # A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.
 @require_POST
+@require_role(admin)
 def set_role(request):
     # Always check in case session is not set
-    if not check_role(request, 1):
-        return unauthorised
     body = json.loads(request.body.decode("utf-8"))
     # Check if the request is formed correctly
     if not ("role" in body and "user" in body):
         return bad_request
-    # Check if you have the permission to do this in principle
-    if body["role"] <= request.session["role"] and request.session["role"] > 0:
-        return unauthorised
     # Check if the user role you are trying to assign exists
-    if not (3 >= body["role"] >= 0):
+    if not (student >= body["role"] >= admin):
         return bad_request
 
     # if you are not admin, make sure you don't demote an admin or something
@@ -823,10 +820,8 @@ def set_role(request):
 
 
 @require_GET
+@authenticated
 def whoami(request):
-    if not check_role(request, 3):
-        return not_found
-
     user = dbmusers.objects.get(id=request.session["user"])
     response = {
         "id": user.id,
