@@ -9,29 +9,30 @@
 {% endblock %}
 
 {% block content %}
+    <div class="container-fluid">
         <div class="row">
             <div class="mt-5 col-10 col-md-7 col-xl-4 center-block
-    container border border-dark rounded-lg shadow-lg bg-white">
+    container border border-dark rounded-lg shadow-lg bg-white mb-5">
                 <!-- Register Form -->
-                <div class="p-5"> {# actual content #}
+                <div class="p-5 form-horizontal"> {# actual content #}
                     <p class="text-center h4 mb-4">Register</p>
                     <hr/>
-                    <div class="mt-5 form-group row">
+                    <div class="mt-5 form-group row align-items-center">
                         <label for="email" class="col-12 col-md-4 col-form-label">UT e-mail address</label>
-                        <div class="col-12 col-md-8">
+                        <div class="col-12 col-md-8 align-middle">
                             {{ form.mail }}
                             <div class="invalid-feedback"></div>
                         </div>
 
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row align-items-center">
                         <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
                         <div class="col-12 col-md-8">
                             {{ form.password }}
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row align-items-center mb-4">
                         <label for="passwordConfirm" class="col-12 col-md-4 col-form-label">Confirm Password</label>
                         <div class="col-12 col-md-8">
                             {{ form.passwordConfirm }}
@@ -45,4 +46,5 @@
                 </div>
             </div>
         </div>
+    </div>
 {% endblock %}

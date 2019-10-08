@@ -6,8 +6,7 @@ class RegisterForm(forms.Form):
     mail = forms.CharField(
         widget=forms.EmailInput(
             attrs={
-                'class': 'form-control mb-2',
-                # 'placeholder': 'your.name@student.utwente.nl'
+                'class': 'form-control my-1',
                 'id': 'register-email-field',
                 'autofocus': 'True',
             }
@@ -16,7 +15,7 @@ class RegisterForm(forms.Form):
     password = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
-                'class': 'form-control mb-2',
+                'class': 'form-control',
                 'id': 'register-password-field',
 
             }
@@ -26,7 +25,7 @@ class RegisterForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'id': 'register-password-confirm-field mb-0'
+                'id': 'register-password-confirm-field'
             }
         ), required=True, label="confirm password")
 
