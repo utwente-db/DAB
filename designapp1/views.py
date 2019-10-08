@@ -530,39 +530,38 @@ def generate_migration(request):
     password = connection.settings_dict["PASSWORD"]
     database = connection.settings_dict["NAME"]
 
-    #setup
-    output = "#!/bin/sh\necho 'Creating structure...';\nmkdir dab_backups;\nmv /tmp/restore.sh dab_backups/;\ncd dab_backups;\nexport PGPASSWORD=\""+password+"\";\n"
-    #dump the current database
-    output += "echo 'Backing up main database...';\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" \""+database+"\" > "+database+".sql;\n"
-
     #dump all of the student databases
     dbs = Studentdatabases.objects.all();
+
+    #setup
+    output = "#!/bin/sh\necho 'Creating structure...';\nmkdir dab_backups;\ncd dab_backups;\nexport PGPASSWORD=\""+password+"\";\n"
+    
+    #start making the restore script
+    restore = "#!/bin/sh\nexport PGPASSWORD=\""+password+"\";\n"
+    #restore the main database
+    restore += "echo 'Restoring main database...';\ncat "+database+".sql | psql -h "+host+" -p "+port+" -U \""+user+"\";\n"
+    for db in dbs:
+        db_name = db.databasename
+        db_name = re.sub(r'\/', "?", db_name)
+        restore += "echo 'Restoring "+db.databasename+"';\ncat "+db_name+".sql | psql -h "+host+" -p "+port+" -U \""+user+"\";\n"
+    restore = re.sub(r'"', "\\\"", restore)
+    #make the backup script make the restore script
+    output += "echo \""+restore+"\" > restore.sh;\n"
+
+    #dump the current database
+    output += "echo 'Backing up main database...';\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" -C \""+database+"\" > "+database+".sql;\n"
+
     for db in dbs:
         create_command = "CREATE USER \""+db.username+"\" WITH UNENCRYPTED PASSWORD \""+db.password+"\";"
         #escape / from the filename by replacing it by ?
         db_name = db.databasename
         db_name = re.sub(r'\/', "?", db_name)
-        output += "echo 'Backing up "+db.databasename+"';\necho '"+create_command+"' >> "+database+".sql;\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" -C \""+db.databasename+"\" > "+db_name+".sql;\n"
+        output += "echo 'Backing up "+db.databasename+"';\necho '"+create_command+"' > "+db_name+".sql;\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" -C \""+db.databasename+"\" >> "+db_name+".sql;\n"
 
     output += "echo 'Compressing...';\ncd ..;\ntar -czf dab_backup.tar.gz dab_backups;\nrm -R dab_backups;\n"
     output += "echo 'Done generating dab_backup.tar.gz'"
 
     filename = script_file
-    f = open(filename, "w+")
-    f.write(output)
-    f.close()
-
-    #start the restore script
-    output = "#!/bin/sh\nexport PGPASSWORD=\""+password+"\";\n"
-    #restore the main database
-    output += "echo 'Restoring main database...';\ncat "+database+".sql | psql -h "+host+" -p "+port+" -U \""+user+"\" \""+database+"\";\n"
-
-    for db in dbs:
-        db_name = db.databasename
-        db_name = re.sub(r'\/', "?", db_name)
-        output += "echo 'Restoring "+db.databasename+"';\ncat "+db_name+".sql | psql -h "+host+" -p "+port+" -U \""+user+"\" \""+db.databasename+"\";\n"
-
-    filename = "/tmp/restore.sh"
     f = open(filename, "w+")
     f.write(output)
     f.close()
