@@ -2,20 +2,21 @@ import "../sass/desktop.sass"
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
+import {addAlert, addTempAlert, Alert} from "./error";
 
 const registerButton: HTMLButtonElement = document.getElementById("register-button") as HTMLButtonElement;
 const registerEmailField: HTMLInputElement = document.getElementById("register-email-field") as HTMLInputElement;
 const registerPasswordField: HTMLInputElement = document.getElementById('register-password-field') as HTMLInputElement;
 const registerPasswordConfirmField: HTMLInputElement = document.getElementById('register-password-confirm-field') as HTMLInputElement;
 
-const registerJSON = {
-    "email": "asdfasdf2",
-    "password": "test205",
-};
+interface Credentials {
+    "email": string
+    "password": string
+}
 
 function setValid(input: HTMLInputElement): void {
     input.classList.remove("is-invalid");
-    input.classList.add("is-valid")
+    input.classList.add("is-valid");
         if (input.nextElementSibling) {
         const errorField: Element = input.nextElementSibling;
         errorField.textContent = "";
@@ -26,14 +27,13 @@ function setValid(input: HTMLInputElement): void {
 
 function setInvalid(input: HTMLInputElement, error: string): void {
     input.classList.remove("is-valid");
-    input.classList.add("is-invalid")
+    input.classList.add("is-invalid");
     if (input.nextElementSibling) {
         const errorField: Element = input.nextElementSibling;
         errorField.textContent = error;
     } else {
         console.error("No sibling element for input. Contact the front-end devs with this error")
     }
-    // TODO add error
 }
 
 function passwordsEqual(): boolean {
@@ -55,42 +55,41 @@ function validEmail(): boolean {
             setValid(registerEmailField);
             return true;
         } else {
-            setInvalid(registerEmailField, "Please enter a valid utwente.nl address");
+            setInvalid(registerEmailField, "Not a valid utwente.nl address");
         }
     } else {
-        setInvalid(registerEmailField, "Please enter a valid email address");
+        setInvalid(registerEmailField, "Not a valid e-mail address");
     }
     return false;
 }
 
 function validPassword(): boolean {
-    const passwordRegex: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
-    // TODO add placeholder to password with hints
-    setInvalid(registerPasswordField,"Invalid password")
-    return false;
-    // TODO Password check
-    // todo error message
-    // todo also back-en?
+    const passwordPattern: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    const password: string = registerPasswordField.value;
+    if (passwordPattern.test(password)) {
+        setValid(registerPasswordField);
+        return true
+    } else {
+        setInvalid(registerPasswordField,"Password does not meet the requirements");
+        return false;
+    }
 }
 
 function checkFields(): boolean {
-    const a =validEmail() // Can't use
-    const b = validPassword()
+    const a =validEmail(); // Can't use a one-line function here due to lazy evaluation
+    const b = validPassword();
     const c = passwordsEqual();
     return a && b && c
 }
 
 function register(): void {
-
+    addTempAlert("Please wait...",Alert.secondary)
 }
 
 function tryRegister(): void {
     if (checkFields()) {
         register()
-    } else {
-        // Show user an error
     }
-
 }
 
 

@@ -149,7 +149,7 @@ GET	-> get all users
 POST	-> add a new user
 body: 
 	{
-	"role":"0", [0=admin,1=teacher,2=student]
+	"role":"0", [0=admin,1=teacher,2=student] [set to 2 if not included]
 	"email":"asdfasdf2", [FREE TO CHOOSE, THOUGH NO DUPLICATE IN TABLE]
 	"password":"test205", [FREE TO CHOOSE, IS HASHED]
 	}

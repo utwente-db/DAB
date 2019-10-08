@@ -5,14 +5,12 @@ import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import {Alert, generateAlertHTML} from "./error";
+import {addAlert, addTempAlert, Alert, generateAlertHTML} from "./error";
 
 
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
 const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
-const errorDismissButton: HTMLButtonElement = document.getElementById("error-dismiss-button") as HTMLButtonElement;
-const errorText: HTMLDivElement = document.getElementById("error-text") as HTMLDivElement;
-const errorDiv: HTMLDivElement = document.getElementById("error-div") as HTMLDivElement;
+const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
 
 interface Course {
     courseid: number;
@@ -62,22 +60,23 @@ async function getCredentials() {
             "course": courseID,
         };
         try {
+            addTempAlert("Please wait...",Alert.secondary);
             const response: AxiosResponse = await axios.post("/rest/studentdatabases/", data);
             const database: Database = await response.data;
 
-            resultDiv.innerHTML += generateAlertHTML(`Database generated for course "${database.course}".<br>
+            addAlert(`Database generated for course "${database.course}".<br>
                                                                    Username: "${database.username}"<br>
                                                                    Password: "${database.password}"`, Alert.success)
         } catch (error) {
-            errorDiv.innerHTML += generateAlertHTML(error, Alert.danger)
+            addAlert(error, Alert.danger)
         }
     }
 }
 
 window.onload = async () => {
-    await Promise.all([await displayCourses(),
-        $('select').selectpicker(), // Style all selects
-        credentialsButton.addEventListener("click", getCredentials)]);
+    await displayCourses()
+        $('select').selectpicker() // Style all selects
+        credentialsButton.addEventListener("click", getCredentials)
 };
 
 // TODO on course select: make group no longer gray
