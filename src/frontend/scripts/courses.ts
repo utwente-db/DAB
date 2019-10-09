@@ -1,11 +1,11 @@
 import "../sass/main.sass"
-import axios, {AxiosError, AxiosResponse} from 'axios';
+import axios, {AxiosResponse} from 'axios';
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import {addAlert, addErrorAlert, addTempAlert, Alert} from "./error";
+import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import {displayWhoami} from "./navbar";
 
 
@@ -52,32 +52,29 @@ async function displayCourses(): Promise<void> {
     // coursesDropdown.innerHTML += resultString;
 }
 
-async function getCredentials() {
+async function tryGetCredentials() {
     const courseID: number = Number(coursesDropdown.value);
-    const resultDiv: HTMLDivElement = document.getElementById("result-div") as HTMLDivElement;
-
     if (courseID !== 0) {
-        const data = {
-            "course": courseID,
-        };
+        const data = {"course": courseID};
+        const tempAlert: ChildNode | null = addTempAlert();
         try {
-            addTempAlert("Please wait...", Alert.secondary);
-            const response: AxiosResponse = await axios.post("/rest/studentdatabases/", data);
+            const response: AxiosResponse<Database> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<Database>;
             const database: Database = await response.data;
-
             addAlert(`Database generated for course "${database.course}".<br>
                                                                    Username: "${database.username}"<br>
-                                                                   Password: "${database.password}"`, Alert.success)
+                                                                   Password: "${database.password}"`, AlertType.success, tempAlert)
         } catch (error) {
-            addErrorAlert(error)
+            addErrorAlert(error, tempAlert)
         }
+    } else {
+        addAlert("Please select a course", AlertType.danger)
     }
 }
 
 window.onload = async () => {
     await Promise.all([await displayCourses(),
         $('select').selectpicker(), // Style all selects
-        credentialsButton.addEventListener("click", getCredentials),
+        credentialsButton.addEventListener("click", tryGetCredentials),
         displayWhoami()]);
 };
 

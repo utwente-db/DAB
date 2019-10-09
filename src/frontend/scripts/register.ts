@@ -2,7 +2,8 @@ import "../sass/main.sass"
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import {addAlert, addTempAlert, Alert} from "./error";
+import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import axios, {AxiosResponse} from "axios";
 
 const registerButton: HTMLButtonElement = document.getElementById("register-button") as HTMLButtonElement;
 const registerEmailField: HTMLInputElement = document.getElementById("register-email-field") as HTMLInputElement;
@@ -17,7 +18,7 @@ interface Credentials {
 function setValid(input: HTMLInputElement): void {
     input.classList.remove("is-invalid");
     input.classList.add("is-valid");
-        if (input.nextElementSibling) {
+    if (input.nextElementSibling) {
         const errorField: Element = input.nextElementSibling;
         errorField.textContent = "";
     } else {
@@ -70,26 +71,33 @@ function validPassword(): boolean {
         setValid(registerPasswordField);
         return true
     } else {
-        setInvalid(registerPasswordField,"Password does not meet the requirements");
+        setInvalid(registerPasswordField, "Password does not meet the requirements");
         return false;
     }
 }
 
 function checkFields(): boolean {
-    const a =validEmail(); // Can't use a one-line function here due to lazy evaluation
+    const a = validEmail(); // Can't use a one-line function here due to lazy evaluation
     const b = validPassword();
     const c = passwordsEqual();
     return a && b && c
 }
 
-function register(): void {
-    addTempAlert("Please wait...",Alert.secondary)
-}
-
-function tryRegister(): void {
+async function tryRegister(): Promise<void> {
     if (checkFields()) {
-        register()
+        const credentials: Credentials = {email: registerEmailField.value, password: registerPasswordField.value};
+        const tempAlert: ChildNode | null = addTempAlert();
+        try {
+            const response: AxiosResponse = await axios.post("/rest/dbmusers/", credentials); // TODO fix type with interface
+            const responseData: string = await response.data;
+            addAlert(`Please check your inbox to confirm your e-mail`, AlertType.success, tempAlert)
+            // TODO redirect
+        } catch (error) {
+            addErrorAlert(error, tempAlert)
+        }
     }
+
+
 }
 
 
