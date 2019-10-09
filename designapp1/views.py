@@ -671,29 +671,29 @@ def generate_migration(request):
     dbs = Studentdatabases.objects.all();
 
     #setup
-    output = "#!/bin/sh\necho 'Creating structure...';\nmkdir dab_backups;\ncd dab_backups;\nexport PGPASSWORD=\""+password+"\";\n"
+    output = "#!/bin/sh\necho 'Creating structure...';\nmkdir dab_backups;\ncd dab_backups;\nexport PGPASSWORD=\""+password+"\";\nexport HOST=\""+host+"\";\nexport USER=\""+user+"\";\nexport PORT="+port+";\n"
     
     #start making the restore script
-    restore = "#!/bin/sh\nexport PGPASSWORD=\""+password+"\";\n"
+    restore = "#!/bin/sh\nexport PGPASSWORD=\""+password+"\";\nexport HOST=\""+host+"\";\nexport USER=\""+user+"\";\nexport PORT="+port+";\n"
     #restore the main database
-    restore += "echo 'Restoring main database...';\ncat "+database+".sql | psql -h "+host+" -p "+port+" -U \""+user+"\";\n"
+    restore += "echo 'Restoring main database...';\ncat "+database+".sql | psql -h $HOST -p $PORT -U $USER;\n"
     for db in dbs:
         db_name = db.databasename
         db_name = re.sub(r'\/', "?", db_name)
-        restore += "echo 'Restoring "+db.databasename+"';\ncat "+db_name+".sql | psql -h "+host+" -p "+port+" -U \""+user+"\";\n"
+        restore += "echo 'Restoring "+db.databasename+"';\ncat "+db_name+".sql | psql -h $HOST -p $PORT -U $USER;\n"
     restore = re.sub(r'"', "\\\"", restore)
     #make the backup script make the restore script
     output += "echo \""+restore+"\" > restore.sh;\n"
 
     #dump the current database
-    output += "echo 'Backing up main database...';\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" -C \""+database+"\" > "+database+".sql;\n"
+    output += "echo 'Backing up main database...';\npg_dump -h $HOST -p $PORT -U $USER -C \""+database+"\" > "+database+".sql;\n"
 
     for db in dbs:
         create_command = "CREATE USER \""+db.username+"\" WITH UNENCRYPTED PASSWORD \""+db.password+"\";"
         #escape / from the filename by replacing it by ?
         db_name = db.databasename
         db_name = re.sub(r'\/', "?", db_name)
-        output += "echo 'Backing up "+db.databasename+"';\necho '"+create_command+"' > "+db_name+".sql;\npg_dump -h "+host+" -p "+port+" -U \""+user+"\" -C \""+db.databasename+"\" >> "+db_name+".sql;\n"
+        output += "echo 'Backing up "+db.databasename+"';\necho '"+create_command+"' > "+db_name+".sql;\npg_dump -h $HOST -p $PORT -U $USER -C \""+db.databasename+"\" >> "+db_name+".sql;\n"
 
     output += "echo 'Compressing...';\ncd ..;\ntar -czf dab_backup.tar.gz dab_backups;\nrm -R dab_backups;\n"
     output += "echo 'Done generating dab_backup.tar.gz'"
