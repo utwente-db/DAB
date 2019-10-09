@@ -23025,11 +23025,15 @@ function addErrorAlert(error, tempAlert) {
     if (response) {
         var errorKeys = Object.keys(response.data);
         var errorMessages = Object.values(response.data);
+        // check for specific errors
         if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
             // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
             addAlert("You already have database credentials for this course", AlertType.danger);
         }
-        else {
+        else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
+            addAlert("Another user is already registered using this e-mail", AlertType.danger);
+        }
+        else { // No longer checking for specific errors
             // This is a response error (4XX or 5XX etc)
             var alertMessage = "";
             for (var i = 0; i < errorKeys.length; i++) {

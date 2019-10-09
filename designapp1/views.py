@@ -837,3 +837,14 @@ def verify(request, token):
     user.save()
     return render(request, 'login.html',
                   {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+
+def student_view(request):
+    return render(request, 'student_view.html')
+
+@require_GET
+@auth_redirect
+def redirect(request):
+    if (request.session['role'] == 2):
+        return student_view(request)
+    else:
+        return admin_view(request)

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Student home</title>
+{% endblock %}
+
+{% block scripts %}
+    <script defer src="/static/scripts/student_view.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    {% include 'navbar.html' %}
+
+    <div class="container bg-light p-4">
+        <!-- Website title -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>DB Practicum Manager</h1>
+                <hr/>
+            </div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-5">
+                <div class="overflow-auto" style="height: 300px;">
+                    <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="tab-content" id="courses-content"></div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row mt-4">
+            <div class="col-4">
+                <div class="text-center">
+                    <h1>Filters</h1>
+                </div>
+                <!-- Search -->
+                <input class="form-control" type="text" placeholder="Search E-Mail">
+                <!-- Checkboxes -->
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="adminCheck">
+                    <label class="form-check-label" for="adminCheck">Admins</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="TACheck">
+                    <label class="form-check-label" for="TACheck">TAs</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="studentCheck">
+                    <label class="form-check-label" for="studentCheck">Students</label>
+                </div>
+                <!-- Sort by -->
+                <!-- TODO: fix double arrows -->
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <select class="custom-select">
+                            <option selected>Sort by...</option>
+                            <option value="1">Identifier</<option>
+                            <option value="2">Role</option>
+                            <option valie="3">E-Mail</option>
+                        </select>
+                    </div>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button">
+                            <!-- &#8645 -->
+                        </button>
+                    </div>
+                </div>
+                <!-- Apply filters -->
+                <div class="text-center">
+                    <button class="btn btn-info" type="submit">Apply Filters</button>
+                </div>
+            </div>
+            <div class="col-8">
+                <h1 class="text-center">table with all users</h1>
+                <div class="overflow-auto" style="height: 800px;">
+                    <table class="table table-sm table-hover table-fixed">
+                        <thead class="thead dark">
+                        <tr>
+                            <th class="th-sm" scope="col">#</th>
+                            <th class="th-sm" scope="col">Role</th>
+                            <th class="th-sm" scope="col">E-Mail</th>
+                            <th class="th-sm" scope="col">Verified</th>
+                        </tr>
+                        </thead>
+                        <tbody id="users"></tbody>
+                        <!-- TODO make entire cell clickable link -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
