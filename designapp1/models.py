@@ -6,6 +6,8 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.conf import settings
+import base64
 
 
 class dbmusers(models.Model):
@@ -56,10 +58,14 @@ class Studentdatabases(models.Model):
     course = models.ForeignKey(Courses, on_delete=models.PROTECT, db_column='course')
     username = models.CharField(max_length=265)
     password = models.CharField(max_length=265)
-    # schema = models.ForeignKey(schemas, on_delete=models.PROTECT, db_column='schema', null=True)
 
     def owner(self):
         return self.fid
+
+    def readPassword(self):
+        bits = base64.b64decode(self.password)
+        bits = bytes([x^y for (x,y) in zip(settings.BITMASK, bits)])
+        return base64.b64encode(bits).decode()
 
     class Meta:
         managed = False
