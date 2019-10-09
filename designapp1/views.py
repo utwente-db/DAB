@@ -114,6 +114,39 @@ def get_base_response(request, db_parameters):
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
+def does_a_row_exist(sql_result):
+
+        if sql_result.count() > 0:
+            return True
+        else:
+            return False
+
+
+def am_i_ta_of_this_course(current_id,course_id):
+
+    try:
+        ta_info = TAs.objects.filter(courseid=course_id,taid=current_id)
+
+        return does_a_row_exist(ta_info) #is this student a ta over this db?
+
+    except Exception as e:
+        logging.debug(e)
+        return False
+
+
+def am_i_ta_of_this_db(current_id,dbid):
+
+    try:
+        db_info = Studentdatabases.objects.get(pk=dbid)
+        course_id = db_info.course
+        ta_info = TAs.objects.filter(courseid=course_id,taid=current_id)
+
+        return does_a_row_exist(ta_info) #is this student a ta over this db?
+
+    except Exception as e:
+        logging.debug(e)
+        return False
+
 def do_i_own_this_item(current_id, pk, db_parameters):
     db_id = None
     serializer_class = None
@@ -150,8 +183,9 @@ def get_single_response(request, pk, db_parameters):
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
     else:
         am_i_the_owner = do_i_own_this_item(current_id, pk, db_parameters)
-        if am_i_the_owner or check_role(request, teacher) or db_parameters[
-            "dbname"] == "courses":
+        am_i_the_ta = am_i_ta_of_this_db(current_id,pk)
+
+        if am_i_the_owner or check_role(request, teacher) or db_parameters["dbname"] == "courses" or (db_parameters["dbname"] == "studentdatabases"  and am_i_the_ta ):
             message = " a single response is requested on pk:" + str(pk)
             log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_single,message) #LOG THIS ACTION
             return JsonResponse(serializer_class.data, safe=False)
@@ -447,11 +481,14 @@ def search_on_owner(request, search_value, dbname):
 
 @csrf_exempt
 @require_GET
-@require_role(teacher)
+@require_role(student)
 def search_db_on_course(request, search_value):
     try:
         course = Courses.objects.get(courseid=search_value)
-        if not check_role(request, admin) and request.session["user"] != course.owner().id:
+
+        am_i_the_ta = am_i_ta_of_this_course(request.session["user"], course.courseid)
+        logging.debug(am_i_the_ta)
+        if not check_role(request, admin) and request.session["user"] != course.owner().id and not am_i_the_ta:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
         results = Studentdatabases.objects.filter(course=search_value)
         serializer = StudentdatabasesSerializer(results, many=True)
@@ -535,7 +572,7 @@ def reset(request, pk):
     except Studentdatabases.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-    if not check_role(request, teacher) and request.session["user"] != db.owner().id:
+    if not check_role(request, teacher) and request.session["user"] != db.owner().id and not am_i_ta_of_this_db(request.session["user"],pk):
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
     #we are now authorised
