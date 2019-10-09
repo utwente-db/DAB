@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-source ../venv/bin/activate
+. ../venv/bin/activate
 npm install
 npm run production
 find . -name "*.map" -type f|xargs rm -f
