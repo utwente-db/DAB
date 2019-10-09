@@ -213,14 +213,14 @@ def post_base_dbmusers_response(request):
             databases['role'] = student
         custom_serializer = dbmusersSerializer
         serializer_class = custom_serializer(data=databases, create=True)
-        # send confirmation mail
-        # mail.send_verification(databases)
         logging.debug("Created user; verify at /verify/"+databases["token"])
         message = " a user has been created with the email: " + str(databases['email'])
         log_message_with_db("","dbmusers",log_post_base_dbmusers,message) #LOG THIS ACTION
 
         if serializer_class.is_valid():
             serializer_class.save()
+            # send confirmation mail
+            # mail.send_verification(databases)
             #We don't want to return hashed password and verification tokens
             serializer_class = dbmusersSerializer(serializer_class.data)
             return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
