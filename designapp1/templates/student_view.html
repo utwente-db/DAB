@@ -11,26 +11,31 @@
 {% block content %}
 
     {% include 'navbar.html' %}
+    <div class="container-fluid py-3 py-md-5">
+        <div class="row px-0 px-md-5">
+            <div class="col-12 col-md-4">
+                <div class=" center-block
+    container border border-dark rounded-lg shadow-lg bg-white">
+                    <div class="p-5 text-center">
+                        <!-- Website title -->
+                        <div class="mx-5 text-center">
+                            <h1>Student homepage</h1>
+                        </div>
+                        <hr/>
+                        <div class="overflow-auto" style="height: 300px;">
+                            <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
+                        </div>
 
-    <div class="container bg-light p-4">
-        <!-- Website title -->
-        <div class="row">
-            <div class="col-12 text-center">
-                <h1>Student homepage</h1>
-                <hr/>
-            </div>
-        </div>
-        <div class="row mt-4">
-            <div class="col-5">
-                <div class="overflow-auto" style="height: 300px;">
-                    <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
+                    </div>
                 </div>
             </div>
-            <div class="col-7">
-                <div class="tab-content" id="courses-content"></div>
+            <div class="col-12 col-md-8">
+                <div class=" center-block
+    container border border-dark rounded-lg shadow-lg bg-white">
+
+                    <div class="tab-content" id="courses-content"></div>
+                </div>
             </div>
         </div>
-        <hr/>
     </div>
-
 {% endblock %}
