@@ -13,7 +13,7 @@ class CoursesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Courses
-        fields = ('courseid', 'fid', 'coursename', 'info', 'schema')
+        fields = ('courseid', 'fid', 'coursename', 'info', 'schema','active','databases')
 
 
 class StudentdatabasesDeleteSerializer(serializers.ModelSerializer):

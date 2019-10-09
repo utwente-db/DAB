@@ -21,12 +21,12 @@ class dbmusers(models.Model):
         db_table = 'dbmusers'
         verbose_name_plural = 'dbmusers'
 
-
 class Courses(models.Model):
     courseid = models.AutoField(db_column='courseid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
     coursename = models.CharField(max_length=256)
     info = models.TextField()
+    active = models.BooleanField(null=False)
     assistants = models.ManyToManyField(
         dbmusers,
         through='TAs',
@@ -44,10 +44,10 @@ class Courses(models.Model):
 
     class Meta(object):
         managed = False
+#        abstract = True
         db_table = 'courses'
         verbose_name_plural = 'Courses'
         unique_together = ('fid', 'coursename')
-
 
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid', primary_key=True)

@@ -31,9 +31,9 @@ from .log_functions import *
 # DESIGN PROJECT
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s %(levelname)s %(message)s',
-)
+        level=logging.INFO,
+        format='%(asctime)s %(levelname)s %(message)s',
+    )
 
 # AUTHENTICATION CHECKERS
 
@@ -69,8 +69,10 @@ def require_role_redirect(role):
     def decorator(func):
         @functools.wraps(func)
         def wrapper(request, *args, **kwargs):
-            if not check_role(request, role):
+            if not check_role(request, student):
                 return HttpResponseRedirect("/login")
+            elif not check_role(request, role):
+                return HttpResponse("You are not authorised", status=status.HTTP_403_FORBIDDEN)
             return func(request, *args, **kwargs)
         return wrapper
     return decorator
@@ -155,7 +157,6 @@ def get_single_response(request, pk, db_parameters):
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-
 @csrf_exempt
 @authenticated
 def get_own_response(request, dbname):
@@ -199,8 +200,8 @@ def post_base_dbmusers_response(request):
 
         if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', databases["email"]):
             return HttpResponse("only utwente email address can be used", status=status.HTTP_400_BAD_REQUEST)
-    
-    
+
+
         unhashed_password = databases['password']
         databases['password'] = hash.make(unhashed_password)
         databases["token"] = hash.token()
@@ -216,7 +217,7 @@ def post_base_dbmusers_response(request):
         logging.debug("Created user; verify at /verify/"+databases["token"])
         message = " a user has been created with the email: " + str(databases['email'])
         log_message_with_db("","dbmusers",log_post_base_dbmusers,message) #LOG THIS ACTION
-    
+
         if serializer_class.is_valid():
             serializer_class.save()
             #We don't want to return hashed password and verification tokens
@@ -365,6 +366,31 @@ def delete_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+def update_single_response(request, requested_pk, db_parameters):
+    #UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES, THIS FUNCTION COULD BE EXPANDED FOR OTHER DB'S
+    if check_role(request, teacher) and db_parameters["dbname"] == "courses":
+        try:
+
+            data = JSONParser().parse(request)
+
+            data.pop("fid", None) #in case this exist remove it
+            data.pop("courseid", None) #in case this exist remove it
+
+            current_row = db_parameters['db'].objects.get(pk=requested_pk)
+            current_row.__dict__.update(data)
+            current_row.save()
+
+        except ParseError as e:
+            return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logging.debug(e)
+            return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            message = "a row has been updated with pk:"+str(requested_pk)
+            log_message_with_db(request.session['user'],db_parameters["dbname"],log_update_single, message) #LOG THIS ACTION
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+    else:
+        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
 @csrf_exempt
 @authenticated
@@ -461,6 +487,8 @@ def singleview(request, pk, dbname):
         return get_single_response(request, pk, db_parameters)
     elif request.method == 'DELETE':
         return delete_single_response(request, pk, db_parameters)
+    elif request.method == 'PUT':
+        return update_single_response(request, pk, db_parameters)
     else:
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -655,12 +683,13 @@ not_found.status_code = 404
 #def get_queryset(self):
     #logging.debug(self.request)
 
-
+@require_role_redirect(admin)
 def userpage(request):
     return render(request, 'userpage.html')
 
 @require_GET
-def admin(request):
+@require_role_redirect(admin)
+def admin_view(request):
     return render(request, 'admin.html')
 
 
@@ -705,7 +734,10 @@ def login(request):
                     request.session["user"] = user.id
                     request.session["role"] = user.role
                     request.session.modified = True
-                    return HttpResponseRedirect("/")
+                    if user.role < 2:
+                        return HttpResponseRedirect("/admin")
+                    else:
+                        return HttpResponseRedirect("/courses")
 
 
                 else:
@@ -736,6 +768,7 @@ def logout_button(request):
 
 # Function that returns HTML page for choosing courses
 @require_GET
+@auth_redirect
 def courses(request):
     template = 'courses.html'
     # number = 3

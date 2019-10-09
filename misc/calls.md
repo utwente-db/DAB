@@ -7,6 +7,9 @@ IN GENERAL IF YOU GET A 500 ERROR -> YOU FIND A BUG, PLEASE REPORT
 GET
 	RESPONSE: 	Succes:		data
 			Otherwise: 	404
+PUT 
+    RESPOSNE:   Sucess:     202
+            bad request:    400 [is the JSON object correct?]
 POST
 	RESPONSE: 	Succes:		201
 			bad request: 	400 [Did you provide the correct fields?]
@@ -138,6 +141,7 @@ This code is not very well tested; if you ever encounter an error that relates t
 ### /courses/pk
 
 GET	-> get course for that course id
+PUT -> update information (updating the fid or courseid is not allowed)
 DELETE	-> delete course for that course id
 
 ### /courses/name/value
