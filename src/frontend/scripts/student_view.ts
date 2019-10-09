@@ -1,4 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
+import {getCoursesPromise} from './courses'
 import {displayWhoami} from "./navbar";
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import "popper.js"
@@ -6,6 +7,7 @@ import "bootstrap"
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
+let courses: Course[];
 
 interface Course {
     courseid: number;
@@ -14,13 +16,8 @@ interface Course {
     info: string;
 }
 
-async function getCoursesPromise(): Promise<Course[]> {
-    const response: AxiosResponse = await axios.get("/rest/courses/");
-    return response.data;
-}
-
 async function displayCourses(): Promise<void> {
-    const courses: Course[] = await getCoursesPromise();
+    courses = await getCoursesPromise();
     const resultNav: string[] = [];
     const resultContent: string[] = [];
 

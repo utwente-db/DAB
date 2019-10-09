@@ -32,7 +32,7 @@ interface Database {
 
 }
 
-async function getCoursesPromise(): Promise<Course[]> {
+export async function getCoursesPromise(): Promise<Course[]> {
     const response: AxiosResponse = await axios.get("/rest/courses/");
     return response.data;
 
