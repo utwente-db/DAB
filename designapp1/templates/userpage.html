@@ -11,20 +11,34 @@
 
 <!-- - Inspect datails
 - Check their database(s)
-- Extract a dumb from that database
+- Extract a dump from that database
 - Remove from system
 - Change role -->
 
 {% block content %}
     <div class="container bg-light p-4">
         <div class="row">
-            <div class="col-6">
-                <div class="text-center">
-                    User Information
-                    <hr/>
+            <div id="user-info"></div>
+                <div class="col-8">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="email">E-Mail</span>
+                        </div>
+                        <input type="text" class="form-control disabled" id="email">test.email@asdasd</input>
+                    </div>
                 </div>
-                <div id="user-info"></div>
-                <div class="text-center">
+                <div class="col-4 text-left">
+                    <label>Verfied: </label>
+                    <span>&check</span>
+                    <span>&cross</span>
+                </div>
+            <hr/>
+
+
+
+
+
+            <div class="text-center">
                     <button class="btn btn-danger">Delete User</button>
                 </div>
             </div>

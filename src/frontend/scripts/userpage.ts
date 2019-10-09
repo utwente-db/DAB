@@ -40,13 +40,18 @@ async function displayUserDetails(): Promise<void> {
         role = "Unknown";
     }
 
-    userInfoHtml.innerHTML +=
-        "<ul><li>ID: " + user.id +
-        "</li><li>Role: " + role + // Change role
-        "</li><li>E-Mail: "  + user.email +
-        "</li><li>Verified: " + user.verified +
-        "</li>"
-        ;
+    // userInfoHtml.innerHTML +=
+    //     "<>"
+    //
+    //
+    //
+    //
+    //     "<ul><li>ID: " + user.id +
+    //     "</li><li>Role: " + role + // Change role
+    //     "</li><li>E-Mail: "  + user.email +
+    //     "</li><li>Verified: " + user.verified +
+    //     "</li>"
+    //     ;
 
 }
 
