@@ -5,8 +5,8 @@ from . import views
 
 urlpatterns = [
     url(r'^/?$', views.redirect, name="home2"),
-    path('userpage', views.userpage, name="userpage"), #admin view of individual users
-    path('admin', views.admin_view, name="admin"), # TODO ths is eerily close to the django admin page (save for a trailing slash)
+    url(r'^student_view/?$', views.student_view, name="student_view"), #admin view of individual users
+    url(r'^admin_view/?$', views.admin_view, name="admin_view"), #admin view of individual users
     url(r'^login/?$', views.login, name="login"),
     url(r'^logout/?$', views.logout, name="logout"),
     url(r'^register/?$', views.register, name="register"),
