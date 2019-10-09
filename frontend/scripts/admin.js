@@ -19905,13 +19905,13 @@ function displayUsers() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, displayUsers()];
+            case 0: return [4 /*yield*/, navbar_1.displayWhoami()];
             case 1:
                 _a.sent();
-                return [4 /*yield*/, displayCourses()];
+                return [4 /*yield*/, displayUsers()];
             case 2:
                 _a.sent();
-                return [4 /*yield*/, navbar_1.displayWhoami()];
+                return [4 /*yield*/, displayCourses()];
             case 3:
                 _a.sent();
                 return [2 /*return*/];

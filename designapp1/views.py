@@ -838,13 +838,17 @@ def verify(request, token):
     return render(request, 'login.html',
                   {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
 
+@require_GET
 def student_view(request):
     return render(request, 'student_view.html')
 
 @require_GET
-@auth_redirect
+# @auth_redirect
 def redirect(request):
-    if (request.session['role'] == 2):
-        return student_view(request)
+    if 'role' in request.session:
+        if request.session['role'] == 2:
+            return student_view(request)
+        else:
+            return admin_view(request)
     else:
-        return admin_view(request)
+        return login(request)

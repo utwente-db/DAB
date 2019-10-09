@@ -99,7 +99,7 @@ async function displayUsers(): Promise<void> {
 }
 
 window.onload = async () => {
-    await displayUsers();
-    await displayCourses();
+    // await displayUsers();
+    // await displayCourses();
     await displayWhoami();
 };
