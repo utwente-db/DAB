@@ -273,6 +273,8 @@ def post_base_response(request, db_parameters):
                     databases["fid"] = request.session["user"]
                 if "schema" not in databases:
                     databases["schema"] = ""
+                if "active" not in databases:
+                    databases["active"] = False
                 serializer_class = CoursesSerializer(data=databases, create=True)
             else:
                 if db_parameters["dbname"] == "studentdatabases":

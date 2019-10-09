@@ -133,6 +133,7 @@ body:
 	"info":"test200", [FREE TO CHOOSE]
 	"fid":"7" [FOREIGN KEY, MUST EXIST; OPTIONAL, defaults to own]
 	"schema": <sql> [OPTIONAL, DEFAULT=""]
+	"active": [BOOLEAN, OPTIONAL, DEFAULT=false]
 	}
 
 NB: Schemas are verified for properties such as assigning ownership and creating schemas.
