@@ -27,6 +27,7 @@ from . import schemaCheck
 from . import schemas as schemaWriter
 from .settings import *
 from .log_functions import *
+from . import mail
 
 # DESIGN PROJECT
 
