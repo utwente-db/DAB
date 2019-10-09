@@ -5,6 +5,7 @@ import json
 import logging
 import re
 import functools
+import base64
 #import os
 #import pwd
 
@@ -14,6 +15,7 @@ from django.shortcuts import render
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
+from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
@@ -237,6 +239,11 @@ def post_base_dbmusers_response(request):
             return HttpResponse(status=status.HTTP_409_CONFLICT)
         raise e
 
+def switchPassword(password):
+    bits = base64.b64decode(password)
+    bits = bytes([x^y for (x,y) in zip(settings.BITMASK, bits)])
+    return base64.b64encode(bits).decode()
+
 @authenticated
 def post_base_response(request, db_parameters):
     if check_role(request, teacher) or (
@@ -272,7 +279,7 @@ def post_base_response(request, db_parameters):
                     password = hash.randomPassword()
                     databases["username"] = username
                     databases["databasename"] = username
-                    databases["password"] = password
+                    databases["password"] = switchPassword(password)
 
                 custom_serializer = db_parameters["serializer"]
                 serializer_class = custom_serializer(data=databases)
@@ -286,16 +293,20 @@ def post_base_response(request, db_parameters):
             if serializer_class.is_valid():
                 try:
                     if db_parameters["dbname"] == "studentdatabases":
-                        create_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"], serializer_class.validated_data["password"])
+                        create_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"], switchPassword(serializer_class.validated_data["password"]))
                         try:
+                            databases["password"] = switchPassword(databases["password"])
                             setup_student_db(databases, serializer_class)
                             serializer_class.save()
+                            # now we need to make sure the correct password is returned IN THE STUPIDEST WAY POSSIBLE because the IOVE DAMNET SERIALIZERS have IMMUTABLE DICTS
+                            data = serializer_class.data.copy()
+                            data["password"] = switchPassword(data["password"])
+                            log_message_with_db(request.session['user'],db_parameters["dbname"],log_post_base," a new studentdatabases has been added (row including entire database)") # LOG THIS ACTION
+                            return JsonResponse(data, status=status.HTTP_201_CREATED)
                         except Exception as e:
                             #rollback db creation
                             delete_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"])
                             return HttpResponse(e.__cause__, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                        log_message_with_db(request.session['user'],db_parameters["dbname"],log_post_base," a new studentdatabases has been added (row including entire database)") # LOG THIS ACTION
-                        return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
                     else:
                         if db_parameters["dbname"] == "courses":
                             check = schemaCheck.check(serializer_class.validated_data["schema"])
@@ -312,6 +323,7 @@ def post_base_response(request, db_parameters):
                     return HttpResponse("The following field(s) should be included:" + str(e),
                                         status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
+                    raise e
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     else:
