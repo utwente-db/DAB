@@ -89,6 +89,11 @@ def check_role(request, role):
     return False
 
 
+def switchPassword(password):
+    bits = base64.b64decode(password)
+    bits = bytes([x^y for (x,y) in zip(settings.BITMASK, bits)])
+    return base64.b64encode(bits).decode()
+
 # REST RESPONSES
 
 def defaultresponse(request):
@@ -107,6 +112,12 @@ def get_base_response(request, db_parameters):
         try:
             database = db_parameters["db"].objects.all()
             serializer_class = db_parameters["serializer"](database, many=True)
+            if db_parameters["dbname"] == "Studentdatabases":
+                data = serializer_class.data.copy()
+                for row in data:
+                    row["password"] = switchPassword(row["password"])
+                log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_base," has requested all rows from this db") #LOG THIS ACTION
+                return JsonResponse(data, safe=False)
         except db_parameters["db"].DoesNotExist as e:
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
@@ -152,10 +163,14 @@ def get_single_response(request, pk, db_parameters):
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
     else:
         am_i_the_owner = do_i_own_this_item(current_id, pk, db_parameters)
-        if am_i_the_owner or check_role(request, teacher) or db_parameters[
-            "dbname"] == "courses":
+        if am_i_the_owner or check_role(request, teacher) or db_parameters["dbname"] == "courses":
             message = " a single response is requested on pk:" + str(pk)
             log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_single,message) #LOG THIS ACTION
+            if db_parameters["dbname"] == "Studentdatabases":
+                data = serializer_class.data.copy()
+                for row in data:
+                    row["password"] = switchPassword(row["password"])
+                return JsonResponse(data, safe=False)
             return JsonResponse(serializer_class.data, safe=False)
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
@@ -185,6 +200,10 @@ def get_own_response(request, dbname):
         elif db_parameters["dbname"] == "studentdatabases":
             database = Studentdatabases.objects.filter(fid__id=current_id)
             serializer_class = StudentdatabasesSerializer(database, many=True)
+            data = serializer_class.data.copy()
+            for row in data:
+                row["password"] = switchPassword(row["password"])
+            return JsonResponse(data, safe=False)
     except Exception as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
     else:
@@ -238,11 +257,6 @@ def post_base_dbmusers_response(request):
         if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
             return HttpResponse(status=status.HTTP_409_CONFLICT)
         raise e
-
-def switchPassword(password):
-    bits = base64.b64decode(password)
-    bits = bytes([x^y for (x,y) in zip(settings.BITMASK, bits)])
-    return base64.b64encode(bits).decode()
 
 @authenticated
 def post_base_response(request, db_parameters):
@@ -434,6 +448,10 @@ def search_on_name(request, search_value, dbname):
         else:
             message = " a search has been done on the term:" + str(search_value)
             log_message_with_db(request.session['user'],db_parameters["dbname"],log_search, message) #LOG THIS ACTION
+            if db_parameters["dbname"] == "Studentdatabases":
+                data = serializer.data.copy()
+                data["password"] = results.readPassword()
+                return JsonResponse(data, safe=False)
             return JsonResponse(serializer.data, safe=False)
 
     else:
@@ -452,6 +470,10 @@ def search_on_owner(request, search_value, dbname):
         else:
             return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
         serializer = db_parameters["serializer"](results, many=True)
+        if db_parameters["dbname"] == "Studentdatabases":
+            data = serializer.data.copy()
+            for row in data:
+                row["password"] = switchPassword(row["password"])
         return JsonResponse(serializer.data, safe=False)
     except db_parameters["db"].DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
@@ -467,6 +489,9 @@ def search_db_on_course(request, search_value):
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
         results = Studentdatabases.objects.filter(course=search_value)
         serializer = StudentdatabasesSerializer(results, many=True)
+        data = serializer.data.copy()
+        for row in data:
+            row["password"] = switchPassword(row["password"])
         return JsonResponse(serializer.data, safe=False)
     except Courses.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
@@ -531,6 +556,7 @@ def dump(request, pk):
     if not check_role(request, teacher) and request.session["user"] != db.owner().id:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+    db.password = db.readPassword()
     schema = schemaWriter.dump(db.__dict__)
     response =  HttpResponse(schema, content_type="application/sql")
     response['Content-Disposition'] = "inline; filename=%s" % (db.databasename+".sql")
