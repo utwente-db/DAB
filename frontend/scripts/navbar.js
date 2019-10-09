@@ -19835,22 +19835,13 @@ function displayWhoami() {
                         role = "Unknown";
                     }
                     whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + "\t You are " + role;
-                    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary\" href=\"/settings\">Settings</button>";
+                    whoamiButtonHtml.innerHTML += "<a class=\"btn btn-secondary\" href=\"/settings\" role=\"button\">Settings</a>";
                     return [2 /*return*/];
             }
         });
     });
 }
-window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, displayWhoami()];
-            case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); };
+exports.displayWhoami = displayWhoami;
 
 
 /***/ })

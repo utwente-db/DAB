@@ -18,7 +18,7 @@ async function getWhoamiPromise(): Promise<Whoami> {
     return response.data;
 }
 
-async function displayWhoami(): Promise<void> {
+export async function displayWhoami(): Promise<void> {
     const whoami: Whoami = await getWhoamiPromise();
     let role: string;
     if (whoami.role == 0) {
@@ -31,9 +31,5 @@ async function displayWhoami(): Promise<void> {
         role = "Unknown";
     }
     whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + "\t You are " + role;
-    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary\" href=\"/settings\">Settings</button>";
-}
-
-window.onload = async () => {
-    await displayWhoami();
+    whoamiButtonHtml.innerHTML += "<a class=\"btn btn-secondary\" href=\"/settings\" role=\"button\">Settings</a>";
 }

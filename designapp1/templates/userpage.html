@@ -9,14 +9,28 @@
     <script defer src="/static/scripts/userpage.js"></script>
 {% endblock %}
 
-{% include 'navbar.html' %}
+<!-- - Inspect datails
+- Check their database(s)
+- Extract a dumb from that database
+- Remove from system
+- Change role -->
 
 {% block content %}
     <div class="container bg-light p-4">
         <div class="row">
+            <div class="col-6">
+                <div class="text-center">
+                    User Information
+                    <hr/>
+                </div>
+                <div id="user-info"></div>
+                <div class="text-center">
+                    <button class="btn btn-danger">Delete User</button>
+                </div>
+            </div>
             <div class="col-12 text-center">
                 <!-- content -->
-                <div id="user-info"></div>
+
                 <!-- <ul>
                     <li>id</li>
                     <li>email</li>

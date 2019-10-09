@@ -2,8 +2,10 @@ import axios, {AxiosResponse} from 'axios';
 
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import * as $ from "jquery";
-import "popper.js"
-import "bootstrap"
+import "popper.js";
+import "bootstrap";
+
+import {displayWhoami} from "./navbar";
 
 const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -54,7 +56,7 @@ async function displayCourses(): Promise<void> {
             + "<li>FID: " + courses[i].fid + "</li>"
             + "<li>Coursename: " + courses[i].coursename + "</li>"
             + "<li>Info: " + courses[i].info + "</li></ul>"
-            + "<button class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\">Edit Course</button></div>"
+            + "<a class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\" role=\"button\">Edit Course</a></div>"
         );
     }
     const resultNavString: string = resultNav.join("\n");
@@ -100,5 +102,6 @@ async function displayUsers(): Promise<void> {
 window.onload = async () => {
     await displayUsers();
     await displayCourses();
+    await displayWhoami();
 
 };

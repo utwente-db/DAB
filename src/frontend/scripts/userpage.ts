@@ -4,6 +4,8 @@ import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
 
+import {displayWhoami} from "./navbar";
+
 //todo: change to selected user ofcourse
 const hardcoded_userid: number = 73;
 
@@ -38,15 +40,17 @@ async function displayUserDetails(): Promise<void> {
         role = "Unknown";
     }
 
-
     userInfoHtml.innerHTML +=
-        "id: " + user.id + "<br>" +
-        "role: " + role + "<br>" +
-        "email: " + user.email + "<br>" +
-        "verified:" + user.verified + "<br>"
+        "<ul><li>ID: " + user.id +
+        "</li><li>Role: " + role + // Change role
+        "</li><li>E-Mail: "  + user.email +
+        "</li><li>Verified: " + user.verified +
+        "</li>"
         ;
+
 }
 
 window.onload = async () => {
     await displayUserDetails();
+    await displayWhoami();
 }
