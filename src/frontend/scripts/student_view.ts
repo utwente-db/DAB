@@ -59,11 +59,14 @@ async function populateHaveCredentialsPane(i: number) {
                             </div>
                         </div>
                         <div class="align-items-center align-items-stretch row">
-                            <div class="center-block col-12 col-md-6 my-4">
+                            <div class="center-block col-12 col-md-4 my-2 my-md-4">
                                 <button id="delete-button-${db.dbid}" class="btn btn-danger delete-button ">Delete database and release credentials</button>
                             </div>
-                            <div class="center-block col-12 col-md-6 my-4">
+                            <div class="center-block col-12 col-md-4 my-2 my-md-4"">
                                 <button id="reset-button-${db.dbid}" class="btn btn-info reset-button">Reset database</button>
+                            </div>
+                            <div class="center-block col-12 col-md-4 my-2 my-md-4"">
+                                <a id="dump-button-${db.dbid}" href="/rest/dump/${db.dbid}" target="_blank" class="btn btn-secondary dump-button">Get dump of database</a>
                             </div>
                         </div>`;
             credentials += html.trim();
@@ -146,9 +149,12 @@ async function prepareToGetCredentials() {
     credentialsButton.classList.add("disabled");
     groupInput.classList.add("disabled");
     try {
-        await tryGetCredentials(currentCourse, Number(groupInput.value), false);
+        const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
-        await changeViewToHaveCredentials()
+        if (success) {
+            await changeViewToHaveCredentials()
+        }
+        ;
     } catch (error) {
         addErrorAlert(error);
     } finally {
@@ -177,7 +183,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Delete!',
+        confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel'
     });
 
@@ -225,7 +231,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Delete!',
+        confirmButtonText: 'Reset',
         cancelButtonText: 'Cancel'
     });
 
