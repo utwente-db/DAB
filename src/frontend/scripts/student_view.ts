@@ -66,7 +66,7 @@ async function populateHaveCredentialsPane(i: number) {
                                 <button id="reset-button-${db.dbid}" class="btn btn-info reset-button btn-block">Reset database</button>
                             </div>
                             <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
-                                <a class="d-flex" href="/rest/dump/${db.dbid}" target="_blank"><button id="dump-button-${db.dbid}" class="btn-block d-flex btn btn-secondary dump-button">Get dump of database</button></a>
+                                <button onclick="window.open('/rest/dump/${db.dbid}/')" id="dump-button-${db.dbid}" class="btn btn-secondary dump-button btn-block">Get dump of database</button>
                             </div>
                         </div>`;
             // TODO make third button mobile-friendly
