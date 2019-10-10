@@ -4,6 +4,7 @@ import axios from 'axios';
 import "popper.js"
 import "bootstrap"
 import {addAlert, addErrorAlert, AlertType} from "./alert";
+import Swal from 'sweetalert2'
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
@@ -170,7 +171,21 @@ async function changeViewToNoCredentials() {
     populateNoCredentialsPane(i);
 }
 
-async function prepareToDeleteCredentials(dbID: number) {
+async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
+    const result = await Swal.fire({
+        title: 'Are you sure you want to delete this database?',
+        text: 'You will not be able to recover your data!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete!',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success;
+
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
@@ -185,8 +200,10 @@ async function prepareToDeleteCredentials(dbID: number) {
         // await changeViewToHaveCredentials()
         addAlert("Deleted database", AlertType.primary);
         changeViewToNoCredentials();
+        success = true;
     } catch (error) {
         addErrorAlert(error);
+        success = false;
     } finally {
         coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
         Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
@@ -198,7 +215,7 @@ async function prepareToDeleteCredentials(dbID: number) {
                 resetButton.classList.remove("disabled")
             });
     }
-
+    return success;
 
 }
 
