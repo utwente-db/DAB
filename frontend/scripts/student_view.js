@@ -26319,7 +26319,7 @@ function populateHaveCredentialsPane(i) {
             haveCredsInfo.innerText = courses[i].info;
             ownDatabases.forEach(function (db) {
                 if (db.course === courses[i].courseid) {
-                    var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"align-items-center align-items-stretch row\">\n                            <div class=\"center-block col-12 col-md-6 my-4\">\n                                <button id=\"delete-button-" + db.dbid + "\" class=\"btn btn-danger delete-button \">Delete database and release credentials</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-6 my-4\">\n                                <button id=\"reset-button-" + db.dbid + "\" class=\"btn btn-info  reset-button\">Reset database (werkt nog niet)</button>\n                            </div>\n                        </div>";
+                    var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"align-items-center align-items-stretch row\">\n                            <div class=\"center-block col-12 col-md-6 my-4\">\n                                <button id=\"delete-button-" + db.dbid + "\" class=\"btn btn-danger delete-button \">Delete database and release credentials</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-6 my-4\">\n                                <button id=\"reset-button-" + db.dbid + "\" class=\"btn btn-info reset-button\">Reset database</button>\n                            </div>\n                        </div>";
                     credentials += html.trim();
                     dbIDs.push(db.dbid);
                 }
@@ -26331,7 +26331,7 @@ function populateHaveCredentialsPane(i) {
                 deleteButton.addEventListener("click", function () {
                     prepareToDeleteCredentials(id);
                 });
-                deleteButton.addEventListener("click", function () {
+                resetButton.addEventListener("click", function () {
                     resetDatabase(id);
                 });
             });
@@ -26524,8 +26524,62 @@ function prepareToDeleteCredentials(dbID) {
         });
     });
 }
-function resetDatabase(id) {
-    // TODO implement
+function resetDatabase(dbID) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, success, error_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
+                        title: 'Are you sure you want to reset this database?',
+                        text: 'You will not be able to recover your data!',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Delete!',
+                        cancelButtonText: 'Cancel'
+                    })];
+                case 1:
+                    result = _a.sent();
+                    if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
+                        return [2 /*return*/, false];
+                    }
+                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
+                    Array.from(document.getElementsByClassName("delete-button"))
+                        .forEach(function (deleteButton) {
+                        deleteButton.classList.add("disabled");
+                    });
+                    Array.from(document.getElementsByClassName("reset-button"))
+                        .forEach(function (resetButton) {
+                        resetButton.classList.add("disabled");
+                    });
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, 5, 6]);
+                    return [4 /*yield*/, axios_1.default.post("/rest/reset/" + dbID + "/")];
+                case 3:
+                    _a.sent();
+                    alert_1.addAlert("Reset database", alert_1.AlertType.primary);
+                    success = true;
+                    return [3 /*break*/, 6];
+                case 4:
+                    error_3 = _a.sent();
+                    alert_1.addErrorAlert(error_3);
+                    success = false;
+                    return [3 /*break*/, 6];
+                case 5:
+                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
+                    Array.from(document.getElementsByClassName("delete-button"))
+                        .forEach(function (deleteButton) {
+                        deleteButton.classList.remove("disabled");
+                    });
+                    Array.from(document.getElementsByClassName("reset-button"))
+                        .forEach(function (resetButton) {
+                        resetButton.classList.remove("disabled");
+                    });
+                    return [7 /*endfinally*/];
+                case 6: return [2 /*return*/, success];
+            }
+        });
+    });
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {

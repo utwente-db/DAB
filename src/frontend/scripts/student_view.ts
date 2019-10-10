@@ -63,7 +63,7 @@ async function populateHaveCredentialsPane(i: number) {
                                 <button id="delete-button-${db.dbid}" class="btn btn-danger delete-button ">Delete database and release credentials</button>
                             </div>
                             <div class="center-block col-12 col-md-6 my-4">
-                                <button id="reset-button-${db.dbid}" class="btn btn-info  reset-button">Reset database (werkt nog niet)</button>
+                                <button id="reset-button-${db.dbid}" class="btn btn-info reset-button">Reset database</button>
                             </div>
                         </div>`;
             credentials += html.trim();
@@ -75,10 +75,10 @@ async function populateHaveCredentialsPane(i: number) {
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
         const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-            prepareToDeleteCredentials(id)
+            prepareToDeleteCredentials(id);
         });
-        deleteButton.addEventListener("click", () => {
-            resetDatabase(id)
+        resetButton.addEventListener("click", () => {
+            resetDatabase(id);
         });
 
     });
@@ -219,8 +219,49 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
 
 }
 
-function resetDatabase(id: number) {
-    // TODO implement
+async function resetDatabase(dbID: number): Promise<boolean> {
+    const result = await Swal.fire({
+        title: 'Are you sure you want to reset this database?',
+        text: 'You will not be able to recover your data!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete!',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success;
+
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
+    Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((deleteButton: HTMLButtonElement) => {
+            deleteButton.classList.add("disabled")
+        });
+    Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((resetButton: HTMLButtonElement) => {
+            resetButton.classList.add("disabled")
+        });
+    try {
+        await axios.post(`/rest/reset/${dbID}/`);
+        addAlert("Reset database", AlertType.primary);
+        success = true;
+    } catch (error) {
+        addErrorAlert(error);
+        success = false;
+    } finally {
+        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
+        Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
+            .forEach((deleteButton: HTMLButtonElement) => {
+                deleteButton.classList.remove("disabled")
+            });
+        Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
+            .forEach((resetButton: HTMLButtonElement) => {
+                resetButton.classList.remove("disabled")
+            });
+    }
+    return success;
 }
 
 window.onload = async () => {
