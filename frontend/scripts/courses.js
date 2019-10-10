@@ -23187,15 +23187,18 @@ function tryGetCredentials() {
     });
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, Promise.all([navbar_1.displayWhoami(),
-                    displayCourses(),
-                    $('select').selectpicker(),
-                    credentialsButton.addEventListener("click", tryGetCredentials),
-                ])];
-            case 1:
-                _a.sent();
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0:
+                _b = (_a = Promise).all;
+                _c = [navbar_1.displayWhoami()];
+                return [4 /*yield*/, displayCourses()];
+            case 1: return [4 /*yield*/, _b.apply(_a, [_c.concat([_d.sent(),
+                        $('select').selectpicker(),
+                        credentialsButton.addEventListener("click", tryGetCredentials)])])];
+            case 2:
+                _d.sent();
                 return [2 /*return*/];
         }
     });

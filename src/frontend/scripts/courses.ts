@@ -73,7 +73,7 @@ async function tryGetCredentials() {
 
 window.onload = async () => {
     await Promise.all([displayWhoami(),
-        displayCourses(),
+        await displayCourses(),
         $('select').selectpicker(), // Style all selects
         credentialsButton.addEventListener("click", tryGetCredentials),
         ]);

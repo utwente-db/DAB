@@ -16,21 +16,39 @@
             <div class="col-12 col-md-4">
                 <div class=" center-block
     container border border-dark rounded-lg shadow-lg bg-white p-3 p-xl-5 text-center">
-                        <!-- Website title -->
-                            <h2>Course list</h2>
-                        <hr/>
-                        <div class="overflow-auto" style="height: 300px;">
-                            <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
-                        </div>
+                    <!-- Website title -->
+                    <h2>Course list</h2>
+                    <hr/>
+                    <div class="overflow-auto" style="height: 300px;">
+                        <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
+                    </div>
 
                 </div>
             </div>
             <div class="col-12 col-md-8 mt-3 mt-md-0 d-flex">
                 <div class="center-block
-    container border border-dark rounded-lg shadow-lg bg-white p-3 p-xl-5 text-center">
+    container border border-dark rounded-lg shadow-lg bg-white p-3  p-xl-5 text-center">
 
                     <div class="tab-content" id="courses-content">
                         <div class="tab-pane active m-5"><h1>Please select a course</h1></div>
+                        <div class="tab-pane" id="no-credentials-pane">
+                            <p class="h2" id="no-credentials-coursename">No credentials coursename</p>
+                            <p class="text-center small mb-2" id="no-credentials-courseinfo">No credentials courseinfo</p>
+                            <hr>
+                            <div class="form-row">
+                                <label for="group-dropdown" class="col-4">Please select a group</label>
+                                <select id="group-dropdown" class="form-control col-8" disabled>
+                                    <option disabled selected value="0"> Selecting groups is not a thing yet</option>
+                                </select>
+
+                            </div>
+
+
+                            <button class="btn btn-info my-4" id="credentials-button">Get credentials</button>
+
+                            <div id="alert-div"></div>
+
+                        </div>
                     </div>
                 </div>
             </div>

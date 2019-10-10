@@ -26,14 +26,12 @@ async function displayCourses(): Promise<void> {
             `<a class="nav-link" data-toggle="pill" href="#course${i}">${courses[i].coursename}</a>`
         );
 
-        if (courseOwned) {
-            resultContent.push(
-                `<div class="tab-pane" id="course${i}">
-                  <ul><li>Info: ${courses[i].info}</li></ul>
-                  <button class="btn btn-secondary course-not-owned-button" 
-                  href="/courses#${courses[i].courseid}">Edit Course</button></div>`
-            );
-        }
+        // if (courseOwned) {
+        //     resultContent.push(
+        //         `
+        //             `
+        //     );
+        // }
 
 
     }
@@ -44,6 +42,8 @@ async function displayCourses(): Promise<void> {
 }
 
 window.onload = async () => {
+
     await displayCourses();
     await displayWhoami();
+
 };
