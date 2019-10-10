@@ -29,7 +29,7 @@ export interface StudentDatabase {
     "databasename": string,
     "username": string,
     "password": string
-
+    // TODO update to include groupID field
 
 }
 

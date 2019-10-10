@@ -23365,6 +23365,7 @@ var noCredsCoursename = document.getElementById("no-credentials-coursename");
 var noCredsInfo = document.getElementById("no-credentials-courseinfo");
 var haveCredsCoursename = document.getElementById("have-credentials-coursename");
 var haveCredsInfo = document.getElementById("have-credentials-courseinfo");
+var credentialsDiv = document.getElementById("credentials-div");
 var haveCredsPane = document.getElementById("have-credentials-pane");
 var noCredsPane = document.getElementById("no-credentials-pane");
 var credentialsButton = document.getElementById("credentials-button");
@@ -23377,8 +23378,27 @@ function populateNoCredentialsPane(i) {
     noCredsInfo.innerText = courses[i].info;
 }
 function populateHaveCredentialsPane(i) {
-    haveCredsCoursename.innerText = courses[i].coursename;
-    haveCredsInfo.innerText = courses[i].info;
+    return __awaiter(this, void 0, void 0, function () {
+        var credentials, ownDatabases;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    credentials = "";
+                    haveCredsCoursename.innerText = courses[i].coursename;
+                    haveCredsInfo.innerText = courses[i].info;
+                    return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
+                case 1:
+                    ownDatabases = (_a.sent()).data;
+                    ownDatabases.forEach(function (db) {
+                        if (db.course === courses[i].courseid) {
+                            credentials += "username: " + db.username + "<br>\n                            password: " + db.password + "<br><br>";
+                        }
+                    });
+                    credentialsDiv.innerHTML = credentials;
+                    return [2 /*return*/];
+            }
+        });
+    });
 }
 function createNavLink(haveCredentials, i, active) {
     if (active === void 0) { active = false; }
@@ -23438,29 +23458,32 @@ function changeViewToHaveCredentials() {
     haveCredsPane.classList.add("active");
     populateHaveCredentialsPane(i);
 }
+function prepareToGetCredentials() {
+    return __awaiter(this, void 0, void 0, function () {
+        var success;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
+                    credentialsButton.classList.add("disabled");
+                    return [4 /*yield*/, courses_1.tryGetCredentials(currentCourse, Number(groupInput.value))];
+                case 1:
+                    success = _a.sent();
+                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
+                    credentialsButton.classList.remove("disabled");
+                    if (success) {
+                        changeViewToHaveCredentials();
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                credentialsButton.addEventListener("click", function () { return __awaiter(void 0, void 0, void 0, function () {
-                    var success;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
-                                credentialsButton.classList.add("disabled");
-                                return [4 /*yield*/, courses_1.tryGetCredentials(currentCourse, Number(groupInput.value))];
-                            case 1:
-                                success = _a.sent();
-                                coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
-                                credentialsButton.classList.remove("disabled");
-                                if (success) {
-                                    changeViewToHaveCredentials();
-                                }
-                                return [2 /*return*/];
-                        }
-                    });
-                }); });
+                credentialsButton.addEventListener("click", prepareToGetCredentials);
                 return [4 /*yield*/, displayCourses()];
             case 1:
                 _a.sent();

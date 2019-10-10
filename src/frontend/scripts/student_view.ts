@@ -10,7 +10,7 @@ const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-creden
 const noCredsInfo: HTMLDivElement = document.getElementById("no-credentials-courseinfo") as HTMLDivElement;
 const haveCredsCoursename: HTMLHeadingElement = document.getElementById("have-credentials-coursename") as HTMLDivElement;
 const haveCredsInfo: HTMLDivElement = document.getElementById("have-credentials-courseinfo") as HTMLDivElement;
-
+const credentialsDiv: HTMLDivElement = document.getElementById("credentials-div") as HTMLDivElement;
 const haveCredsPane: HTMLHeadingElement = document.getElementById("have-credentials-pane") as HTMLDivElement;
 const noCredsPane: HTMLHeadingElement = document.getElementById("no-credentials-pane") as HTMLDivElement;
 
@@ -34,12 +34,22 @@ function populateNoCredentialsPane(i: number) {
     noCredsInfo.innerText = courses[i].info;
 }
 
-function populateHaveCredentialsPane(i: number) {
+async function populateHaveCredentialsPane(i: number) {
+    let credentials = "";
     haveCredsCoursename.innerText = courses[i].coursename;
     haveCredsInfo.innerText = courses[i].info;
+    const ownDatabases: StudentDatabase[] = (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
+    ownDatabases.forEach((db: StudentDatabase) => {
+        if (db.course === courses[i].courseid) {
+            credentials += `username: ${db.username}<br>
+                            password: ${db.password}<br><br>`
+        }
+    });
+    credentialsDiv.innerHTML=credentials;
+    // TODO populate with credentials
 }
 
-function createNavLink(haveCredentials: boolean, i: number, active=false): DocumentFragment {
+function createNavLink(haveCredentials: boolean, i: number, active = false): DocumentFragment {
     const credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
     const hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
     const activeString = active ? "active" : "";
@@ -83,26 +93,30 @@ async function displayCourses(): Promise<void> {
 }
 
 function changeViewToHaveCredentials() {
-    const activeLink: HTMLLinkElement =  document.getElementsByClassName("nav-link no-credentials-nav active")[0] as HTMLLinkElement;
+    const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link no-credentials-nav active")[0] as HTMLLinkElement;
     const i = Number(activeLink.id);
-    const fragment = createNavLink(true, i,true);
+    const fragment = createNavLink(true, i, true);
     activeLink.classList.remove("active");
-    activeLink.insertAdjacentElement("afterend",fragment.firstElementChild!);
+    activeLink.insertAdjacentElement("afterend", fragment.firstElementChild!);
     activeLink.remove();
     noCredsPane.classList.remove("active");
     haveCredsPane.classList.add("active");
     populateHaveCredentialsPane(i);
 }
 
+async function prepareToGetCredentials() {
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
+    credentialsButton.classList.add("disabled");
+    const success = await tryGetCredentials(currentCourse, Number(groupInput.value));
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
+    credentialsButton.classList.remove("disabled");
+    if (success) {
+        changeViewToHaveCredentials()
+    }
+}
+
 window.onload = async () => {
-    credentialsButton.addEventListener("click", async () => {
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
-        credentialsButton.classList.add("disabled");
-        const success = await tryGetCredentials(currentCourse, Number(groupInput.value));
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
-        credentialsButton.classList.remove("disabled");
-        if (success) {changeViewToHaveCredentials()}
-    });
+    credentialsButton.addEventListener("click", prepareToGetCredentials);
     await displayCourses();
     await displayWhoami();
 };
