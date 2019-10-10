@@ -847,10 +847,7 @@ def login(request):
                     request.session["user"] = user.id
                     request.session["role"] = user.role
                     request.session.modified = True
-                    if user.role < 2:
-                        return HttpResponseRedirect("/admin")
-                    else:
-                        return HttpResponseRedirect("/courses")
+                    return HttpResponseRedirect("/")
 
 
                 else:
@@ -949,3 +946,18 @@ def verify(request, token):
     user.save()
     return render(request, 'login.html',
                   {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+
+@require_GET
+def student_view(request):
+    return render(request, 'student_view.html')
+
+@require_GET
+# @auth_redirect
+def redirect(request):
+    if 'role' in request.session:
+        if request.session['role'] == 2:
+            return student_view(request)
+        else:
+            return admin_view(request)
+    else:
+        return login(request)

@@ -4,9 +4,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    url(r'^/?$', views.admin_view, name="home2"),
-    path('userpage', views.userpage, name="userpage"), #admin view of individual users
-    path('admin', views.admin_view, name="admin"),
+    url(r'^/?$', views.redirect, name="home2"),
+    url(r'^student_view/?$', views.student_view, name="student_view"),
+    url(r'^admin_view/?$', views.admin_view, name="admin_view"),
+    url(r'^userpage/?$', views.userpage, name="userpage"), #admin view of individual users
     url(r'^login/?$', views.login, name="login"),
     url(r'^logout/?$', views.logout, name="logout"),
     url(r'^register/?$', views.register, name="register"),

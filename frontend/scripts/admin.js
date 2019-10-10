@@ -19905,13 +19905,13 @@ function displayUsers() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, displayUsers()];
+            case 0: return [4 /*yield*/, navbar_1.displayWhoami()];
             case 1:
                 _a.sent();
-                return [4 /*yield*/, displayCourses()];
+                return [4 /*yield*/, displayUsers()];
             case 2:
                 _a.sent();
-                return [4 /*yield*/, navbar_1.displayWhoami()];
+                return [4 /*yield*/, displayCourses()];
             case 3:
                 _a.sent();
                 return [2 /*return*/];
@@ -19995,19 +19995,18 @@ function displayWhoami() {
                 case 1:
                     whoami = _a.sent();
                     if (whoami.role === 0) {
-                        role = "an Admin";
+                        role = "an admin";
                     }
                     else if (whoami.role === 1) {
-                        role = "a Teacher";
+                        role = "a teacher";
                     }
                     else if (whoami.role === 2) {
-                        role = "a Student";
+                        role = "a student";
                     }
                     else {
                         role = "Unknown";
                     }
-                    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + "\t You are " + role;
-                    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary\" href=\"/settings\">Settings</button>";
+                    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + ", you are " + role + ".";
                     return [2 /*return*/];
             }
         });

@@ -22,14 +22,14 @@ export async function displayWhoami(): Promise<void> {
     const whoami: Whoami = await getWhoamiPromise();
     let role: string;
     if (whoami.role === 0) {
-        role = "an Admin";
+        role = "an admin";
     } else if (whoami.role === 1) {
-        role = "a Teacher";
+        role = "a teacher";
     } else if (whoami.role === 2) {
-        role = "a Student";
+        role = "a student";
     } else {
         role = "Unknown";
     }
-    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + "\t You are " + role;
-    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary\" href=\"/settings\">Settings</button>";
+    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + ", you are " + role +".";
+    // whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary\" href=\"/settings\">Settings</button>";
 }

@@ -1,7 +1,6 @@
 import axios, {AxiosResponse} from 'axios';
 import {displayWhoami} from "./navbar";
 
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
@@ -99,7 +98,7 @@ async function displayUsers(): Promise<void> {
 }
 
 window.onload = async () => {
+    await displayWhoami();
     await displayUsers();
     await displayCourses();
-    await displayWhoami();
 };

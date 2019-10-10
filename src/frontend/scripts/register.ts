@@ -2,7 +2,7 @@ import "../sass/main.sass"
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert, AlertType, generateAlertHTML} from "./alert";
 import axios, {AxiosResponse} from "axios";
 
 const registerButton: HTMLButtonElement = document.getElementById("register-button") as HTMLButtonElement;
@@ -88,10 +88,9 @@ async function tryRegister(): Promise<void> {
         const credentials: Credentials = {email: registerEmailField.value, password: registerPasswordField.value};
         const tempAlert: ChildNode | null = addTempAlert();
         try {
-            const response: AxiosResponse = await axios.post("/rest/dbmusers/", credentials); // TODO fix type with interface
-            const responseData: string = await response.data;
+            const response: AxiosResponse<string> = await axios.post("/rest/dbmusers/", credentials) as AxiosResponse<string>;
+            const responseData: string = response.data;
             addAlert(`Please check your inbox to confirm your e-mail`, AlertType.success, tempAlert)
-            // TODO redirect
         } catch (error) {
             addErrorAlert(error, tempAlert)
         }
