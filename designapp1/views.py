@@ -847,10 +847,7 @@ def login(request):
                     request.session["user"] = user.id
                     request.session["role"] = user.role
                     request.session.modified = True
-                    if user.role < 2:
-                        return HttpResponseRedirect("/admin")
-                    else:
-                        return HttpResponseRedirect("/courses")
+                    return HttpResponseRedirect("/")
 
 
                 else:
