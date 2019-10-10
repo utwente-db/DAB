@@ -23417,11 +23417,11 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
-                                coursesNavHtml.childNodes.forEach(function (element) { return element.classList.add("disabled"); });
+                                coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
                                 return [4 /*yield*/, courses_1.tryGetCredentials(currentCourse, Number(groupInput.value))];
                             case 1:
                                 _a.sent();
-                                coursesNavHtml.childNodes.forEach(function (element) { return element.classList.remove("disabled"); });
+                                coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
                                 return [2 /*return*/];
                         }
                     });

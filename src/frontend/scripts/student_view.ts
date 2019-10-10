@@ -58,9 +58,9 @@ async function displayCourses(): Promise<void> {
 
 window.onload = async () => {
     credentialsButton.addEventListener("click", async () => {
-        coursesNavHtml.childNodes.forEach((element: any) => element.classList.add("disabled"));
+        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
         await tryGetCredentials(currentCourse, Number(groupInput.value));
-        coursesNavHtml.childNodes.forEach((element: any) => element.classList.remove("disabled"));
+        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
     });
     await displayCourses();
     await displayWhoami();
