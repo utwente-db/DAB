@@ -58,6 +58,7 @@ class Studentdatabases(models.Model):
     course = models.ForeignKey(Courses, on_delete=models.PROTECT, db_column='course')
     username = models.CharField(max_length=265)
     password = models.CharField(max_length=265)
+    groupid = models.IntegerField(default=0, db_column="groupid")
 
     def owner(self):
         return self.fid

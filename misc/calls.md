@@ -77,6 +77,7 @@ POST 	-> add user
 		{
 		"fid":"5", [FOREIGN KEY, MUST EXIST. Optional, if not specified, your current user id]
 		"course":"3", [FOREIGN KEY, MUST EXIST]
+        "groupid":"4" [FREE TO CHOOSE, responsibility is for the student as he is the person who can change it]
 		}
 
 Note: on success you will get the following object back:

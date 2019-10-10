@@ -430,20 +430,53 @@ def delete_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+
+def accepted_fields_for_db(table):
+
+    if table == "courses":
+        return {'coursename','info','schema','active','databases'}
+    if table == "studentdatabases":
+        return {'groupid'}
+
+def filter_dict_on_keys(incoming,dbname):
+
+    accepted_fields = accepted_fields_for_db(dbname)
+
+    unwanted = set (incoming) - set (accepted_fields)
+    for unwanted_key in unwanted: del incoming[unwanted_key]
+
+    return incoming
+
+
 def update_single_response(request, requested_pk, db_parameters):
-    #UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES, THIS FUNCTION COULD BE EXPANDED FOR OTHER DB'S
-    am_i_the_ta = am_i_ta_of_this_course(request.session["user"], requested_pk)
-    if (check_role(request, teacher) or am_i_the_ta) and db_parameters["dbname"] == "courses":
+    #UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES AND STUDENTDATABASES
+    #are we allowed to do this?
+
+    authorised = False
+
+    if db_parameters["dbname"] == "courses":
+        am_i_the_ta = am_i_ta_of_this_course(request.session["user"], requested_pk)
+        if check_role(request, teacher) or am_i_the_ta:
+            authorised = True
+    if db_parameters["dbname"] == "studentdatabases":
+        am_i_the_ta = am_i_ta_of_this_db(request.session["user"], requested_pk)
+        logging.debug(am_i_the_ta)
+        if check_role(request, teacher) or am_i_the_ta or do_i_own_this_item(request.session["user"],requested_pk,db_parameters):
+            authorised = True
+
+    if authorised:
         try:
 
             data = JSONParser().parse(request)
 
-            data.pop("fid", None) #in case this exist remove it
-            data.pop("courseid", None) #in case this exist remove it
+            filtered_data = filter_dict_on_keys(data,db_parameters["dbname"])
 
-            current_row = db_parameters['db'].objects.get(pk=requested_pk)
-            current_row.__dict__.update(data)
-            current_row.save()
+            if len(filtered_data) == 0:
+                return HttpResponse("The fields you supplied are not valid. Check your fields on grammar or provide at least 1 field", status=status.HTTP_400_BAD_REQUEST)
+            else:
+                current_row = db_parameters['db'].objects.get(pk=requested_pk)
+                current_row.__dict__.update(filtered_data)
+                current_row.save()
 
         except ParseError as e:
             return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
