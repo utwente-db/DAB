@@ -26372,8 +26372,9 @@ function displayCourses() {
                 case 1:
                     courses = _a.sent();
                     return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
-                case 2:
-                    ownDatabases = (_a.sent()).data;
+                case 2: return [4 /*yield*/, (_a.sent()).data];
+                case 3:
+                    ownDatabases = (_a.sent());
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     console.log(ownCourses);
                     resultNav = [];
@@ -26589,13 +26590,12 @@ function resetDatabase(dbID) {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                credentialsButton.addEventListener("click", prepareToGetCredentials);
-                return [4 /*yield*/, displayCourses()];
+            case 0: return [4 /*yield*/, Promise.all([
+                    credentialsButton.addEventListener("click", prepareToGetCredentials),
+                    displayCourses(),
+                    navbar_1.displayWhoami()
+                ])];
             case 1:
-                _a.sent();
-                return [4 /*yield*/, navbar_1.displayWhoami()];
-            case 2:
                 _a.sent();
                 return [2 /*return*/];
         }

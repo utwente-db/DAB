@@ -116,7 +116,7 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
 
 async function displayCourses(): Promise<void> {
     courses = await getCoursesPromise();
-    ownDatabases = (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
+    ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     console.log(ownCourses);
@@ -272,7 +272,9 @@ async function resetDatabase(dbID: number): Promise<boolean> {
 }
 
 window.onload = async () => {
-    credentialsButton.addEventListener("click", prepareToGetCredentials);
-    await displayCourses();
-    await displayWhoami();
+    await Promise.all([
+    credentialsButton.addEventListener("click", prepareToGetCredentials),
+    displayCourses(),
+    displayWhoami()
+    ])
 };
