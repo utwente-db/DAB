@@ -23359,6 +23359,7 @@ var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navba
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
+var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
 var coursesNavHtml = document.getElementById("courses-nav");
 var coursesContentHtml = document.getElementById("courses-content");
 var noCredsCoursename = document.getElementById("no-credentials-coursename");
@@ -23380,18 +23381,26 @@ function populateNoCredentialsPane(i) {
 }
 function populateHaveCredentialsPane(i) {
     return __awaiter(this, void 0, void 0, function () {
-        var credentials;
+        var credentials, dbIDs;
         return __generator(this, function (_a) {
             credentials = "";
+            dbIDs = [];
             haveCredsCoursename.innerText = courses[i].coursename;
             haveCredsInfo.innerText = courses[i].info;
             ownDatabases.forEach(function (db) {
                 if (db.course === courses[i].courseid) {
-                    var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>";
+                    var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row align-items-center px-2 px-md-5\">\n                            <button id=\"delete-button-" + db.dbid + "\" class=\"btn btn-danger my-4 delete-button\">Delete database and release credentials (WIP)</button>\n                            <button id=\"reset-button-" + db.dbid + "\" class=\"btn btn-info my-4 reset-button\">Reset database (WIP)</button>\n                            </div>";
                     credentials += html.trim();
+                    dbIDs.push(db.dbid);
                 }
             });
             credentialsDiv.innerHTML = credentials;
+            dbIDs.forEach(function (id) {
+                var deleteButton = document.getElementById("delete-button-" + id);
+                var resetButton = document.getElementById("reset-button-" + id);
+                deleteButton.addEventListener("click", function () { deleteCredentials(id); });
+                deleteButton.addEventListener("click", function () { resetDatabase(id); });
+            });
             return [2 /*return*/];
         });
     });
@@ -23486,6 +23495,30 @@ function prepareToGetCredentials() {
             }
         });
     });
+}
+function deleteCredentials(dbID) {
+    return __awaiter(this, void 0, void 0, function () {
+        var response, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, axios_1.default.delete("/rest/studentdatabases/" + dbID + "/")];
+                case 1:
+                    response = _a.sent();
+                    console.debug(response);
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_1 = _a.sent();
+                    alert_1.addErrorAlert(error_1);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+}
+function resetDatabase(id) {
+    // TODO implement
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {

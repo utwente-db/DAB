@@ -21,8 +21,8 @@ interface Course {
 }
 
 export interface StudentDatabase {
-
-
+    "dbid": number,
+    "groupid" : number,
     "fid": number,
     "course": number,
     "schema": number,

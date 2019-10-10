@@ -3,6 +3,7 @@ import {displayWhoami} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
+import {addErrorAlert} from "./alert";
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
@@ -16,6 +17,7 @@ const noCredsPane: HTMLHeadingElement = document.getElementById("no-credentials-
 
 
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
+
 const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
 
@@ -35,8 +37,11 @@ function populateNoCredentialsPane(i: number) {
     noCredsInfo.innerText = courses[i].info;
 }
 
+
+
 async function populateHaveCredentialsPane(i: number) {
     let credentials = "";
+    let dbIDs: number[] = [];
     haveCredsCoursename.innerText = courses[i].coursename;
     haveCredsInfo.innerText = courses[i].info;
     ownDatabases.forEach((db: StudentDatabase) => {
@@ -52,14 +57,29 @@ async function populateHaveCredentialsPane(i: number) {
                             <div class="col-12 col-md-8">
                                 <input type="text" class="form-control" value="${db.password}" readonly="">
                             </div>
-                        </div>`
+                        </div>
+                        <div class="form-group row align-items-center px-2 px-md-5">
+                            <button id="delete-button-${db.dbid}" class="btn btn-danger my-4 delete-button">Delete database and release credentials (WIP)</button>
+                            <button id="reset-button-${db.dbid}" class="btn btn-info my-4 reset-button">Reset database (WIP)</button>
+                            </div>`;
             credentials += html.trim();
+            dbIDs.push(db.dbid)
         }
     });
-
-
     credentialsDiv.innerHTML = credentials;
-    // TODO populate with credentials
+    dbIDs.forEach((id: number) => {
+        const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
+        const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
+        deleteButton.addEventListener("click", () => {deleteCredentials(id)});
+        deleteButton.addEventListener("click", () => {resetDatabase(id)});
+
+    });
+
+    // TODO implement code below
+    // deletebuttons = ..
+    // for each deletebutton
+    //    deleteButton.addEventListener("click", deleteCredentials);
+
 }
 
 function createNavLink(haveCredentials: boolean, i: number, active = false): DocumentFragment {
@@ -127,6 +147,19 @@ async function prepareToGetCredentials() {
     if (success) {
         changeViewToHaveCredentials()
     }
+}
+
+async function deleteCredentials(dbID: number) {
+    try {
+        const response = await axios.delete(`/rest/studentdatabases/${dbID}/`);
+        console.debug(response)
+    } catch (error) {
+        addErrorAlert(error)
+    }
+}
+
+function resetDatabase(id: number) {
+    // TODO implement
 }
 
 window.onload = async () => {
