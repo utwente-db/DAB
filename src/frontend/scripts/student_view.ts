@@ -59,11 +59,14 @@ async function populateHaveCredentialsPane(i: number) {
                             </div>
                         </div>
                         <div class="align-items-center align-items-stretch row">
-                            <div class="center-block col-12 col-md-6 my-4">
+                            <div class="center-block col-12 col-md-4 my-4">
                                 <button id="delete-button-${db.dbid}" class="btn btn-danger delete-button ">Delete database and release credentials</button>
                             </div>
-                            <div class="center-block col-12 col-md-6 my-4">
+                            <div class="center-block col-12 col-md-4 my-4">
                                 <button id="reset-button-${db.dbid}" class="btn btn-info reset-button">Reset database</button>
+                            </div>
+                            <div class="center-block col-12 col-md-4 my-4">
+                                <a id="dump-button-${db.dbid}" href="/rest/dump/${db.dbid}" target="_blank" class="btn btn-secondary dump-button">Get dump of database</a>
                             </div>
                         </div>`;
             credentials += html.trim();
@@ -148,7 +151,10 @@ async function prepareToGetCredentials() {
     try {
         const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
-        if (success) {await changeViewToHaveCredentials()};
+        if (success) {
+            await changeViewToHaveCredentials()
+        }
+        ;
     } catch (error) {
         addErrorAlert(error);
     } finally {
