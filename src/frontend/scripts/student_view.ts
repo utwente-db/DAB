@@ -1,4 +1,4 @@
-import {getCoursesPromise} from './courses'
+import {getCoursesPromise, tryGetCredentials} from './courses'
 import {displayWhoami} from "./navbar";
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import "popper.js"
@@ -13,6 +13,7 @@ const coursesDropdown: HTMLSelectElement = document.getElementById("courses-drop
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
 
 let courses: Course[];
+let currentCourse = 0;
 
 interface Course {
     courseid: number;
@@ -22,6 +23,7 @@ interface Course {
 }
 
 function populateNoCredentialsPane(i: number) {
+    currentCourse = i;
     noCredsCoursename.innerText=courses[i].coursename;
     noCredsInfo.innerText=courses[i].info;
 }
@@ -41,7 +43,7 @@ async function displayCourses(): Promise<void> {
 }
 
 window.onload = async () => {
-
+    credentialsButton.addEventListener("click",() => {tryGetCredentials(currentCourse)})
     await displayCourses();
     await displayWhoami();
 

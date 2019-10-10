@@ -23152,13 +23152,12 @@ function displayCourses() {
         });
     });
 }
-function tryGetCredentials() {
+function tryGetCredentials(courseID) {
     return __awaiter(this, void 0, void 0, function () {
-        var courseID, data, tempAlert, response, database, error_1;
+        var data, tempAlert, response, database, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    courseID = Number(coursesDropdown.value);
                     if (!(courseID !== 0)) return [3 /*break*/, 6];
                     data = { "course": courseID };
                     tempAlert = alert_1.addTempAlert();
@@ -23186,6 +23185,7 @@ function tryGetCredentials() {
         });
     });
 }
+exports.tryGetCredentials = tryGetCredentials;
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     var _a, _b, _c;
     return __generator(this, function (_d) {
@@ -23196,7 +23196,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                 return [4 /*yield*/, displayCourses()];
             case 1: return [4 /*yield*/, _b.apply(_a, [_c.concat([_d.sent(),
                         $('select').selectpicker(),
-                        credentialsButton.addEventListener("click", tryGetCredentials)])])];
+                        credentialsButton.addEventListener("click", function () { tryGetCredentials(Number(coursesDropdown.value)); })])])];
             case 2:
                 _d.sent();
                 return [2 /*return*/];
@@ -23362,7 +23362,9 @@ var credentialsButton = document.getElementById("credentials-button");
 var coursesDropdown = document.getElementById("courses-dropdown");
 var alertDiv = document.getElementById("alert-div");
 var courses;
+var currentCourse = 0;
 function populateNoCredentialsPane(i) {
+    currentCourse = i;
     noCredsCoursename.innerText = courses[i].coursename;
     noCredsInfo.innerText = courses[i].info;
 }
@@ -23393,7 +23395,9 @@ function displayCourses() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, displayCourses()];
+            case 0:
+                credentialsButton.addEventListener("click", function () { courses_1.tryGetCredentials(currentCourse); });
+                return [4 /*yield*/, displayCourses()];
             case 1:
                 _a.sent();
                 return [4 /*yield*/, navbar_1.displayWhoami()];

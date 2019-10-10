@@ -13,6 +13,7 @@ const credentialsButton: HTMLButtonElement = document.getElementById("credential
 const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
 
+
 interface Course {
     courseid: number;
     fid: number;
@@ -52,8 +53,8 @@ async function displayCourses(): Promise<void> {
     // coursesDropdown.innerHTML += resultString;
 }
 
-async function tryGetCredentials() {
-    const courseID: number = Number(coursesDropdown.value);
+export async function tryGetCredentials(courseID: number) {
+
     if (courseID !== 0) {
         const data = {"course": courseID};
         const tempAlert: ChildNode | null = addTempAlert();
@@ -75,7 +76,7 @@ window.onload = async () => {
     await Promise.all([displayWhoami(),
         await displayCourses(),
         $('select').selectpicker(), // Style all selects
-        credentialsButton.addEventListener("click", tryGetCredentials),
+        credentialsButton.addEventListener("click",() => {tryGetCredentials(Number(coursesDropdown.value))}),
         ]);
 };
 
