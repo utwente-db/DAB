@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from . import secret
+import base64
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -76,22 +78,24 @@ WSGI_APPLICATION = 'designproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'designproject',
-        'USER': 'admin',
-        'PASSWORD': 'NK1QjbesuPcW0ZOMfj8zzd5jw4AkfJ7Tq1uQ+pmVG2g=',
-        'HOST': 'thebias.nl',
-        'PORT': '5432'
+        'NAME': secret.db_name,
+        'USER': secret.db_user,
+        'PASSWORD': secret.db_password,
+        'HOST': secret.db_host,
+        'PORT': secret.db_port
     },
 
     'designproject': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'designproject',
-        'USER': 'admin',
-        'PASSWORD': 'NK1QjbesuPcW0ZOMfj8zzd5jw4AkfJ7Tq1uQ+pmVG2g=',
-        'HOST': 'thebias.nl',
-        'PORT': '5432'
+        'NAME': secret.db_name,
+        'USER': secret.db_user,
+        'PASSWORD': secret.db_password,
+        'HOST': secret.db_host,
+        'PORT': secret.db_port
     },
 }
+
+BITMASK = base64.b64decode(secret.bitmask)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -132,6 +136,7 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = "static"
 STATIC_URL = '/static/'
+
 
 DEBUG_PROPAGATE_EXCEPTIONS = True
 

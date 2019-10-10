@@ -36,6 +36,29 @@ Logging:
 
 Any pip and npm packages will be installed automatically during the installation steps
 
+## Secret.py and the database
+
+There MUST exist a file `designproject/secret.py`. 
+This file is not included in this repository for obvious reasons.
+
+The file MUST be a correct python file, and SHOULD contain nothing but the following variable definitions, all of which MUST be strings:
+
+    db_name = [DATABASE NAME]
+    db_user = [DATABASE USER]
+    db_password = [DATABASE PASSWORD]
+    db_host = [DATABASE SERVER]
+    db_port = [DATABASE PORT]
+    
+    bitmask = [33 BYTES OF CRYPTORANDOM DATA, AS BASE64]
+
+If the file does not exist, parse, or assign appropriate values to all of these variables, the program will crash.
+
+The database user MUST exist, and MUST have superuser privileges on the database server.
+The database server MUST run Postgres, and MUST be available from wherever this software is running.
+The database name SHOULD be something memorable and SHOULD NOT end on a number.
+The database server SHOULD not be used for any other purpose than this software.
+Failure to heed the advice in this paragraph may result in unexpected exceptions.
+
 ## Installation and running for development
 
 To install the server for development, simply run init.sh.

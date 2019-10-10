@@ -81,14 +81,14 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/error.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/alert.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/frontend/scripts/error.ts":
+/***/ "./src/frontend/scripts/alert.ts":
 /*!***************************************!*\
-  !*** ./src/frontend/scripts/error.ts ***!
+  !*** ./src/frontend/scripts/alert.ts ***!
   \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -135,14 +135,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var delay = function (ms) { return new Promise(function (res) { return setTimeout(res, ms); }); };
 function generateAlertHTML(errorMessage, alertType, dismissable) {
     if (dismissable === void 0) { dismissable = true; }
-    var dismissableString = dismissable ? "alert-dismissable" : "temp-alert";
+    var dismissableString = dismissable ? "alert-dismissible" : "temp-alert";
     var buttonString = dismissable ? " <button type=\"button\" class=\"close error-dismiss-button\" data-dismiss=\"alert\"\n            aria-label=\"Close\">\n            <span aria-hidden=\"true\">&times;</span>\n            </button>" : "";
-    return "<div class=\"alert " + alertType + " " + dismissableString + " fade show\"  role=\"alert\">\n            <div class=\"error-text\">" + errorMessage + "</div>\n            " + buttonString + "\n            </div>";
+    return "<div class=\"alert " + alertType + " " + dismissableString + " fade show col-12\"  role=\"alert\">\n            <div class=\"error-text\">" + errorMessage + "</div>\n            " + buttonString + "\n            </div>";
 }
 exports.generateAlertHTML = generateAlertHTML;
 ;
-function addAlert(errorMessage, alertType) {
-    removeTempAlerts();
+function addAlert(errorMessage, alertType, tempAlert) {
+    if (tempAlert === void 0) { tempAlert = null; }
+    if (tempAlert && document.body.contains(tempAlert)) {
+        tempAlert.remove();
+    }
     var alertDiv = document.getElementById("alert-div");
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType);
 }
@@ -154,56 +157,76 @@ function removeTempAlerts() {
         alert_1.remove();
     }
 }
-function addTempAlert(errorMessage, alertType) {
+function removeAlertOnTimeout(tempAlert, ms, timeOutError) {
     return __awaiter(this, void 0, void 0, function () {
-        var alertDiv;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    alertDiv = document.getElementById("alert-div");
-                    alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
-                    return [4 /*yield*/, delay(5000)];
+                case 0: return [4 /*yield*/, delay(ms)];
                 case 1:
                     _a.sent();
-                    removeTempAlerts();
+                    if (tempAlert && document.body.contains(tempAlert)) {
+                        tempAlert.remove();
+                        if (timeOutError) {
+                            addAlert("Request timed out", AlertType.danger);
+                        }
+                    }
                     return [2 /*return*/];
             }
         });
     });
 }
+function addTempAlert(errorMessage, alertType, timeOutError, ms) {
+    if (errorMessage === void 0) { errorMessage = "Please wait..."; }
+    if (alertType === void 0) { alertType = AlertType.secondary; }
+    if (timeOutError === void 0) { timeOutError = true; }
+    if (ms === void 0) { ms = 10000; }
+    var alertDiv = document.getElementById("alert-div");
+    alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
+    var tempAlert = alertDiv.lastChild;
+    removeAlertOnTimeout(tempAlert, ms, timeOutError);
+    return tempAlert;
+    // TODO maybe don't remove all temp alerts
+}
 exports.addTempAlert = addTempAlert;
-function addErrorAlert(error) {
+function addErrorAlert(error, tempAlert) {
+    if (tempAlert === void 0) { tempAlert = null; }
+    if (tempAlert && document.body.contains(tempAlert)) {
+        tempAlert.remove();
+    }
     var responseError = error;
     var response = responseError.response;
     if (response) {
         var errorKeys = Object.keys(response.data);
         var errorMessages = Object.values(response.data);
         if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
-            addAlert("You already have database credentials for this course", Alert.danger);
+            // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
+            addAlert("You already have database credentials for this course", AlertType.danger);
         }
         else {
+            // This is a response error (4XX or 5XX etc)
             var alertMessage = "";
             for (var i = 0; i < errorKeys.length; i++) {
                 alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>");
             }
-            addAlert(error + "<br><br>" + alertMessage, Alert.danger);
+            addAlert(error + "<br><br>" + alertMessage, AlertType.danger);
         }
     }
     else {
-        addAlert(error.message, Alert.danger);
+        // This is a generic javascript error
+        addAlert(error.message, AlertType.danger);
     }
 }
 exports.addErrorAlert = addErrorAlert;
-var Alert;
-(function (Alert) {
-    Alert["primary"] = "alert-primary";
-    Alert["secondary"] = "alert-secondary";
-    Alert["danger"] = "alert-danger";
-    Alert["success"] = "alert-success";
-})(Alert = exports.Alert || (exports.AlertType = {}));
+var AlertType;
+(function (AlertType) {
+    AlertType["primary"] = "alert-primary";
+    AlertType["secondary"] = "alert-secondary";
+    AlertType["danger"] = "alert-danger";
+    AlertType["success"] = "alert-success";
+})(AlertType = exports.AlertType || (exports.AlertType = {}));
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=error.js.map
+//# sourceMappingURL=alert.js.map
