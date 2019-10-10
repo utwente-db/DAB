@@ -15,16 +15,26 @@ interface Course {
     info: string;
 }
 
+function logShit() {
+    console.log('yeet')
+}
+
 async function displayCourses(): Promise<void> {
     courses = await getCoursesPromise();
     const resultNav: string[] = [];
-    const resultContent: string[] = [];
 
     for (let i = 0; i < courses.length; i++) {
-        const courseOwned = true;
-        resultNav.push(
-            `<a class="nav-link" data-toggle="pill" href="#course${i}">${courses[i].coursename}</a>`
-        );
+        // TODO if credentials, push href to credentials-pane
+        const templateString = `<a id="no-credentials-link-${i}" class="nav-link" data-toggle="pill" href="#no-credentials-pane">${courses[i].coursename}</a>`;
+        const tempTemplate = document.createElement('template');
+        // tempTemplate.innerHTML = templateString;
+
+        const element: DocumentFragment = document.createRange().createContextualFragment(templateString);
+        const node: Node = coursesNavHtml.appendChild(element);
+        node.addEventListener("click",() => {console.log("yeet")})
+
+
+
 
         // if (courseOwned) {
         //     resultContent.push(
@@ -35,10 +45,6 @@ async function displayCourses(): Promise<void> {
 
 
     }
-    const resultNavString: string = resultNav.join("\n");
-    const resultContentString: string = resultContent.join("\n");
-    coursesNavHtml.innerHTML += resultNavString;
-    coursesContentHtml.innerHTML += resultContentString;
 }
 
 window.onload = async () => {
