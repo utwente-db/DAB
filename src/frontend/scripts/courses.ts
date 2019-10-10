@@ -12,7 +12,7 @@ import {displayWhoami} from "./navbar";
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
 const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
-
+const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 
 interface Course {
     courseid: number;
@@ -53,10 +53,10 @@ async function displayCourses(): Promise<void> {
     // coursesDropdown.innerHTML += resultString;
 }
 
-export async function tryGetCredentials(courseID: number) {
+export async function tryGetCredentials(courseID: number, groupNumber: number) {
 
     if (courseID !== 0) {
-        const data = {"course": courseID};
+        const data = {"course": courseID, "groupid": groupNumber};
         const tempAlert: ChildNode | null = addTempAlert();
         try {
             const response: AxiosResponse<Database> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<Database>;
@@ -76,7 +76,7 @@ window.onload = async () => {
     await Promise.all([displayWhoami(),
         await displayCourses(),
         $('select').selectpicker(), // Style all selects
-        credentialsButton.addEventListener("click",() => {tryGetCredentials(Number(coursesDropdown.value))}),
+        credentialsButton.addEventListener("click",() => {tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value))}),
         ]);
 };
 

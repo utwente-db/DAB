@@ -43,7 +43,7 @@ async function displayCourses(): Promise<void> {
 }
 
 window.onload = async () => {
-    credentialsButton.addEventListener("click",() => {tryGetCredentials(currentCourse)})
+    // credentialsButton.addEventListener("click",() => {tryGetCredentials(currentCourse)})
     await displayCourses();
     await displayWhoami();
 

@@ -23117,6 +23117,7 @@ var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navba
 var credentialsButton = document.getElementById("credentials-button");
 var coursesDropdown = document.getElementById("courses-dropdown");
 var alertDiv = document.getElementById("alert-div");
+var groupInput = document.getElementById("group-input");
 function getCoursesPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -23152,14 +23153,14 @@ function displayCourses() {
         });
     });
 }
-function tryGetCredentials(courseID) {
+function tryGetCredentials(courseID, groupNumber) {
     return __awaiter(this, void 0, void 0, function () {
         var data, tempAlert, response, database, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     if (!(courseID !== 0)) return [3 /*break*/, 6];
-                    data = { "course": courseID };
+                    data = { "course": courseID, "groupid": groupNumber };
                     tempAlert = alert_1.addTempAlert();
                     _a.label = 1;
                 case 1:
@@ -23196,7 +23197,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                 return [4 /*yield*/, displayCourses()];
             case 1: return [4 /*yield*/, _b.apply(_a, [_c.concat([_d.sent(),
                         $('select').selectpicker(),
-                        credentialsButton.addEventListener("click", function () { tryGetCredentials(Number(coursesDropdown.value)); })])])];
+                        credentialsButton.addEventListener("click", function () { tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value)); })])])];
             case 2:
                 _d.sent();
                 return [2 /*return*/];
@@ -23395,10 +23396,11 @@ function displayCourses() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0:
-                credentialsButton.addEventListener("click", function () { courses_1.tryGetCredentials(currentCourse); });
-                return [4 /*yield*/, displayCourses()];
+            case 0: 
+            // credentialsButton.addEventListener("click",() => {tryGetCredentials(currentCourse)})
+            return [4 /*yield*/, displayCourses()];
             case 1:
+                // credentialsButton.addEventListener("click",() => {tryGetCredentials(currentCourse)})
                 _a.sent();
                 return [4 /*yield*/, navbar_1.displayWhoami()];
             case 2:
