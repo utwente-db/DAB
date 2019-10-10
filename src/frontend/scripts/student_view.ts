@@ -1,5 +1,6 @@
-import {getCoursesPromise, tryGetCredentials} from './courses'
+import {getCoursesPromise, tryGetCredentials, StudentDatabase} from './courses'
 import {displayWhoami} from "./navbar";
+import axios, {AxiosResponse, AxiosStatic} from 'axios';
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import "popper.js"
 import "bootstrap"
@@ -30,10 +31,14 @@ function populateNoCredentialsPane(i: number) {
 
 async function displayCourses(): Promise<void> {
     courses = await getCoursesPromise();
+    const ownDatabases = (await axios.get("/rest/studentdatabases/own/")).data;
+    // tslint:disable-next-line:variable-name
+    const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
+    console.log(ownCourses);
     const resultNav: string[] = [];
 
     for (let i = 0; i < courses.length; i++) {
-        const haveCredentials = false;
+        const haveCredentials = (courses[i].courseid in ownCourses);
         const credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
         // TODO if credentials, push href to credentials-pane
         const templateString = `<a class="nav-link ${credentialsClass}" data-toggle="pill" href="#no-credentials-pane">${courses[i].coursename}</a>`;

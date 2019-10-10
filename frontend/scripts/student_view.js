@@ -23359,6 +23359,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var courses_1 = __webpack_require__(/*! ./courses */ "./src/frontend/scripts/courses.ts");
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
+var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
@@ -23378,15 +23379,20 @@ function populateNoCredentialsPane(i) {
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var resultNav, _loop_1, i;
+        var ownDatabases, ownCourses, resultNav, _loop_1, i;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
                 case 1:
                     courses = _a.sent();
+                    return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
+                case 2:
+                    ownDatabases = (_a.sent()).data;
+                    ownCourses = ownDatabases.map(function (db) { return db.course; });
+                    console.log(ownCourses);
                     resultNav = [];
                     _loop_1 = function (i) {
-                        var haveCredentials = false;
+                        var haveCredentials = (courses[i].courseid in ownCourses);
                         var credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
                         // TODO if credentials, push href to credentials-pane
                         var templateString = "<a class=\"nav-link " + credentialsClass + "\" data-toggle=\"pill\" href=\"#no-credentials-pane\">" + courses[i].coursename + "</a>";
