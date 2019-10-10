@@ -57,10 +57,14 @@ async function populateHaveCredentialsPane(i: number) {
                                 <input type="text" class="form-control" value="${db.password}" readonly="">
                             </div>
                         </div>
-                        <div class="form-group row align-items-center px-2 px-md-5">
-                            <button id="delete-button-${db.dbid}" class="btn btn-danger my-4 delete-button">Delete database and release credentials (WIP)</button>
-                            <button id="reset-button-${db.dbid}" class="btn btn-info my-4 reset-button">Reset database (WIP)</button>
-                            </div>`;
+                        <div class="align-items-center align-items-stretch row">
+                            <div class="center-block col-12 col-md-6 my-4">
+                                <button id="delete-button-${db.dbid}" class="btn btn-danger delete-button ">Delete database and release credentials</button>
+                            </div>
+                            <div class="center-block col-12 col-md-6 my-4">
+                                <button id="reset-button-${db.dbid}" class="btn btn-info  reset-button">Reset database (werkt nog niet)</button>
+                            </div>
+                        </div>`;
             credentials += html.trim();
             dbIDs.push(db.dbid)
         }
@@ -185,14 +189,14 @@ async function prepareToDeleteCredentials(dbID: number) {
         addErrorAlert(error);
     } finally {
         coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
-            Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
-        .forEach((deleteButton: HTMLButtonElement) => {
-            deleteButton.classList.remove("disabled")
-        });
-    Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
-        .forEach((resetButton: HTMLButtonElement) => {
-            resetButton.classList.remove("disabled")
-        });
+        Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
+            .forEach((deleteButton: HTMLButtonElement) => {
+                deleteButton.classList.remove("disabled")
+            });
+        Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
+            .forEach((resetButton: HTMLButtonElement) => {
+                resetButton.classList.remove("disabled")
+            });
     }
 
 
