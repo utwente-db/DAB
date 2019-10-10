@@ -47,7 +47,7 @@ async function displayCourses(): Promise<void> {
         }
 
         fragment.firstChild!.addEventListener("click", () => {
-            alertDiv.innerHTML=""
+            alertDiv.innerHTML = "" // Remove all alerts when switching course
         });
 
         coursesNavHtml.appendChild(fragment);
@@ -57,10 +57,11 @@ async function displayCourses(): Promise<void> {
 }
 
 window.onload = async () => {
-    credentialsButton.addEventListener("click", () => {
-        tryGetCredentials(currentCourse, Number(groupInput.value))
-    })
+    credentialsButton.addEventListener("click", async () => {
+        coursesNavHtml.childNodes.forEach((element: any) => element.classList.add("disabled"));
+        await tryGetCredentials(currentCourse, Number(groupInput.value));
+        coursesNavHtml.childNodes.forEach((element: any) => element.classList.remove("disabled"));
+    });
     await displayCourses();
     await displayWhoami();
-
 };
