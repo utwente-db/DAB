@@ -34,8 +34,9 @@ async function displayCourses(): Promise<void> {
 
     for (let i = 0; i < courses.length; i++) {
         const haveCredentials = false;
+        const credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
         // TODO if credentials, push href to credentials-pane
-        const templateString = `<a id="no-credentials-link-${i}" class="nav-link" data-toggle="pill" href="#no-credentials-pane">${courses[i].coursename}</a>`;
+        const templateString = `<a class="nav-link ${credentialsClass}" data-toggle="pill" href="#no-credentials-pane">${courses[i].coursename}</a>`;
         const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
 

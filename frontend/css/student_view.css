@@ -503,7 +503,7 @@ pre {
   margin-right: auto;
   margin-left: auto; }
 
-.row, #alert-div {
+.row {
   display: flex;
   flex-wrap: wrap;
   margin-right: -15px;
@@ -7140,8 +7140,7 @@ select.selectpicker {
   margin-left: 0; }
 
 .bootstrap-select.dropdown-menu-right, .bootstrap-select[class*="col-"].dropdown-menu-right,
-.row .bootstrap-select[class*="col-"].dropdown-menu-right,
-#alert-div .bootstrap-select[class*="col-"].dropdown-menu-right {
+.row .bootstrap-select[class*="col-"].dropdown-menu-right {
   float: right; }
 
 .form-inline .bootstrap-select,
@@ -7416,6 +7415,12 @@ a {
 
 .bootstrap-select .dropdown-item.active, .dropdown-item:active, .nav-link.active {
   background-color: #17a2b8 !important; }
+
+.nav-link.have-credentials-nav {
+  background-color: #d0ffcd;
+  font-weight: bold; }
+  .nav-link.have-credentials-nav.active {
+    background-color: #4ecf86 !important; }
 
 
 /*# sourceMappingURL=student_view.css.map*/

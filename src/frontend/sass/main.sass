@@ -17,7 +17,14 @@ a
 .bootstrap-select .dropdown-item.active, .dropdown-item:active, .nav-link.active
   background-color: $cyan !important
 
+.nav-link
+  &.have-credentials-nav
+    background-color: #d0ffcd
+    font-weight: bold
+    &.active
+      background-color: #4ecf86 !important
+
 #alert-div
-  @extend .row
+  //@extend .row
   @extend .text-center
 // border-color: #17a2b8

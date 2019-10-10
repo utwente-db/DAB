@@ -23387,8 +23387,9 @@ function displayCourses() {
                     resultNav = [];
                     _loop_1 = function (i) {
                         var haveCredentials = false;
+                        var credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
                         // TODO if credentials, push href to credentials-pane
-                        var templateString = "<a id=\"no-credentials-link-" + i + "\" class=\"nav-link\" data-toggle=\"pill\" href=\"#no-credentials-pane\">" + courses[i].coursename + "</a>";
+                        var templateString = "<a class=\"nav-link " + credentialsClass + "\" data-toggle=\"pill\" href=\"#no-credentials-pane\">" + courses[i].coursename + "</a>";
                         var fragment = document.createRange().createContextualFragment(templateString);
                         if (!haveCredentials) {
                             fragment.firstChild.addEventListener("click", function () {
