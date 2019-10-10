@@ -23130,6 +23130,7 @@ function getCoursesPromise() {
         });
     });
 }
+exports.getCoursesPromise = getCoursesPromise;
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
         var courses, result, i, optionNode;

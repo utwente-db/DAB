@@ -1,4 +1,3 @@
-import axios, {AxiosResponse} from 'axios';
 import {getCoursesPromise} from './courses'
 import {displayWhoami} from "./navbar";
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
@@ -22,19 +21,21 @@ async function displayCourses(): Promise<void> {
     const resultContent: string[] = [];
 
     for (let i = 0; i < courses.length; i++) {
-        const active = "";
-
+        const courseOwned = true;
         resultNav.push(
-            "<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + i + "\">" + courses[i].coursename + "</a>"
+            `<a class="nav-link" data-toggle="pill" href="#course${i}">${courses[i].coursename}</a>`
         );
-        resultContent.push(
-            "<div class=\"tab-pane" + active + "\" id=\"course" + i + "\">"
-            + "<ul><li>ID: " + courses[i].courseid + "</li>"
-            + "<li>FID: " + courses[i].fid + "</li>"
-            + "<li>Coursename: " + courses[i].coursename + "</li>"
-            + "<li>Info: " + courses[i].info + "</li></ul>"
-            + "<button class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\">Edit Course</button></div>"
-        );
+
+        if (courseOwned) {
+            resultContent.push(
+                `<div class="tab-pane" id="course${i}">
+                  <ul><li>Info: ${courses[i].info}</li></ul>
+                  <button class="btn btn-secondary course-not-owned-button" 
+                  href="/courses#${courses[i].courseid}">Edit Course</button></div>`
+            );
+        }
+
+
     }
     const resultNavString: string = resultNav.join("\n");
     const resultContentString: string = resultContent.join("\n");
