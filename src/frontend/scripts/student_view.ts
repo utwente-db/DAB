@@ -38,7 +38,7 @@ async function displayCourses(): Promise<void> {
     const resultNav: string[] = [];
 
     for (let i = 0; i < courses.length; i++) {
-        const haveCredentials = (courses[i].courseid in ownCourses);
+        const haveCredentials = (ownCourses.includes(courses[i].courseid));
         const credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
         // TODO if credentials, push href to credentials-pane
         const templateString = `<a class="nav-link ${credentialsClass}" data-toggle="pill" href="#no-credentials-pane">${courses[i].coursename}</a>`;
