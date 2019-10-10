@@ -19,6 +19,7 @@ const credentialsButton: HTMLButtonElement = document.getElementById("credential
 const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
 
+let ownDatabases: StudentDatabase[];
 let courses: Course[];
 let currentCourse = 0;
 
@@ -38,14 +39,26 @@ async function populateHaveCredentialsPane(i: number) {
     let credentials = "";
     haveCredsCoursename.innerText = courses[i].coursename;
     haveCredsInfo.innerText = courses[i].info;
-    const ownDatabases: StudentDatabase[] = (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
-            credentials += `username: ${db.username}<br>
-                            password: ${db.password}<br><br>`
+            const html = `<div class="mt-5 form-group row">
+                            <label class="col-12 col-md-4 col-form-label">Username:</label>
+                            <div class="col-12 col-md-8">
+                                <input type="text" class="form-control" value="${db.username}" readonly="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-form-label">Password:</label>
+                            <div class="col-12 col-md-8">
+                                <input type="text" class="form-control" value="${db.password}" readonly="">
+                            </div>
+                        </div>`
+            credentials += html.trim();
         }
     });
-    credentialsDiv.innerHTML=credentials;
+
+
+    credentialsDiv.innerHTML = credentials;
     // TODO populate with credentials
 }
 
@@ -76,7 +89,7 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
 
 async function displayCourses(): Promise<void> {
     courses = await getCoursesPromise();
-    const ownDatabases = (await axios.get("/rest/studentdatabases/own/")).data;
+    ownDatabases = (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     console.log(ownCourses);
@@ -92,13 +105,14 @@ async function displayCourses(): Promise<void> {
     }
 }
 
-function changeViewToHaveCredentials() {
+async function changeViewToHaveCredentials() {
     const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link no-credentials-nav active")[0] as HTMLLinkElement;
     const i = Number(activeLink.id);
     const fragment = createNavLink(true, i, true);
     activeLink.classList.remove("active");
     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild!);
     activeLink.remove();
+    ownDatabases = (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     noCredsPane.classList.remove("active");
     haveCredsPane.classList.add("active");
     populateHaveCredentialsPane(i);

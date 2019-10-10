@@ -23371,6 +23371,7 @@ var noCredsPane = document.getElementById("no-credentials-pane");
 var credentialsButton = document.getElementById("credentials-button");
 var groupInput = document.getElementById("group-input");
 var alertDiv = document.getElementById("alert-div");
+var ownDatabases;
 var courses;
 var currentCourse = 0;
 function populateNoCredentialsPane(i) {
@@ -23379,24 +23380,19 @@ function populateNoCredentialsPane(i) {
 }
 function populateHaveCredentialsPane(i) {
     return __awaiter(this, void 0, void 0, function () {
-        var credentials, ownDatabases;
+        var credentials;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    credentials = "";
-                    haveCredsCoursename.innerText = courses[i].coursename;
-                    haveCredsInfo.innerText = courses[i].info;
-                    return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
-                case 1:
-                    ownDatabases = (_a.sent()).data;
-                    ownDatabases.forEach(function (db) {
-                        if (db.course === courses[i].courseid) {
-                            credentials += "username: " + db.username + "<br>\n                            password: " + db.password + "<br><br>";
-                        }
-                    });
-                    credentialsDiv.innerHTML = credentials;
-                    return [2 /*return*/];
-            }
+            credentials = "";
+            haveCredsCoursename.innerText = courses[i].coursename;
+            haveCredsInfo.innerText = courses[i].info;
+            ownDatabases.forEach(function (db) {
+                if (db.course === courses[i].courseid) {
+                    var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>";
+                    credentials += html.trim();
+                }
+            });
+            credentialsDiv.innerHTML = credentials;
+            return [2 /*return*/];
         });
     });
 }
@@ -23425,7 +23421,7 @@ function createNavLink(haveCredentials, i, active) {
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var ownDatabases, ownCourses, resultNav, i, haveCredentials, fragment;
+        var ownCourses, resultNav, i, haveCredentials, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
@@ -23448,15 +23444,27 @@ function displayCourses() {
     });
 }
 function changeViewToHaveCredentials() {
-    var activeLink = document.getElementsByClassName("nav-link no-credentials-nav active")[0];
-    var i = Number(activeLink.id);
-    var fragment = createNavLink(true, i, true);
-    activeLink.classList.remove("active");
-    activeLink.insertAdjacentElement("afterend", fragment.firstElementChild);
-    activeLink.remove();
-    noCredsPane.classList.remove("active");
-    haveCredsPane.classList.add("active");
-    populateHaveCredentialsPane(i);
+    return __awaiter(this, void 0, void 0, function () {
+        var activeLink, i, fragment;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    activeLink = document.getElementsByClassName("nav-link no-credentials-nav active")[0];
+                    i = Number(activeLink.id);
+                    fragment = createNavLink(true, i, true);
+                    activeLink.classList.remove("active");
+                    activeLink.insertAdjacentElement("afterend", fragment.firstElementChild);
+                    activeLink.remove();
+                    return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
+                case 1:
+                    ownDatabases = (_a.sent()).data;
+                    noCredsPane.classList.remove("active");
+                    haveCredsPane.classList.add("active");
+                    populateHaveCredentialsPane(i);
+                    return [2 /*return*/];
+            }
+        });
+    });
 }
 function prepareToGetCredentials() {
     return __awaiter(this, void 0, void 0, function () {
