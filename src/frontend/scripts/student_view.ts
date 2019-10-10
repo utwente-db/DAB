@@ -12,7 +12,7 @@ const noCredsInfo: HTMLDivElement = document.getElementById("no-credentials-cour
 const haveCredsCoursename: HTMLHeadingElement = document.getElementById("have-credentials-coursename") as HTMLDivElement;
 const haveCredsInfo: HTMLDivElement = document.getElementById("have-credentials-courseinfo") as HTMLDivElement;
 const credentialsDiv: HTMLDivElement = document.getElementById("credentials-div") as HTMLDivElement;
-const haveCredsPane: HTMLHeadingElement = document.getElementById("have-credentials-pane") as HTMLDivElement;
+const haveCredsPane: HTMLDivElement = document.getElementById("have-credentials-pane") as HTMLDivElement;
 const noCredsPane: HTMLHeadingElement = document.getElementById("no-credentials-pane") as HTMLDivElement;
 
 
@@ -70,18 +70,13 @@ async function populateHaveCredentialsPane(i: number) {
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
         const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-            deleteCredentials(id)
+            prepareToDeleteCredentials(id)
         });
         deleteButton.addEventListener("click", () => {
             resetDatabase(id)
         });
 
     });
-
-    // TODO implement code below
-    // deletebuttons = ..
-    // for each deletebutton
-    //    deleteButton.addEventListener("click", deleteCredentials);
 
 }
 
@@ -129,7 +124,7 @@ async function displayCourses(): Promise<void> {
 }
 
 async function changeViewToHaveCredentials() {
-    const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link no-credentials-nav active")[0] as HTMLLinkElement;
+    const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link active")[0] as HTMLLinkElement;
     const i = Number(activeLink.id);
     const fragment = createNavLink(true, i, true);
     activeLink.classList.remove("active");
@@ -145,23 +140,62 @@ async function prepareToGetCredentials() {
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
     credentialsButton.classList.add("disabled");
     groupInput.classList.add("disabled");
-    const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
-    credentialsButton.classList.remove("disabled");
-    groupInput.classList.remove("disabled");
+    try {
+        await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
-    if (success) {
-        changeViewToHaveCredentials()
+        await changeViewToHaveCredentials()
+    } catch (error) {
+        addErrorAlert(error);
+    } finally {
+        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
+        credentialsButton.classList.remove("disabled");
+        groupInput.classList.remove("disabled");
     }
 }
 
-async function deleteCredentials(dbID: number) {
+async function changeViewToNoCredentials() {
+    const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link active")[0] as HTMLLinkElement;
+    const i = Number(activeLink.id);
+    const fragment = createNavLink(false, i, true);
+    activeLink.classList.remove("active");
+    activeLink.insertAdjacentElement("afterend", fragment.firstElementChild!);
+    activeLink.remove();
+    ownDatabases = (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
+    haveCredsPane.classList.remove("active");
+    noCredsPane.classList.add("active");
+    populateNoCredentialsPane(i);
+}
+
+async function prepareToDeleteCredentials(dbID: number) {
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
+    Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((deleteButton: HTMLButtonElement) => {
+            deleteButton.classList.add("disabled")
+        });
+    Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((resetButton: HTMLButtonElement) => {
+            resetButton.classList.add("disabled")
+        });
     try {
-        const response = await axios.delete(`/rest/studentdatabases/${dbID}/`);
-        addAlert("Deleted database", AlertType.primary)
+        await axios.delete(`/rest/studentdatabases/${dbID}/`);
+        // await changeViewToHaveCredentials()
+        addAlert("Deleted database", AlertType.primary);
+        changeViewToNoCredentials();
     } catch (error) {
-        addErrorAlert(error)
+        addErrorAlert(error);
+    } finally {
+        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
+            Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((deleteButton: HTMLButtonElement) => {
+            deleteButton.classList.remove("disabled")
+        });
+    Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((resetButton: HTMLButtonElement) => {
+            resetButton.classList.remove("disabled")
+        });
     }
+
+
 }
 
 function resetDatabase(id: number) {
