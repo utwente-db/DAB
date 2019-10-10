@@ -23356,31 +23356,34 @@ __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.j
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 var coursesNavHtml = document.getElementById("courses-nav");
 var coursesContentHtml = document.getElementById("courses-content");
+var noCredsCoursename = document.getElementById("no-credentials-coursename");
+var noCredsInfo = document.getElementById("no-credentials-courseinfo");
+var credentialsButton = document.getElementById("credentials-button");
+var coursesDropdown = document.getElementById("courses-dropdown");
+var alertDiv = document.getElementById("alert-div");
 var courses;
-function logShit() {
-    console.log('yeet');
+function populateNoCredentialsPane(i) {
+    noCredsCoursename.innerText = courses[i].coursename;
+    noCredsInfo.innerText = courses[i].info;
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var resultNav, i, templateString, tempTemplate, element, node;
+        var resultNav, _loop_1, i;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
                 case 1:
                     courses = _a.sent();
                     resultNav = [];
+                    _loop_1 = function (i) {
+                        // TODO if credentials, push href to credentials-pane
+                        var templateString = "<a id=\"no-credentials-link-" + i + "\" class=\"nav-link\" data-toggle=\"pill\" href=\"#no-credentials-pane\">" + courses[i].coursename + "</a>";
+                        var fragment = document.createRange().createContextualFragment(templateString);
+                        fragment.firstChild.addEventListener("click", function () { populateNoCredentialsPane(i); });
+                        coursesNavHtml.appendChild(fragment);
+                    };
                     for (i = 0; i < courses.length; i++) {
-                        templateString = "<a id=\"no-credentials-link-" + i + "\" class=\"nav-link\" data-toggle=\"pill\" href=\"#no-credentials-pane\">" + courses[i].coursename + "</a>";
-                        tempTemplate = document.createElement('template');
-                        element = document.createRange().createContextualFragment(templateString);
-                        node = coursesNavHtml.appendChild(element);
-                        node.addEventListener("click", function () { console.log("yeet"); });
-                        // if (courseOwned) {
-                        //     resultContent.push(
-                        //         `
-                        //             `
-                        //     );
-                        // }
+                        _loop_1(i);
                     }
                     return [2 /*return*/];
             }
