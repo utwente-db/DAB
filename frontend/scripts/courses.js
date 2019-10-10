@@ -23012,7 +23012,6 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     var tempAlert = alertDiv.lastChild;
     removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert;
-    // TODO maybe don't remove all temp alerts
 }
 exports.addTempAlert = addTempAlert;
 function addErrorAlert(error, tempAlert) {
@@ -23107,7 +23106,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
@@ -23173,7 +23171,7 @@ function tryGetCredentials(courseID, groupNumber) {
                 case 3:
                     database = _a.sent();
                     alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success, tempAlert);
-                    return [3 /*break*/, 5];
+                    return [2 /*return*/, true];
                 case 4:
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1, tempAlert);
@@ -23186,7 +23184,7 @@ function tryGetCredentials(courseID, groupNumber) {
                 case 8:
                     alert_1.addAlert("Please select a course", alert_1.AlertType.danger);
                     _a.label = 9;
-                case 9: return [2 /*return*/];
+                case 9: return [2 /*return*/, false];
             }
         });
     });
@@ -23211,7 +23209,6 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
         }
     });
 }); };
-// TODO on course select: make group no longer gray
 
 
 /***/ }),

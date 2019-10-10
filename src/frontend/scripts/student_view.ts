@@ -1,7 +1,6 @@
 import {getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
 import {displayWhoami} from "./navbar";
 import axios from 'axios';
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import "popper.js"
 import "bootstrap"
 
@@ -11,6 +10,10 @@ const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-creden
 const noCredsInfo: HTMLDivElement = document.getElementById("no-credentials-courseinfo") as HTMLDivElement;
 const haveCredsCoursename: HTMLHeadingElement = document.getElementById("have-credentials-coursename") as HTMLDivElement;
 const haveCredsInfo: HTMLDivElement = document.getElementById("have-credentials-courseinfo") as HTMLDivElement;
+
+const haveCredsPane: HTMLHeadingElement = document.getElementById("have-credentials-pane") as HTMLDivElement;
+const noCredsPane: HTMLHeadingElement = document.getElementById("no-credentials-pane") as HTMLDivElement;
+
 
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
 const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
@@ -36,6 +39,31 @@ function populateHaveCredentialsPane(i: number) {
     haveCredsInfo.innerText = courses[i].info;
 }
 
+function createNavLink(haveCredentials: boolean, i: number, active=false): DocumentFragment {
+    const credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
+    const hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
+    const activeString = active ? "active" : "";
+    const templateString = `<a id="${i}" class="nav-link ${credentialsClass} ${activeString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
+    const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
+
+
+    if (!haveCredentials) {
+        fragment.firstChild!.addEventListener("click", () => {
+            populateNoCredentialsPane(i);
+        });
+    } else {
+        fragment.firstChild!.addEventListener("click", () => {
+            populateHaveCredentialsPane(i);
+        });
+    }
+
+    fragment.firstChild!.addEventListener("click", () => {
+        currentCourse = courses[i].courseid;
+        alertDiv.innerHTML = "" // Remove all alerts when switching course
+    });
+    return fragment;
+}
+
 async function displayCourses(): Promise<void> {
     courses = await getCoursesPromise();
     const ownDatabases = (await axios.get("/rest/studentdatabases/own/")).data;
@@ -45,28 +73,8 @@ async function displayCourses(): Promise<void> {
     const resultNav: string[] = [];
 
     for (let i = 0; i < courses.length; i++) {
-        const haveCredentials = (ownCourses.includes(courses[i].courseid));
-        const credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
-        const hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
-        // TODO if credentials, push href to credentials-pane
-        const templateString = `<a class="nav-link ${credentialsClass}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
-        const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
-
-
-        if (!haveCredentials) {
-            fragment.firstChild!.addEventListener("click", () => {
-                populateNoCredentialsPane(i);
-            });
-        } else {
-            fragment.firstChild!.addEventListener("click", () => {
-                populateHaveCredentialsPane(i);
-            });
-        }
-
-        fragment.firstChild!.addEventListener("click", () => {
-            currentCourse = courses[i].courseid;
-            alertDiv.innerHTML = "" // Remove all alerts when switching course
-        });
+        const haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
+        const fragment = createNavLink(haveCredentials, i);
 
         coursesNavHtml.appendChild(fragment);
 
@@ -74,11 +82,26 @@ async function displayCourses(): Promise<void> {
     }
 }
 
+function changeViewToHaveCredentials() {
+    const activeLink: HTMLLinkElement =  document.getElementsByClassName("nav-link no-credentials-nav active")[0] as HTMLLinkElement;
+    const i = Number(activeLink.id);
+    const fragment = createNavLink(true, i,true);
+    activeLink.classList.remove("active");
+    activeLink.insertAdjacentElement("afterend",fragment.firstElementChild!);
+    activeLink.remove();
+    noCredsPane.classList.remove("active");
+    haveCredsPane.classList.add("active");
+    populateHaveCredentialsPane(i);
+}
+
 window.onload = async () => {
     credentialsButton.addEventListener("click", async () => {
         coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
-        await tryGetCredentials(currentCourse, Number(groupInput.value));
+        credentialsButton.classList.add("disabled");
+        const success = await tryGetCredentials(currentCourse, Number(groupInput.value));
         coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
+        credentialsButton.classList.remove("disabled");
+        if (success) {changeViewToHaveCredentials()}
     });
     await displayCourses();
     await displayWhoami();

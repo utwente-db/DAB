@@ -1,6 +1,5 @@
 import "../sass/main.sass"
 import axios, {AxiosResponse} from 'axios';
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
@@ -54,7 +53,7 @@ async function displayCourses(): Promise<void> {
     // coursesDropdown.innerHTML += resultString;
 }
 
-export async function tryGetCredentials(courseID: number, groupNumber: number) {
+export async function tryGetCredentials(courseID: number, groupNumber: number): Promise<boolean> {
 
     if (courseID !== 0) {
         if (groupNumber > 0) {
@@ -66,6 +65,7 @@ export async function tryGetCredentials(courseID: number, groupNumber: number) {
                 addAlert(`Database generated for course "${database.course}".<br>
                                                                    Username: "${database.username}"<br>
                                                                    Password: "${database.password}"`, AlertType.success, tempAlert)
+                return true;
             } catch (error) {
                 addErrorAlert(error, tempAlert)
             }
@@ -76,6 +76,7 @@ export async function tryGetCredentials(courseID: number, groupNumber: number) {
     } else {
         addAlert("Please select a course", AlertType.danger)
     }
+    return false;
 }
 
 window.onload = async () => {
@@ -88,4 +89,3 @@ window.onload = async () => {
     ]);
 };
 
-// TODO on course select: make group no longer gray

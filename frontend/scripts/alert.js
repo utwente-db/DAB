@@ -185,7 +185,6 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     var tempAlert = alertDiv.lastChild;
     removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert;
-    // TODO maybe don't remove all temp alerts
 }
 exports.addTempAlert = addTempAlert;
 function addErrorAlert(error, tempAlert) {

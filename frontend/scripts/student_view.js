@@ -23012,7 +23012,6 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     var tempAlert = alertDiv.lastChild;
     removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert;
-    // TODO maybe don't remove all temp alerts
 }
 exports.addTempAlert = addTempAlert;
 function addErrorAlert(error, tempAlert) {
@@ -23107,7 +23106,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
@@ -23173,7 +23171,7 @@ function tryGetCredentials(courseID, groupNumber) {
                 case 3:
                     database = _a.sent();
                     alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success, tempAlert);
-                    return [3 /*break*/, 5];
+                    return [2 /*return*/, true];
                 case 4:
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1, tempAlert);
@@ -23186,7 +23184,7 @@ function tryGetCredentials(courseID, groupNumber) {
                 case 8:
                     alert_1.addAlert("Please select a course", alert_1.AlertType.danger);
                     _a.label = 9;
-                case 9: return [2 /*return*/];
+                case 9: return [2 /*return*/, false];
             }
         });
     });
@@ -23211,7 +23209,6 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
         }
     });
 }); };
-// TODO on course select: make group no longer gray
 
 
 /***/ }),
@@ -23360,7 +23357,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var courses_1 = __webpack_require__(/*! ./courses */ "./src/frontend/scripts/courses.ts");
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 var coursesNavHtml = document.getElementById("courses-nav");
@@ -23369,6 +23365,8 @@ var noCredsCoursename = document.getElementById("no-credentials-coursename");
 var noCredsInfo = document.getElementById("no-credentials-courseinfo");
 var haveCredsCoursename = document.getElementById("have-credentials-coursename");
 var haveCredsInfo = document.getElementById("have-credentials-courseinfo");
+var haveCredsPane = document.getElementById("have-credentials-pane");
+var noCredsPane = document.getElementById("no-credentials-pane");
 var credentialsButton = document.getElementById("credentials-button");
 var groupInput = document.getElementById("group-input");
 var alertDiv = document.getElementById("alert-div");
@@ -23382,9 +23380,32 @@ function populateHaveCredentialsPane(i) {
     haveCredsCoursename.innerText = courses[i].coursename;
     haveCredsInfo.innerText = courses[i].info;
 }
+function createNavLink(haveCredentials, i, active) {
+    if (active === void 0) { active = false; }
+    var credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
+    var hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
+    var activeString = active ? "active" : "";
+    var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
+    var fragment = document.createRange().createContextualFragment(templateString);
+    if (!haveCredentials) {
+        fragment.firstChild.addEventListener("click", function () {
+            populateNoCredentialsPane(i);
+        });
+    }
+    else {
+        fragment.firstChild.addEventListener("click", function () {
+            populateHaveCredentialsPane(i);
+        });
+    }
+    fragment.firstChild.addEventListener("click", function () {
+        currentCourse = courses[i].courseid;
+        alertDiv.innerHTML = ""; // Remove all alerts when switching course
+    });
+    return fragment;
+}
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var ownDatabases, ownCourses, resultNav, _loop_1, i;
+        var ownDatabases, ownCourses, resultNav, i, haveCredentials, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
@@ -23396,50 +23417,46 @@ function displayCourses() {
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     console.log(ownCourses);
                     resultNav = [];
-                    _loop_1 = function (i) {
-                        var haveCredentials = (ownCourses.includes(courses[i].courseid));
-                        var credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
-                        var hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
-                        // TODO if credentials, push href to credentials-pane
-                        var templateString = "<a class=\"nav-link " + credentialsClass + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
-                        var fragment = document.createRange().createContextualFragment(templateString);
-                        if (!haveCredentials) {
-                            fragment.firstChild.addEventListener("click", function () {
-                                populateNoCredentialsPane(i);
-                            });
-                        }
-                        else {
-                            fragment.firstChild.addEventListener("click", function () {
-                                populateHaveCredentialsPane(i);
-                            });
-                        }
-                        fragment.firstChild.addEventListener("click", function () {
-                            currentCourse = courses[i].courseid;
-                            alertDiv.innerHTML = ""; // Remove all alerts when switching course
-                        });
-                        coursesNavHtml.appendChild(fragment);
-                    };
                     for (i = 0; i < courses.length; i++) {
-                        _loop_1(i);
+                        haveCredentials = (ownCourses.includes(courses[i].courseid));
+                        fragment = createNavLink(haveCredentials, i);
+                        coursesNavHtml.appendChild(fragment);
                     }
                     return [2 /*return*/];
             }
         });
     });
 }
+function changeViewToHaveCredentials() {
+    var activeLink = document.getElementsByClassName("nav-link no-credentials-nav active")[0];
+    var i = Number(activeLink.id);
+    var fragment = createNavLink(true, i, true);
+    activeLink.classList.remove("active");
+    activeLink.insertAdjacentElement("afterend", fragment.firstElementChild);
+    activeLink.remove();
+    noCredsPane.classList.remove("active");
+    haveCredsPane.classList.add("active");
+    populateHaveCredentialsPane(i);
+}
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 credentialsButton.addEventListener("click", function () { return __awaiter(void 0, void 0, void 0, function () {
+                    var success;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
                                 coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
+                                credentialsButton.classList.add("disabled");
                                 return [4 /*yield*/, courses_1.tryGetCredentials(currentCourse, Number(groupInput.value))];
                             case 1:
-                                _a.sent();
+                                success = _a.sent();
                                 coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
+                                credentialsButton.classList.remove("disabled");
+                                if (success) {
+                                    changeViewToHaveCredentials();
+                                }
                                 return [2 /*return*/];
                         }
                     });

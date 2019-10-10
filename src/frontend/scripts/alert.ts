@@ -47,9 +47,6 @@ export function addTempAlert(errorMessage = "Please wait...", alertType = AlertT
     removeAlertOnTimeout(tempAlert, ms, timeOutError)
     return tempAlert
 
-
-    // TODO maybe don't remove all temp alerts
-
 }
 
 export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null) {
