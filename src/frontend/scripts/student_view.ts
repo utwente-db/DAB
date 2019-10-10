@@ -59,16 +59,17 @@ async function populateHaveCredentialsPane(i: number) {
                             </div>
                         </div>
                         <div class="align-items-center align-items-stretch row">
-                            <div class="center-block col-12 col-md-4 my-2 my-md-4">
-                                <button id="delete-button-${db.dbid}" class="btn btn-danger delete-button ">Delete database and release credentials</button>
+                            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                <button id="delete-button-${db.dbid}" class="btn btn-danger delete-button btn-block">Delete database and release credentials</button>
                             </div>
-                            <div class="center-block col-12 col-md-4 my-2 my-md-4"">
-                                <button id="reset-button-${db.dbid}" class="btn btn-info reset-button">Reset database</button>
+                            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                <button id="reset-button-${db.dbid}" class="btn btn-info reset-button btn-block">Reset database</button>
                             </div>
-                            <div class="center-block col-12 col-md-4 my-2 my-md-4"">
-                                <a id="dump-button-${db.dbid}" href="/rest/dump/${db.dbid}" target="_blank" class="btn btn-secondary dump-button">Get dump of database</a>
+                            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                <button onclick="window.open('/rest/dump/${db.dbid}/')" id="dump-button-${db.dbid}" class="btn btn-secondary dump-button btn-block">Get dump of database</button>
                             </div>
                         </div>`;
+            // TODO make third button mobile-friendly
             credentials += html.trim();
             dbIDs.push(db.dbid)
         }
