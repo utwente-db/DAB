@@ -432,7 +432,8 @@ def delete_single_response(request, requested_pk, db_parameters):
 
 def update_single_response(request, requested_pk, db_parameters):
     #UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES, THIS FUNCTION COULD BE EXPANDED FOR OTHER DB'S
-    if check_role(request, teacher) and db_parameters["dbname"] == "courses":
+    am_i_the_ta = am_i_ta_of_this_course(request.session["user"], requested_pk)
+    if (check_role(request, teacher) or am_i_the_ta) and db_parameters["dbname"] == "courses":
         try:
 
             data = JSONParser().parse(request)
