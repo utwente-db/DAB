@@ -4,12 +4,11 @@ from django import forms
 class RegisterForm(forms.Form):
     # TODO: validate emails are emails via regex (possibly do this in frontend)
     mail = forms.CharField(
-        widget=forms.TextInput(
+        widget=forms.EmailInput(
             attrs={
-                'class': 'form-control',
-                # 'placeholder': 'your.name@student.utwente.nl'
-                'id': 'email',
-                'autofocus': 'True'
+                'class': 'form-control my-1',
+                'id': 'register-email-field',
+                'autofocus': 'True',
             }
         ), required=True, label='email', max_length=256
     )
@@ -17,7 +16,8 @@ class RegisterForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'id': 'password'
+                'id': 'register-password-field',
+
             }
         ), required=True, label='password')
 
@@ -25,7 +25,7 @@ class RegisterForm(forms.Form):
         widget=forms.PasswordInput(
             attrs={
                 'class': 'form-control',
-                'id': 'passwordConfirm'
+                'id': 'register-password-confirm-field'
             }
         ), required=True, label="confirm password")
 

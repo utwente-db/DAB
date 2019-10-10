@@ -171,10 +171,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
 __webpack_require__(/*! bootstrap-cookie-alert/cookiealert.js */ "./node_modules/bootstrap-cookie-alert/cookiealert.js");
-function f() {
-    console.log("Main file loaded");
-}
-f();
 
 
 /***/ })

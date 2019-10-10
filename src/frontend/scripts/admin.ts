@@ -1,4 +1,5 @@
 import axios, {AxiosResponse} from 'axios';
+import {displayWhoami} from "./navbar";
 
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import * as $ from "jquery";
@@ -43,8 +44,8 @@ async function displayCourses(): Promise<void> {
     const resultContent: string[] = [];
 
     for (let i = 0; i < courses.length; i++) {
-        let active: string = "";
-        if (i == 0) {
+        let active = "";
+        if (i === 0) {
             active = " active";
         }
         resultNav.push(
@@ -71,11 +72,11 @@ async function displayUsers(): Promise<void> {
 
     for (let i = 0; i < users.length; i++) {
         let role: string;
-        if (users[i].role == 0) {
+        if (users[i].role === 0) {
             role = "Admin";
-        } else if (users[i].role == 1) {
+        } else if (users[i].role === 1) {
             role = "Teacher";
-        } else if (users[i].role == 2) {
+        } else if (users[i].role === 2) {
             role = "Student";
         } else {
             role = "Unknown";
@@ -103,5 +104,8 @@ window.onload = async () => {
     await displayUsers();
     await displayCourses();
     await displayWhoami();
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 };
