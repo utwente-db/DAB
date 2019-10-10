@@ -11,12 +11,25 @@ const hardcoded_userid: number = 73;
 
 const pageTitleHtml: HTMLTitleElement = document.getElementById("page-title") as HTMLTitleElement;
 const userInfoHtml: HTMLDivElement = document.getElementById("user-info") as HTMLDivElement;
+const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 
 interface User {
     id: number;
     role: number;
     email: string;
     verified: boolean;
+}
+
+interface Course {
+    courseid: number;
+    fid: number;
+    coursename: string;
+    info: string;
+}
+
+async function getCoursesPromise(): Promise<Course[]> {
+    const response: AxiosResponse = await axios.get("/rest/courses/");
+    return response.data;
 }
 
 async function getUserPromise(): Promise<User> {

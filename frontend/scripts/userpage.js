@@ -19900,6 +19900,20 @@ var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navba
 var hardcoded_userid = 73;
 var pageTitleHtml = document.getElementById("page-title");
 var userInfoHtml = document.getElementById("user-info");
+var coursesNavHtml = document.getElementById("courses-nav");
+function getCoursesPromise() {
+    return __awaiter(this, void 0, void 0, function () {
+        var response;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, axios_1.default.get("/rest/courses/")];
+                case 1:
+                    response = _a.sent();
+                    return [2 /*return*/, response.data];
+            }
+        });
+    });
+}
 function getUserPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var path, response;
