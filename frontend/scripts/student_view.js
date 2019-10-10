@@ -23360,12 +23360,12 @@ var coursesContentHtml = document.getElementById("courses-content");
 var noCredsCoursename = document.getElementById("no-credentials-coursename");
 var noCredsInfo = document.getElementById("no-credentials-courseinfo");
 var credentialsButton = document.getElementById("credentials-button");
-var coursesDropdown = document.getElementById("courses-dropdown");
+var groupInput = document.getElementById("group-input");
 var alertDiv = document.getElementById("alert-div");
 var courses;
 var currentCourse = 0;
 function populateNoCredentialsPane(i) {
-    currentCourse = i;
+    currentCourse = courses[i].courseid;
     noCredsCoursename.innerText = courses[i].coursename;
     noCredsInfo.innerText = courses[i].info;
 }
@@ -23379,10 +23379,18 @@ function displayCourses() {
                     courses = _a.sent();
                     resultNav = [];
                     _loop_1 = function (i) {
+                        var haveCredentials = false;
                         // TODO if credentials, push href to credentials-pane
                         var templateString = "<a id=\"no-credentials-link-" + i + "\" class=\"nav-link\" data-toggle=\"pill\" href=\"#no-credentials-pane\">" + courses[i].coursename + "</a>";
                         var fragment = document.createRange().createContextualFragment(templateString);
-                        fragment.firstChild.addEventListener("click", function () { populateNoCredentialsPane(i); });
+                        if (!haveCredentials) {
+                            fragment.firstChild.addEventListener("click", function () {
+                                populateNoCredentialsPane(i);
+                            });
+                        }
+                        fragment.firstChild.addEventListener("click", function () {
+                            alertDiv.innerHTML = "";
+                        });
                         coursesNavHtml.appendChild(fragment);
                     };
                     for (i = 0; i < courses.length; i++) {
@@ -23396,11 +23404,12 @@ function displayCourses() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: 
-            // credentialsButton.addEventListener("click",() => {tryGetCredentials(currentCourse)})
-            return [4 /*yield*/, displayCourses()];
+            case 0:
+                credentialsButton.addEventListener("click", function () {
+                    courses_1.tryGetCredentials(currentCourse, Number(groupInput.value));
+                });
+                return [4 /*yield*/, displayCourses()];
             case 1:
-                // credentialsButton.addEventListener("click",() => {tryGetCredentials(currentCourse)})
                 _a.sent();
                 return [4 /*yield*/, navbar_1.displayWhoami()];
             case 2:

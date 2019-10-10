@@ -9,7 +9,7 @@ const coursesContentHtml: HTMLDivElement = document.getElementById("courses-cont
 const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
 const noCredsInfo: HTMLDivElement = document.getElementById("no-credentials-courseinfo") as HTMLDivElement;
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
-const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
+const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
 
 let courses: Course[];
@@ -23,9 +23,9 @@ interface Course {
 }
 
 function populateNoCredentialsPane(i: number) {
-    currentCourse = i;
-    noCredsCoursename.innerText=courses[i].coursename;
-    noCredsInfo.innerText=courses[i].info;
+    currentCourse = courses[i].courseid;
+    noCredsCoursename.innerText = courses[i].coursename;
+    noCredsInfo.innerText = courses[i].info;
 }
 
 async function displayCourses(): Promise<void> {
@@ -33,17 +33,32 @@ async function displayCourses(): Promise<void> {
     const resultNav: string[] = [];
 
     for (let i = 0; i < courses.length; i++) {
+        const haveCredentials = false;
         // TODO if credentials, push href to credentials-pane
         const templateString = `<a id="no-credentials-link-${i}" class="nav-link" data-toggle="pill" href="#no-credentials-pane">${courses[i].coursename}</a>`;
-
         const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
-        fragment.firstChild!.addEventListener("click",() => {populateNoCredentialsPane(i)});
+
+
+        if (!haveCredentials) {
+            fragment.firstChild!.addEventListener("click", () => {
+                populateNoCredentialsPane(i)
+            });
+        }
+
+        fragment.firstChild!.addEventListener("click", () => {
+            alertDiv.innerHTML=""
+        });
+
         coursesNavHtml.appendChild(fragment);
+
+
     }
 }
 
 window.onload = async () => {
-    // credentialsButton.addEventListener("click",() => {tryGetCredentials(currentCourse)})
+    credentialsButton.addEventListener("click", () => {
+        tryGetCredentials(currentCourse, Number(groupInput.value))
+    })
     await displayCourses();
     await displayWhoami();
 

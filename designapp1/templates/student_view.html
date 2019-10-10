@@ -33,13 +33,13 @@
                         <div class="tab-pane active m-5"><h1>Please select a course</h1></div>
                         <div class="tab-pane" id="no-credentials-pane">
                             <p class="h2" id="no-credentials-coursename">No credentials coursename</p>
-                            <p class="text-center small mb-2" id="no-credentials-courseinfo">No credentials courseinfo</p>
+                            <p class="text-center small mb-2" id="no-credentials-courseinfo">No credentials
+                                courseinfo</p>
                             <hr>
                             <div class="form-row">
-                                <label for="group-dropdown" class="col-4">Please select a group</label>
-                                <select id="group-dropdown" class="form-control col-8" disabled>
-                                    <option disabled selected value="0"> Selecting groups is not a thing yet</option>
-                                </select>
+                                <label for="group-input" class="col-4">Please select a group</label>
+                                <input type="number" id="group-input" class="form-control"
+                                       min="1" step="1">
 
                             </div>
 
@@ -49,7 +49,7 @@
 
                         </div>
                     </div>
-                            <div id="alert-div"></div>
+                    <div id="alert-div"></div>
 
                 </div>
             </div>
