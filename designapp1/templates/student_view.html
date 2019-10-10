@@ -30,23 +30,40 @@
     container border border-dark rounded-lg shadow-lg bg-white p-3  p-xl-5 text-center">
 
                     <div class="tab-content" id="courses-content">
+
+
                         <div class="tab-pane active m-5"><h1>Please select a course</h1></div>
+
                         <div class="tab-pane" id="no-credentials-pane">
                             <p class="h2" id="no-credentials-coursename">No credentials coursename</p>
                             <p class="text-center small mb-2" id="no-credentials-courseinfo">No credentials
                                 courseinfo</p>
+                            <p id="no-credentials-status" class="text-center text-warning">You do not have credentials
+                                for this
+                                course yet</p>
                             <hr>
-                            <div class="form-row">
-                                <label for="group-input" class="col-4">Please select a group</label>
-                                <input type="number" id="group-input" class="form-control" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
-
+                            <div class="form-group row align-items-center px-2 px-md-5">
+                                <label for="group-input" class="col-12 col-md-4">Please select a group</label>
+                                <input type="number" id="group-input" class="form-control col-12 col-md-8"
+                                       oninput="this.value=this.value.replace(/[^0-9]/g,'');">
                             </div>
-
-
                             <button class="btn btn-info my-4" id="credentials-button">Get credentials</button>
-
-
                         </div>
+
+                        <div class="tab-pane" id="have-credentials-pane">
+                            <p class="h2" id="have-credentials-coursename">Have credentials coursename</p>
+                            <p class="text-center small mb-2" id="have-credentials-courseinfo">Have credentials
+                                courseinfo</p>
+                            <p id="have-credentials-status" class="text-center text-success">You already have
+                                credentials for this course</p>
+                            <hr>
+                            Credentials blabla
+                            <div class="form-group row align-items-center px-2 px-md-5">
+                                <button class="btn btn-secondary my-4">Cool button</button>
+                                <button class="btn btn-secondary my-4">Cool button</button>
+                            </div>
+                        </div>
+
                     </div>
                     <div id="alert-div"></div>
 
