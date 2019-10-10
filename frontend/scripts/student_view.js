@@ -23151,7 +23151,8 @@ function displayCourses() {
         });
     });
 }
-function tryGetCredentials(courseID, groupNumber) {
+function tryGetCredentials(courseID, groupNumber, alert) {
+    if (alert === void 0) { alert = true; }
     return __awaiter(this, void 0, void 0, function () {
         var data, tempAlert, response, database, error_1;
         return __generator(this, function (_a) {
@@ -23170,7 +23171,14 @@ function tryGetCredentials(courseID, groupNumber) {
                     return [4 /*yield*/, response.data];
                 case 3:
                     database = _a.sent();
-                    alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success, tempAlert);
+                    if (alert) {
+                        alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success, tempAlert);
+                    }
+                    else {
+                        if (tempAlert) {
+                            tempAlert.remove();
+                        }
+                    }
                     return [2 /*return*/, true];
                 case 4:
                     error_1 = _a.sent();
@@ -23398,8 +23406,12 @@ function populateHaveCredentialsPane(i) {
             dbIDs.forEach(function (id) {
                 var deleteButton = document.getElementById("delete-button-" + id);
                 var resetButton = document.getElementById("reset-button-" + id);
-                deleteButton.addEventListener("click", function () { deleteCredentials(id); });
-                deleteButton.addEventListener("click", function () { resetDatabase(id); });
+                deleteButton.addEventListener("click", function () {
+                    deleteCredentials(id);
+                });
+                deleteButton.addEventListener("click", function () {
+                    resetDatabase(id);
+                });
             });
             return [2 /*return*/];
         });
@@ -23483,11 +23495,13 @@ function prepareToGetCredentials() {
                 case 0:
                     coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
                     credentialsButton.classList.add("disabled");
-                    return [4 /*yield*/, courses_1.tryGetCredentials(currentCourse, Number(groupInput.value))];
+                    groupInput.classList.add("disabled");
+                    return [4 /*yield*/, courses_1.tryGetCredentials(currentCourse, Number(groupInput.value), false)];
                 case 1:
                     success = _a.sent();
                     coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
                     credentialsButton.classList.remove("disabled");
+                    groupInput.classList.remove("disabled");
                     if (success) {
                         changeViewToHaveCredentials();
                     }
@@ -23506,7 +23520,7 @@ function deleteCredentials(dbID) {
                     return [4 /*yield*/, axios_1.default.delete("/rest/studentdatabases/" + dbID + "/")];
                 case 1:
                     response = _a.sent();
-                    console.debug(response);
+                    alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
                     return [3 /*break*/, 3];
                 case 2:
                     error_1 = _a.sent();

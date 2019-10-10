@@ -22,7 +22,7 @@ interface Course {
 
 export interface StudentDatabase {
     "dbid": number,
-    "groupid" : number,
+    "groupid": number,
     "fid": number,
     "course": number,
     "schema": number,
@@ -53,7 +53,7 @@ async function displayCourses(): Promise<void> {
     // coursesDropdown.innerHTML += resultString;
 }
 
-export async function tryGetCredentials(courseID: number, groupNumber: number): Promise<boolean> {
+export async function tryGetCredentials(courseID: number, groupNumber: number, alert = true): Promise<boolean> {
 
     if (courseID !== 0) {
         if (groupNumber > 0) {
@@ -62,9 +62,16 @@ export async function tryGetCredentials(courseID: number, groupNumber: number): 
             try {
                 const response: AxiosResponse<StudentDatabase> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<StudentDatabase>;
                 const database: StudentDatabase = await response.data;
-                addAlert(`Database generated for course "${database.course}".<br>
+                if (alert) {
+                    addAlert(`Database generated for course "${database.course}".<br>
                                                                    Username: "${database.username}"<br>
-                                                                   Password: "${database.password}"`, AlertType.success, tempAlert)
+                                                                   Password: "${database.password}"`, AlertType.success, tempAlert);
+                } else {
+                    if (tempAlert) {
+                        tempAlert.remove();
+                    }
+                }
+
                 return true;
             } catch (error) {
                 addErrorAlert(error, tempAlert)

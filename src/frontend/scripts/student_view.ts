@@ -3,7 +3,7 @@ import {displayWhoami} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
-import {addErrorAlert} from "./alert";
+import {addAlert, addErrorAlert, AlertType} from "./alert";
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
@@ -38,10 +38,9 @@ function populateNoCredentialsPane(i: number) {
 }
 
 
-
 async function populateHaveCredentialsPane(i: number) {
     let credentials = "";
-    let dbIDs: number[] = [];
+    const dbIDs: number[] = [];
     haveCredsCoursename.innerText = courses[i].coursename;
     haveCredsInfo.innerText = courses[i].info;
     ownDatabases.forEach((db: StudentDatabase) => {
@@ -70,8 +69,12 @@ async function populateHaveCredentialsPane(i: number) {
     dbIDs.forEach((id: number) => {
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
         const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
-        deleteButton.addEventListener("click", () => {deleteCredentials(id)});
-        deleteButton.addEventListener("click", () => {resetDatabase(id)});
+        deleteButton.addEventListener("click", () => {
+            deleteCredentials(id)
+        });
+        deleteButton.addEventListener("click", () => {
+            resetDatabase(id)
+        });
 
     });
 
@@ -141,9 +144,12 @@ async function changeViewToHaveCredentials() {
 async function prepareToGetCredentials() {
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
     credentialsButton.classList.add("disabled");
-    const success = await tryGetCredentials(currentCourse, Number(groupInput.value));
+    groupInput.classList.add("disabled");
+    const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
     credentialsButton.classList.remove("disabled");
+    groupInput.classList.remove("disabled");
+
     if (success) {
         changeViewToHaveCredentials()
     }
@@ -152,7 +158,7 @@ async function prepareToGetCredentials() {
 async function deleteCredentials(dbID: number) {
     try {
         const response = await axios.delete(`/rest/studentdatabases/${dbID}/`);
-        console.debug(response)
+        addAlert("Deleted database", AlertType.primary)
     } catch (error) {
         addErrorAlert(error)
     }

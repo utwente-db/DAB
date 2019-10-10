@@ -23151,7 +23151,8 @@ function displayCourses() {
         });
     });
 }
-function tryGetCredentials(courseID, groupNumber) {
+function tryGetCredentials(courseID, groupNumber, alert) {
+    if (alert === void 0) { alert = true; }
     return __awaiter(this, void 0, void 0, function () {
         var data, tempAlert, response, database, error_1;
         return __generator(this, function (_a) {
@@ -23170,7 +23171,14 @@ function tryGetCredentials(courseID, groupNumber) {
                     return [4 /*yield*/, response.data];
                 case 3:
                     database = _a.sent();
-                    alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success, tempAlert);
+                    if (alert) {
+                        alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success, tempAlert);
+                    }
+                    else {
+                        if (tempAlert) {
+                            tempAlert.remove();
+                        }
+                    }
                     return [2 /*return*/, true];
                 case 4:
                     error_1 = _a.sent();
