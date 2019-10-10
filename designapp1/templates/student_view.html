@@ -38,8 +38,7 @@
                             <hr>
                             <div class="form-row">
                                 <label for="group-input" class="col-4">Please select a group</label>
-                                <input type="number" id="group-input" class="form-control"
-                                       min="1" step="1">
+                                <input type="number" id="group-input" class="form-control" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
 
                             </div>
 

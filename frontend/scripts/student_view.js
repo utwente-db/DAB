@@ -23159,7 +23159,8 @@ function tryGetCredentials(courseID, groupNumber) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!(courseID !== 0)) return [3 /*break*/, 6];
+                    if (!(courseID !== 0)) return [3 /*break*/, 8];
+                    if (!(groupNumber > 0)) return [3 /*break*/, 6];
                     data = { "course": courseID, "groupid": groupNumber };
                     tempAlert = alert_1.addTempAlert();
                     _a.label = 1;
@@ -23179,9 +23180,13 @@ function tryGetCredentials(courseID, groupNumber) {
                     return [3 /*break*/, 5];
                 case 5: return [3 /*break*/, 7];
                 case 6:
-                    alert_1.addAlert("Please select a course", alert_1.AlertType.danger);
+                    alert_1.addAlert("Please enter a valid group number", alert_1.AlertType.danger);
                     _a.label = 7;
-                case 7: return [2 /*return*/];
+                case 7: return [3 /*break*/, 9];
+                case 8:
+                    alert_1.addAlert("Please select a course", alert_1.AlertType.danger);
+                    _a.label = 9;
+                case 9: return [2 /*return*/];
             }
         });
     });
@@ -23197,7 +23202,9 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                 return [4 /*yield*/, displayCourses()];
             case 1: return [4 /*yield*/, _b.apply(_a, [_c.concat([_d.sent(),
                         $('select').selectpicker(),
-                        credentialsButton.addEventListener("click", function () { tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value)); })])])];
+                        credentialsButton.addEventListener("click", function () {
+                            tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value));
+                        })])])];
             case 2:
                 _d.sent();
                 return [2 /*return*/];

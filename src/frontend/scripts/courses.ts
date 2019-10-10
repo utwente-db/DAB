@@ -56,17 +56,22 @@ async function displayCourses(): Promise<void> {
 export async function tryGetCredentials(courseID: number, groupNumber: number) {
 
     if (courseID !== 0) {
-        const data = {"course": courseID, "groupid": groupNumber};
-        const tempAlert: ChildNode | null = addTempAlert();
-        try {
-            const response: AxiosResponse<Database> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<Database>;
-            const database: Database = await response.data;
-            addAlert(`Database generated for course "${database.course}".<br>
+        if (groupNumber > 0) {
+            const data = {"course": courseID, "groupid": groupNumber};
+            const tempAlert: ChildNode | null = addTempAlert();
+            try {
+                const response: AxiosResponse<Database> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<Database>;
+                const database: Database = await response.data;
+                addAlert(`Database generated for course "${database.course}".<br>
                                                                    Username: "${database.username}"<br>
                                                                    Password: "${database.password}"`, AlertType.success, tempAlert)
-        } catch (error) {
-            addErrorAlert(error, tempAlert)
+            } catch (error) {
+                addErrorAlert(error, tempAlert)
+            }
+        } else {
+            addAlert("Please enter a valid group number", AlertType.danger)
         }
+
     } else {
         addAlert("Please select a course", AlertType.danger)
     }
@@ -76,8 +81,10 @@ window.onload = async () => {
     await Promise.all([displayWhoami(),
         await displayCourses(),
         $('select').selectpicker(), // Style all selects
-        credentialsButton.addEventListener("click",() => {tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value))}),
-        ]);
+        credentialsButton.addEventListener("click", () => {
+            tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value))
+        }),
+    ]);
 };
 
 // TODO on course select: make group no longer gray
