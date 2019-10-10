@@ -36,6 +36,7 @@ interface Course {
 function populateNoCredentialsPane(i: number) {
     noCredsCoursename.innerText = courses[i].coursename;
     noCredsInfo.innerText = courses[i].info;
+    groupInput.value = "";
 }
 
 
@@ -68,7 +69,8 @@ async function populateHaveCredentialsPane(i: number) {
                             <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
                                 <button onclick="window.open('/rest/dump/${db.dbid}/')" id="dump-button-${db.dbid}" class="btn btn-secondary dump-button btn-block">Get dump of database</button>
                             </div>
-                        </div>`;
+                        </div>
+                        <hr>`;
             // TODO make third button mobile-friendly
             credentials += html.trim();
             dbIDs.push(db.dbid)
@@ -115,7 +117,7 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
 }
 
 async function displayCourses(): Promise<void> {
-    courses = await getCoursesPromise();
+    courses = (await getCoursesPromise()).sort((a:Course, b:Course) => a.coursename.localeCompare(b.coursename));
     ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
