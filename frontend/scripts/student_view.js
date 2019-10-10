@@ -23367,15 +23367,20 @@ var coursesNavHtml = document.getElementById("courses-nav");
 var coursesContentHtml = document.getElementById("courses-content");
 var noCredsCoursename = document.getElementById("no-credentials-coursename");
 var noCredsInfo = document.getElementById("no-credentials-courseinfo");
+var haveCredsCoursename = document.getElementById("have-credentials-coursename");
+var haveCredsInfo = document.getElementById("have-credentials-courseinfo");
 var credentialsButton = document.getElementById("credentials-button");
 var groupInput = document.getElementById("group-input");
 var alertDiv = document.getElementById("alert-div");
 var courses;
 var currentCourse = 0;
 function populateNoCredentialsPane(i) {
-    currentCourse = courses[i].courseid;
     noCredsCoursename.innerText = courses[i].coursename;
     noCredsInfo.innerText = courses[i].info;
+}
+function populateHaveCredentialsPane(i) {
+    haveCredsCoursename.innerText = courses[i].coursename;
+    haveCredsInfo.innerText = courses[i].info;
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
@@ -23394,15 +23399,22 @@ function displayCourses() {
                     _loop_1 = function (i) {
                         var haveCredentials = (ownCourses.includes(courses[i].courseid));
                         var credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
+                        var hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
                         // TODO if credentials, push href to credentials-pane
-                        var templateString = "<a class=\"nav-link " + credentialsClass + "\" data-toggle=\"pill\" href=\"#no-credentials-pane\">" + courses[i].coursename + "</a>";
+                        var templateString = "<a class=\"nav-link " + credentialsClass + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
                         var fragment = document.createRange().createContextualFragment(templateString);
                         if (!haveCredentials) {
                             fragment.firstChild.addEventListener("click", function () {
                                 populateNoCredentialsPane(i);
                             });
                         }
+                        else {
+                            fragment.firstChild.addEventListener("click", function () {
+                                populateHaveCredentialsPane(i);
+                            });
+                        }
                         fragment.firstChild.addEventListener("click", function () {
+                            currentCourse = courses[i].courseid;
                             alertDiv.innerHTML = ""; // Remove all alerts when switching course
                         });
                         coursesNavHtml.appendChild(fragment);

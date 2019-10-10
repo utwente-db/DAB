@@ -1,6 +1,6 @@
-import {getCoursesPromise, tryGetCredentials, StudentDatabase} from './courses'
+import {getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
 import {displayWhoami} from "./navbar";
-import axios, {AxiosResponse, AxiosStatic} from 'axios';
+import axios from 'axios';
 // TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import "popper.js"
 import "bootstrap"
@@ -9,6 +9,9 @@ const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
 const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
 const noCredsInfo: HTMLDivElement = document.getElementById("no-credentials-courseinfo") as HTMLDivElement;
+const haveCredsCoursename: HTMLHeadingElement = document.getElementById("have-credentials-coursename") as HTMLDivElement;
+const haveCredsInfo: HTMLDivElement = document.getElementById("have-credentials-courseinfo") as HTMLDivElement;
+
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
 const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
@@ -24,9 +27,13 @@ interface Course {
 }
 
 function populateNoCredentialsPane(i: number) {
-    currentCourse = courses[i].courseid;
     noCredsCoursename.innerText = courses[i].coursename;
     noCredsInfo.innerText = courses[i].info;
+}
+
+function populateHaveCredentialsPane(i: number) {
+    haveCredsCoursename.innerText = courses[i].coursename;
+    haveCredsInfo.innerText = courses[i].info;
 }
 
 async function displayCourses(): Promise<void> {
@@ -40,18 +47,24 @@ async function displayCourses(): Promise<void> {
     for (let i = 0; i < courses.length; i++) {
         const haveCredentials = (ownCourses.includes(courses[i].courseid));
         const credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
+        const hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
         // TODO if credentials, push href to credentials-pane
-        const templateString = `<a class="nav-link ${credentialsClass}" data-toggle="pill" href="#no-credentials-pane">${courses[i].coursename}</a>`;
+        const templateString = `<a class="nav-link ${credentialsClass}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
         const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
 
         if (!haveCredentials) {
             fragment.firstChild!.addEventListener("click", () => {
-                populateNoCredentialsPane(i)
+                populateNoCredentialsPane(i);
+            });
+        } else {
+            fragment.firstChild!.addEventListener("click", () => {
+                populateHaveCredentialsPane(i);
             });
         }
 
         fragment.firstChild!.addEventListener("click", () => {
+            currentCourse = courses[i].courseid;
             alertDiv.innerHTML = "" // Remove all alerts when switching course
         });
 
