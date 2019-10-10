@@ -146,9 +146,9 @@ async function prepareToGetCredentials() {
     credentialsButton.classList.add("disabled");
     groupInput.classList.add("disabled");
     try {
-        await tryGetCredentials(currentCourse, Number(groupInput.value), false);
+        const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
-        await changeViewToHaveCredentials()
+        if (success) {await changeViewToHaveCredentials()};
     } catch (error) {
         addErrorAlert(error);
     } finally {
@@ -177,7 +177,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Delete!',
+        confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel'
     });
 
@@ -225,7 +225,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
-        confirmButtonText: 'Delete!',
+        confirmButtonText: 'Reset',
         cancelButtonText: 'Cancel'
     });
 

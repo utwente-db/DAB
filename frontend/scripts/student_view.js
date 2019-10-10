@@ -26411,7 +26411,7 @@ function changeViewToHaveCredentials() {
 }
 function prepareToGetCredentials() {
     return __awaiter(this, void 0, void 0, function () {
-        var error_1;
+        var success, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -26420,24 +26420,28 @@ function prepareToGetCredentials() {
                     groupInput.classList.add("disabled");
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 4, 5, 6]);
+                    _a.trys.push([1, 5, 6, 7]);
                     return [4 /*yield*/, courses_1.tryGetCredentials(currentCourse, Number(groupInput.value), false)];
                 case 2:
-                    _a.sent();
+                    success = _a.sent();
+                    if (!success) return [3 /*break*/, 4];
                     return [4 /*yield*/, changeViewToHaveCredentials()];
                 case 3:
                     _a.sent();
-                    return [3 /*break*/, 6];
+                    _a.label = 4;
                 case 4:
+                    ;
+                    return [3 /*break*/, 7];
+                case 5:
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1);
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
                     credentialsButton.classList.remove("disabled");
                     groupInput.classList.remove("disabled");
                     return [7 /*endfinally*/];
-                case 6: return [2 /*return*/];
+                case 7: return [2 /*return*/];
             }
         });
     });
@@ -26475,7 +26479,7 @@ function prepareToDeleteCredentials(dbID) {
                         text: 'You will not be able to recover your data!',
                         type: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Delete!',
+                        confirmButtonText: 'Delete',
                         cancelButtonText: 'Cancel'
                     })];
                 case 1:
@@ -26534,7 +26538,7 @@ function resetDatabase(dbID) {
                         text: 'You will not be able to recover your data!',
                         type: 'warning',
                         showCancelButton: true,
-                        confirmButtonText: 'Delete!',
+                        confirmButtonText: 'Reset',
                         cancelButtonText: 'Cancel'
                     })];
                 case 1:
