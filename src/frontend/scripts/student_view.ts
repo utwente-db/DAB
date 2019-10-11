@@ -67,7 +67,7 @@ async function populateHaveCredentialsPane(i: number) {
                                 <button id="reset-button-${db.dbid}" class="btn btn-info reset-button btn-block">Reset database</button>
                             </div>
                             <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
-                                <button onclick="window.open('/rest/dump/${db.dbid}/')" id="dump-button-${db.dbid}" class="btn btn-secondary dump-button btn-block">Get dump of database</button>
+                                <button onclick="window.location.replace('/rest/dump/${db.dbid}/')" id="dump-button-${db.dbid}" class="btn btn-secondary dump-button btn-block">Get dump of database</button>
                             </div>
                         </div>
                         <hr>`;
