@@ -26499,6 +26499,10 @@ function prepareToDeleteCredentials(dbID) {
                         .forEach(function (resetButton) {
                         resetButton.classList.add("disabled");
                     });
+                    Array.from(document.getElementsByClassName("dump-button"))
+                        .forEach(function (dumpButton) {
+                        dumpButton.classList.add("disabled");
+                    });
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 4, 5, 6]);
@@ -26524,6 +26528,10 @@ function prepareToDeleteCredentials(dbID) {
                     Array.from(document.getElementsByClassName("reset-button"))
                         .forEach(function (resetButton) {
                         resetButton.classList.remove("disabled");
+                    });
+                    Array.from(document.getElementsByClassName("dump-button"))
+                        .forEach(function (dumpButton) {
+                        dumpButton.classList.remove("disabled");
                     });
                     return [7 /*endfinally*/];
                 case 6: return [2 /*return*/, success];
@@ -26558,6 +26566,10 @@ function resetDatabase(dbID) {
                         .forEach(function (resetButton) {
                         resetButton.classList.add("disabled");
                     });
+                    Array.from(document.getElementsByClassName("dump-button"))
+                        .forEach(function (dumpButton) {
+                        dumpButton.classList.add("disabled");
+                    });
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 4, 5, 6]);
@@ -26581,6 +26593,10 @@ function resetDatabase(dbID) {
                     Array.from(document.getElementsByClassName("reset-button"))
                         .forEach(function (resetButton) {
                         resetButton.classList.remove("disabled");
+                    });
+                    Array.from(document.getElementsByClassName("dump-button"))
+                        .forEach(function (dumpButton) {
+                        dumpButton.classList.remove("disabled");
                     });
                     return [7 /*endfinally*/];
                 case 6: return [2 /*return*/, success];

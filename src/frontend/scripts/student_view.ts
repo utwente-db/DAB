@@ -117,7 +117,7 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
 }
 
 async function displayCourses(): Promise<void> {
-    courses = (await getCoursesPromise()).sort((a:Course, b:Course) => a.coursename.localeCompare(b.coursename));
+    courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
     ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
@@ -204,6 +204,10 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         .forEach((resetButton: HTMLButtonElement) => {
             resetButton.classList.add("disabled")
         });
+    Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((dumpButton: HTMLButtonElement) => {
+            dumpButton.classList.add("disabled")
+        });
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         // await changeViewToHaveCredentials()
@@ -222,6 +226,10 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
             .forEach((resetButton: HTMLButtonElement) => {
                 resetButton.classList.remove("disabled")
+            });
+        Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
+            .forEach((dumpButton: HTMLButtonElement) => {
+                dumpButton.classList.remove("disabled")
             });
     }
     return success;
@@ -252,6 +260,10 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         .forEach((resetButton: HTMLButtonElement) => {
             resetButton.classList.add("disabled")
         });
+    Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((dumpButton: HTMLButtonElement) => {
+            dumpButton.classList.add("disabled")
+        });
     try {
         await axios.post(`/rest/reset/${dbID}/`);
         addAlert("Reset database", AlertType.primary);
@@ -269,14 +281,18 @@ async function resetDatabase(dbID: number): Promise<boolean> {
             .forEach((resetButton: HTMLButtonElement) => {
                 resetButton.classList.remove("disabled")
             });
+        Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
+            .forEach((dumpButton: HTMLButtonElement) => {
+                dumpButton.classList.remove("disabled")
+            });
     }
     return success;
 }
 
 window.onload = async () => {
     await Promise.all([
-    credentialsButton.addEventListener("click", prepareToGetCredentials),
-    displayCourses(),
-    displayWhoami()
+        credentialsButton.addEventListener("click", prepareToGetCredentials),
+        displayCourses(),
+        displayWhoami()
     ])
 };
