@@ -57,7 +57,6 @@ def reset_studentdatabase(db):
         connection.autocommit = True
 
         schema = db.course.schema
-        db.password = db.readPassword()
         writeSchema(db.__dict__, schema)
 
 
