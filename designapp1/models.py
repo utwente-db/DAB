@@ -8,6 +8,7 @@
 from django.db import models
 from django.conf import settings
 import base64
+import re
 
 
 class dbmusers(models.Model):
@@ -41,6 +42,11 @@ class Courses(models.Model):
 
     def __str__(self):
         return self.coursename
+
+    def save(self, *args, **kwargs):
+        if not re.match(r'^[a-zA-Z0-9\.\-\_\+\/\\]+$', self.coursename):
+            raise ValueError("Coursename can only contain alphanumerical and these: .-_+/\\ characters")
+        super(Courses, self).save()
 
     def owner(self):
         return self.fid

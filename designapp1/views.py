@@ -360,8 +360,9 @@ def post_base_response(request, db_parameters):
                 except KeyError as e:
                     return HttpResponse("The following field(s) should be included:" + str(e),
                                         status=status.HTTP_400_BAD_REQUEST)
+                except ValueError as e:
+                    return HttpResponse(str(e), status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
-                    raise e
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     else:
@@ -742,7 +743,7 @@ def generate_migration(request):
     output += "echo 'Backing up main database...';\npg_dump -h $HOST -p $PORT -U $USER -C \""+database+"\" > "+database+".sql;\n"
 
     for db in dbs:
-        create_command = "CREATE USER \""+db.username+"\" WITH UNENCRYPTED PASSWORD \""+db.password+"\";"
+        create_command = "CREATE USER \""+db.username+"\" WITH ENCRYPTED PASSWORD \""+db.password+"\";"
         #escape / from the filename by replacing it by ?
         db_name = db.databasename
         db_name = re.sub(r'\/', "?", db_name)
