@@ -333,8 +333,6 @@ def post_base_response(request, db_parameters):
             if serializer_class.is_valid():
                 try:
                     if db_parameters["dbname"] == "studentdatabases":
-                        print("creating database")
-                        print(serializer_class.validated_data["password"])
                         create_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"], serializer_class.validated_data["password"])
                         try:
                             setup_student_db(databases, serializer_class)
