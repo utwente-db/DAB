@@ -9,6 +9,7 @@ import base64
 #import os
 #import pwd
 
+from django.utils import timezone
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
@@ -847,6 +848,9 @@ def login(request):
                     request.session["user"] = user.id
                     request.session["role"] = user.role
                     request.session.modified = True
+
+                    dbmusers.objects.filter(pk=request.session["user"]).update(lastlogin=timezone.now()) #update last login
+
                     return HttpResponseRedirect("/")
 
 

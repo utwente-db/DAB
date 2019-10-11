@@ -17,6 +17,7 @@ class dbmusers(models.Model):
     password = models.TextField(max_length=265)
     verified = models.BooleanField(default=False)
     token = models.TextField(null=True)
+    lastlogin = models.DateTimeField(default=None)
 
     class Meta:
         managed = False
