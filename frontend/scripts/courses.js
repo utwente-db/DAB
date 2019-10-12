@@ -23288,7 +23288,7 @@ function displayWhoami() {
                         role = "Unknown";
                     }
                     whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + "\t You are " + role;
-                    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary\" href=\"/settings\">Settings</button>";
+                    whoamiButtonHtml.innerHTML += "<a class=\"btn btn-secondary\" href=\"/settings\" role=\"button\">Settings</a>";
                     return [2 /*return*/];
             }
         });

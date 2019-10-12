@@ -31,9 +31,5 @@ export async function displayWhoami(): Promise<void> {
         role = "Unknown";
     }
     whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + "\t You are " + role;
-<<<<<<< HEAD
     whoamiButtonHtml.innerHTML += "<a class=\"btn btn-secondary\" href=\"/settings\" role=\"button\">Settings</a>";
-=======
-    whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary\" href=\"/settings\">Settings</button>";
->>>>>>> master
 }
