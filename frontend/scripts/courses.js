@@ -23208,6 +23208,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
   !*** ./src/frontend/scripts/navbar.ts ***!
   \****************************************/
 /*! no static exports found */
+<<<<<<< HEAD
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23295,7 +23296,11 @@ function displayWhoami() {
     });
 }
 exports.displayWhoami = displayWhoami;
+=======
+/***/ (function(module, exports) {
+>>>>>>> 9b946296a12b6f3826fbc42d8387a2470337ff0a
 
+throw new Error("Module build failed (from ./node_modules/ts-loader/index.js):\nError: TypeScript emitted no output for /home/denys/design/src/frontend/scripts/navbar.ts.\n    at makeSourceMapAndFinish (/home/denys/design/node_modules/ts-loader/dist/index.js:80:15)\n    at successLoader (/home/denys/design/node_modules/ts-loader/dist/index.js:68:9)\n    at Object.loader (/home/denys/design/node_modules/ts-loader/dist/index.js:22:12)");
 
 /***/ })
 
