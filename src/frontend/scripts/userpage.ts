@@ -7,7 +7,7 @@ import "bootstrap"
 import {displayWhoami} from "./navbar";
 
 //todo: change to selected user ofcourse
-const hardcoded_userid: number = 73;
+const hardcodedUserID = 73;
 
 const pageTitleHtml: HTMLTitleElement = document.getElementById("page-title") as HTMLTitleElement;
 const userInfoHtml: HTMLDivElement = document.getElementById("user-info") as HTMLDivElement;
@@ -40,7 +40,7 @@ interface Database {
 }
 
 async function getDatabasesPromise(): Promise<Database[]> {
-    const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + hardcoded_userid + "/");
+    const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + hardcodedUserID + "/");
     return response.data;
 }
 
@@ -50,7 +50,7 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
 }
 
 async function getUserPromise(): Promise<User> {
-    const path: string = "/rest/dbmusers/" + hardcoded_userid + "/";
+    const path: string = "/rest/dbmusers/" + hardcodedUserID + "/";
     const response: AxiosResponse = await axios.get(path);
     return response.data;
 }
@@ -58,7 +58,7 @@ async function getUserPromise(): Promise<User> {
 async function displayCoursesAndDatabases(): Promise<void> {
     const databases: Database[] = await getDatabasesPromise();
 
-    const coursesAndDatabases = new Map<number, string>();
+    const coursesAndDatabases: Map<number, string> = new Map<number, string>();
 
     for (let i = 0; i < databases.length; i++) {
         coursesAndDatabases.set(databases[i].course, "");
@@ -73,13 +73,18 @@ async function displayCoursesAndDatabases(): Promise<void> {
             + "fid: " + databases[i].fid + "<br>"
             + "course: " + databases[i].course + "<br>";
 
-        coursesAndDatabases.get(databases[i].course).concat(html);
+        const course: string | undefined = coursesAndDatabases.get(databases[i].course);
+        if (course) {
+            course.concat(html);
+        }
     }
 
     const resultNav: string[] = [];
     const resultContent: string[] = [];
     let active = " active";
-    for (let [courseNumber, content] of coursesAndDatabases) {
+    for (const entry of Array.from(coursesAndDatabases.entries())) {
+        const courseNumber: number = entry[0];
+        const content: string = entry[1];
         const course: Course = await getCourseByIDPromise(courseNumber);
         resultNav.push(
             "<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>"
@@ -103,11 +108,11 @@ async function displayUserDetails(): Promise<void> {
     pageTitleHtml.innerHTML += "Admin - User " + user.id;
 
     let role: string;
-    if (user.role == 0) {
+    if (user.role === 0) {
         role = "Admin";
-    } else if (user.role == 1) {
+    } else if (user.role === 1) {
         role = "Teacher";
-    } else if (user.role == 2) {
+    } else if (user.role === 2) {
         role = "Student";
     } else {
         role = "Unknown";
