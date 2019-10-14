@@ -144,13 +144,15 @@ Throughout this tutorial, `[DOCUMENT ROOT]` will be used to indicate the absolut
 5. Copy uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; /var/run/ is simply the standard.
 6. To test if you have correctly configured uwsgi, run `uwsgi --ini uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
 7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` (or any name of your choice) using the init system of your operation system. The execute command is `uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini`. Depending on the permissions of the files and the socket, you may need to run this as root; however, we recommend running it as www-data. Start the service, and make sure it is started with Apache at boot time.
-8. If the previous step succeeded, we can start configuring apache. If you need to set up a virtual host, we assume you already know how to do this. Otherwise, you can configure this as the main server by putting the configuration information at the root level of the config file. This project needs the following configuration:
-```
+8. If the previous step succeeded, we can start configuring apache. If you need to set up a virtual host, we assume you already know how to do this. Otherwise, you can configure this as the main server by putting the configuration information at the root level of the config file. 
+
+This project needs the following configuration:
+
     DocumentRoot "[DOCUMENT ROOT]"
     ProxyPass /static !
     ProxyPass / unix:/var/run/dab.sock|uwsgi://uwsgi-uds-dab/
     ProxyPassReverse / unix:/var/run/dab.sock|uwsgi://uwsgi-uds-dab/
-```
+
 If you have changed the location of the socket in the previous steps, you must also change it here.
 
 Congratulations! You should now have the basic web page set up. You can test this by trying to access the page, at whatever port Apache runs on.
