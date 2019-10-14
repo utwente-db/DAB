@@ -131,30 +131,23 @@ async function displayCourses(): Promise<void> {
     }
 }
 
-async function changeViewToHaveCredentials() {
+async function changeView(hasCredentials: boolean) {
     const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link active")[0] as HTMLLinkElement;
+    const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
+    const newPane = hasCredentials ? haveCredsPane : noCredsPane;
     const i = Number(activeLink.id);
-    const fragment = createNavLink(true, i, true);
+    const fragment = createNavLink(hasCredentials, i, true);
     activeLink.classList.remove("active");
     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild!);
     activeLink.remove();
     ownDatabases = (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
-    noCredsPane.classList.remove("active");
-    haveCredsPane.classList.add("active");
-    populateHaveCredentialsPane(i);
-}
-
-async function changeViewToNoCredentials() {
-    const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link active")[0] as HTMLLinkElement;
-    const i = Number(activeLink.id);
-    const fragment = createNavLink(false, i, true);
-    activeLink.classList.remove("active");
-    activeLink.insertAdjacentElement("afterend", fragment.firstElementChild!);
-    activeLink.remove();
-    ownDatabases = (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
-    haveCredsPane.classList.remove("active");
-    noCredsPane.classList.add("active");
-    populateNoCredentialsPane(i);
+    oldPane.classList.remove("active");
+    newPane.classList.add("active");
+    if (hasCredentials) {
+        await populateHaveCredentialsPane(i);
+    } else {
+        await populateNoCredentialsPane(i);
+    }
 }
 
 async function prepareToGetCredentials() {
@@ -165,7 +158,7 @@ async function prepareToGetCredentials() {
         const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
         if (success) {
-            await changeViewToHaveCredentials()
+            await changeView(true);
         }
 
     } catch (error) {
@@ -176,7 +169,6 @@ async function prepareToGetCredentials() {
         groupInput.classList.remove("disabled");
     }
 }
-
 
 
 function disableElementsOnPage() {
@@ -230,7 +222,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         // await changeViewToHaveCredentials()
         addAlert("Deleted database", AlertType.primary);
-        changeViewToNoCredentials();
+        await changeView(false);
         success = true;
     } catch (error) {
         addErrorAlert(error);
@@ -265,7 +257,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         addErrorAlert(error);
         success = false;
     } finally {
-    enableElementsOnPage();
+        enableElementsOnPage();
     }
     return success;
 }

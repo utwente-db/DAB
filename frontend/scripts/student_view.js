@@ -26387,48 +26387,35 @@ function displayCourses() {
         });
     });
 }
-function changeViewToHaveCredentials() {
+function changeView(hasCredentials) {
     return __awaiter(this, void 0, void 0, function () {
-        var activeLink, i, fragment;
+        var activeLink, oldPane, newPane, i, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     activeLink = document.getElementsByClassName("nav-link active")[0];
+                    oldPane = hasCredentials ? noCredsPane : haveCredsPane;
+                    newPane = hasCredentials ? haveCredsPane : noCredsPane;
                     i = Number(activeLink.id);
-                    fragment = createNavLink(true, i, true);
+                    fragment = createNavLink(hasCredentials, i, true);
                     activeLink.classList.remove("active");
                     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild);
                     activeLink.remove();
                     return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
                 case 1:
                     ownDatabases = (_a.sent()).data;
-                    noCredsPane.classList.remove("active");
-                    haveCredsPane.classList.add("active");
-                    populateHaveCredentialsPane(i);
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
-function changeViewToNoCredentials() {
-    return __awaiter(this, void 0, void 0, function () {
-        var activeLink, i, fragment;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    activeLink = document.getElementsByClassName("nav-link active")[0];
-                    i = Number(activeLink.id);
-                    fragment = createNavLink(false, i, true);
-                    activeLink.classList.remove("active");
-                    activeLink.insertAdjacentElement("afterend", fragment.firstElementChild);
-                    activeLink.remove();
-                    return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
-                case 1:
-                    ownDatabases = (_a.sent()).data;
-                    haveCredsPane.classList.remove("active");
-                    noCredsPane.classList.add("active");
-                    populateNoCredentialsPane(i);
-                    return [2 /*return*/];
+                    oldPane.classList.remove("active");
+                    newPane.classList.add("active");
+                    if (!hasCredentials) return [3 /*break*/, 3];
+                    return [4 /*yield*/, populateHaveCredentialsPane(i)];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 5];
+                case 3: return [4 /*yield*/, populateNoCredentialsPane(i)];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5: return [2 /*return*/];
             }
         });
     });
@@ -26449,7 +26436,7 @@ function prepareToGetCredentials() {
                 case 2:
                     success = _a.sent();
                     if (!success) return [3 /*break*/, 4];
-                    return [4 /*yield*/, changeViewToHaveCredentials()];
+                    return [4 /*yield*/, changeView(true)];
                 case 3:
                     _a.sent();
                     _a.label = 4;
@@ -26519,24 +26506,26 @@ function prepareToDeleteCredentials(dbID) {
                     disableElementsOnPage();
                     _a.label = 2;
                 case 2:
-                    _a.trys.push([2, 4, 5, 6]);
+                    _a.trys.push([2, 5, 6, 7]);
                     return [4 /*yield*/, axios_1.default.delete("/rest/studentdatabases/" + dbID + "/")];
                 case 3:
                     _a.sent();
                     // await changeViewToHaveCredentials()
                     alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
-                    changeViewToNoCredentials();
-                    success = true;
-                    return [3 /*break*/, 6];
+                    return [4 /*yield*/, changeView(false)];
                 case 4:
+                    _a.sent();
+                    success = true;
+                    return [3 /*break*/, 7];
+                case 5:
                     error_2 = _a.sent();
                     alert_1.addErrorAlert(error_2);
                     success = false;
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     enableElementsOnPage();
                     return [7 /*endfinally*/];
-                case 6: return [2 /*return*/, success];
+                case 7: return [2 /*return*/, success];
             }
         });
     });
