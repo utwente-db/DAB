@@ -12,17 +12,20 @@ Firstly, the software requires full administrative access to a PostgreSQL server
 This server does not have to be hosted on the same machine.
 It is recommended that the PostgreSQL databases not be used for any other purpose than this software.
 
-To run the project the following system packages are required (may not be actual package names):
+Install dependencies:
+
+- python3-pip
+- npm (required for installation only)
+
+Run dependencies:
 
 - python3.7
 - python3-venv
-- python3-pip
 - python3-dev
 - postgresql-python-venv
 - libpq-dev
 - postgresql-client-common
 - postgresql-client-<VERSION>
-- npm (required for installation only)
 
 Additionally, the following software is needed for the recommended production server setup:
 
@@ -120,3 +123,54 @@ To use Postfix from a location on the UT campus, only one line needs to be added
 This will cause postfix to send all its mail to the UT SMTP server, which, at the moment, forwards all mail originating from within the campus.
 
 Furthermore, `designapp1/mail.py` must be edited to ensure the sender address is corresponds to the domain of the server.
+
+## Installation under Apache
+
+This tutorial will outline the steps required to install the software under Apache.
+It is intended for services that already have an Apache server running other websites, with a system administrator who is somewhat experienced with Apache httpd and whatever operating system they choose to use.
+Note that while in principle all operating systems are supported, in practice we have assumed the project will be ran in a UNIX-like environment.
+If you want to set up the system on a standalone server, we recommend the above tutorial for nginx.
+
+Note that this tutorial will use the somewhat newer `mod_proxy_uwsgi`, instead of the older, and much uglier, `mod_wsgi`. 
+This mod is NOT CONSIDERED STABLE UNLESS uWSGI is at least version 2.0.6, and Apache is at least version 2.4.9. 
+If your system does not provide these versions, or you have an exceptionally high need for stability, we recommend the usage of the older `mod_wsgi` instead.
+
+Throughout this tutorial, `[DOCUMENT ROOT]` will be used to indicate the absolute path to the directory in which you cloned this project. Standard practice is putting it somewhere in `/var/www/`
+
+1. Install all the dependencies listed above. Take care to install uwsgi as a pip3 package, and not via the system dependencies. 
+2. If your distribution does not come with Python3.6 or later, compile Python3.7 from source, then follow [this tutorial](https://www.paulox.net/2019/03/13/how-to-use-uwsgi-with-python-3-7-in-ubuntu-18-x/) to ensure uwsgi uses it. Also edit install.sh: the first line, `python3 -m venv venv` MUST use your new python3.7 installation.
+3. Run install.sh. This will create a virtual environment, and install the dependencies for the project in it.
+4. Create `secret.py` in accordance with the paragraph on it above.
+5. Copy uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; /var/run/ is simply the standard.
+6. To test if you have correctly configured uwsgi, run `uwsgi --ini uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
+7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` (or any name of your choice) using the init system of your operation system. The execute command is `uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini`. Depending on the permissions of the files and the socket, you may need to run this as root; however, we recommend running it as www-data. Start the service, and make sure it is started with Apache at boot time.
+8. If the previous step succeeded, we can start configuring apache. If you need to set up a virtual host, we assume you already know how to do this. Otherwise, you can configure this as the main server by putting the configuration information at the root level of the config file. This project needs the following configuration:
+
+    DocumentRoot "[DOCUMENT ROOT]"
+    ProxyPass /static !
+    ProxyPass / unix:/var/run/dab.sock|uwsgi://uwsgi-uds-dab/
+    ProxyPassReverse / unix:/var/run/dab.sock|uwsgi://uwsgi-uds-dab/
+
+If you have changed the location of the socket in the previous steps, you must also change it here.
+
+Congratulations! You should now have the basic web page set up. You can test this by trying to access the page, at whatever port Apache runs on.
+There are now two things left to do:
+
+This project MUST run over https. 
+It is the responsibility of the system administrator to ensure there are proper SSL certificates present. 
+After this has been arranged, `SSLRequireSSL` MUST be added to the Apache configuration of this site, to ensure that only SSL connections will be accepted.
+Failure to comply with these instructions will cause passwords to be transmitted over unencrypted connections.
+
+The second thing is email.
+This project requires you to locally host an SMTP server, so that we can send verification emails. 
+This email server only needs to relay messages from the local host, coming in over a loopback connection.
+If you do not have one installed, we recommend installing Postfix using the package manager. 
+On the UT campus, the only edit that needs to be made to Postfix is the following line in `/etc/postfix/main.cf`:
+
+    relayhost = smtp.utwente.nl
+
+Once this is configured, the server should be able to create email.
+
+To bootstrap an administrator account, we recommend registering a regular account, then accessing the main database by hand and change the role for this account to `0`.
+The table that contains user accounts is called `dbmusers`.
+Once this is done, the administrator account can promote users to teacher or administrator status.
