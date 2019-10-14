@@ -19,6 +19,7 @@ class dbmusers(models.Model):
     verified = models.BooleanField(default=False)
     token = models.TextField(null=True)
     lastlogin = models.DateTimeField(default=None)
+    tokenExpire = models.DateTimeField(default=None, db_column="token_expire")
 
     class Meta:
         managed = False

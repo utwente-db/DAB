@@ -225,6 +225,21 @@ POST -> Generates the backup script. Returns the location of said script.
 
 Only accessible to admins
 
+## /request_reset_password/[email] \(NOT /rest !!!)
+
+POST -> Sends an password reset email
+
+Email contains a link that is valid for 4 hours.
+
+## /reset_password/[user id]/[token]
+
+GET -> Displays a "new password" prompt //TODO
+POST -> Takes in a JSON object with one key, "password", and sets the password to that password.
+
+Both of these will return errors if the token is invalid or expired.
+
+The link sent will be valid for 4 hours.
+
 # Permissions
 
 Each user level has the following permissions
