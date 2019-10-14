@@ -2,8 +2,8 @@ import axios, {AxiosResponse} from 'axios';
 import {displayWhoami} from "./navbar";
 
 import * as $ from "jquery";
-import "popper.js"
-import "bootstrap"
+import "popper.js";
+import "bootstrap";
 
 const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -54,7 +54,7 @@ async function displayCourses(): Promise<void> {
             + "<li>FID: " + courses[i].fid + "</li>"
             + "<li>Coursename: " + courses[i].coursename + "</li>"
             + "<li>Info: " + courses[i].info + "</li></ul>"
-            + "<button class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\">Edit Course</button></div>"
+            + "<a class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\" role=\"button\">Edit Course</a></div>"
         );
     }
     const resultNavString: string = resultNav.join("\n");
