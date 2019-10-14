@@ -61,6 +61,10 @@ async function displayCoursesAndDatabases(): Promise<void> {
     const coursesAndDatabases = new Map<number, string>();
 
     for (let i = 0; i < databases.length; i++) {
+        coursesAndDatabases.set(databases[i].course, "");
+    }
+
+    for (let i = 0; i < databases.length; i++) {
         const html: string = "dbid: " + databases[i].dbid + "<br>"
             + "databasename: " + databases[i].databasename + "<br>"
             + "username: " + databases[i].username + "<br>"
@@ -69,13 +73,7 @@ async function displayCoursesAndDatabases(): Promise<void> {
             + "fid: " + databases[i].fid + "<br>"
             + "course: " + databases[i].course + "<br>";
 
-        if (!coursesAndDatabases.has(databases[i].course)) {
-            coursesAndDatabases.set(databases[i].course, "");
-        }
-        if (coursesAndDatabases.get(databases[i].course) != undefined) {
-            coursesAndDatabases.get(databases[i].course).concat(html);
-        }
-
+        coursesAndDatabases.get(databases[i].course).concat(html);
     }
 
     const resultNav: string[] = [];
@@ -114,20 +112,6 @@ async function displayUserDetails(): Promise<void> {
     } else {
         role = "Unknown";
     }
-
-    // userInfoHtml.innerHTML +=
-    //     "<>"
-    //
-    //
-    //
-    //
-    //     "<ul><li>ID: " + user.id +
-    //     "</li><li>Role: " + role + // Change role
-    //     "</li><li>E-Mail: "  + user.email +
-    //     "</li><li>Verified: " + user.verified +
-    //     "</li>"
-    //     ;
-
 }
 
 window.onload = async () => {

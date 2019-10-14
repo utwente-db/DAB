@@ -102,12 +102,4 @@ window.onload = async () => {
     await displayUsers();
     await displayCourses();
     await displayWhoami();
-<<<<<<< HEAD
 }
-=======
-<<<<<<< HEAD
-
-=======
->>>>>>> master
-};
->>>>>>> 9b946296a12b6f3826fbc42d8387a2470337ff0a
