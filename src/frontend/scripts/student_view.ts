@@ -7,7 +7,6 @@ import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2'
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
-const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
 const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
 const noCredsInfo: HTMLDivElement = document.getElementById("no-credentials-courseinfo") as HTMLDivElement;
 const haveCredsCoursename: HTMLHeadingElement = document.getElementById("have-credentials-coursename") as HTMLDivElement;
@@ -122,8 +121,6 @@ async function displayCourses(): Promise<void> {
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     console.log(ownCourses);
-    const resultNav: string[] = [];
-
     for (let i = 0; i < courses.length; i++) {
         const haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
         const fragment = createNavLink(haveCredentials, i);
@@ -147,26 +144,6 @@ async function changeViewToHaveCredentials() {
     populateHaveCredentialsPane(i);
 }
 
-async function prepareToGetCredentials() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
-    credentialsButton.classList.add("disabled");
-    groupInput.classList.add("disabled");
-    try {
-        const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
-
-        if (success) {
-            await changeViewToHaveCredentials()
-        }
-        ;
-    } catch (error) {
-        addErrorAlert(error);
-    } finally {
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
-        credentialsButton.classList.remove("disabled");
-        groupInput.classList.remove("disabled");
-    }
-}
-
 async function changeViewToNoCredentials() {
     const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link active")[0] as HTMLLinkElement;
     const i = Number(activeLink.id);
@@ -178,6 +155,60 @@ async function changeViewToNoCredentials() {
     haveCredsPane.classList.remove("active");
     noCredsPane.classList.add("active");
     populateNoCredentialsPane(i);
+}
+
+async function prepareToGetCredentials() {
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
+    credentialsButton.classList.add("disabled");
+    groupInput.classList.add("disabled");
+    try {
+        const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
+
+        if (success) {
+            await changeViewToHaveCredentials()
+        }
+
+    } catch (error) {
+        addErrorAlert(error);
+    } finally {
+        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
+        credentialsButton.classList.remove("disabled");
+        groupInput.classList.remove("disabled");
+    }
+}
+
+
+
+function disableElementsOnPage() {
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
+    Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((deleteButton: HTMLButtonElement) => {
+            deleteButton.classList.add("disabled")
+        });
+    Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((resetButton: HTMLButtonElement) => {
+            resetButton.classList.add("disabled")
+        });
+    Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((dumpButton: HTMLButtonElement) => {
+            dumpButton.classList.add("disabled")
+        });
+}
+
+function enableElementsOnPage() {
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
+    Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((deleteButton: HTMLButtonElement) => {
+            deleteButton.classList.remove("disabled")
+        });
+    Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((resetButton: HTMLButtonElement) => {
+            resetButton.classList.remove("disabled")
+        });
+    Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
+        .forEach((dumpButton: HTMLButtonElement) => {
+            dumpButton.classList.remove("disabled")
+        });
 }
 
 async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
@@ -193,21 +224,8 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
     if (result.dismiss === Swal.DismissReason.cancel) {
         return false;
     }
-    let success;
-
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
-    Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
-        .forEach((deleteButton: HTMLButtonElement) => {
-            deleteButton.classList.add("disabled")
-        });
-    Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
-        .forEach((resetButton: HTMLButtonElement) => {
-            resetButton.classList.add("disabled")
-        });
-    Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
-        .forEach((dumpButton: HTMLButtonElement) => {
-            dumpButton.classList.add("disabled")
-        });
+    let success: boolean;
+    disableElementsOnPage();
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         // await changeViewToHaveCredentials()
@@ -218,19 +236,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         addErrorAlert(error);
         success = false;
     } finally {
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
-        Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
-            .forEach((deleteButton: HTMLButtonElement) => {
-                deleteButton.classList.remove("disabled")
-            });
-        Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
-            .forEach((resetButton: HTMLButtonElement) => {
-                resetButton.classList.remove("disabled")
-            });
-        Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
-            .forEach((dumpButton: HTMLButtonElement) => {
-                dumpButton.classList.remove("disabled")
-            });
+        enableElementsOnPage();
     }
     return success;
 
@@ -249,21 +255,8 @@ async function resetDatabase(dbID: number): Promise<boolean> {
     if (result.dismiss === Swal.DismissReason.cancel) {
         return false;
     }
-    let success;
-
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
-    Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
-        .forEach((deleteButton: HTMLButtonElement) => {
-            deleteButton.classList.add("disabled")
-        });
-    Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
-        .forEach((resetButton: HTMLButtonElement) => {
-            resetButton.classList.add("disabled")
-        });
-    Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
-        .forEach((dumpButton: HTMLButtonElement) => {
-            dumpButton.classList.add("disabled")
-        });
+    let success: boolean;
+    disableElementsOnPage();
     try {
         await axios.post(`/rest/reset/${dbID}/`);
         addAlert("Reset database", AlertType.primary);
@@ -272,19 +265,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         addErrorAlert(error);
         success = false;
     } finally {
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
-        Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
-            .forEach((deleteButton: HTMLButtonElement) => {
-                deleteButton.classList.remove("disabled")
-            });
-        Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
-            .forEach((resetButton: HTMLButtonElement) => {
-                resetButton.classList.remove("disabled")
-            });
-        Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
-            .forEach((dumpButton: HTMLButtonElement) => {
-                dumpButton.classList.remove("disabled")
-            });
+    enableElementsOnPage();
     }
     return success;
 }

@@ -13,7 +13,7 @@ const coursesDropdown: HTMLSelectElement = document.getElementById("courses-drop
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
 const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 
-interface Course {
+export interface Course {
     courseid: number;
     fid: number;
     coursename: string;

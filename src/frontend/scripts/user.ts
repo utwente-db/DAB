@@ -5,6 +5,7 @@ import "popper.js"
 import "bootstrap"
 
 import {displayWhoami} from "./navbar";
+import {Course, StudentDatabase} from "./courses";
 
 //todo: change to selected user ofcourse
 const hardcodedUserID = 73;
@@ -15,31 +16,21 @@ const userInfoHtml: HTMLDivElement = document.getElementById("user-info") as HTM
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
 
-interface User {
+export interface User {
     id: number;
     role: number;
     email: string;
-    verified: boolean;
-}
-
-interface Course {
-    courseid: number;
-    fid: number;
-    coursename: string;
-    info: string;
-}
-
-interface Database {
-    dbid: number;
-    databasename: string;
-    username: string;
     password: string;
-    groupid: number;
-    fid: number;
-    course: number;
+    verified: boolean;
+    token: string;
 }
 
-async function getDatabasesPromise(): Promise<Database[]> {
+export async function getUsersPromise(): Promise<User[]> {
+    const response: AxiosResponse = await axios.get("/rest/dbmusers/");
+    return response.data;
+}
+
+async function getDatabasesPromise(): Promise<StudentDatabase[]> {
     const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + hardcodedUserID + "/");
     return response.data;
 }
@@ -56,7 +47,7 @@ async function getUserPromise(): Promise<User> {
 }
 
 async function displayCoursesAndDatabases(): Promise<void> {
-    const databases: Database[] = await getDatabasesPromise();
+    const databases: StudentDatabase[] = await getDatabasesPromise();
 
     const coursesAndDatabases: Map<number, string> = new Map<number, string>();
 

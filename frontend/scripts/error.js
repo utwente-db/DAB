@@ -91,24 +91,9 @@
   !*** ./src/frontend/scripts/error.ts ***!
   \***************************************/
 /*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-function generateAlertHTML(errorMessage, alertType) {
-    return "<div class=\"alert " + alertType + " alert-dismissible fade show\"  role=\"alert\">\n            <div id=\"error-text\">" + errorMessage + "</div>\n            <button type=\"button\" id=\"error-dismiss-button\" class=\"close\" data-dismiss=\"alert\"\n            aria-label=\"Close\">\n            <span aria-hidden=\"true\">&times;</span>\n            </button>\n            </div>";
-}
-exports.generateAlertHTML = generateAlertHTML;
-;
-var Alert;
-(function (Alert) {
-    Alert["primary"] = "alert-primary";
-    Alert["secondary"] = "alert-secondary";
-    Alert["danger"] = "alert-danger";
-    Alert["success"] = "alert-success";
-})(Alert = exports.Alert || (exports.Alert = {}));
-
+throw new Error("Module build failed (from ./node_modules/ts-loader/index.js):\nError: ENOENT: no such file or directory, open '/home/freek/design/src/frontend/scripts/error.ts'");
 
 /***/ })
 

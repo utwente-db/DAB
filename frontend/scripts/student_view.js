@@ -26291,7 +26291,6 @@ __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap
 var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
 var sweetalert2_1 = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 var coursesNavHtml = document.getElementById("courses-nav");
-var coursesContentHtml = document.getElementById("courses-content");
 var noCredsCoursename = document.getElementById("no-credentials-coursename");
 var noCredsInfo = document.getElementById("no-credentials-courseinfo");
 var haveCredsCoursename = document.getElementById("have-credentials-coursename");
@@ -26366,7 +26365,7 @@ function createNavLink(haveCredentials, i, active) {
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var ownCourses, resultNav, i, haveCredentials, fragment;
+        var ownCourses, i, haveCredentials, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
@@ -26378,7 +26377,6 @@ function displayCourses() {
                     ownDatabases = (_a.sent());
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     console.log(ownCourses);
-                    resultNav = [];
                     for (i = 0; i < courses.length; i++) {
                         haveCredentials = (ownCourses.includes(courses[i].courseid));
                         fragment = createNavLink(haveCredentials, i);
@@ -26412,43 +26410,6 @@ function changeViewToHaveCredentials() {
         });
     });
 }
-function prepareToGetCredentials() {
-    return __awaiter(this, void 0, void 0, function () {
-        var success, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
-                    credentialsButton.classList.add("disabled");
-                    groupInput.classList.add("disabled");
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 5, 6, 7]);
-                    return [4 /*yield*/, courses_1.tryGetCredentials(currentCourse, Number(groupInput.value), false)];
-                case 2:
-                    success = _a.sent();
-                    if (!success) return [3 /*break*/, 4];
-                    return [4 /*yield*/, changeViewToHaveCredentials()];
-                case 3:
-                    _a.sent();
-                    _a.label = 4;
-                case 4:
-                    ;
-                    return [3 /*break*/, 7];
-                case 5:
-                    error_1 = _a.sent();
-                    alert_1.addErrorAlert(error_1);
-                    return [3 /*break*/, 7];
-                case 6:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
-                    credentialsButton.classList.remove("disabled");
-                    groupInput.classList.remove("disabled");
-                    return [7 /*endfinally*/];
-                case 7: return [2 /*return*/];
-            }
-        });
-    });
-}
 function changeViewToNoCredentials() {
     return __awaiter(this, void 0, void 0, function () {
         var activeLink, i, fragment;
@@ -26472,6 +26433,71 @@ function changeViewToNoCredentials() {
         });
     });
 }
+function prepareToGetCredentials() {
+    return __awaiter(this, void 0, void 0, function () {
+        var success, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
+                    credentialsButton.classList.add("disabled");
+                    groupInput.classList.add("disabled");
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 5, 6, 7]);
+                    return [4 /*yield*/, courses_1.tryGetCredentials(currentCourse, Number(groupInput.value), false)];
+                case 2:
+                    success = _a.sent();
+                    if (!success) return [3 /*break*/, 4];
+                    return [4 /*yield*/, changeViewToHaveCredentials()];
+                case 3:
+                    _a.sent();
+                    _a.label = 4;
+                case 4: return [3 /*break*/, 7];
+                case 5:
+                    error_1 = _a.sent();
+                    alert_1.addErrorAlert(error_1);
+                    return [3 /*break*/, 7];
+                case 6:
+                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
+                    credentialsButton.classList.remove("disabled");
+                    groupInput.classList.remove("disabled");
+                    return [7 /*endfinally*/];
+                case 7: return [2 /*return*/];
+            }
+        });
+    });
+}
+function disableElementsOnPage() {
+    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
+    Array.from(document.getElementsByClassName("delete-button"))
+        .forEach(function (deleteButton) {
+        deleteButton.classList.add("disabled");
+    });
+    Array.from(document.getElementsByClassName("reset-button"))
+        .forEach(function (resetButton) {
+        resetButton.classList.add("disabled");
+    });
+    Array.from(document.getElementsByClassName("dump-button"))
+        .forEach(function (dumpButton) {
+        dumpButton.classList.add("disabled");
+    });
+}
+function enableElementsOnPage() {
+    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
+    Array.from(document.getElementsByClassName("delete-button"))
+        .forEach(function (deleteButton) {
+        deleteButton.classList.remove("disabled");
+    });
+    Array.from(document.getElementsByClassName("reset-button"))
+        .forEach(function (resetButton) {
+        resetButton.classList.remove("disabled");
+    });
+    Array.from(document.getElementsByClassName("dump-button"))
+        .forEach(function (dumpButton) {
+        dumpButton.classList.remove("disabled");
+    });
+}
 function prepareToDeleteCredentials(dbID) {
     return __awaiter(this, void 0, void 0, function () {
         var result, success, error_2;
@@ -26490,19 +26516,7 @@ function prepareToDeleteCredentials(dbID) {
                     if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
                         return [2 /*return*/, false];
                     }
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
-                    Array.from(document.getElementsByClassName("delete-button"))
-                        .forEach(function (deleteButton) {
-                        deleteButton.classList.add("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("reset-button"))
-                        .forEach(function (resetButton) {
-                        resetButton.classList.add("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("dump-button"))
-                        .forEach(function (dumpButton) {
-                        dumpButton.classList.add("disabled");
-                    });
+                    disableElementsOnPage();
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 4, 5, 6]);
@@ -26520,19 +26534,7 @@ function prepareToDeleteCredentials(dbID) {
                     success = false;
                     return [3 /*break*/, 6];
                 case 5:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
-                    Array.from(document.getElementsByClassName("delete-button"))
-                        .forEach(function (deleteButton) {
-                        deleteButton.classList.remove("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("reset-button"))
-                        .forEach(function (resetButton) {
-                        resetButton.classList.remove("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("dump-button"))
-                        .forEach(function (dumpButton) {
-                        dumpButton.classList.remove("disabled");
-                    });
+                    enableElementsOnPage();
                     return [7 /*endfinally*/];
                 case 6: return [2 /*return*/, success];
             }
@@ -26557,19 +26559,7 @@ function resetDatabase(dbID) {
                     if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
                         return [2 /*return*/, false];
                     }
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
-                    Array.from(document.getElementsByClassName("delete-button"))
-                        .forEach(function (deleteButton) {
-                        deleteButton.classList.add("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("reset-button"))
-                        .forEach(function (resetButton) {
-                        resetButton.classList.add("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("dump-button"))
-                        .forEach(function (dumpButton) {
-                        dumpButton.classList.add("disabled");
-                    });
+                    disableElementsOnPage();
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 4, 5, 6]);
@@ -26585,19 +26575,7 @@ function resetDatabase(dbID) {
                     success = false;
                     return [3 /*break*/, 6];
                 case 5:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
-                    Array.from(document.getElementsByClassName("delete-button"))
-                        .forEach(function (deleteButton) {
-                        deleteButton.classList.remove("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("reset-button"))
-                        .forEach(function (resetButton) {
-                        resetButton.classList.remove("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("dump-button"))
-                        .forEach(function (dumpButton) {
-                        dumpButton.classList.remove("disabled");
-                    });
+                    enableElementsOnPage();
                     return [7 /*endfinally*/];
                 case 6: return [2 /*return*/, success];
             }
