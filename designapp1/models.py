@@ -44,9 +44,10 @@ class Courses(models.Model):
         return self.coursename
 
     def save(self, *args, **kwargs):
-        if not re.match(r'^[a-zA-Z0-9\.\-\_\+\/\\]+$', self.coursename):
-            raise ValueError("Coursename can only contain alphanumerical and these: .-_+/\\ characters")
-        super(Courses, self).save()
+        if not re.match(r'^[a-zA-Z0-9\.\-\_\+\/]+$', self.coursename):
+            raise ValueError("Coursename can only contain alphanumerical and these: .-_+/ characters")
+        else:
+            super(Courses, self).save()
 
     def owner(self):
         return self.fid
