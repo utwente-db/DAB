@@ -73,13 +73,19 @@ async function displayCoursesAndDatabases(): Promise<void> {
             + "fid: " + databases[i].fid + "<br>"
             + "course: " + databases[i].course + "<br>";
 
-        coursesAndDatabases.get(databases[i].course).concat(html);
+        const course: string | undefined = coursesAndDatabases.get(databases[i].course);
+        if (course) {
+            course.concat(html);
+        }
+
     }
 
     const resultNav: string[] = [];
     const resultContent: string[] = [];
     let active = " active";
-    for (let [courseNumber, content] of coursesAndDatabases) {
+    for (const entry of Array.from(coursesAndDatabases.entries())) {
+        const courseNumber: number = entry[0];
+        const content: string = entry[1];
         const course: Course = await getCourseByIDPromise(courseNumber);
         resultNav.push(
             "<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>"
@@ -117,4 +123,5 @@ async function displayUserDetails(): Promise<void> {
 window.onload = async () => {
     await displayUserDetails();
     await displayWhoami();
+    await displayCoursesAndDatabases();
 }
