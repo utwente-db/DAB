@@ -36,7 +36,7 @@ def send_verification(user):
     mailer.send_message(msg)
 
 def send_reset(user):
-    # mailer = smtplib.SMTP('localhost');
+    mailer = smtplib.SMTP('localhost');
     send_addr = "no-reply@thebias.nl"
 
     a = user["email"].split("@")
@@ -63,5 +63,4 @@ def send_reset(user):
         </html>
         """.format(cid=cid[1:-1]), subtype='html')
 
-    print(msg)
-    # mailer.send_message(msg)
+    mailer.send_message(msg)
