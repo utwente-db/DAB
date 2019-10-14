@@ -5,13 +5,13 @@ import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import {displayWhoami} from "./navbar";
-
-
-const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
-const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
-const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
-const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
+// import {displayWhoami} from "./navbar";
+//
+//
+// const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
+// const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
+// const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
+// const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 
 export interface Course {
     courseid: number;
@@ -39,19 +39,19 @@ export async function getCoursesPromise(): Promise<Course[]> {
 
 }
 
-async function displayCourses(): Promise<void> {
-    const courses: Course[] = await getCoursesPromise();
-    const result: string[] = [];
-    for (let i = 0; i < courses.length; i++) {
-        const optionNode = document.createElement("option");
-        optionNode.setAttribute("value", String(courses[i].courseid));
-        optionNode.appendChild(document.createTextNode(courses[i].coursename));
-        coursesDropdown.appendChild(optionNode)
-        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
-    }
-    // const resultString: string = result.join("\n");
-    // coursesDropdown.innerHTML += resultString;
-}
+// async function displayCourses(): Promise<void> {
+//     const courses: Course[] = await getCoursesPromise();
+//     const result: string[] = [];
+//     for (let i = 0; i < courses.length; i++) {
+//         const optionNode = document.createElement("option");
+//         optionNode.setAttribute("value", String(courses[i].courseid));
+//         optionNode.appendChild(document.createTextNode(courses[i].coursename));
+//         coursesDropdown.appendChild(optionNode)
+//         // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+//     }
+//     // const resultString: string = result.join("\n");
+//     // coursesDropdown.innerHTML += resultString;
+// }
 
 export async function tryGetCredentials(courseID: number, groupNumber: number, alert = true): Promise<boolean> {
 
@@ -86,13 +86,14 @@ export async function tryGetCredentials(courseID: number, groupNumber: number, a
     return false;
 }
 
-window.onload = async () => {
-    await Promise.all([displayWhoami(),
-        await displayCourses(),
-        $('select').selectpicker(), // Style all selects
-        credentialsButton.addEventListener("click", () => {
-            tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value))
-        }),
-    ]);
-};
+// deprecated page onload
+// window.onload = async () => {
+//     await Promise.all([displayWhoami(),
+//         await displayCourses(),
+//         $('select').selectpicker(), // Style all selects
+//         credentialsButton.addEventListener("click", () => {
+//             tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value))
+//         }),
+//     ]);
+// };
 

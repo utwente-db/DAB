@@ -1,7 +1,4 @@
-import axios, {AxiosResponse} from 'axios';
 import {displayWhoami} from "./navbar";
-
-import * as $ from "jquery";
 import "popper.js";
 import "bootstrap";
 import {getUsersPromise, User} from "./user";
@@ -10,7 +7,6 @@ import {Course, getCoursesPromise} from "./courses";
 const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
-
 
 
 async function displayCourses(): Promise<void> {
@@ -76,7 +72,9 @@ async function displayUsers(): Promise<void> {
 }
 
 window.onload = async () => {
-    await displayWhoami();
-    await displayUsers();
-    await displayCourses();
+    await Promise.all([
+        displayWhoami(),
+        displayUsers(),
+        displayCourses()
+    ]);
 };

@@ -25888,7 +25888,6 @@ function generateAlertHTML(errorMessage, alertType, dismissable) {
     return "<div class=\"alert " + alertType + " " + dismissableString + " fade show col-12\"  role=\"alert\">\n            <div class=\"error-text\">" + errorMessage + "</div>\n            " + buttonString + "\n            </div>";
 }
 exports.generateAlertHTML = generateAlertHTML;
-;
 function addAlert(errorMessage, alertType, tempAlert) {
     if (tempAlert === void 0) { tempAlert = null; }
     if (tempAlert && document.body.contains(tempAlert)) {
@@ -25931,6 +25930,7 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     var alertDiv = document.getElementById("alert-div");
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     var tempAlert = alertDiv.lastChild;
+    // noinspection JSIgnoredPromiseFromCall
     removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert;
 }
@@ -26027,16 +26027,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
 var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
-var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
-var credentialsButton = document.getElementById("credentials-button");
-var coursesDropdown = document.getElementById("courses-dropdown");
-var alertDiv = document.getElementById("alert-div");
-var groupInput = document.getElementById("group-input");
 function getCoursesPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -26051,27 +26045,19 @@ function getCoursesPromise() {
     });
 }
 exports.getCoursesPromise = getCoursesPromise;
-function displayCourses() {
-    return __awaiter(this, void 0, void 0, function () {
-        var courses, result, i, optionNode;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getCoursesPromise()];
-                case 1:
-                    courses = _a.sent();
-                    result = [];
-                    for (i = 0; i < courses.length; i++) {
-                        optionNode = document.createElement("option");
-                        optionNode.setAttribute("value", String(courses[i].courseid));
-                        optionNode.appendChild(document.createTextNode(courses[i].coursename));
-                        coursesDropdown.appendChild(optionNode);
-                        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
-                    }
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
+// async function displayCourses(): Promise<void> {
+//     const courses: Course[] = await getCoursesPromise();
+//     const result: string[] = [];
+//     for (let i = 0; i < courses.length; i++) {
+//         const optionNode = document.createElement("option");
+//         optionNode.setAttribute("value", String(courses[i].courseid));
+//         optionNode.appendChild(document.createTextNode(courses[i].coursename));
+//         coursesDropdown.appendChild(optionNode)
+//         // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+//     }
+//     // const resultString: string = result.join("\n");
+//     // coursesDropdown.innerHTML += resultString;
+// }
 function tryGetCredentials(courseID, groupNumber, alert) {
     if (alert === void 0) { alert = true; }
     return __awaiter(this, void 0, void 0, function () {
@@ -26119,25 +26105,16 @@ function tryGetCredentials(courseID, groupNumber, alert) {
     });
 }
 exports.tryGetCredentials = tryGetCredentials;
-window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
-            case 0:
-                _b = (_a = Promise).all;
-                _c = [navbar_1.displayWhoami()];
-                return [4 /*yield*/, displayCourses()];
-            case 1: return [4 /*yield*/, _b.apply(_a, [_c.concat([_d.sent(),
-                        $('select').selectpicker(),
-                        credentialsButton.addEventListener("click", function () {
-                            tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value));
-                        })])])];
-            case 2:
-                _d.sent();
-                return [2 /*return*/];
-        }
-    });
-}); };
+// deprecated page onload
+// window.onload = async () => {
+//     await Promise.all([displayWhoami(),
+//         await displayCourses(),
+//         $('select').selectpicker(), // Style all selects
+//         credentialsButton.addEventListener("click", () => {
+//             tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value))
+//         }),
+//     ]);
+// };
 
 
 /***/ }),

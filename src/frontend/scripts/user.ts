@@ -1,6 +1,4 @@
 import axios, {AxiosResponse} from 'axios';
-
-import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
 
@@ -111,6 +109,8 @@ async function displayUserDetails(): Promise<void> {
 }
 
 window.onload = async () => {
-    await displayUserDetails();
-    await displayWhoami();
-}
+    await Promise.all([
+        displayUserDetails(),
+        displayWhoami()
+    ]);
+};

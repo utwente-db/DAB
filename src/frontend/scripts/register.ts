@@ -2,7 +2,7 @@ import "../sass/main.sass"
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import {addAlert, addErrorAlert, addTempAlert, AlertType, generateAlertHTML} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
 
 const registerButton: HTMLButtonElement = document.getElementById("register-button") as HTMLButtonElement;
