@@ -32,6 +32,7 @@ Additionally, the following software is needed for the recommended production se
 - uWSGI (please install via pip3)
 - a web server (e.g. nginx or apache2)
 - an SMTP server (e.g. postfix)
+- libapache2-mod-proxy-uwsgi (when using apache2)
 
 Logging:
 
@@ -139,14 +140,17 @@ Throughout this tutorial, `[DOCUMENT ROOT]` will be used to indicate the absolut
 
 1. Install all the dependencies listed above. Take care to install uwsgi as a pip3 package, and not via the system dependencies (do not use the venv for this). 
 2. If your distribution does not come with Python3.6 or later, compile Python3.7 from source, then follow [this tutorial](https://www.paulox.net/2019/03/13/how-to-use-uwsgi-with-python-3-7-in-ubuntu-18-x/) to ensure uwsgi uses it. Also edit install.sh: the first line, `python3 -m venv venv` MUST use your new python3.7 installation.
-3. Run install.sh. This will create a virtual environment, and install the dependencies for the project in it.
-4. Create `secret.py` in accordance with the paragraph on it above.
-5. Copy uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; /var/run/ is simply the standard.
+3. Create `secret.py` in accordance with the paragraph on it above.
+4. Run install.sh. This will create a virtual environment, and install the dependencies for the project in it.
+5. Copy/rename uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; /var/run/ is simply the standard. (errors related to socket.c probably mean that you do not have file permissions on the socket file)
 6. To test if you have correctly configured uwsgi, run `uwsgi --ini uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
-7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` (or any name of your choice) using the init system of your operation system. The execute command is `uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini`. Depending on the permissions of the files and the socket, you may need to run this as root; however, we recommend running it as www-data. Start the service, and make sure it is started with Apache at boot time.
+7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` (or any name of your choice) using the init system of your operation system (on linux: https://linuxconfig.org/how-to-create-systemd-service-unit-in-linux). The execute command is `uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini`. Depending on the permissions of the files and the socket, you may need to run this as root; however, we recommend running it as www-data. Start the service, and make sure it is started with Apache at boot time.
 8. If the previous step succeeded, we can start configuring apache. If you need to set up a virtual host, we assume you already know how to do this. Otherwise, you can configure this as the main server by putting the configuration information at the root level of the config file. 
 
-This project needs the following configuration:
+Go to your apache directory (probably /etc/apache2). Use a2enmod to enable proxy and proxy_uwsgi
+
+Then, we must add/edit a configuration file under the sites-available directory (and enable using a2ensite).
+Replace the line containing DocumentRoot by the lines below:
 
     DocumentRoot "[DOCUMENT ROOT]"
     ProxyPass /static !
@@ -155,7 +159,13 @@ This project needs the following configuration:
 
 If you have changed the location of the socket in the previous steps, you must also change it here.
 
-Congratulations! You should now have the basic web page set up. You can test this by trying to access the page, at whatever port Apache runs on.
+If you do not host from /var/www, you might need to edit apache2.conf, and change the line containing:
+
+    <Directory /var/www/>
+
+To the directory you are using.
+
+Congratulations! If you run apache, you should now have the basic web page set up. You can test this by trying to access the page, at whatever port Apache runs on.
 There are now two things left to do:
 
 This project MUST run over https. 

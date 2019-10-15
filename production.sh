@@ -1,4 +1,6 @@
 #!/bin/sh
+# script of commands that should be run just before running a production server
+# deprecated, do not use
 
 . ../venv/bin/activate
 npm install
