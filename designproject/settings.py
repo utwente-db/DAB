@@ -28,8 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-#EMAIL SETTINGS: (please edit)
+# For display to users only; please edit
+DATABASE_SERVER = 'thebias.nl'
 
+# EMAIL SETTINGS: (please edit)
 EMAIL_SERVER = 'localhost'
 EMAIL_SENDER = 'no-reply@thebias.nl'
 

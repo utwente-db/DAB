@@ -935,6 +935,31 @@ def verify(request, token):
     except dbmusers.DoesNotExist as e:
         return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
 
+@require_POST
+def resend_verification(request):
+    body = None
+    user = None
+    try:
+        body = JSONParser().parse(request)
+    except ParseError as e:
+        return HttpResponse("Your JSON did not parse", status=status.HTTP_400_BAD_REQUEST)
+    if not "email" in body:
+        return HttpResponse("Missing key 'email'", status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = dbmusers.objects.get(email=body["email"])
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if user.verified:
+        return HttpResponse(status=status.HTTP_409_CONFLICT)
+
+    user.token = hash.token()
+    user.save()
+
+    mail.send_verification(user.__dict__)
+    return HttpResponse()
+
 #TODO: make front-end for this
 @require_POST
 def request_reset_password(request, email):
@@ -945,7 +970,7 @@ def request_reset_password(request, email):
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     if not db.verified:
-        return HttpResponse("Please verify your email before attempting a password reset", status=HTTP_409_CONFLICT)
+        return HttpResponse("Please verify your email before attempting a password reset", status=status.HTTP_409_CONFLICT)
 
     token = hash.token()
     db.token = hash.token()
