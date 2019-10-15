@@ -28,6 +28,11 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+#EMAIL SETTINGS: (please edit)
+
+EMAIL_SERVER = 'localhost'
+EMAIL_SENDER = 'no-reply@thebias.nl'
+
 # Application definition
 
 INSTALLED_APPS = [
