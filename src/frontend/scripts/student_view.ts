@@ -1,4 +1,4 @@
-import {getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
+import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
 import {displayWhoami} from "./navbar";
 import axios from 'axios';
 import "popper.js"
@@ -24,13 +24,6 @@ const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDiv
 let ownDatabases: StudentDatabase[];
 let courses: Course[];
 let currentCourse = 0;
-
-interface Course {
-    courseid: number;
-    fid: number;
-    coursename: string;
-    info: string;
-}
 
 function populateNoCredentialsPane(i: number) {
     noCredsCoursename.innerText = courses[i].coursename;
