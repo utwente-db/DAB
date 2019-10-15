@@ -8,6 +8,7 @@
 from django.db import models
 from django.conf import settings
 import base64
+import re
 
 
 class dbmusers(models.Model):
@@ -18,6 +19,7 @@ class dbmusers(models.Model):
     verified = models.BooleanField(default=False)
     token = models.TextField(null=True)
     lastlogin = models.DateTimeField(default=None)
+    tokenExpire = models.DateTimeField(default=None, db_column="token_expire")
 
     class Meta:
         managed = False
@@ -42,6 +44,12 @@ class Courses(models.Model):
     def __str__(self):
         return self.coursename
 
+    def save(self, *args, **kwargs):
+        if not re.match(r'^[a-zA-Z0-9\.\-\_\+\/]+$', self.coursename):
+            raise ValueError("Coursename can only contain alphanumerical and these: .-_+/ characters")
+        else:
+            super(Courses, self).save()
+
     def owner(self):
         return self.fid
 
@@ -52,6 +60,31 @@ class Courses(models.Model):
         verbose_name_plural = 'Courses'
         unique_together = ('fid', 'coursename')
 
+def switchPassword(password):
+    bits = base64.b64decode(password)
+    bits = bytes([x^y for (x,y) in zip(settings.BITMASK, bits)])
+    return base64.b64encode(bits).decode()
+
+class StudentdatabasesQuerySet(models.query.QuerySet):
+
+    def get(self, **kwargs):
+        out = super().get(**kwargs)
+        out.password = switchPassword(out.password)
+        return out
+
+    def filter(self, **kwargs):
+        out = super().filter(**kwargs)
+        for db in out:
+            db.password = switchPassword(db.password)
+        return out
+
+class StudentdatabasesManager(models.Manager.from_queryset(StudentdatabasesQuerySet)):
+    def all(self):
+        out = super().all()
+        for db in out:
+            db.password = switchPassword(db.password)
+        return out
+
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.PROTECT, db_column='fid')
@@ -61,13 +94,15 @@ class Studentdatabases(models.Model):
     password = models.CharField(max_length=265)
     groupid = models.IntegerField(default=0, db_column="groupid")
 
+    objects = StudentdatabasesManager()
+
+    def save(self, *args, **kwargs):
+        self.password = switchPassword(self.password)
+        super(Studentdatabases, self).save()
+        self.password = switchPassword(self.password)
+
     def owner(self):
         return self.fid
-
-    def readPassword(self):
-        bits = base64.b64decode(self.password)
-        bits = bytes([x^y for (x,y) in zip(settings.BITMASK, bits)])
-        return base64.b64encode(bits).decode()
 
     class Meta:
         managed = False

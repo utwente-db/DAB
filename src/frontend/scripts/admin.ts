@@ -1,39 +1,13 @@
-import axios, {AxiosResponse} from 'axios';
 import {displayWhoami} from "./navbar";
-
-import * as $ from "jquery";
-import "popper.js"
-import "bootstrap"
+import "popper.js";
+import "bootstrap";
+import {getUsersPromise, User} from "./user";
+import {Course, getCoursesPromise} from "./courses";
 
 const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
 
-interface User {
-    id: number;
-    role: number;
-    email: string;
-    password: string;
-    verified: boolean;
-    token: string;
-}
-
-interface Course {
-    courseid: number;
-    fid: number;
-    coursename: string;
-    info: string;
-}
-
-async function getCoursesPromise(): Promise<Course[]> {
-    const response: AxiosResponse = await axios.get("/rest/courses/");
-    return response.data;
-}
-
-async function getUsersPromise(): Promise<User[]> {
-    const response: AxiosResponse = await axios.get("/rest/dbmusers/");
-    return response.data;
-}
 
 async function displayCourses(): Promise<void> {
     const courses: Course[] = await getCoursesPromise();
@@ -54,7 +28,7 @@ async function displayCourses(): Promise<void> {
             + "<li>FID: " + courses[i].fid + "</li>"
             + "<li>Coursename: " + courses[i].coursename + "</li>"
             + "<li>Info: " + courses[i].info + "</li></ul>"
-            + "<button class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\">Edit Course</button></div>"
+            + "<a class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\" role=\"button\">Edit Course</a></div>"
         );
     }
     const resultNavString: string = resultNav.join("\n");
@@ -98,7 +72,9 @@ async function displayUsers(): Promise<void> {
 }
 
 window.onload = async () => {
-    await displayWhoami();
-    await displayUsers();
-    await displayCourses();
+    await Promise.all([
+        displayWhoami(),
+        displayUsers(),
+        displayCourses()
+    ]);
 };

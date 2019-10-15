@@ -57,7 +57,6 @@ def reset_studentdatabase(db):
         connection.autocommit = True
 
         schema = db.course.schema
-        db.password = db.readPassword()
         writeSchema(db.__dict__, schema)
 
 
@@ -83,7 +82,7 @@ def delete_studentdatabase(databasename, username):
 
 def create_studentdatabase(db_name, username, password):
     with connection.cursor() as cursor:
-        cursor.execute("CREATE USER \"%s\" WITH UNENCRYPTED PASSWORD '%s';", [AsIs(username), AsIs(password)])
+        cursor.execute("CREATE USER \"%s\" WITH ENCRYPTED PASSWORD '%s';", [AsIs(username), AsIs(password)])
         cursor.execute("CREATE DATABASE \"%s\" WITH OWNER \"%s\";", [AsIs(db_name), AsIs(username)])
         cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \"%s\" TO \"%s\";", [AsIs(db_name), AsIs(username)])
         cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \"%s\" FROM public;", [AsIs(db_name)])

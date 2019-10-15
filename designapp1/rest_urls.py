@@ -56,10 +56,8 @@ urlpatterns = [
     # path('get_users', views.get_users, name='get_users'),
     # path('login/', views.login, name="login"),
 
-    path('whoami', views.whoami, name='whoami'),
-    path('whoami/', views.whoami, name='whoami'),
-    path('set_role', views.set_role, name='set_role'),
-    path('set_role/', views.set_role, name='set_role'),
+    url(r'^whoami/?$', views.whoami, name='whoami'),
+    url(r'^set_role/?$', views.set_role, name='set_role'),
 
     # path('test', views.test, name='test'),
 

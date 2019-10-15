@@ -93,12 +93,6 @@ def check_role(request, role):
         pass
     return False
 
-
-def switchPassword(password):
-    bits = base64.b64decode(password)
-    bits = bytes([x^y for (x,y) in zip(settings.BITMASK, bits)])
-    return base64.b64encode(bits).decode()
-
 # REST RESPONSES
 
 def defaultresponse(request):
@@ -119,8 +113,6 @@ def get_base_response(request, db_parameters):
             serializer_class = db_parameters["serializer"](database, many=True)
             if db_parameters["dbname"] == "Studentdatabases":
                 data = serializer_class.data.copy()
-                for row in data:
-                    row["password"] = switchPassword(row["password"])
                 log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_base," has requested all rows from this db") #LOG THIS ACTION
                 return JsonResponse(data, safe=False)
         except db_parameters["db"].DoesNotExist as e:
@@ -200,7 +192,7 @@ def get_single_response(request, pk, db_parameters):
     try:
         database = db_parameters["db"].objects.get(pk=pk)
         serializer_class = db_parameters["serializer"](database, many=False)
-    except Exception as e:
+    except db_parameters["db"].DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
     else:
         am_i_the_owner = do_i_own_this_item(current_id, pk, db_parameters)
@@ -211,8 +203,6 @@ def get_single_response(request, pk, db_parameters):
             log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_single,message) #LOG THIS ACTION
             if db_parameters["dbname"] == "Studentdatabases":
                 data = serializer_class.data.copy()
-                for row in data:
-                    row["password"] = switchPassword(row["password"])
                 return JsonResponse(data, safe=False)
             return JsonResponse(serializer_class.data, safe=False)
         else:
@@ -244,8 +234,6 @@ def get_own_response(request, dbname):
             database = Studentdatabases.objects.filter(fid__id=current_id)
             serializer_class = StudentdatabasesSerializer(database, many=True)
             data = serializer_class.data.copy()
-            for row in data:
-                row["password"] = switchPassword(row["password"])
             return JsonResponse(data, safe=False)
     except Exception as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
@@ -259,7 +247,7 @@ def post_base_dbmusers_response(request):
     try:
         databases = JSONParser().parse(request)
     except ParseError:
-        return HttpResponse("Your JSON is incorrectly formatted")
+        return HttpResponse("Your JSON is incorrectly formatted", status=HTTP_400_BAD_REQUEST)
 
     try:
 
@@ -277,7 +265,6 @@ def post_base_dbmusers_response(request):
             databases['role'] = student
         custom_serializer = dbmusersSerializer
         serializer_class = custom_serializer(data=databases, create=True)
-        logging.debug("Created user; verify at /verify/"+databases["token"])
         message = " a user has been created with the email: " + str(databases['email'])
         log_message_with_db("","dbmusers",log_post_base_dbmusers,message) #LOG THIS ACTION
 
@@ -338,7 +325,7 @@ def post_base_response(request, db_parameters):
                     password = hash.randomPassword()
                     databases["username"] = username
                     databases["databasename"] = username
-                    databases["password"] = switchPassword(password)
+                    databases["password"] = password
 
                 custom_serializer = db_parameters["serializer"]
                 serializer_class = custom_serializer(data=databases)
@@ -352,14 +339,12 @@ def post_base_response(request, db_parameters):
             if serializer_class.is_valid():
                 try:
                     if db_parameters["dbname"] == "studentdatabases":
-                        create_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"], switchPassword(serializer_class.validated_data["password"]))
+                        create_studentdatabase(serializer_class.validated_data["databasename"], serializer_class.validated_data["username"], serializer_class.validated_data["password"])
                         try:
-                            databases["password"] = switchPassword(databases["password"])
                             setup_student_db(databases, serializer_class)
                             serializer_class.save()
                             # now we need to make sure the correct password is returned IN THE STUPIDEST WAY POSSIBLE because the IOVE DAMNET SERIALIZERS have IMMUTABLE DICTS
                             data = serializer_class.data.copy()
-                            data["password"] = switchPassword(data["password"])
                             log_message_with_db(request.session['user'],db_parameters["dbname"],log_post_base," a new studentdatabases has been added (row including entire database)") # LOG THIS ACTION
                             return JsonResponse(data, status=status.HTTP_201_CREATED)
                         except Exception as e:
@@ -381,8 +366,9 @@ def post_base_response(request, db_parameters):
                 except KeyError as e:
                     return HttpResponse("The following field(s) should be included:" + str(e),
                                         status=status.HTTP_400_BAD_REQUEST)
+                except ValueError as e:
+                    return HttpResponse(str(e), status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
-                    raise e
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     else:
@@ -529,7 +515,6 @@ def search_on_name(request, search_value, dbname):
             log_message_with_db(request.session['user'],db_parameters["dbname"],log_search, message) #LOG THIS ACTION
             if db_parameters["dbname"] == "Studentdatabases":
                 data = serializer.data.copy()
-                data["password"] = results.readPassword()
                 return JsonResponse(data, safe=False)
             return JsonResponse(serializer.data, safe=False)
 
@@ -551,8 +536,6 @@ def search_on_owner(request, search_value, dbname):
         serializer = db_parameters["serializer"](results, many=True)
         if db_parameters["dbname"] == "Studentdatabases":
             data = serializer.data.copy()
-            for row in data:
-                row["password"] = switchPassword(row["password"])
         return JsonResponse(serializer.data, safe=False)
     except db_parameters["db"].DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
@@ -572,8 +555,6 @@ def search_db_on_course(request, search_value):
         results = Studentdatabases.objects.filter(course=search_value)
         serializer = StudentdatabasesSerializer(results, many=True)
         data = serializer.data.copy()
-        for row in data:
-            row["password"] = switchPassword(row["password"])
         return JsonResponse(serializer.data, safe=False)
     except Courses.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
@@ -638,7 +619,6 @@ def dump(request, pk):
     if not check_role(request, teacher) and request.session["user"] != db.owner().id:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-    db.password = db.readPassword()
     schema = schemaWriter.dump(db.__dict__)
     response =  HttpResponse(schema, content_type="application/sql")
     response['Content-Disposition'] = "inline; filename=%s" % (db.databasename+".sql")
@@ -769,7 +749,7 @@ def generate_migration(request):
     output += "echo 'Backing up main database...';\npg_dump -h $HOST -p $PORT -U $USER -C \""+database+"\" > "+database+".sql;\n"
 
     for db in dbs:
-        create_command = "CREATE USER \""+db.username+"\" WITH UNENCRYPTED PASSWORD \""+db.password+"\";"
+        create_command = "CREATE USER \""+db.username+"\" WITH ENCRYPTED PASSWORD \""+db.password+"\";"
         #escape / from the filename by replacing it by ?
         db_name = db.databasename
         db_name = re.sub(r'\/', "?", db_name)
@@ -856,7 +836,8 @@ def login(request):
                     request.session["role"] = user.role
                     request.session.modified = True
 
-                    dbmusers.objects.filter(pk=request.session["user"]).update(lastlogin=timezone.now()) #update last login
+                    user.lastlogin = timezone.now() #update last login
+                    user.save()
 
                     return HttpResponseRedirect("/")
 
@@ -951,12 +932,95 @@ def whoami(request):
 
 @require_GET
 def verify(request, token):
-    user = dbmusers.objects.get(token=token)
-    user.verified = True
-    user.token = None
-    user.save()
-    return render(request, 'login.html',
+    try:
+        user = dbmusers.objects.get(token=token)
+        user.verified = True
+        user.token = None
+        user.save()
+        return render(request, 'login.html',
                   {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
+
+@require_POST
+def resend_verification(request):
+    body = None
+    user = None
+    try:
+        body = JSONParser().parse(request)
+    except ParseError as e:
+        return HttpResponse("Your JSON did not parse", status=status.HTTP_400_BAD_REQUEST)
+    if not "email" in body:
+        return HttpResponse("Missing key 'email'", status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = dbmusers.objects.get(email=body["email"])
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if user.verified:
+        return HttpResponse(status=status.HTTP_409_CONFLICT)
+
+    user.token = hash.token()
+    user.save()
+
+    mail.send_verification(user.__dict__)
+    return HttpResponse()
+
+#TODO: make front-end for this
+@require_POST
+def request_reset_password(request, email):
+    db = None
+    try:
+        db = dbmusers.objects.get(email=email)
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if not db.verified:
+        return HttpResponse("Please verify your email before attempting a password reset", status=status.HTTP_409_CONFLICT)
+
+    token = hash.token()
+    db.token = hash.token()
+    db.tokenExpire = timezone.now() + timezone.timedelta(hours=4)
+    db.save()
+
+    mail.send_reset(db.__dict__)
+
+    return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+@require_http_methods(["GET", "POST"])
+def reset_password(request, pk, token):
+    #do checks first
+    db = None
+    try:
+        db = dbmusers.objects.get(id=pk)
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND) #TODO: give it some text for the user to know what's going on
+
+    if db.token == None or db.tokenExpire == None or db.token != token:
+        return HttpResponse("token invalid", status=status.HTTP_403_FORBIDDEN)
+
+    elif db.tokenExpire < timezone.now():
+        return HttpResponse("token expired", status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == "GET":
+        #TODO: make front end with nice password input fields
+        pass
+
+    else:
+        body = None
+        try:
+            body = JSONParser().parse(request)
+        except ParseError as e:
+            return HttpResponse("Incorrect JSON formatting", status=status.HTTP_400_BAD_REQUEST)
+        if not "password" in body:
+            return HttpResponse("Missing key 'password' in body", status=status.HTTP_400_BAD_REQUEST)
+        print(body["password"])
+        db.password = hash.make(body["password"])
+        db.token = None
+        db.tokenExpire = None
+        db.save()
+        return HttpResponse()
 
 @require_GET
 def student_view(request):
