@@ -24,9 +24,14 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'z)7pbw!fc(th%m)!(ytsprc3bick1ga-mavn4c8xvujwe(3x21'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
+
+#EMAIL SETTINGS: (please edit)
+
+EMAIL_SERVER = 'localhost'
+EMAIL_SENDER = 'no-reply@thebias.nl'
 
 # Application definition
 
