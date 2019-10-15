@@ -258,7 +258,6 @@ def post_base_dbmusers_response(request):
             databases['role'] = student
         custom_serializer = dbmusersSerializer
         serializer_class = custom_serializer(data=databases, create=True)
-        logging.debug("Created user; verify at /verify/"+databases["token"])
         message = " a user has been created with the email: " + str(databases['email'])
         log_message_with_db("","dbmusers",log_post_base_dbmusers,message) #LOG THIS ACTION
 
@@ -926,12 +925,15 @@ def whoami(request):
 
 @require_GET
 def verify(request, token):
-    user = dbmusers.objects.get(token=token)
-    user.verified = True
-    user.token = None
-    user.save()
-    return render(request, 'login.html',
+    try:
+        user = dbmusers.objects.get(token=token)
+        user.verified = True
+        user.token = None
+        user.save()
+        return render(request, 'login.html',
                   {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
 
 #TODO: make front-end for this
 @require_POST
