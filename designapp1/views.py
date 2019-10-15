@@ -14,7 +14,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.template import loader
-from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_protect
+#from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
 from django.conf import settings
 from rest_framework import status
@@ -185,9 +189,12 @@ def do_i_own_this_item(current_id, pk, db_parameters):
             return True
         else:
             return False
-
+#@csrf_protect
+@ensure_csrf_cookie
+@csrf_protect
 @authenticated
 def get_single_response(request, pk, db_parameters):
+    logging.debug(get_token(request))
     current_id = request.session['user']
 
     try:
@@ -211,7 +218,7 @@ def get_single_response(request, pk, db_parameters):
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-@csrf_exempt
+#@csrf_exempt
 @authenticated
 def get_own_response(request, dbname):
     db_parameters = get_db_parameters(dbname)
@@ -491,7 +498,7 @@ def update_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
-@csrf_exempt
+#@csrf_exempt
 @authenticated
 def search_on_name(request, search_value, dbname):
     db_parameters = get_db_parameters(dbname)
@@ -529,7 +536,7 @@ def search_on_name(request, search_value, dbname):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-@csrf_exempt
+#@csrf_exempt
 @require_GET
 @require_role(admin)
 def search_on_owner(request, search_value, dbname):
@@ -551,7 +558,7 @@ def search_on_owner(request, search_value, dbname):
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
 
-@csrf_exempt
+#@csrf_exempt
 @require_GET
 @require_role(student)
 def search_db_on_course(request, search_value):
@@ -592,7 +599,7 @@ def get_db_parameters(dbname):
     return db_parameters
 
 
-@csrf_exempt
+#@csrf_exempt
 def singleview(request, pk, dbname):
     db_parameters = get_db_parameters(dbname)
 
@@ -606,7 +613,7 @@ def singleview(request, pk, dbname):
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@csrf_exempt
+#@csrf_exempt
 def baseview(request, dbname):
     db_parameters = get_db_parameters(dbname)
     if request.method == 'GET':
@@ -619,7 +626,7 @@ def baseview(request, dbname):
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@csrf_exempt
+#@csrf_exempt
 @require_GET
 @authenticated
 def dump(request, pk):
@@ -639,7 +646,7 @@ def dump(request, pk):
     log_message_with_db(request.session['user'],"Studentdatabases",log_dump, message) #LOG THIS ACTION
     return response
 
-@csrf_exempt
+#@csrf_exempt
 @require_POST
 @authenticated
 def reset(request, pk):
@@ -660,7 +667,7 @@ def reset(request, pk):
     log_message_with_db(request.session['user'],"Studentdatabases",log_reset, message) #LOG THIS ACTION
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
-@csrf_exempt
+#@csrf_exempt
 @require_http_methods(["GET", "POST"])
 @authenticated
 #TODO: investigate file uploads for this, together with front-end team
