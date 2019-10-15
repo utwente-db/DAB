@@ -25,12 +25,12 @@ Run dependencies:
 - postgresql-python-venv
 - libpq-dev
 - postgresql-client-common
-- postgresql-client-<VERSION>
+- postgresql-client-[VERSION] (we use version 10)
 
 Additionally, the following software is needed for the recommended production server setup:
 
 - uWSGI (please install via pip3)
-- a web server (e.g. nginx)
+- a web server (e.g. nginx or apache2)
 - an SMTP server (e.g. postfix)
 
 Logging:
@@ -137,7 +137,7 @@ If your system does not provide these versions, or you have an exceptionally hig
 
 Throughout this tutorial, `[DOCUMENT ROOT]` will be used to indicate the absolute path to the directory in which you cloned this project. Standard practice is putting it somewhere in `/var/www/`
 
-1. Install all the dependencies listed above. Take care to install uwsgi as a pip3 package, and not via the system dependencies. 
+1. Install all the dependencies listed above. Take care to install uwsgi as a pip3 package, and not via the system dependencies (do not use the venv for this). 
 2. If your distribution does not come with Python3.6 or later, compile Python3.7 from source, then follow [this tutorial](https://www.paulox.net/2019/03/13/how-to-use-uwsgi-with-python-3-7-in-ubuntu-18-x/) to ensure uwsgi uses it. Also edit install.sh: the first line, `python3 -m venv venv` MUST use your new python3.7 installation.
 3. Run install.sh. This will create a virtual environment, and install the dependencies for the project in it.
 4. Create `secret.py` in accordance with the paragraph on it above.
