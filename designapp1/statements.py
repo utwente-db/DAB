@@ -31,7 +31,7 @@ def create_db(db_name, username, password):
     with connection.cursor() as cursor:
         # TODO: literally any security of any kind at all
         # (especially preventing injections)
-        cursor.execute("CREATE USER \"" + username + "\" WITH UNENCRYPTED PASSWORD '" + password + "';")
+        cursor.execute("CREATE USER \"" + username + "\" WITH ENCRYPTED PASSWORD '" + password + "';")
         cursor.execute("CREATE DATABASE \"" + db_name + "\" WITH OWNER \"" + username + "\";")
         cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \"" + db_name + "\" TO \"" + username + "\";")
         cursor.execute("REVOKE ALL PRIVILEGES ON DATABASE \"" + db_name + "\" FROM public;")

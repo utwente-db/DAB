@@ -34,10 +34,11 @@
                             </select>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="group-dropdown">Group</label>
-                            <select id="group-dropdown" class="form-control" disabled>
-                                <option disabled selected value="0"> Selecting groups is not a thing yet</option>
-                            </select>
+                            <label for="group-input">Group</label>
+                            <input type="number" id="group-input" class="form-control" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+{#                            <select id="group-dropdown" class="form-control" disabled>#}
+{#                                <option disabled selected value="0"> Selecting groups is not a thing yet</option>#}
+{#                            </select>#}
                         </div>
 
                     </div>

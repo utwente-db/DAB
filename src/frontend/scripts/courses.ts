@@ -1,6 +1,5 @@
 import "../sass/main.sass"
 import axios, {AxiosResponse} from 'axios';
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
@@ -12,6 +11,7 @@ import {displayWhoami} from "./navbar";
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
 const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
+const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 
 interface Course {
     courseid: number;
@@ -20,19 +20,20 @@ interface Course {
     info: string
 }
 
-interface Database {
-
-
+export interface StudentDatabase {
+    "dbid": number,
+    "groupid": number,
     "fid": number,
     "course": number,
     "schema": number,
     "databasename": string,
     "username": string,
     "password": string
+    // TODO update to include groupID field
 
 }
 
-async function getCoursesPromise(): Promise<Course[]> {
+export async function getCoursesPromise(): Promise<Course[]> {
     const response: AxiosResponse = await axios.get("/rest/courses/");
     return response.data;
 
@@ -52,30 +53,46 @@ async function displayCourses(): Promise<void> {
     // coursesDropdown.innerHTML += resultString;
 }
 
-async function tryGetCredentials() {
-    const courseID: number = Number(coursesDropdown.value);
+export async function tryGetCredentials(courseID: number, groupNumber: number, alert = true): Promise<boolean> {
+
     if (courseID !== 0) {
-        const data = {"course": courseID};
-        const tempAlert: ChildNode | null = addTempAlert();
-        try {
-            const response: AxiosResponse<Database> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<Database>;
-            const database: Database = await response.data;
-            addAlert(`Database generated for course "${database.course}".<br>
+        if (groupNumber > 0) {
+            const data = {"course": courseID, "groupid": groupNumber};
+            const tempAlert: ChildNode | null = addTempAlert();
+            try {
+                const response: AxiosResponse<StudentDatabase> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<StudentDatabase>;
+                const database: StudentDatabase = await response.data;
+                if (alert) {
+                    addAlert(`Database generated for course "${database.course}".<br>
                                                                    Username: "${database.username}"<br>
-                                                                   Password: "${database.password}"`, AlertType.success, tempAlert)
-        } catch (error) {
-            addErrorAlert(error, tempAlert)
+                                                                   Password: "${database.password}"`, AlertType.success, tempAlert);
+                } else {
+                    if (tempAlert) {
+                        tempAlert.remove();
+                    }
+                }
+
+                return true;
+            } catch (error) {
+                addErrorAlert(error, tempAlert)
+            }
+        } else {
+            addAlert("Please enter a valid group number", AlertType.danger)
         }
+
     } else {
         addAlert("Please select a course", AlertType.danger)
     }
+    return false;
 }
 
 window.onload = async () => {
-    await Promise.all([await displayCourses(),
+    await Promise.all([displayWhoami(),
+        await displayCourses(),
         $('select').selectpicker(), // Style all selects
-        credentialsButton.addEventListener("click", tryGetCredentials),
-        displayWhoami()]);
+        credentialsButton.addEventListener("click", () => {
+            tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value))
+        }),
+    ]);
 };
 
-// TODO on course select: make group no longer gray

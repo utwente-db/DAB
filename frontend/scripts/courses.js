@@ -23012,7 +23012,6 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     var tempAlert = alertDiv.lastChild;
     removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert;
-    // TODO maybe don't remove all temp alerts
 }
 exports.addTempAlert = addTempAlert;
 function addErrorAlert(error, tempAlert) {
@@ -23025,11 +23024,15 @@ function addErrorAlert(error, tempAlert) {
     if (response) {
         var errorKeys = Object.keys(response.data);
         var errorMessages = Object.values(response.data);
+        // check for specific errors
         if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
             // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
             addAlert("You already have database credentials for this course", AlertType.danger);
         }
-        else {
+        else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
+            addAlert("Another user is already registered using this e-mail", AlertType.danger);
+        }
+        else { // No longer checking for specific errors
             // This is a response error (4XX or 5XX etc)
             var alertMessage = "";
             for (var i = 0; i < errorKeys.length; i++) {
@@ -23103,7 +23106,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-// TODO uncomment these when needed, but never ship the product with the entirety of jquery and bootstrap in main.js
 var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
@@ -23113,6 +23115,7 @@ var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navba
 var credentialsButton = document.getElementById("credentials-button");
 var coursesDropdown = document.getElementById("courses-dropdown");
 var alertDiv = document.getElementById("alert-div");
+var groupInput = document.getElementById("group-input");
 function getCoursesPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -23126,6 +23129,7 @@ function getCoursesPromise() {
         });
     });
 }
+exports.getCoursesPromise = getCoursesPromise;
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
         var courses, result, i, optionNode;
@@ -23147,15 +23151,16 @@ function displayCourses() {
         });
     });
 }
-function tryGetCredentials() {
+function tryGetCredentials(courseID, groupNumber, alert) {
+    if (alert === void 0) { alert = true; }
     return __awaiter(this, void 0, void 0, function () {
-        var courseID, data, tempAlert, response, database, error_1;
+        var data, tempAlert, response, database, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    courseID = Number(coursesDropdown.value);
-                    if (!(courseID !== 0)) return [3 /*break*/, 6];
-                    data = { "course": courseID };
+                    if (!(courseID !== 0)) return [3 /*break*/, 8];
+                    if (!(groupNumber > 0)) return [3 /*break*/, 6];
+                    data = { "course": courseID, "groupid": groupNumber };
                     tempAlert = alert_1.addTempAlert();
                     _a.label = 1;
                 case 1:
@@ -23166,39 +23171,52 @@ function tryGetCredentials() {
                     return [4 /*yield*/, response.data];
                 case 3:
                     database = _a.sent();
-                    alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success, tempAlert);
-                    return [3 /*break*/, 5];
+                    if (alert) {
+                        alert_1.addAlert("Database generated for course \"" + database.course + "\".<br>\n                                                                   Username: \"" + database.username + "\"<br>\n                                                                   Password: \"" + database.password + "\"", alert_1.AlertType.success, tempAlert);
+                    }
+                    else {
+                        if (tempAlert) {
+                            tempAlert.remove();
+                        }
+                    }
+                    return [2 /*return*/, true];
                 case 4:
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1, tempAlert);
                     return [3 /*break*/, 5];
                 case 5: return [3 /*break*/, 7];
                 case 6:
-                    alert_1.addAlert("Please select a course", alert_1.AlertType.danger);
+                    alert_1.addAlert("Please enter a valid group number", alert_1.AlertType.danger);
                     _a.label = 7;
-                case 7: return [2 /*return*/];
+                case 7: return [3 /*break*/, 9];
+                case 8:
+                    alert_1.addAlert("Please select a course", alert_1.AlertType.danger);
+                    _a.label = 9;
+                case 9: return [2 /*return*/, false];
             }
         });
     });
 }
+exports.tryGetCredentials = tryGetCredentials;
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, _b;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
+    var _a, _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
                 _b = (_a = Promise).all;
+                _c = [navbar_1.displayWhoami()];
                 return [4 /*yield*/, displayCourses()];
-            case 1: return [4 /*yield*/, _b.apply(_a, [[_c.sent(),
+            case 1: return [4 /*yield*/, _b.apply(_a, [_c.concat([_d.sent(),
                         $('select').selectpicker(),
-                        credentialsButton.addEventListener("click", tryGetCredentials),
-                        navbar_1.displayWhoami()]])];
+                        credentialsButton.addEventListener("click", function () {
+                            tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value));
+                        })])])];
             case 2:
-                _c.sent();
+                _d.sent();
                 return [2 /*return*/];
         }
     });
 }); };
-// TODO on course select: make group no longer gray
 
 
 /***/ }),
@@ -23276,19 +23294,18 @@ function displayWhoami() {
                 case 1:
                     whoami = _a.sent();
                     if (whoami.role === 0) {
-                        role = "an Admin";
+                        role = "an admin";
                     }
                     else if (whoami.role === 1) {
-                        role = "a Teacher";
+                        role = "a teacher";
                     }
                     else if (whoami.role === 2) {
-                        role = "a Student";
+                        role = "a student";
                     }
                     else {
                         role = "Unknown";
                     }
-                    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + "\t You are " + role;
-                    whoamiButtonHtml.innerHTML += "<a class=\"btn btn-secondary\" href=\"/settings\" role=\"button\">Settings</a>";
+                    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + ", you are " + role + ".";
                     return [2 /*return*/];
             }
         });

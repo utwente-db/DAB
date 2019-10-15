@@ -23012,7 +23012,6 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     var tempAlert = alertDiv.lastChild;
     removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert;
-    // TODO maybe don't remove all temp alerts
 }
 exports.addTempAlert = addTempAlert;
 function addErrorAlert(error, tempAlert) {
@@ -23025,11 +23024,15 @@ function addErrorAlert(error, tempAlert) {
     if (response) {
         var errorKeys = Object.keys(response.data);
         var errorMessages = Object.values(response.data);
+        // check for specific errors
         if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
             // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
             addAlert("You already have database credentials for this course", AlertType.danger);
         }
-        else {
+        else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
+            addAlert("Another user is already registered using this e-mail", AlertType.danger);
+        }
+        else { // No longer checking for specific errors
             // This is a response error (4XX or 5XX etc)
             var alertMessage = "";
             for (var i = 0; i < errorKeys.length; i++) {
@@ -23185,25 +23188,23 @@ function tryRegister() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!checkFields()) return [3 /*break*/, 5];
+                    if (!checkFields()) return [3 /*break*/, 4];
                     credentials = { email: registerEmailField.value, password: registerPasswordField.value };
                     tempAlert = alert_1.addTempAlert();
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 4, , 5]);
+                    _a.trys.push([1, 3, , 4]);
                     return [4 /*yield*/, axios_1.default.post("/rest/dbmusers/", credentials)];
                 case 2:
                     response = _a.sent();
-                    return [4 /*yield*/, response.data];
-                case 3:
-                    responseData = _a.sent();
+                    responseData = response.data;
                     alert_1.addAlert("Please check your inbox to confirm your e-mail", alert_1.AlertType.success, tempAlert);
-                    return [3 /*break*/, 5];
-                case 4:
+                    return [3 /*break*/, 4];
+                case 3:
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1, tempAlert);
-                    return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     });
