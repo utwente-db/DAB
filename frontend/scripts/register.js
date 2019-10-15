@@ -22967,7 +22967,6 @@ function generateAlertHTML(errorMessage, alertType, dismissable) {
     return "<div class=\"alert " + alertType + " " + dismissableString + " fade show col-12\"  role=\"alert\">\n            <div class=\"error-text\">" + errorMessage + "</div>\n            " + buttonString + "\n            </div>";
 }
 exports.generateAlertHTML = generateAlertHTML;
-;
 function addAlert(errorMessage, alertType, tempAlert) {
     if (tempAlert === void 0) { tempAlert = null; }
     if (tempAlert && document.body.contains(tempAlert)) {
@@ -23010,6 +23009,7 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     var alertDiv = document.getElementById("alert-div");
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     var tempAlert = alertDiv.lastChild;
+    // noinspection JSIgnoredPromiseFromCall
     removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert;
 }
