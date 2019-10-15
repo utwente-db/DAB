@@ -17,5 +17,8 @@ urlpatterns = [
     url(r'^verify/(?P<token>(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?)$', views.verify,
         name='verify'),
     # https://stackoverflow.com/questions/475074/regex-to-parse-or-validate-base64-data
+
+    url(r'^reset_password/(?P<pk>[0-9]+)/(?P<token>(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?)$', views.reset_password, name='reset_password'),
+    url(r'^request_reset_password/(?P<email>.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl)/?$', views.request_reset_password, name='request_reset_password'),
     url('', views.defaultresponse)
 ]

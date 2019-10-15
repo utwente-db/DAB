@@ -240,7 +240,7 @@ def post_base_dbmusers_response(request):
     try:
         databases = JSONParser().parse(request)
     except ParseError:
-        return HttpResponse("Your JSON is incorrectly formatted")
+        return HttpResponse("Your JSON is incorrectly formatted", status=HTTP_400_BAD_REQUEST)
 
     try:
 
@@ -830,7 +830,8 @@ def login(request):
                     request.session["role"] = user.role
                     request.session.modified = True
 
-                    dbmusers.objects.filter(pk=request.session["user"]).update(lastlogin=timezone.now()) #update last login
+                    user.lastlogin = timezone.now() #update last login
+                    user.save()
 
                     return HttpResponseRedirect("/")
 
@@ -931,6 +932,61 @@ def verify(request, token):
     user.save()
     return render(request, 'login.html',
                   {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+
+#TODO: make front-end for this
+@require_POST
+def request_reset_password(request, email):
+    db = None
+    try:
+        db = dbmusers.objects.get(email=email)
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if not db.verified:
+        return HttpResponse("Please verify your email before attempting a password reset", status=HTTP_409_CONFLICT)
+
+    token = hash.token()
+    db.token = hash.token()
+    db.tokenExpire = timezone.now() + timezone.timedelta(hours=4)
+    db.save()
+
+    mail.send_reset(db.__dict__)
+
+    return HttpResponse(status=status.HTTP_202_ACCEPTED)
+
+@require_http_methods(["GET", "POST"])
+def reset_password(request, pk, token):
+    #do checks first
+    db = None
+    try:
+        db = dbmusers.objects.get(id=pk)
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND) #TODO: give it some text for the user to know what's going on
+
+    if db.token == None or db.tokenExpire == None or db.token != token:
+        return HttpResponse("token invalid", status=status.HTTP_403_FORBIDDEN)
+
+    elif db.tokenExpire < timezone.now():
+        return HttpResponse("token expired", status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == "GET":
+        #TODO: make front end with nice password input fields
+        pass
+
+    else:
+        body = None
+        try:
+            body = JSONParser().parse(request)
+        except ParseError as e:
+            return HttpResponse("Incorrect JSON formatting", status=status.HTTP_400_BAD_REQUEST)
+        if not "password" in body:
+            return HttpResponse("Missing key 'password' in body", status=status.HTTP_400_BAD_REQUEST)
+        print(body["password"])
+        db.password = hash.make(body["password"])
+        db.token = None
+        db.tokenExpire = None
+        db.save()
+        return HttpResponse()
 
 @require_GET
 def student_view(request):
