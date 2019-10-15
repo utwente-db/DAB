@@ -6,17 +6,61 @@
 
 {% block scripts %}
     <link rel="stylesheet" href="/static/css/main.css">
-    <script defer src="/static/scripts/userpage.js"></script>
+    <script defer src="/static/scripts/user.js"></script>
 {% endblock %}
 
-{% include 'navbar.html' %}
+<!-- - Inspect datails
+- Check their database(s)
+- Extract a dump from that database
+- Remove from system
+- Change role -->
 
 {% block content %}
+
+    {% include 'navbar.html' %}
+
     <div class="container bg-light p-4">
         <div class="row">
+            <div id="user-info"></div>
+                <div class="col-6">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="email">E-Mail</span>
+                        </div>
+                        <input type="text" class="form-control" id="email" placeholder="test.email@asdasd" disabled>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="role">Role</span>
+                        </div>
+                        <input type="text" class="form-control" id="role" placeholder="Student" disabled>
+                        <div class="input-group-append">
+                            <button class="btn btn-danger">Edit</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 text-right">
+                    <label>Verfied: </label>
+                    <span>&#x2714</span>
+                    <span>&#x2718</span>
+                </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-6">
+                <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
+            </div>
+            <div class="col-6">
+                <div id="courses-db"></div>
+            </div>
+
+            <div class="text-center">
+                <button class="btn btn-danger">Delete User</button>
+            </div>
+            
             <div class="col-12 text-center">
                 <!-- content -->
-                <div id="user-info"></div>
+
                 <!-- <ul>
                     <li>id</li>
                     <li>email</li>

@@ -25888,7 +25888,6 @@ function generateAlertHTML(errorMessage, alertType, dismissable) {
     return "<div class=\"alert " + alertType + " " + dismissableString + " fade show col-12\"  role=\"alert\">\n            <div class=\"error-text\">" + errorMessage + "</div>\n            " + buttonString + "\n            </div>";
 }
 exports.generateAlertHTML = generateAlertHTML;
-;
 function addAlert(errorMessage, alertType, tempAlert) {
     if (tempAlert === void 0) { tempAlert = null; }
     if (tempAlert && document.body.contains(tempAlert)) {
@@ -25931,6 +25930,7 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     var alertDiv = document.getElementById("alert-div");
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     var tempAlert = alertDiv.lastChild;
+    // noinspection JSIgnoredPromiseFromCall
     removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert;
 }
@@ -26027,16 +26027,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 __webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
 var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
-var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
-var credentialsButton = document.getElementById("credentials-button");
-var coursesDropdown = document.getElementById("courses-dropdown");
-var alertDiv = document.getElementById("alert-div");
-var groupInput = document.getElementById("group-input");
 function getCoursesPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -26051,27 +26045,19 @@ function getCoursesPromise() {
     });
 }
 exports.getCoursesPromise = getCoursesPromise;
-function displayCourses() {
-    return __awaiter(this, void 0, void 0, function () {
-        var courses, result, i, optionNode;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getCoursesPromise()];
-                case 1:
-                    courses = _a.sent();
-                    result = [];
-                    for (i = 0; i < courses.length; i++) {
-                        optionNode = document.createElement("option");
-                        optionNode.setAttribute("value", String(courses[i].courseid));
-                        optionNode.appendChild(document.createTextNode(courses[i].coursename));
-                        coursesDropdown.appendChild(optionNode);
-                        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
-                    }
-                    return [2 /*return*/];
-            }
-        });
-    });
-}
+// async function displayCourses(): Promise<void> {
+//     const courses: Course[] = await getCoursesPromise();
+//     const result: string[] = [];
+//     for (let i = 0; i < courses.length; i++) {
+//         const optionNode = document.createElement("option");
+//         optionNode.setAttribute("value", String(courses[i].courseid));
+//         optionNode.appendChild(document.createTextNode(courses[i].coursename));
+//         coursesDropdown.appendChild(optionNode)
+//         // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+//     }
+//     // const resultString: string = result.join("\n");
+//     // coursesDropdown.innerHTML += resultString;
+// }
 function tryGetCredentials(courseID, groupNumber, alert) {
     if (alert === void 0) { alert = true; }
     return __awaiter(this, void 0, void 0, function () {
@@ -26119,25 +26105,16 @@ function tryGetCredentials(courseID, groupNumber, alert) {
     });
 }
 exports.tryGetCredentials = tryGetCredentials;
-window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
-            case 0:
-                _b = (_a = Promise).all;
-                _c = [navbar_1.displayWhoami()];
-                return [4 /*yield*/, displayCourses()];
-            case 1: return [4 /*yield*/, _b.apply(_a, [_c.concat([_d.sent(),
-                        $('select').selectpicker(),
-                        credentialsButton.addEventListener("click", function () {
-                            tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value));
-                        })])])];
-            case 2:
-                _d.sent();
-                return [2 /*return*/];
-        }
-    });
-}); };
+// deprecated page onload
+// window.onload = async () => {
+//     await Promise.all([displayWhoami(),
+//         await displayCourses(),
+//         $('select').selectpicker(), // Style all selects
+//         credentialsButton.addEventListener("click", () => {
+//             tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value))
+//         }),
+//     ]);
+// };
 
 
 /***/ }),
@@ -26291,7 +26268,6 @@ __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap
 var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
 var sweetalert2_1 = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 var coursesNavHtml = document.getElementById("courses-nav");
-var coursesContentHtml = document.getElementById("courses-content");
 var noCredsCoursename = document.getElementById("no-credentials-coursename");
 var noCredsInfo = document.getElementById("no-credentials-courseinfo");
 var haveCredsCoursename = document.getElementById("have-credentials-coursename");
@@ -26320,7 +26296,7 @@ function populateHaveCredentialsPane(i) {
             haveCredsInfo.innerText = courses[i].info;
             ownDatabases.forEach(function (db) {
                 if (db.course === courses[i].courseid) {
-                    var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"align-items-center align-items-stretch row\">\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"delete-button-" + db.dbid + "\" class=\"btn btn-danger delete-button btn-block\">Delete database and release credentials</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"reset-button-" + db.dbid + "\" class=\"btn btn-info reset-button btn-block\">Reset database</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button onclick=\"window.open('/rest/dump/" + db.dbid + "/')\" id=\"dump-button-" + db.dbid + "\" class=\"btn btn-secondary dump-button btn-block\">Get dump of database</button>\n                            </div>\n                        </div>\n                        <hr>";
+                    var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"align-items-center align-items-stretch row\">\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"delete-button-" + db.dbid + "\" class=\"btn btn-danger delete-button btn-block\">Delete database and release credentials</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"reset-button-" + db.dbid + "\" class=\"btn btn-info reset-button btn-block\">Reset database</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button onclick=\"window.location.replace('/rest/dump/" + db.dbid + "/')\" id=\"dump-button-" + db.dbid + "\" class=\"btn btn-secondary dump-button btn-block\">Get dump of database</button>\n                            </div>\n                        </div>\n                        <hr>";
                     // TODO make third button mobile-friendly
                     credentials += html.trim();
                     dbIDs.push(db.dbid);
@@ -26366,7 +26342,7 @@ function createNavLink(haveCredentials, i, active) {
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var ownCourses, resultNav, i, haveCredentials, fragment;
+        var ownCourses, i, haveCredentials, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
@@ -26378,7 +26354,6 @@ function displayCourses() {
                     ownDatabases = (_a.sent());
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     console.log(ownCourses);
-                    resultNav = [];
                     for (i = 0; i < courses.length; i++) {
                         haveCredentials = (ownCourses.includes(courses[i].courseid));
                         fragment = createNavLink(haveCredentials, i);
@@ -26389,25 +26364,35 @@ function displayCourses() {
         });
     });
 }
-function changeViewToHaveCredentials() {
+function changeView(hasCredentials) {
     return __awaiter(this, void 0, void 0, function () {
-        var activeLink, i, fragment;
+        var activeLink, oldPane, newPane, i, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     activeLink = document.getElementsByClassName("nav-link active")[0];
+                    oldPane = hasCredentials ? noCredsPane : haveCredsPane;
+                    newPane = hasCredentials ? haveCredsPane : noCredsPane;
                     i = Number(activeLink.id);
-                    fragment = createNavLink(true, i, true);
+                    fragment = createNavLink(hasCredentials, i, true);
                     activeLink.classList.remove("active");
                     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild);
                     activeLink.remove();
                     return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
                 case 1:
                     ownDatabases = (_a.sent()).data;
-                    noCredsPane.classList.remove("active");
-                    haveCredsPane.classList.add("active");
-                    populateHaveCredentialsPane(i);
-                    return [2 /*return*/];
+                    oldPane.classList.remove("active");
+                    newPane.classList.add("active");
+                    if (!hasCredentials) return [3 /*break*/, 3];
+                    return [4 /*yield*/, populateHaveCredentialsPane(i)];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 5];
+                case 3: return [4 /*yield*/, populateNoCredentialsPane(i)];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5: return [2 /*return*/];
             }
         });
     });
@@ -26428,13 +26413,11 @@ function prepareToGetCredentials() {
                 case 2:
                     success = _a.sent();
                     if (!success) return [3 /*break*/, 4];
-                    return [4 /*yield*/, changeViewToHaveCredentials()];
+                    return [4 /*yield*/, changeView(true)];
                 case 3:
                     _a.sent();
                     _a.label = 4;
-                case 4:
-                    ;
-                    return [3 /*break*/, 7];
+                case 4: return [3 /*break*/, 7];
                 case 5:
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1);
@@ -26449,27 +26432,34 @@ function prepareToGetCredentials() {
         });
     });
 }
-function changeViewToNoCredentials() {
-    return __awaiter(this, void 0, void 0, function () {
-        var activeLink, i, fragment;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    activeLink = document.getElementsByClassName("nav-link active")[0];
-                    i = Number(activeLink.id);
-                    fragment = createNavLink(false, i, true);
-                    activeLink.classList.remove("active");
-                    activeLink.insertAdjacentElement("afterend", fragment.firstElementChild);
-                    activeLink.remove();
-                    return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
-                case 1:
-                    ownDatabases = (_a.sent()).data;
-                    haveCredsPane.classList.remove("active");
-                    noCredsPane.classList.add("active");
-                    populateNoCredentialsPane(i);
-                    return [2 /*return*/];
-            }
-        });
+function disableElementsOnPage() {
+    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
+    Array.from(document.getElementsByClassName("delete-button"))
+        .forEach(function (deleteButton) {
+        deleteButton.classList.add("disabled");
+    });
+    Array.from(document.getElementsByClassName("reset-button"))
+        .forEach(function (resetButton) {
+        resetButton.classList.add("disabled");
+    });
+    Array.from(document.getElementsByClassName("dump-button"))
+        .forEach(function (dumpButton) {
+        dumpButton.classList.add("disabled");
+    });
+}
+function enableElementsOnPage() {
+    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
+    Array.from(document.getElementsByClassName("delete-button"))
+        .forEach(function (deleteButton) {
+        deleteButton.classList.remove("disabled");
+    });
+    Array.from(document.getElementsByClassName("reset-button"))
+        .forEach(function (resetButton) {
+        resetButton.classList.remove("disabled");
+    });
+    Array.from(document.getElementsByClassName("dump-button"))
+        .forEach(function (dumpButton) {
+        dumpButton.classList.remove("disabled");
     });
 }
 function prepareToDeleteCredentials(dbID) {
@@ -26490,43 +26480,29 @@ function prepareToDeleteCredentials(dbID) {
                     if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
                         return [2 /*return*/, false];
                     }
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
-                    Array.from(document.getElementsByClassName("delete-button"))
-                        .forEach(function (deleteButton) {
-                        deleteButton.classList.add("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("reset-button"))
-                        .forEach(function (resetButton) {
-                        resetButton.classList.add("disabled");
-                    });
+                    disableElementsOnPage();
                     _a.label = 2;
                 case 2:
-                    _a.trys.push([2, 4, 5, 6]);
+                    _a.trys.push([2, 5, 6, 7]);
                     return [4 /*yield*/, axios_1.default.delete("/rest/studentdatabases/" + dbID + "/")];
                 case 3:
                     _a.sent();
                     // await changeViewToHaveCredentials()
                     alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
-                    changeViewToNoCredentials();
-                    success = true;
-                    return [3 /*break*/, 6];
+                    return [4 /*yield*/, changeView(false)];
                 case 4:
+                    _a.sent();
+                    success = true;
+                    return [3 /*break*/, 7];
+                case 5:
                     error_2 = _a.sent();
                     alert_1.addErrorAlert(error_2);
                     success = false;
-                    return [3 /*break*/, 6];
-                case 5:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
-                    Array.from(document.getElementsByClassName("delete-button"))
-                        .forEach(function (deleteButton) {
-                        deleteButton.classList.remove("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("reset-button"))
-                        .forEach(function (resetButton) {
-                        resetButton.classList.remove("disabled");
-                    });
+                    return [3 /*break*/, 7];
+                case 6:
+                    enableElementsOnPage();
                     return [7 /*endfinally*/];
-                case 6: return [2 /*return*/, success];
+                case 7: return [2 /*return*/, success];
             }
         });
     });
@@ -26549,15 +26525,7 @@ function resetDatabase(dbID) {
                     if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
                         return [2 /*return*/, false];
                     }
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
-                    Array.from(document.getElementsByClassName("delete-button"))
-                        .forEach(function (deleteButton) {
-                        deleteButton.classList.add("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("reset-button"))
-                        .forEach(function (resetButton) {
-                        resetButton.classList.add("disabled");
-                    });
+                    disableElementsOnPage();
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 4, 5, 6]);
@@ -26573,15 +26541,7 @@ function resetDatabase(dbID) {
                     success = false;
                     return [3 /*break*/, 6];
                 case 5:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
-                    Array.from(document.getElementsByClassName("delete-button"))
-                        .forEach(function (deleteButton) {
-                        deleteButton.classList.remove("disabled");
-                    });
-                    Array.from(document.getElementsByClassName("reset-button"))
-                        .forEach(function (resetButton) {
-                        resetButton.classList.remove("disabled");
-                    });
+                    enableElementsOnPage();
                     return [7 /*endfinally*/];
                 case 6: return [2 /*return*/, success];
             }
