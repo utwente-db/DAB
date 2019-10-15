@@ -93,7 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-throw new Error("Module build failed (from ./node_modules/ts-loader/index.js):\nError: ENOENT: no such file or directory, open '/home/freek/design/src/frontend/scripts/test.ts'");
+throw new Error("Module build failed (from ./node_modules/ts-loader/index.js):\nError: ENOENT: no such file or directory, open '/Users/floris/ownCloud/UT/design_project/src/frontend/scripts/test.ts'");
 
 /***/ })
 
