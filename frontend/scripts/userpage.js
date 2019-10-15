@@ -19982,19 +19982,20 @@ function displayCoursesAndDatabases() {
                 case 3:
                     course = _b.sent();
                     resultNav.push("<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>");
-                    active = "";
                     resultContent.push("<div class=\"tab-pane" + active + "\" id=\"course" + course.courseid + "\">"
                         + content
-                        + "</div>");
-                    resultNavString = resultNav.join("\n");
-                    resultContentString = resultContent.join("\n");
-                    coursesNavHtml.innerHTML += resultNavString;
-                    courseDatabasesHtml.innerHTML += resultContentString;
+                        + "test</div>");
+                    active = "";
                     _b.label = 4;
                 case 4:
                     _i++;
                     return [3 /*break*/, 2];
-                case 5: return [2 /*return*/];
+                case 5:
+                    resultNavString = resultNav.join("\n");
+                    resultContentString = resultContent.join("\n");
+                    coursesNavHtml.innerHTML = resultNavString;
+                    courseDatabasesHtml.innerHTML = resultContentString;
+                    return [2 /*return*/];
             }
         });
     });

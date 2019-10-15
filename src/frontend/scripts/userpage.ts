@@ -77,7 +77,6 @@ async function displayCoursesAndDatabases(): Promise<void> {
         if (course) {
             course.concat(html);
         }
-
     }
 
     const resultNav: string[] = [];
@@ -90,18 +89,17 @@ async function displayCoursesAndDatabases(): Promise<void> {
         resultNav.push(
             "<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>"
         );
-        active = "";
         resultContent.push(
             "<div class=\"tab-pane" + active + "\" id=\"course" + course.courseid + "\">"
             + content
-            + "</div>"
+            + "test</div>"
         );
-
-        const resultNavString: string = resultNav.join("\n");
-        const resultContentString: string = resultContent.join("\n");
-        coursesNavHtml.innerHTML += resultNavString;
-        courseDatabasesHtml.innerHTML += resultContentString;
+        active = "";
     }
+    const resultNavString: string = resultNav.join("\n");
+    const resultContentString: string = resultContent.join("\n");
+    coursesNavHtml.innerHTML = resultNavString;
+    courseDatabasesHtml.innerHTML = resultContentString;
 }
 
 async function displayUserDetails(): Promise<void> {

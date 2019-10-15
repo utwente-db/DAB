@@ -7,6 +7,21 @@
 {% block scripts %}
     <link rel="stylesheet" href="/static/css/main.css">
     <script defer src="/static/scripts/admin.js"></script>
+
+    <!-- Include as proper ts, had to include jQuery for now -->
+    <!-- This is the search function for user table -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script defer>
+    $(document).ready(function(){
+      $("#search").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#users tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+    </script>
+
 {% endblock %}
 
 {% block content %}
@@ -33,13 +48,13 @@
         </div>
         <hr/>
         <div class="row mt-4">
-            <div class="col-4">
+            <!-- <div class="col-4">
                 <div class="text-center">
                     <h1>Filters</h1>
                 </div>
-                <!-- Search -->
-                <input class="form-control" type="text" placeholder="Search E-Mail">
-                <!-- Checkboxes -->
+
+                <input class="form-control" type="text" id="search" placeholder="Search...">
+
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" id="adminCheck">
                     <label class="form-check-label" for="adminCheck">Admins</label>
@@ -52,8 +67,7 @@
                     <input class="form-check-input" type="checkbox" value="" id="studentCheck">
                     <label class="form-check-label" for="studentCheck">Students</label>
                 </div>
-                <!-- Sort by -->
-                <!-- TODO: fix double arrows -->
+
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <select class="custom-select">
@@ -69,14 +83,13 @@
                         </button>
                     </div>
                 </div>
-                <!-- Apply filters -->
                 <div class="text-center">
                     <button class="btn btn-info" type="submit">Apply Filters</button>
                 </div>
-            </div>
-            <div class="col-8">
-                <h1 class="text-center">table with all users</h1>
-                <div class="overflow-auto" style="height: 800px;">
+            </div> -->
+            <div class="col-12">
+                <input class="form-control mb-3" type="text" id="search" placeholder="Search...">
+                <div class="overflow-auto tableFixHead" style="height: 800px;">
                     <table class="table table-sm table-hover table-fixed">
                         <thead class="thead dark">
                         <tr>

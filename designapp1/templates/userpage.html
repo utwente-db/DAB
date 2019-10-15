@@ -48,16 +48,22 @@
         <hr/>
         <div class="row">
             <div class="col-6">
-                <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
+                <div class="overflow-auto" style="height: 300px;">
+                    <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
+                        <div class="spinner-border text-info"></div>
+                    </div>
+                </div>
             </div>
             <div class="col-6">
-                <div id="courses-db"></div>
+                <div class="tab-content" id="courses-db">
+                    <div class="spinner-border text-info"></div>
+                </div>
             </div>
 
             <div class="text-center">
                 <button class="btn btn-danger">Delete User</button>
             </div>
-            
+
             <div class="col-12 text-center">
                 <!-- content -->
 

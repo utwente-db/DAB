@@ -19888,7 +19888,7 @@ function displayUsers() {
                         result.push("<tr><th scope=\"row\">" + users[i].id + "</th>"
                             + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + role + "</td>"
                             + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + users[i].email + "</td>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + verified + "</td></tr></a>"
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + verified + "</td></a></tr>"
                         // "<tr><th scope=\"row\">" + users[i].id + "</th>"
                         // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
                         // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"

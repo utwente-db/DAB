@@ -7417,5 +7417,24 @@ a {
 .bootstrap-select .dropdown-item.active, .dropdown-item:active, .nav-link.active {
   background-color: #17a2b8 !important; }
 
+.tableFixHead {
+  overflow-y: auto;
+  height: 100px; }
+
+.tableFixHead thead th {
+  position: sticky;
+  top: 0; }
+
+/* Just common table stuff. Really. */
+table {
+  border-collapse: collapse;
+  width: 100%; }
+
+th, td {
+  padding: 8px 16px; }
+
+th {
+  background: #eee; }
+
 
 /*# sourceMappingURL=register.css.map*/
