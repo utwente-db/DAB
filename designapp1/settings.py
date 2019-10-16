@@ -18,3 +18,4 @@ log_reset               =   True
 log_schema              =   True
 log_default             =   True
 log_update_single       =   True
+log_teacher_own_tas     =   True

@@ -9,6 +9,8 @@ import base64
 #import os
 #import pwd
 
+
+from django.db.models import Q
 from django.utils import timezone
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
@@ -94,6 +96,10 @@ def check_role(request, role):
         pass
     return False
 
+def get_role(request):
+    return int(request.session["role"])
+
+
 # REST RESPONSES
 
 def defaultresponse(request):
@@ -108,7 +114,7 @@ def defaultresponse(request):
 
 @authenticated
 def get_base_response(request, db_parameters):
-    if check_role(request, teacher) or db_parameters["dbname"] == "courses":
+    if check_role(request, admin) or db_parameters["dbname"] == "courses":
         try:
             database = db_parameters["db"].objects.all()
             serializer_class = db_parameters["serializer"](database, many=True)
@@ -183,9 +189,11 @@ def do_i_own_this_item(current_id, pk, db_parameters):
         else:
             return False
 
+
+
+
 @authenticated
 def get_single_response(request, pk, db_parameters):
-    logging.debug(get_token(request))
     current_id = request.session['user']
 
     try:
@@ -488,16 +496,29 @@ def search_on_name(request, search_value, dbname):
 
     results = None
 
-    if check_role(request, teacher) or db_parameters["dbname"] == "courses":
+    if check_role(request, admin) or (check_role(request,student) and db_parameters["dbname"] == "studentdatabases" ) or db_parameters["dbname"] == "courses":
 
         try:
 
             if db_parameters["dbname"] == "studentdatabases":
-                results = db_parameters["db"].objects.filter(databasename__icontains=search_value)
+                current_id = request.session['user']
+                if (get_role(request)==student):
+                    ta_courses_results = TAs.objects.filter(studentid=current_id)
+
+                    results = []
+
+                    for single_course in ta_courses_results:
+                        #get databases where this student is a TA
+                        results.extend(db_parameters["db"].objects.filter(databasename__icontains=search_value,course=single_course.courseid))
+
+                elif (get_role(request)==teacher):
+                    results = db_parameters["db"].objects.filter(databasename__icontains=search_value,course__fid=current_id) #get only results of the courses of this teacher
+                elif (get_role(request)==admin):
+                    results = db_parameters["db"].objects.filter(databasename__icontains=search_value) #get all results
             elif db_parameters["dbname"] == "courses":
                 results = db_parameters["db"].objects.filter(coursename__icontains=search_value)
             elif db_parameters["dbname"] == "dbmusers":
-                results = db_parameters["db"].objects.filter(email__icontains=search_value)
+               results = db_parameters["db"].objects.filter(email__icontains=search_value)
             #     TODO: requirs foreign key
             #     elif db_parameters["dbname"] == "tas":
             #      results = db_parameters["db"].objects.filter(databasename__icontains=search_value)
@@ -574,6 +595,29 @@ def get_db_parameters(dbname):
 
     return db_parameters
 
+@authenticated
+def teacher_own_tas(request,dbname):
+    current_id = request.session['user']
+    db_parameters = get_db_parameters(dbname)
+
+    if check_role(request, teacher):
+        try:
+            courses_results = Courses.objects.filter(fid=current_id)
+
+            results = []
+            for single_course in courses_results:
+                results.extend(TAs.objects.filter(courseid=single_course.courseid))  #get all students in the course of this teacher
+
+            serializer = db_parameters["serializer"](results, many=True)
+
+        except Exception as e:
+           return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        else:
+           log_message_with_db(request.session['user'],'tas and courses',log_teacher_own_tas, 'This teacher requested its own tas') #LOG THIS ACTION
+           return JsonResponse(serializer.data, safe=False)
+
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 def singleview(request, pk, dbname):
     db_parameters = get_db_parameters(dbname)
