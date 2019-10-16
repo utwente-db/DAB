@@ -28,7 +28,7 @@ class dbmusersManager(models.Manager.from_queryset(dbmusersQuerySet)):
     def all(self, **kwargs):
         if "email" in kwargs:
             kwargs["email"] = kwargs["email"].lower()
-        return super().get(**kwargs)
+        return super().all(**kwargs)
 
 class dbmusers(models.Model):
     id = models.AutoField(db_column='id', primary_key=True)
@@ -74,8 +74,8 @@ class Courses(models.Model):
         return self.coursename
 
     def save(self, *args, **kwargs):
-        if not re.match(r'^[a-zA-Z0-9\.\-\_\+\/]+$', self.coursename):
-            raise ValueError("Coursename can only contain alphanumerical and these: .-_+/ characters")
+        if not re.match(r'^[a-zA-Z0-9\.\-\+\/ ]+$', self.coursename):
+            raise ValueError("Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces")
         else:
             super(Courses, self).save()
 

@@ -316,6 +316,7 @@ def post_base_response(request, db_parameters):
                     username = ""
                     try:
                         username = get_studentdatabase_name(databases["course"])
+                        username = re.sub(r' ', "_", username)
                     except KeyError as e:
                         return HttpResponse("The following fields should be included: "+str(e), status=status.HTTP_400_BAD_REQUEST)
                     except Courses.DoesNotExist as e:
