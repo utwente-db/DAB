@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^studentdatabases/own/?$', views.get_own_response, {"dbname": "studentdatabases"}),
     url(r'^studentdatabases/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "studentdatabases"}),
     url(r'^studentdatabases/$', views.baseview, {"dbname": "studentdatabases"}),
-    url(r'^studentdatabases/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name, {"dbname": "studentdatabases"}),
+    url(r'^studentdatabases/name/(?P<search_value>[a-zA-Z0-9]+)/?$', views.search_on_name, {"dbname": "studentdatabases"}),
     url(r'^studentdatabases/owner/(?P<search_value>[0-9]+)/?$', views.search_on_owner, {"dbname": "studentdatabases"}),
     url(r'^studentdatabases/course/(?P<search_value>[0-9]+)/?$', views.search_db_on_course),
     # Courses
@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^courses/name/(?P<search_value>[a-z0-9]+)/?$', views.search_on_name, {"dbname": "courses"}),
     # TAs
     url(r'^tas/own/?$', views.get_own_response, {"dbname": "tas"}),
+    url(r'^tas/teacher/own/?$', views.teacher_own_tas, {"dbname": "tas"}),
     url(r'^tas/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "tas"}),
     url(r'^tas/$', views.baseview, {"dbname": "tas"}),
 

@@ -7,13 +7,12 @@ export function generateAlertHTML(errorMessage: string, alertType: AlertType, di
     const buttonString = dismissable ? ` <button type="button" class="close error-dismiss-button" data-dismiss="alert"
             aria-label="Close">
             <span aria-hidden="true">&times;</span>
-            </button>` : ``
+            </button>` : ``;
     return `<div class="alert ${alertType} ${dismissableString} fade show col-12"  role="alert">
             <div class="error-text">${errorMessage}</div>
             ${buttonString}
             </div>`
-};
-
+}
 export function addAlert(errorMessage: string, alertType: AlertType, tempAlert: ChildNode | null = null): void {
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
@@ -44,7 +43,8 @@ export function addTempAlert(errorMessage = "Please wait...", alertType = AlertT
     const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     const tempAlert: ChildNode | null = alertDiv.lastChild;
-    removeAlertOnTimeout(tempAlert, ms, timeOutError)
+    // noinspection JSIgnoredPromiseFromCall
+    removeAlertOnTimeout(tempAlert, ms, timeOutError);
     return tempAlert
 
 }

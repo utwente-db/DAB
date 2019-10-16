@@ -31,7 +31,7 @@ def write(database, schema):
     os.environ["PGPASSWORD"] = database['password']
     process = subprocess.run(
         ["psql", "-h", db_host, "-U", database['username'], "-p", db_port, "-1", database['databasename']],
-        input=schema, encoding='ascii', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        input=schema, encoding='utf-8', stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     err = stderr(process.stderr)
     if err != None:
@@ -43,6 +43,6 @@ def dump(database):
     os.environ["PGPASSWORD"] = database['password']
     process = subprocess.run(
         ["pg_dump", "-h", db_host, "-U", database['username'], "-p", db_port, "-O", database["databasename"]],
-        encoding='ascii', stdout=subprocess.PIPE)
+        encoding='utf-8', stdout=subprocess.PIPE)
 
     return process.stdout

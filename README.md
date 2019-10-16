@@ -25,13 +25,14 @@ Run dependencies:
 - postgresql-python-venv
 - libpq-dev
 - postgresql-client-common
-- postgresql-client-<VERSION>
+- postgresql-client-[VERSION] \(we use version 10)
 
 Additionally, the following software is needed for the recommended production server setup:
 
 - uWSGI (please install via pip3)
-- a web server (e.g. nginx)
+- a web server (e.g. nginx or apache2)
 - an SMTP server (e.g. postfix)
+- libapache2-mod-proxy-uwsgi (when using apache2)
 
 Logging:
 
@@ -39,10 +40,27 @@ Logging:
 
 Any pip and npm packages will be installed automatically during the installation steps
 
-## Secret.py and the database
+## The Database Server
+
+This service requires a PostgreSQL server to connect to.
+This server SHOULD not be used for any other purposes but this program, as that might cause unexpected behaviour.
+It requires a single superuser on this server.
+To import the schema into the database, [TODO: MIGRATION INSTRUCTION]
+
+## Settings
+
+There are two kinds of settings: Public settings and private settings.
+The former can simply be accessed from `designproject/settings.py`, and are as follows.
+This file contains many settings that do not need to be edited, but some do:
+
+- `DEBUG`: Whether the server is in debug mode. Set to `True` on development, and to `False` on production
+- `EMAIL_SERVER` and `EMAIL_SENDER`: will be discussed under the "email" heading below.
+
+Private settings are stored in the file `secret.py`.
 
 There MUST exist a file `designproject/secret.py`. 
 This file is not included in this repository for obvious reasons.
+The repository does, however, include secret.py.example, which can be used as a template.
 
 The file MUST be a correct python file, and SHOULD contain nothing but the following variable definitions, all of which MUST be strings:
 
@@ -56,11 +74,13 @@ The file MUST be a correct python file, and SHOULD contain nothing but the follo
 
 If the file does not exist, parse, or assign appropriate values to all of these variables, the program will crash.
 
+To create the required 33 bits of data, you could use the command `head -c 33 /dev/urandom | base64`.
+
 The database user MUST exist, and MUST have superuser privileges on the database server.
 The database server MUST run Postgres, and MUST be available from wherever this software is running.
 The database name SHOULD be something memorable and SHOULD NOT end on a number.
 The database server SHOULD not be used for any other purpose than this software.
-Failure to heed the advice in this paragraph may result in unexpected exceptions.
+Failure to heed the advice in this paragraph results in undefined behaviour.
 
 ## Installation and running for development
 
@@ -71,8 +91,7 @@ To run the server, simply run start.sh.
 This will compile the typescript, move static files to their correct location, and finally start a development server on port 8000.
 Note that this server can only be approached from the local host.
 
-NB: the registration of new users requires an smtp server to be present on the local host.
-As your development machine probably does not have such a server, we recommend you use existing user accounts, or, if these are not available, verify accounts by manually modifying the database.
+NB: In development mode, emails will be printed to the standard output instead of being sent as email
 
 WARNING: do not use this way of setting up a server in production.
 It is not intended for high-demand environments, and using it in production may lead to terrible performance and security risks.
@@ -110,19 +129,7 @@ For security reasons, the web server MUST be configured to use SSL, and only all
 All static files are in `<project root>/static`.
 As such, the /media location from the tutorial can be removed.
 
-Finally, there is the matter of email.
-
-To send emails, all that is needed is an smtp server that runs on the local host, and relays messages sent from the local host in such a way that they will inbox in utwente.nl accounts.
-NB: because Python, we do NOT use the UNIX Mail system; instead, we open an smtp connection from the local host.
-
-In Postfix, these settings are present by default. 
-To use Postfix from a location on the UT campus, only one line needs to be added/changed in the default postfix configuration: 
-
-    relayhost = smtp.utwente.nl
-
-This will cause postfix to send all its mail to the UT SMTP server, which, at the moment, forwards all mail originating from within the campus.
-
-Furthermore, `designapp1/mail.py` must be edited to ensure the sender address is corresponds to the domain of the server.
+Finally, email should be setup according to the instructions in the paragraph on it below
 
 ## Installation under Apache
 
@@ -137,34 +144,58 @@ If your system does not provide these versions, or you have an exceptionally hig
 
 Throughout this tutorial, `[DOCUMENT ROOT]` will be used to indicate the absolute path to the directory in which you cloned this project. Standard practice is putting it somewhere in `/var/www/`
 
-1. Install all the dependencies listed above. Take care to install uwsgi as a pip3 package, and not via the system dependencies. 
+1. Install all the dependencies listed above. Take care to install uwsgi as a pip3 package, and not via the system dependencies (do not use the venv for this). 
 2. If your distribution does not come with Python3.6 or later, compile Python3.7 from source, then follow [this tutorial](https://www.paulox.net/2019/03/13/how-to-use-uwsgi-with-python-3-7-in-ubuntu-18-x/) to ensure uwsgi uses it. Also edit install.sh: the first line, `python3 -m venv venv` MUST use your new python3.7 installation.
-3. Run install.sh. This will create a virtual environment, and install the dependencies for the project in it.
-4. Create `secret.py` in accordance with the paragraph on it above.
-5. Copy uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; /var/run/ is simply the standard.
+3. Follow the steps in the paragraph on settings above. Take special care to create `secret.py` correctly.
+4. Run install.sh. This will create a virtual environment, install the dependencies for the project in it, and also migrate the database.
+5. Copy/rename uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; the "good practice" is to put it in /var/run, but as this requires permissions, the current default file puts it in /tmp instead. If you get errors related to socket.c, that probably means that you do not have file permissions on the socket file. 
 6. To test if you have correctly configured uwsgi, run `uwsgi --ini uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
-7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` (or any name of your choice) using the init system of your operation system. The execute command is `uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini`. Depending on the permissions of the files and the socket, you may need to run this as root; however, we recommend running it as www-data. Start the service, and make sure it is started with Apache at boot time.
-8. If the previous step succeeded, we can start configuring apache. If you need to set up a virtual host, we assume you already know how to do this. Otherwise, you can configure this as the main server by putting the configuration information at the root level of the config file. 
+7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` (or any name of your choice) using the init system of your operation system (on Debian and its derivatives this is [SystemD](https://linuxconfig.org/how-to-create-systemd-service-unit-in-linux)). The execute command is `/usr/local/bin/uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini`. Depending on the permissions of the files and the socket, you may need to run this as root; however, we recommend running it as www-data. Start the service, and make sure it is started with Apache at boot time. Please run `which uwsgi` to ensure the file path to the executable is correct.
+8. If the previous step succeeded, we can start configuring apache. We require the modules `proxy` and `proxy_uwsgi` to be enabled and available to the rest of the configuration settings. The easiest way to do this in modern GNU/Linux package of Apache is to use `a2enmod`, as in `a2enmod proxy_uwsgi`. If this is done, you can simply place the configuration below in the place you would normally place the `DocumentRoot` line.
 
-This project needs the following configuration:
+The Apache2 configuration for this project is as follows:
 
     DocumentRoot "[DOCUMENT ROOT]"
     ProxyPass /static !
     ProxyPass / unix:/var/run/dab.sock|uwsgi://uwsgi-uds-dab/
-    ProxyPassReverse / unix:/var/run/dab.sock|uwsgi://uwsgi-uds-dab/
+    ProxyPassReverse / unix:/tmp/dab.sock|uwsgi://uwsgi-uds-dab/
 
 If you have changed the location of the socket in the previous steps, you must also change it here.
 
-Congratulations! You should now have the basic web page set up. You can test this by trying to access the page, at whatever port Apache runs on.
-There are now two things left to do:
+Please ensure that Apache2 has read access to the files in `[DOCUMENT ROOT]/static`, and allows any requests to access those files.
+If this is not the case, CSS, Javascript, and media files can't be loaded.
+
+Congratulations! If you run apache, you should now have the basic web page set up. You can test this by trying to access the page, at whatever port Apache runs on.
+There are now three things left to do:
 
 This project MUST run over https. 
 It is the responsibility of the system administrator to ensure there are proper SSL certificates present. 
 After this has been arranged, `SSLRequireSSL` MUST be added to the Apache configuration of this site, to ensure that only SSL connections will be accepted.
 Failure to comply with these instructions will cause passwords to be transmitted over unencrypted connections.
 
-The second thing is email.
-This project requires you to locally host an SMTP server, so that we can send verification emails. 
+The second thing is email, described in the section below.
+
+Finally, the project is rather useless without an administrator.
+To bootstrap one from a project with an empty database, we recommend the following procedure:
+
+1. Register a student user via the regular register page
+2. Access the master database, using `psql` and the credentials in `secret.py`.
+3. Change the `role` of the created `dbmuser` to `0`
+
+The user should now be an administrator, who can create other administrators and teachers.
+
+## Email
+
+This project sends email to confirm the users are somehow linked to the University of Twente.
+To ensure this email is sent properly, the following steps must be taken.
+
+1. The setting for `EMAIL_SERVER` must be correct. If the server is on campus, you could simply point it to `smtp.utwente.nl`; however, we recommend hosting an SMTP server locally, in accordance with instructions below
+2. The setting for `EMAIL_SENDER` must use a domain that is actually assigned to the hosting server
+3. The SPF records for the domain must designate either the hosting server or `smtp.utwente.nl` as a permitted sender, preferably both. Failure to comply with this instruction will result in email appearing in the users spam folder.
+
+### Locally hosting an SMTP server 
+
+While it is possible to use `smtp.utwente.nl` directly, email is rather complicated, and the chances of the email correctly arriving in the users inbox increase when using a local SMTP server that relays to `smtp.utwente.nl` instead.
 This email server only needs to relay messages from the local host, coming in over a loopback connection.
 If you do not have one installed, we recommend installing Postfix using the package manager. 
 On the UT campus, the only edit that needs to be made to Postfix is the following line in `/etc/postfix/main.cf`:
@@ -173,6 +204,3 @@ On the UT campus, the only edit that needs to be made to Postfix is the followin
 
 Once this is configured, the server should be able to create email.
 
-To bootstrap an administrator account, we recommend registering a regular account, then accessing the main database by hand and change the role for this account to `0`.
-The table that contains user accounts is called `dbmusers`.
-Once this is done, the administrator account can promote users to teacher or administrator status.

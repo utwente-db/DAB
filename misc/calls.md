@@ -207,6 +207,10 @@ DELETE	-> delete ta for that ta id
 
 -----!!!!!NOT IMPLEMENTED YET!!!!!------
 
+### /tas/teacher/own/
+
+GET -> only for the teacher (or admin if it owns courses) returned all the tas in the courses made by this teacher
+
 ### /tas/own/
 
 GET -> gives back the ta information about the currently logged in ta

@@ -39,7 +39,7 @@ class dbmusersSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = dbmusers
-        fields = '__all__'
+        fields = ('id', 'email', 'role', 'password', 'verified', 'token')
 
 
 class TasSerializer(serializers.ModelSerializer):

@@ -9,13 +9,20 @@ import base64
 #import os
 #import pwd
 
+
+from django.db.models import Q
 from django.utils import timezone
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from django.template import loader
-from django.views.decorators.csrf import csrf_exempt
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_protect
+#from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
+from django.template import RequestContext
 from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import ParseError
@@ -89,6 +96,10 @@ def check_role(request, role):
         pass
     return False
 
+def get_role(request):
+    return int(request.session["role"])
+
+
 # REST RESPONSES
 
 def defaultresponse(request):
@@ -103,7 +114,7 @@ def defaultresponse(request):
 
 @authenticated
 def get_base_response(request, db_parameters):
-    if check_role(request, teacher) or db_parameters["dbname"] == "courses":
+    if check_role(request, admin) or db_parameters["dbname"] == "courses":
         try:
             database = db_parameters["db"].objects.all()
             serializer_class = db_parameters["serializer"](database, many=True)
@@ -178,6 +189,9 @@ def do_i_own_this_item(current_id, pk, db_parameters):
         else:
             return False
 
+
+
+
 @authenticated
 def get_single_response(request, pk, db_parameters):
     current_id = request.session['user']
@@ -201,7 +215,6 @@ def get_single_response(request, pk, db_parameters):
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-@csrf_exempt
 @authenticated
 def get_own_response(request, dbname):
     db_parameters = get_db_parameters(dbname)
@@ -244,21 +257,18 @@ def post_base_dbmusers_response(request):
 
     try:
 
-        if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', databases["email"]):
-            return HttpResponse("only utwente email address can be used", status=status.HTTP_400_BAD_REQUEST)
-
-
         unhashed_password = databases['password']
         databases['password'] = hash.make(unhashed_password)
         databases["token"] = hash.token()
         if check_role(request, admin):
             pass
             # databases['role'] = databases['role']
+            # databases['verfied'] = database['verified']
         else:
             databases['role'] = student
+            databases['verified'] = False
         custom_serializer = dbmusersSerializer
         serializer_class = custom_serializer(data=databases, create=True)
-        logging.debug("Created user; verify at /verify/"+databases["token"])
         message = " a user has been created with the email: " + str(databases['email'])
         log_message_with_db("","dbmusers",log_post_base_dbmusers,message) #LOG THIS ACTION
 
@@ -270,13 +280,15 @@ def post_base_dbmusers_response(request):
             serializer_class = dbmusersSerializer(serializer_class.data)
             return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
         else:
-            if "must make a unique set" in str(serializer_class.errors):
+            if "must make a unique set" or "already exists" in str(serializer_class.errors):
                 return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
             else:
                 return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
     except KeyError as e:
         return HttpResponse("The following field(s) should be included:" + str(e),
                             status=status.HTTP_400_BAD_REQUEST)
+    except ValueError as e:
+        return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
             return HttpResponse(status=status.HTTP_409_CONFLICT)
@@ -312,6 +324,7 @@ def post_base_response(request, db_parameters):
                     username = ""
                     try:
                         username = get_studentdatabase_name(databases["course"])
+                        username = re.sub(r' ', "_", username)
                     except KeyError as e:
                         return HttpResponse("The following fields should be included: "+str(e), status=status.HTTP_400_BAD_REQUEST)
                     except Courses.DoesNotExist as e:
@@ -478,23 +491,35 @@ def update_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
-@csrf_exempt
 @authenticated
 def search_on_name(request, search_value, dbname):
     db_parameters = get_db_parameters(dbname)
 
     results = None
 
-    if check_role(request, teacher) or db_parameters["dbname"] == "courses":
+    if check_role(request, admin) or (check_role(request,student) and db_parameters["dbname"] == "studentdatabases" ) or db_parameters["dbname"] == "courses":
 
         try:
 
             if db_parameters["dbname"] == "studentdatabases":
-                results = db_parameters["db"].objects.filter(databasename__icontains=search_value)
+                current_id = request.session['user']
+                if (get_role(request)==student):
+                    ta_courses_results = TAs.objects.filter(studentid=current_id)
+
+                    results = []
+
+                    for single_course in ta_courses_results:
+                        #get databases where this student is a TA
+                        results.extend(db_parameters["db"].objects.filter(databasename__icontains=search_value,course=single_course.courseid))
+
+                elif (get_role(request)==teacher):
+                    results = db_parameters["db"].objects.filter(databasename__icontains=search_value,course__fid=current_id) #get only results of the courses of this teacher
+                elif (get_role(request)==admin):
+                    results = db_parameters["db"].objects.filter(databasename__icontains=search_value) #get all results
             elif db_parameters["dbname"] == "courses":
                 results = db_parameters["db"].objects.filter(coursename__icontains=search_value)
             elif db_parameters["dbname"] == "dbmusers":
-                results = db_parameters["db"].objects.filter(email__icontains=search_value)
+               results = db_parameters["db"].objects.filter(email__icontains=search_value)
             #     TODO: requirs foreign key
             #     elif db_parameters["dbname"] == "tas":
             #      results = db_parameters["db"].objects.filter(databasename__icontains=search_value)
@@ -515,7 +540,6 @@ def search_on_name(request, search_value, dbname):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-@csrf_exempt
 @require_GET
 @require_role(admin)
 def search_on_owner(request, search_value, dbname):
@@ -535,7 +559,6 @@ def search_on_owner(request, search_value, dbname):
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
 
-@csrf_exempt
 @require_GET
 @require_role(student)
 def search_db_on_course(request, search_value):
@@ -573,8 +596,30 @@ def get_db_parameters(dbname):
 
     return db_parameters
 
+@authenticated
+def teacher_own_tas(request,dbname):
+    current_id = request.session['user']
+    db_parameters = get_db_parameters(dbname)
 
-@csrf_exempt
+    if check_role(request, teacher):
+        try:
+            courses_results = Courses.objects.filter(fid=current_id)
+
+            results = []
+            for single_course in courses_results:
+                results.extend(TAs.objects.filter(courseid=single_course.courseid))  #get all students in the course of this teacher
+
+            serializer = db_parameters["serializer"](results, many=True)
+
+        except Exception as e:
+           return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+        else:
+           log_message_with_db(request.session['user'],'tas and courses',log_teacher_own_tas, 'This teacher requested its own tas') #LOG THIS ACTION
+           return JsonResponse(serializer.data, safe=False)
+
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
 def singleview(request, pk, dbname):
     db_parameters = get_db_parameters(dbname)
 
@@ -588,7 +633,6 @@ def singleview(request, pk, dbname):
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@csrf_exempt
 def baseview(request, dbname):
     db_parameters = get_db_parameters(dbname)
     if request.method == 'GET':
@@ -601,7 +645,6 @@ def baseview(request, dbname):
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-@csrf_exempt
 @require_GET
 @authenticated
 def dump(request, pk):
@@ -620,7 +663,6 @@ def dump(request, pk):
     log_message_with_db(request.session['user'],"Studentdatabases",log_dump, message) #LOG THIS ACTION
     return response
 
-@csrf_exempt
 @require_POST
 @authenticated
 def reset(request, pk):
@@ -641,7 +683,6 @@ def reset(request, pk):
     log_message_with_db(request.session['user'],"Studentdatabases",log_reset, message) #LOG THIS ACTION
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
-@csrf_exempt
 @require_http_methods(["GET", "POST"])
 @authenticated
 #TODO: investigate file uploads for this, together with front-end team
@@ -811,7 +852,6 @@ def register(request):
 def request_db(request):
     return render(request, 'request_db.html', {})
 
-
 @require_http_methods(["GET", "POST"])
 def login(request):
     incorrect_message = "wrong email or password"
@@ -821,6 +861,7 @@ def login(request):
             data = form.cleaned_data
             try:
                 user = dbmusers.objects.get(email=data["mail"])
+                print(user)
                 if not user.verified:
                     return render(request, 'login.html',
                                   {'form': LoginForm, 'message': "Please verify your email first"})
@@ -857,9 +898,7 @@ def logout(request):
 # Function for debug purposes only; just returns a small web page with the a button to log out.
 @require_GET
 def logout_button(request):
-    return HttpResponse(
-        "<!DOCTYPE html><html><body><form action='/logout' method='POST'><input type='submit' value='logout'/></form></body></html>",
-        content_type='text/html')
+    return HttpResponse("<!DOCTYPE html><html><body><form action='/logout' method='POST'><input type='submit' value='logout'/></form></body></html>")
 
 
 # Function that returns HTML page for choosing courses
@@ -926,12 +965,40 @@ def whoami(request):
 
 @require_GET
 def verify(request, token):
-    user = dbmusers.objects.get(token=token)
-    user.verified = True
-    user.token = None
-    user.save()
-    return render(request, 'login.html',
+    try:
+        user = dbmusers.objects.get(token=token)
+        user.verified = True
+        user.token = None
+        user.save()
+        return render(request, 'login.html',
                   {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
+
+@require_POST
+def resend_verification(request):
+    body = None
+    user = None
+    try:
+        body = JSONParser().parse(request)
+    except ParseError as e:
+        return HttpResponse("Your JSON did not parse", status=status.HTTP_400_BAD_REQUEST)
+    if not "email" in body:
+        return HttpResponse("Missing key 'email'", status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = dbmusers.objects.get(email=body["email"])
+    except dbmusers.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if user.verified:
+        return HttpResponse(status=status.HTTP_409_CONFLICT)
+
+    user.token = hash.token()
+    user.save()
+
+    mail.send_verification(user.__dict__)
+    return HttpResponse()
 
 #TODO: make front-end for this
 @require_POST
@@ -943,7 +1010,7 @@ def request_reset_password(request, email):
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
     if not db.verified:
-        return HttpResponse("Please verify your email before attempting a password reset", status=HTTP_409_CONFLICT)
+        return HttpResponse("Please verify your email before attempting a password reset", status=status.HTTP_409_CONFLICT)
 
     token = hash.token()
     db.token = hash.token()

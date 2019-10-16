@@ -1,57 +1,59 @@
-{% extends 'base.html' %}
+{# deprecated #}
 
-{% block head %}
-    <title>Courses</title>
-{% endblock %}
-
-{% block scripts %}
-    <script defer src="/static/scripts/courses.js"></script>
-{% endblock %}
-
-{% block content %}
-    {% include 'navbar.html' %}
-    <div class="container-fluid py-3 py-md-5">
-        <div class="row">
-            <div class="col-11 col-md-7 center-block
-    container border border-dark rounded-lg shadow-lg bg-white">
-                <!-- Login Form -->
-                <div class="text-center p-5">
+{#{% extends 'base.html' %}#}
+{##}
+{#{% block head %}#}
+{#    <title>Courses</title>#}
+{#{% endblock %}#}
+{##}
+{#{% block scripts %}#}
+{#    <script defer src="/static/scripts/courses.js"></script>#}
+{#{% endblock %}#}
+{##}
+{#{% block content %}#}
+{#    {% include 'navbar.html' %}#}
+{#    <div class="container-fluid py-3 py-md-5">#}
+{#        <div class="row">#}
+{#            <div class="col-11 col-md-7 center-block#}
+{#    container border border-dark rounded-lg shadow-lg bg-white">#}
+{#                <!-- Login Form -->#}
+{#                <div class="text-center p-5">#}
                     {#                    {% csrf_token %}#}
-                    <p class="h4 mb-4">Select a course</p>
-                    <!-- Username -->
-                    <!-- <input type="username" id="loginId" class="form-control mb-4" placeholder="Database id" required autofocus> -->
-                    <!-- Password -->
-                    <!-- <input type="password" id="loginPw" class="form-control mb-4" placeholder="Password" required> -->
-                    <div class="d-flex justify-content-around mb-2 text-danger font-weight-light">
-                    </div>
-
-
-                    <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="courses-dropdown">Select a course</label>
-                            <select class="form-control" id="courses-dropdown">
-                                <option disabled selected value="0"> select an option</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="group-input">Group</label>
-                            <input type="number" id="group-input" class="form-control" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+{#                    <p class="h4 mb-4">Select a course</p>#}
+{#                    <!-- Username -->#}
+{#                    <!-- <input type="username" id="loginId" class="form-control mb-4" placeholder="Database id" required autofocus> -->#}
+{#                    <!-- Password -->#}
+{#                    <!-- <input type="password" id="loginPw" class="form-control mb-4" placeholder="Password" required> -->#}
+{#                    <div class="d-flex justify-content-around mb-2 text-danger font-weight-light">#}
+{#                    </div>#}
+{##}
+{##}
+{#                    <div class="form-row">#}
+{#                        <div class="form-group col-md-6">#}
+{#                            <label for="courses-dropdown">Select a course</label>#}
+{#                            <select class="form-control" id="courses-dropdown">#}
+{#                                <option disabled selected value="0"> select an option</option>#}
+{#                            </select>#}
+{#                        </div>#}
+{#                        <div class="form-group col-md-6">#}
+{#                            <label for="group-input">Group</label>#}
+{#                            <input type="number" id="group-input" class="form-control" oninput="this.value=this.value.replace(/[^0-9]/g,'');">#}
 {#                            <select id="group-dropdown" class="form-control" disabled>#}
 {#                                <option disabled selected value="0"> Selecting groups is not a thing yet</option>#}
 {#                            </select>#}
-                        </div>
-
-                    </div>
-
-
-                    <button class="btn btn-info my-4" id="credentials-button">Get credentials</button>
-
-                    <div id="alert-div"></div>
-
-
-                </div>
+{#                        </div>#}
+{##}
+{#                    </div>#}
+{##}
+{##}
+{#                    <button class="btn btn-info my-4" id="credentials-button">Get credentials</button>#}
+{##}
+{#                    <div id="alert-div"></div>#}
+{##}
+{##}
+{#                </div>#}
                 {#  end of form#}
-            </div>
-        </div>
-    </div>
-{% endblock %}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}

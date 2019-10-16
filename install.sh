@@ -1,4 +1,5 @@
 #!/bin/sh
+# script for setting up production environment
 
 python3 -m venv venv
 . venv/bin/activate
@@ -9,6 +10,18 @@ npm install
 npm run production
 find . -name "*.map" -type f|xargs rm -f
 
-./manage.py collectstatic --noinput
+echo -n "Have you set up the secret.py file? (FIRST PAGE OF README) (y/n)? "
+read answer
 
-deactivate
+if [ "$answer" != "${answer#[Yy]}" ] ;then
+    ./manage.py collectstatic --noinput
+    ./migrate.sh
+    deactivate
+else
+    echo Please run this script again once you have set it up
+    deactivate
+fi
+
+
+
+

@@ -2,29 +2,33 @@
 [uwsgi]
 
 
-# uncomment these lines if you need the Python3.7 plugin
+# uncomment these lines if you compiled Python3.7 from source
 # plugins-dir = /usr/lib/uwsgi/plugins
 # plugin = python37
 
 # Django-related settings
-# the base directory (full path)
-chdir = /Users/floris/ownCloud/UT/design_project
-# Django's wsgi file
+# the base directory (please change to your full path)
+chdir = /home/freek/production-test/design
+# Django's wsgi file (does not need changing)
 module = designproject.wsgi
-# the virtualenv (full path)
-home = /Users/floris/ownCloud/UT/design_project/venv
+# the virtualenv (please change to your full path + /venv)
+home = /home/freek/production-test/design/venv
 
 # process-related settings
-# master
+# master (does not need changing)
 master = true
-# maximum number of worker processes
+# maximum number of worker processes (choose any you like)
 processes = 10
-# the socket (use the full path to be safe
-socket = /var/run/dab.sock
+# the socket (please change to the path where you'd like the socket to be created)
+socket = /tmp/dab.sock
 # ... with appropriate permissions - may be needed
 chmod-socket = 666
-# clear environment on exit
+# clear environment on exit (does not need changing)
 vacuum = true
 
+# Do not change this!
 env = DJANGO_SETTINGS_MODULE=designproject.settings
-deamonize = /var/log/uwsgi/designproject.log
+
+# Choose where you'd like your log file
+# you might need to create this file yourself
+deamonize = /var/log/uwsgi/dab.log
