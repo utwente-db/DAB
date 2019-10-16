@@ -244,10 +244,6 @@ def post_base_dbmusers_response(request):
 
     try:
 
-        if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', databases["email"]):
-            return HttpResponse("only utwente email address can be used", status=status.HTTP_400_BAD_REQUEST)
-
-
         unhashed_password = databases['password']
         databases['password'] = hash.make(unhashed_password)
         databases["token"] = hash.token()
@@ -276,6 +272,8 @@ def post_base_dbmusers_response(request):
     except KeyError as e:
         return HttpResponse("The following field(s) should be included:" + str(e),
                             status=status.HTTP_400_BAD_REQUEST)
+    except ValueError as e:
+        return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
             return HttpResponse(status=status.HTTP_409_CONFLICT)
@@ -820,6 +818,7 @@ def login(request):
             data = form.cleaned_data
             try:
                 user = dbmusers.objects.get(email=data["mail"])
+                print(user)
                 if not user.verified:
                     return render(request, 'login.html',
                                   {'form': LoginForm, 'message': "Please verify your email first"})

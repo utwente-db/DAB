@@ -10,6 +10,25 @@ from django.conf import settings
 import base64
 import re
 
+class dbmusersQuerySet(models.query.QuerySet):
+
+    def get(self, **kwargs):
+        if "email" in kwargs:
+            kwargs["email"] = kwargs["email"].lower()
+
+        return super().get(**kwargs)
+
+    def filter(self, **kwargs):
+        if "email" in kwargs:
+            kwargs["email"] = kwargs["email"].lower()
+        return super().filter(**kwargs)
+
+class dbmusersManager(models.Manager.from_queryset(dbmusersQuerySet)):
+
+    def all(self, **kwargs):
+        if "email" in kwargs:
+            kwargs["email"] = kwargs["email"].lower()
+        return super().get(**kwargs)
 
 class dbmusers(models.Model):
     id = models.AutoField(db_column='id', primary_key=True)
@@ -20,6 +39,16 @@ class dbmusers(models.Model):
     token = models.TextField(null=True)
     lastlogin = models.DateTimeField(default=None)
     tokenExpire = models.DateTimeField(default=None, db_column="token_expire")
+
+    def save(self, *args, **kwargs):
+        self.email = self.email.lower()
+        if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', self.email):
+            raise ValueError("user does not have a utwente email")
+        elif not re.match(r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])", self.email):
+            raise ValueError("user does not have a valid email")
+        super(dbmusers, self).save()
+
+    objects = dbmusersManager()
 
     class Meta:
         managed = False
