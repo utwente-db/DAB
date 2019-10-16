@@ -20,7 +20,7 @@ master = true
 # maximum number of worker processes (choose any you like)
 processes = 10
 # the socket (please change to the path where you'd like the socket to be created)
-socket = /var/run/dab.sock
+socket = /tmp/dab.sock
 # ... with appropriate permissions - may be needed
 chmod-socket = 666
 # clear environment on exit (does not need changing)

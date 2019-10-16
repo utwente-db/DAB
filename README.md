@@ -60,6 +60,7 @@ Private settings are stored in the file `secret.py`.
 
 There MUST exist a file `designproject/secret.py`. 
 This file is not included in this repository for obvious reasons.
+The repository does, however, include secret.py.example, which can be used as a template.
 
 The file MUST be a correct python file, and SHOULD contain nothing but the following variable definitions, all of which MUST be strings:
 
@@ -72,6 +73,8 @@ The file MUST be a correct python file, and SHOULD contain nothing but the follo
     bitmask = [33 BYTES OF CRYPTORANDOM DATA, AS BASE64]
 
 If the file does not exist, parse, or assign appropriate values to all of these variables, the program will crash.
+
+To create the required 33 bits of data, you could use the command `head -c 33 /dev/urandom | base64`.
 
 The database user MUST exist, and MUST have superuser privileges on the database server.
 The database server MUST run Postgres, and MUST be available from wherever this software is running.
@@ -145,17 +148,17 @@ Throughout this tutorial, `[DOCUMENT ROOT]` will be used to indicate the absolut
 2. If your distribution does not come with Python3.6 or later, compile Python3.7 from source, then follow [this tutorial](https://www.paulox.net/2019/03/13/how-to-use-uwsgi-with-python-3-7-in-ubuntu-18-x/) to ensure uwsgi uses it. Also edit install.sh: the first line, `python3 -m venv venv` MUST use your new python3.7 installation.
 3. Follow the steps in the paragraph on settings above. Take special care to create `secret.py` correctly.
 4. Run install.sh. This will create a virtual environment, and install the dependencies for the project in it.
-5. Copy/rename uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; /var/run/ is simply the standard. (errors related to socket.c probably mean that you do not have file permissions on the socket file. If you do not want to change permissions on /var/run, we recommend placing the socket in /tmp instead.)
+5. Copy/rename uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; the "good practice" is to put it in /var/run, but as this requires permissions, the current default file puts it in /tmp instead. If you get errors related to socket.c, that probably means that you do not have file permissions on the socket file. 
 6. To test if you have correctly configured uwsgi, run `uwsgi --ini uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
 7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` (or any name of your choice) using the init system of your operation system (on Debian and its derivatives this is [SystemD](https://linuxconfig.org/how-to-create-systemd-service-unit-in-linux)). The execute command is `/usr/local/bin/uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini`. Depending on the permissions of the files and the socket, you may need to run this as root; however, we recommend running it as www-data. Start the service, and make sure it is started with Apache at boot time. Please run `which uwsgi` to ensure the file path to the executable is correct.
-8. If the previous step succeeded, we can start configuring apache. We require the modules `proxy` and `proxy_uwsgi` to be enabled and available to the rest of the configuration settings. If this is done, you can simply place the configuration below in the place you would normally place the `DocumentRoot` line.
+8. If the previous step succeeded, we can start configuring apache. We require the modules `proxy` and `proxy_uwsgi` to be enabled and available to the rest of the configuration settings. The easiest way to do this in modern GNU/Linux package of Apache is to use `a2enmod`, as in `a2enmod proxy_uwsgi`. If this is done, you can simply place the configuration below in the place you would normally place the `DocumentRoot` line.
 
 The Apache2 configuration for this project is as follows:
 
     DocumentRoot "[DOCUMENT ROOT]"
     ProxyPass /static !
     ProxyPass / unix:/var/run/dab.sock|uwsgi://uwsgi-uds-dab/
-    ProxyPassReverse / unix:/var/run/dab.sock|uwsgi://uwsgi-uds-dab/
+    ProxyPassReverse / unix:/tmp/dab.sock|uwsgi://uwsgi-uds-dab/
 
 If you have changed the location of the socket in the previous steps, you must also change it here.
 
@@ -188,7 +191,7 @@ To ensure this email is sent properly, the following steps must be taken.
 
 1. The setting for `EMAIL_SERVER` must be correct. If the server is on campus, you could simply point it to `smtp.utwente.nl`; however, we recommend hosting an SMTP server locally, in accordance with instructions below
 2. The setting for `EMAIL_SENDER` must use a domain that is actually assigned to the hosting server
-3. The SPF records for the domain must designate either the hosting server or `smtp.utwente.nl` as a permitted sender, preferable both. Failure to comply with this instruction will result in email appearing in the users spam folder.
+3. The SPF records for the domain must designate either the hosting server or `smtp.utwente.nl` as a permitted sender, preferably both. Failure to comply with this instruction will result in email appearing in the users spam folder.
 
 ### Locally hosting an SMTP server 
 
