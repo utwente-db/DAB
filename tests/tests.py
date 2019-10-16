@@ -28,7 +28,8 @@ student.post(BASE + "/login", {"mail": "aoeu@sfbtech.nl", "password": "aoeu"})
 unlogged = requests.Session()
 
 ta_id = 0
-
+teacher_id = 0
+student_id = 0
 
 class TestLogin(unittest.TestCase):
 
@@ -40,11 +41,13 @@ class TestLogin(unittest.TestCase):
         self.assertEqual(body["role"], 0)
 
     def testTeacher(self):
+        global teacher_id
         r = teacher.get(BASE + "/rest/whoami")
         self.assertEqual(r.status_code, 200)
         body = r.json()
         self.assertEqual(body["email"], "teacher@sfbtech.nl")
         self.assertEqual(body["role"], 1)
+        teacher_id = body["id"]
 
     def testTA(self):
         global ta_id
@@ -56,11 +59,13 @@ class TestLogin(unittest.TestCase):
         ta_id = body["id"]
 
     def testStudent(self):
+        global student_id
         r = student.get(BASE + "/rest/whoami")
         self.assertEqual(r.status_code, 200)
         body = r.json()
         self.assertEqual(body["email"], "aoeu@sfbtech.nl")
         self.assertEqual(body["role"], 2)
+        student_id = body["id"]
 
     def testUnlogged(self):
         r = unlogged.get(BASE + "/rest/whoami")
@@ -72,7 +77,7 @@ test_db = {
 test_course = {
     "coursename": base64.b64encode(urandom(18)).decode(),
     "info": "unit_test",
-    "fid": 72,
+    "fid": 0,
     "schema": "CREATE TABLE test (id SERIAL PRIMARY KEY, name TEXT);",
     "active": True,
 }
@@ -84,8 +89,10 @@ class testCourse(unittest.TestCase):
     # Currently relies on alphabetic sorting
 
     def test0CreateCourse(self):
-        global test_course, test_db
+        global test_course, test_db, teacher_id
+        test_course["fid"] = teacher_id
         r = teacher.post(BASE + "/rest/courses/", json=test_course)
+        print(r.text)
         self.assertEqual(r.status_code, 201)
 
         # check if it exists
