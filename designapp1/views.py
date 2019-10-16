@@ -20,6 +20,7 @@ from django.views.decorators.csrf import csrf_protect
 #from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
+from django.template import RequestContext
 from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import ParseError
@@ -181,9 +182,7 @@ def do_i_own_this_item(current_id, pk, db_parameters):
             return True
         else:
             return False
-#@csrf_protect
-@ensure_csrf_cookie
-@csrf_protect
+
 @authenticated
 def get_single_response(request, pk, db_parameters):
     logging.debug(get_token(request))
@@ -208,7 +207,6 @@ def get_single_response(request, pk, db_parameters):
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-#@csrf_exempt
 @authenticated
 def get_own_response(request, dbname):
     db_parameters = get_db_parameters(dbname)
@@ -484,7 +482,6 @@ def update_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
 
-#@csrf_exempt
 @authenticated
 def search_on_name(request, search_value, dbname):
     db_parameters = get_db_parameters(dbname)
@@ -521,7 +518,6 @@ def search_on_name(request, search_value, dbname):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-#@csrf_exempt
 @require_GET
 @require_role(admin)
 def search_on_owner(request, search_value, dbname):
@@ -541,7 +537,6 @@ def search_on_owner(request, search_value, dbname):
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
 
-#@csrf_exempt
 @require_GET
 @require_role(student)
 def search_db_on_course(request, search_value):
@@ -580,7 +575,6 @@ def get_db_parameters(dbname):
     return db_parameters
 
 
-#@csrf_exempt
 def singleview(request, pk, dbname):
     db_parameters = get_db_parameters(dbname)
 
@@ -594,7 +588,6 @@ def singleview(request, pk, dbname):
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-#@csrf_exempt
 def baseview(request, dbname):
     db_parameters = get_db_parameters(dbname)
     if request.method == 'GET':
@@ -607,7 +600,6 @@ def baseview(request, dbname):
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
-#@csrf_exempt
 @require_GET
 @authenticated
 def dump(request, pk):
@@ -626,7 +618,6 @@ def dump(request, pk):
     log_message_with_db(request.session['user'],"Studentdatabases",log_dump, message) #LOG THIS ACTION
     return response
 
-#@csrf_exempt
 @require_POST
 @authenticated
 def reset(request, pk):
@@ -647,7 +638,6 @@ def reset(request, pk):
     log_message_with_db(request.session['user'],"Studentdatabases",log_reset, message) #LOG THIS ACTION
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
-#@csrf_exempt
 @require_http_methods(["GET", "POST"])
 @authenticated
 #TODO: investigate file uploads for this, together with front-end team
@@ -817,7 +807,6 @@ def register(request):
 def request_db(request):
     return render(request, 'request_db.html', {})
 
-
 @require_http_methods(["GET", "POST"])
 def login(request):
     incorrect_message = "wrong email or password"
@@ -863,9 +852,7 @@ def logout(request):
 # Function for debug purposes only; just returns a small web page with the a button to log out.
 @require_GET
 def logout_button(request):
-    return HttpResponse(
-        "<!DOCTYPE html><html><body><form action='/logout' method='POST'><input type='submit' value='logout'/></form></body></html>",
-        content_type='text/html')
+    return HttpResponse("<!DOCTYPE html><html><body><form action='/logout' method='POST'><input type='submit' value='logout'/></form></body></html>")
 
 
 # Function that returns HTML page for choosing courses
