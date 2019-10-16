@@ -250,8 +250,10 @@ def post_base_dbmusers_response(request):
         if check_role(request, admin):
             pass
             # databases['role'] = databases['role']
+            # databases['verfied'] = database['verified']
         else:
             databases['role'] = student
+            databases['verified'] = False
         custom_serializer = dbmusersSerializer
         serializer_class = custom_serializer(data=databases, create=True)
         message = " a user has been created with the email: " + str(databases['email'])
@@ -265,7 +267,7 @@ def post_base_dbmusers_response(request):
             serializer_class = dbmusersSerializer(serializer_class.data)
             return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
         else:
-            if "must make a unique set" in str(serializer_class.errors):
+            if "must make a unique set" or "already exists" in str(serializer_class.errors):
                 return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
             else:
                 return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
