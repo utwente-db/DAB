@@ -257,18 +257,16 @@ def post_base_dbmusers_response(request):
 
     try:
 
-        if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', databases["email"]):
-            return HttpResponse("only utwente email address can be used", status=status.HTTP_400_BAD_REQUEST)
-
-
         unhashed_password = databases['password']
         databases['password'] = hash.make(unhashed_password)
         databases["token"] = hash.token()
         if check_role(request, admin):
             pass
             # databases['role'] = databases['role']
+            # databases['verfied'] = database['verified']
         else:
             databases['role'] = student
+            databases['verified'] = False
         custom_serializer = dbmusersSerializer
         serializer_class = custom_serializer(data=databases, create=True)
         message = " a user has been created with the email: " + str(databases['email'])
@@ -282,13 +280,15 @@ def post_base_dbmusers_response(request):
             serializer_class = dbmusersSerializer(serializer_class.data)
             return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
         else:
-            if "must make a unique set" in str(serializer_class.errors):
+            if "must make a unique set" or "already exists" in str(serializer_class.errors):
                 return JsonResponse(serializer_class.errors, status=status.HTTP_409_CONFLICT)
             else:
                 return JsonResponse(serializer_class.errors, status=status.HTTP_400_BAD_REQUEST)
     except KeyError as e:
         return HttpResponse("The following field(s) should be included:" + str(e),
                             status=status.HTTP_400_BAD_REQUEST)
+    except ValueError as e:
+        return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
             return HttpResponse(status=status.HTTP_409_CONFLICT)
@@ -324,6 +324,7 @@ def post_base_response(request, db_parameters):
                     username = ""
                     try:
                         username = get_studentdatabase_name(databases["course"])
+                        username = re.sub(r' ', "_", username)
                     except KeyError as e:
                         return HttpResponse("The following fields should be included: "+str(e), status=status.HTTP_400_BAD_REQUEST)
                     except Courses.DoesNotExist as e:
@@ -860,6 +861,7 @@ def login(request):
             data = form.cleaned_data
             try:
                 user = dbmusers.objects.get(email=data["mail"])
+                print(user)
                 if not user.verified:
                     return render(request, 'login.html',
                                   {'form': LoginForm, 'message': "Please verify your email first"})

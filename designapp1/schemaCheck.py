@@ -36,7 +36,7 @@ def check(schema):
     os.environ["PGPASSWORD"] = password
     process = subprocess.run(
         ["psql", "-h", db_host, "-U", username, "-p", db_port, "-1", username],
-        input=schema, encoding="ascii", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        input=schema, encoding="utf-8", stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     err = stderr(process.stderr)
     if err != None:
         delete_studentdatabase(username, username)
