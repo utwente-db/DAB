@@ -15,6 +15,7 @@ read answer
 
 if [ "$answer" != "${answer#[Yy]}" ] ;then
     ./manage.py collectstatic --noinput
+    ./migrate.sh
     deactivate
 else
     echo Please run this script again once you have set it up
