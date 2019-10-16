@@ -92,7 +92,6 @@ class testCourse(unittest.TestCase):
         global test_course, test_db, teacher_id
         test_course["fid"] = teacher_id
         r = teacher.post(BASE + "/rest/courses/", json=test_course)
-        print(r.text)
         self.assertEqual(r.status_code, 201)
 
         # check if it exists

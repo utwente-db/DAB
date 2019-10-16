@@ -55,7 +55,7 @@ def randomNames():
     return (base64.b64encode(name).decode(), base64.b64encode(password).decode())
 
 def randomPassword():
-    return base64.b64encode(urandom(33)).decode()
+    return base64.b64encode(urandom(12)).decode()
 
 def token():
     return base64.b64encode(urandom(16)).decode()
