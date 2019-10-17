@@ -23,6 +23,10 @@ class customerrorhandling(object):
 
         if request.build_absolute_uri().endswith('/rest/studentdatabases/name/'):
             return HttpResponse('Your search field is empty',status=status.HTTP_400_BAD_REQUEST)
+        elif request.build_absolute_uri().endswith('/rest/studentdatabases/owner/'):
+            return HttpResponse('Your search field is empty',status=status.HTTP_400_BAD_REQUEST)
+        elif request.build_absolute_uri().endswith('/rest/studentdatabases/course/'):
+            return HttpResponse('Your search field is empty',status=status.HTTP_400_BAD_REQUEST)
 
         if type(exception) == OperationalError:
             return HttpResponse('Connection to the database is lost',status=status.HTTP_424_FAILED_DEPENDENCY)
