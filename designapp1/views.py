@@ -27,6 +27,8 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
+from django.db.utils import OperationalError
+
 
 from designapp1 import statements
 from . import hash
@@ -92,7 +94,9 @@ def check_role(request, role):
     try:
         if (int(request.session["role"]) <= role):
             return True
-    except Exception:
+    except OperationalError as e:
+        return HttpResponse('Connection to the database is lost',status=status.HTTP_424_FAILED_DEPENDENCY)
+    except Exception as e:
         pass
     return False
 
@@ -528,6 +532,7 @@ def search_on_name(request, search_value, dbname):
             serializer = db_parameters["serializer"](results, many=True)
 
         except Exception as e:
+            logging.debug(type(e))
             return HttpResponse(status=status.HTTP_404_NOT_FOUND)
         else:
             message = " a search has been done on the term:" + str(search_value)
