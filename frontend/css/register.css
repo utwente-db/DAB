@@ -8350,21 +8350,14 @@ a {
   .nav-link.have-credentials-nav.active {
     background-color: #4ecf86 !important; }
 
-.tableFixHead {
-  overflow-y: auto;
-  height: 100px; }
-
 .tableFixHead thead th {
   position: sticky;
-  top: 0; }
+  top: 0;
+  cursor: pointer; }
 
-/* Just common table stuff. Really. */
 table {
   border-collapse: collapse;
   width: 100%; }
-
-th, td {
-  padding: 8px 16px; }
 
 th {
   background: #eee; }

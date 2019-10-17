@@ -2,7 +2,7 @@
 @import "~bootstrap/scss/bootstrap"
 @import "~bootstrap-select/sass/bootstrap-select"
 @import "~bootstrap-cookie-alert/cookiealert.css"
-@import '~sweetalert2/src/sweetalert2.scss'
+@import "~sweetalert2/src/sweetalert2.scss"
 
 // -webkit-appearance: none
 
@@ -30,17 +30,16 @@ a
   @extend .text-center
 // border-color: #17a2b8
 
-.tableFixHead
-    overflow-y: auto; height: 100px
-
 .tableFixHead thead th
     position: sticky; top: 0
+    cursor: pointer
 
-/* Just common table stuff. Really. */
+// .table th .table td
+//     border-top: 0px
+
 table
     border-collapse: collapse
     width: 100%
-th, td
-    padding: 8px 16px
+
 th
     background:#eee

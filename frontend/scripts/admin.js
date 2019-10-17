@@ -19854,8 +19854,8 @@ function displayCourses() {
                     }
                     resultNavString = resultNav.join("\n");
                     resultContentString = resultContent.join("\n");
-                    coursesNavHtml.innerHTML += resultNavString;
-                    coursesContentHtml.innerHTML += resultContentString;
+                    coursesNavHtml.innerHTML = resultNavString;
+                    coursesContentHtml.innerHTML = resultContentString;
                     return [2 /*return*/];
             }
         });
@@ -19886,17 +19886,12 @@ function displayUsers() {
                         }
                         verified = users[i].verified;
                         result.push("<tr><th scope=\"row\">" + users[i].id + "</th>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + role + "</td>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + users[i].email + "</td>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + verified + "</td></a></tr>"
-                        // "<tr><th scope=\"row\">" + users[i].id + "</th>"
-                        // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
-                        // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
-                        // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>"
-                        );
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + role + "</td>"
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + users[i].email + "</td>"
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + verified + "</td></tr>");
                     }
                     resultString = result.join("\n");
-                    usersHtml.innerHTML += resultString;
+                    usersHtml.innerHTML = resultString;
                     return [2 /*return*/];
             }
         });
@@ -19995,18 +19990,18 @@ function displayWhoami() {
                 case 1:
                     whoami = _a.sent();
                     if (whoami.role === 0) {
-                        role = "an admin";
+                        role = "admin";
                     }
                     else if (whoami.role === 1) {
-                        role = "a teacher";
+                        role = "teacher";
                     }
                     else if (whoami.role === 2) {
-                        role = "a student";
+                        role = "student";
                     }
                     else {
-                        role = "Unknown";
+                        role = "unknown";
                     }
-                    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + ", you are " + role + ".";
+                    whoamiWelcomeHtml.innerHTML += whoami.email + " (" + role + ")";
                     return [2 /*return*/];
             }
         });

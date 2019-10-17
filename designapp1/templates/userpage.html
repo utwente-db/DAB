@@ -22,33 +22,36 @@
     <div class="container bg-light p-4">
         <div class="row">
             <div id="user-info"></div>
-                <div class="col-6">
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="email">E-Mail</span>
+                <div class="col-7">
+                    <div class="form-group row">
+                        <label class="col-12 col-md-4 col-form-label">Username:</label>
+                        <div class="col-12 col-md-8" id="username">
+                            <!-- <input type="text" class="form-control" value="${db.username}" readonly=""> -->
                         </div>
-                        <input type="text" class="form-control" id="email" placeholder="test.email@asdasd" disabled>
                     </div>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="role">Role</span>
-                        </div>
-                        <input type="text" class="form-control" id="role" placeholder="Student" disabled>
-                        <div class="input-group-append">
-                            <button class="btn btn-danger">Edit</button>
+                    <div class="form-group row">
+                        <label class="col-12 col-md-4 col-form-label">Role:</label>
+                        <div class="col-12 col-md-8" id="role">
+                            <!-- <input type="text" class="form-control" value="${db.role}" readonly=""> -->
                         </div>
                     </div>
                 </div>
-                <div class="col-6 text-right">
-                    <label>Verfied: </label>
-                    <span>&#x2714</span>
-                    <span>&#x2718</span>
+                <div class="col-5 text-right">
+                    <label>Verified: </label>
+                    <div class="d-inline" id="verified">
+                        <!-- <span>&#x2714</span>
+                        <span>&#x2718</span> -->
+                    </div>
+
+                    <div class="text-center">
+                        <button id="delete_button" class="btn btn-danger">Delete User</button>
+                    </div>
                 </div>
         </div>
         <hr/>
         <div class="row">
             <div class="col-6">
-                <div class="overflow-auto" style="height: 300px;">
+                <div class="overflow-auto border rounded" style="height: 300px;">
                     <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
                         <div class="spinner-border text-info"></div>
                     </div>
@@ -58,23 +61,6 @@
                 <div class="tab-content" id="courses-db">
                     <div class="spinner-border text-info"></div>
                 </div>
-            </div>
-
-            <div class="text-center">
-                <button class="btn btn-danger">Delete User</button>
-            </div>
-
-            <div class="col-12 text-center">
-                <!-- content -->
-
-                <!-- <ul>
-                    <li>id</li>
-                    <li>email</li>
-                    <li>role, change role</li>
-                    <li>verified</li>
-                    <li>remove user</li>
-                    <li>which database(s) is/are linked to this user</li>
-                </ul> -->
             </div>
         </div>
     </div>

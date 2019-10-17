@@ -26215,18 +26215,18 @@ function displayWhoami() {
                 case 1:
                     whoami = _a.sent();
                     if (whoami.role === 0) {
-                        role = "an admin";
+                        role = "admin";
                     }
                     else if (whoami.role === 1) {
-                        role = "a teacher";
+                        role = "teacher";
                     }
                     else if (whoami.role === 2) {
-                        role = "a student";
+                        role = "student";
                     }
                     else {
-                        role = "Unknown";
+                        role = "unknown";
                     }
-                    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + ", you are " + role + ".";
+                    whoamiWelcomeHtml.innerHTML += whoami.email + " (" + role + ")";
                     return [2 /*return*/];
             }
         });
@@ -26320,7 +26320,7 @@ function populateHaveCredentialsPane(i) {
             haveCredsInfo.innerText = courses[i].info;
             ownDatabases.forEach(function (db) {
                 if (db.course === courses[i].courseid) {
-                    var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"align-items-center align-items-stretch row\">\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"delete-button-" + db.dbid + "\" class=\"btn btn-danger delete-button btn-block\">Delete database and release credentials</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"reset-button-" + db.dbid + "\" class=\"btn btn-info reset-button btn-block\">Reset database</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button onclick=\"window.open('/rest/dump/" + db.dbid + "/')\" id=\"dump-button-" + db.dbid + "\" class=\"btn btn-secondary dump-button btn-block\">Get dump of database</button>\n                            </div>\n                        </div>\n                        <hr>";
+                    var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"align-items-center align-items-stretch row\">\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"delete-button-" + db.dbid + "\" class=\"btn btn-danger delete-button btn-block\">Delete database and release credentials</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"reset-button-" + db.dbid + "\" class=\"btn btn-info reset-button btn-block\">Reset database</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button onclick=\"window.location.replace('/rest/dump/" + db.dbid + "/')\" id=\"dump-button-" + db.dbid + "\" class=\"btn btn-secondary dump-button btn-block\">Get dump of database</button>\n                            </div>\n                        </div>\n                        <hr>";
                     // TODO make third button mobile-friendly
                     credentials += html.trim();
                     dbIDs.push(db.dbid);
@@ -26499,6 +26499,10 @@ function prepareToDeleteCredentials(dbID) {
                         .forEach(function (resetButton) {
                         resetButton.classList.add("disabled");
                     });
+                    Array.from(document.getElementsByClassName("dump-button"))
+                        .forEach(function (dumpButton) {
+                        dumpButton.classList.add("disabled");
+                    });
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 4, 5, 6]);
@@ -26524,6 +26528,10 @@ function prepareToDeleteCredentials(dbID) {
                     Array.from(document.getElementsByClassName("reset-button"))
                         .forEach(function (resetButton) {
                         resetButton.classList.remove("disabled");
+                    });
+                    Array.from(document.getElementsByClassName("dump-button"))
+                        .forEach(function (dumpButton) {
+                        dumpButton.classList.remove("disabled");
                     });
                     return [7 /*endfinally*/];
                 case 6: return [2 /*return*/, success];
@@ -26558,6 +26566,10 @@ function resetDatabase(dbID) {
                         .forEach(function (resetButton) {
                         resetButton.classList.add("disabled");
                     });
+                    Array.from(document.getElementsByClassName("dump-button"))
+                        .forEach(function (dumpButton) {
+                        dumpButton.classList.add("disabled");
+                    });
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 4, 5, 6]);
@@ -26581,6 +26593,10 @@ function resetDatabase(dbID) {
                     Array.from(document.getElementsByClassName("reset-button"))
                         .forEach(function (resetButton) {
                         resetButton.classList.remove("disabled");
+                    });
+                    Array.from(document.getElementsByClassName("dump-button"))
+                        .forEach(function (dumpButton) {
+                        dumpButton.classList.remove("disabled");
                     });
                     return [7 /*endfinally*/];
                 case 6: return [2 /*return*/, success];

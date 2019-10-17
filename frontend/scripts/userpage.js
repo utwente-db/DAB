@@ -19823,18 +19823,18 @@ function displayWhoami() {
                 case 1:
                     whoami = _a.sent();
                     if (whoami.role === 0) {
-                        role = "an admin";
+                        role = "admin";
                     }
                     else if (whoami.role === 1) {
-                        role = "a teacher";
+                        role = "teacher";
                     }
                     else if (whoami.role === 2) {
-                        role = "a student";
+                        role = "student";
                     }
                     else {
-                        role = "Unknown";
+                        role = "unknown";
                     }
-                    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + ", you are " + role + ".";
+                    whoamiWelcomeHtml.innerHTML += whoami.email + " (" + role + ")";
                     return [2 /*return*/];
             }
         });
@@ -19895,18 +19895,26 @@ var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
-//todo: change to selected user ofcourse
-var hardcoded_userid = 73;
+var urlParams = new URLSearchParams(window.location.search);
+var userid = 0;
+var x = urlParams.get("id");
+if (x != null) {
+    userid = parseInt(x);
+}
 var pageTitleHtml = document.getElementById("page-title");
 var userInfoHtml = document.getElementById("user-info");
 var coursesNavHtml = document.getElementById("courses-nav");
 var courseDatabasesHtml = document.getElementById("courses-db");
+var usernameHtml = document.getElementById("username");
+var roleHtml = document.getElementById("role");
+var verifiedHtml = document.getElementById("verified");
+var deleteButton = document.getElementById("delete_button");
 function getDatabasesPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/owner/" + hardcoded_userid + "/")];
+                case 0: return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/owner/" + userid + "/")];
                 case 1:
                     response = _a.sent();
                     return [2 /*return*/, response.data];
@@ -19933,7 +19941,7 @@ function getUserPromise() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    path = "/rest/dbmusers/" + hardcoded_userid + "/";
+                    path = "/rest/dbmusers/" + userid + "/";
                     return [4 /*yield*/, axios_1.default.get(path)];
                 case 1:
                     response = _a.sent();
@@ -19944,12 +19952,17 @@ function getUserPromise() {
 }
 function displayCoursesAndDatabases() {
     return __awaiter(this, void 0, void 0, function () {
-        var databases, coursesAndDatabases, i, i, html, course, resultNav, resultContent, active, _i, _a, entry, courseNumber, content, course, resultNavString, resultContentString;
+        var databases, coursesAndDatabases, i, i, html, resultNav, resultContent, active, _i, _a, entry, courseNumber, content, course, resultNavString, resultContentString;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0: return [4 /*yield*/, getDatabasesPromise()];
                 case 1:
                     databases = _b.sent();
+                    if (databases.length == 0) {
+                        coursesNavHtml.innerHTML = "empty";
+                        courseDatabasesHtml.innerHTML = "no content";
+                        return [2 /*return*/];
+                    }
                     coursesAndDatabases = new Map();
                     for (i = 0; i < databases.length; i++) {
                         coursesAndDatabases.set(databases[i].course, "");
@@ -19962,10 +19975,8 @@ function displayCoursesAndDatabases() {
                             + "groupid: " + databases[i].groupid + "<br>"
                             + "fid: " + databases[i].fid + "<br>"
                             + "course: " + databases[i].course + "<br>";
-                        course = coursesAndDatabases.get(databases[i].course);
-                        if (course) {
-                            course.concat(html);
-                        }
+                        // This will mess up if someone has multiple db's in a single course
+                        coursesAndDatabases.set(databases[i].course, html);
                     }
                     resultNav = [];
                     resultContent = [];
@@ -20009,17 +20020,33 @@ function displayUserDetails() {
                     user = _a.sent();
                     pageTitleHtml.innerHTML += "Admin - User " + user.id;
                     if (user.role == 0) {
-                        role = "Admin";
+                        role = "admin";
                     }
                     else if (user.role == 1) {
-                        role = "Teacher";
+                        role = "teacher";
                     }
                     else if (user.role == 2) {
-                        role = "Student";
+                        role = "student";
                     }
                     else {
-                        role = "Unknown";
+                        role = "unknown";
                     }
+                    usernameHtml.innerHTML += "<input type=\"text\" class=\"form-control\" value=\"" + user.email + "\" readonly=\"\">";
+                    roleHtml.innerHTML += "<input type=\"text\" class=\"form-control\" value=\"" + role + "\" readonly=\"\">";
+                    verifiedHtml.innerHTML += (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+// TODO: add are you sure and confimation of deletion
+function deleteUser() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, axios_1.default.delete("/rest/dbmusers/" + userid + "/")];
+                case 1:
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
@@ -20028,7 +20055,9 @@ function displayUserDetails() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, displayUserDetails()];
+            case 0:
+                deleteButton.addEventListener("click", deleteUser);
+                return [4 /*yield*/, displayUserDetails()];
             case 1:
                 _a.sent();
                 return [4 /*yield*/, navbar_1.displayWhoami()];

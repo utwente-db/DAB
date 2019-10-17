@@ -6,14 +6,25 @@ import "bootstrap"
 
 import {displayWhoami} from "./navbar";
 
-//todo: change to selected user ofcourse
-const hardcoded_userid: number = 73;
+const urlParams = new URLSearchParams(window.location.search);
+var userid: number = 0;
+
+const x: string | null = urlParams.get("id");
+if (x != null) {
+    userid = parseInt(x);
+}
 
 const pageTitleHtml: HTMLTitleElement = document.getElementById("page-title") as HTMLTitleElement;
 const userInfoHtml: HTMLDivElement = document.getElementById("user-info") as HTMLDivElement;
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
+
+const usernameHtml: HTMLDivElement = document.getElementById("username") as HTMLDivElement;
+const roleHtml: HTMLDivElement = document.getElementById("role") as HTMLDivElement;
+const verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement;
+
+const deleteButton: HTMLButtonElement = document.getElementById("delete_button") as HTMLButtonElement;
 
 interface User {
     id: number;
@@ -40,7 +51,7 @@ interface Database {
 }
 
 async function getDatabasesPromise(): Promise<Database[]> {
-    const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + hardcoded_userid + "/");
+    const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + userid + "/");
     return response.data;
 }
 
@@ -50,13 +61,19 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
 }
 
 async function getUserPromise(): Promise<User> {
-    const path: string = "/rest/dbmusers/" + hardcoded_userid + "/";
+    const path: string = "/rest/dbmusers/" + userid + "/";
     const response: AxiosResponse = await axios.get(path);
     return response.data;
 }
 
 async function displayCoursesAndDatabases(): Promise<void> {
     const databases: Database[] = await getDatabasesPromise();
+
+    if (databases.length == 0) {
+        coursesNavHtml.innerHTML = "empty";
+        courseDatabasesHtml.innerHTML = "no content";
+        return;
+    }
 
     const coursesAndDatabases = new Map<number, string>();
 
@@ -73,10 +90,8 @@ async function displayCoursesAndDatabases(): Promise<void> {
             + "fid: " + databases[i].fid + "<br>"
             + "course: " + databases[i].course + "<br>";
 
-        const course: string | undefined = coursesAndDatabases.get(databases[i].course);
-        if (course) {
-            course.concat(html);
-        }
+        // This will mess up if someone has multiple db's in a single course
+        coursesAndDatabases.set(databases[i].course, html);
     }
 
     const resultNav: string[] = [];
@@ -108,17 +123,27 @@ async function displayUserDetails(): Promise<void> {
 
     let role: string;
     if (user.role == 0) {
-        role = "Admin";
+        role = "admin";
     } else if (user.role == 1) {
-        role = "Teacher";
+        role = "teacher";
     } else if (user.role == 2) {
-        role = "Student";
+        role = "student";
     } else {
-        role = "Unknown";
+        role = "unknown";
     }
+
+    usernameHtml.innerHTML += `<input type=\"text\" class=\"form-control\" value=\"${user.email}\" readonly="">`;
+    roleHtml.innerHTML += `<input type="text" class="form-control" value="${role}" readonly="">`;
+    verifiedHtml.innerHTML += (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
+}
+
+// TODO: add are you sure and confimation of deletion
+async function deleteUser() {
+    await axios.delete(`/rest/dbmusers/${userid}/`);
 }
 
 window.onload = async () => {
+    deleteButton.addEventListener("click", deleteUser);
     await displayUserDetails();
     await displayWhoami();
     await displayCoursesAndDatabases();

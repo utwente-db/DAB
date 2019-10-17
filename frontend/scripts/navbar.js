@@ -19823,18 +19823,18 @@ function displayWhoami() {
                 case 1:
                     whoami = _a.sent();
                     if (whoami.role === 0) {
-                        role = "an admin";
+                        role = "admin";
                     }
                     else if (whoami.role === 1) {
-                        role = "a teacher";
+                        role = "teacher";
                     }
                     else if (whoami.role === 2) {
-                        role = "a student";
+                        role = "student";
                     }
                     else {
-                        role = "Unknown";
+                        role = "unknown";
                     }
-                    whoamiWelcomeHtml.innerHTML += "Welcome " + whoami.email + ", you are " + role + ".";
+                    whoamiWelcomeHtml.innerHTML += whoami.email + " (" + role + ")";
                     return [2 /*return*/];
             }
         });
