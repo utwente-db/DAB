@@ -23,6 +23,12 @@ export interface User {
     token: string;
 }
 
+export enum UserRole {
+    admin = 0,
+    teacher = 1,
+    student = 2
+}
+
 export async function getUsersPromise(): Promise<User[]> {
     const response: AxiosResponse = await axios.get("/rest/dbmusers/");
     return response.data;
@@ -97,11 +103,11 @@ async function displayUserDetails(): Promise<void> {
     pageTitleHtml.innerHTML += "Admin - User " + user.id;
 
     let role: string;
-    if (user.role === 0) {
+    if (user.role === UserRole.admin) {
         role = "Admin";
-    } else if (user.role === 1) {
+    } else if (user.role === UserRole.teacher) {
         role = "Teacher";
-    } else if (user.role === 2) {
+    } else if (user.role === UserRole.student) {
         role = "Student";
     } else {
         role = "Unknown";

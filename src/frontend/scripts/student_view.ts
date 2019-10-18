@@ -1,10 +1,11 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {displayWhoami} from "./navbar";
+import {displayWhoami, getWhoamiPromise, Whoami} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
 import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2'
+import {UserRole} from "./user";
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
@@ -114,10 +115,15 @@ async function displayCourses(): Promise<void> {
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     console.log(ownCourses);
     for (let i = 0; i < courses.length; i++) {
-        const haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
-        const fragment = createNavLink(haveCredentials, i);
+        const whoami: Whoami = await getWhoamiPromise();
+        const youHavePrivilege = (whoami.role === UserRole.admin || whoami.role === UserRole.teacher);
+        // TODO  check if user is TA for course
+        if (courses[i].active || youHavePrivilege) {
+            const haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
+            const fragment = createNavLink(haveCredentials, i);
 
-        coursesNavHtml.appendChild(fragment);
+            coursesNavHtml.appendChild(fragment);
+        }
 
 
     }
