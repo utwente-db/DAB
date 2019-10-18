@@ -34,9 +34,6 @@ Additionally, the following software is needed for the recommended production se
 - an SMTP server (e.g. postfix)
 - libapache2-mod-proxy-uwsgi (when using apache2)
 
-Logging:
-
-- the file /var/log/django/backend.log needs to exist in order to get log messages from the application
 
 Any pip and npm packages will be installed automatically during the installation steps
 
