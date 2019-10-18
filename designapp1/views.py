@@ -357,6 +357,16 @@ def post_base_response(request, db_parameters):
                         # you should not be able to request a db for somebody else if you are a student...
                         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+                    # Check that the course is active
+                    try: 
+                        course = Courses.objects.get(courseid=databases["course"])
+                        if not course.active:
+                            #unless you are a teacher or ta
+                            if not course.owner().id == request.session["user"] and not am_i_ta_of_this_course(request.session["user"], course.courseid):
+                                return HttpResponse("Course is not active!", status=status.HTTP_403_FORBIDDEN)
+                    except Courses.DoesNotExist as e:
+                        return HttpResponse("Course does not exist", status=status.HTTP_409_CONFLICT)
+
                     # generate data for student
                     username = ""
                     try:
