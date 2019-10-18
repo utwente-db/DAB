@@ -15,7 +15,7 @@ const token = djangoTemplate.classList[1];
 function checkFields(): boolean {
     const a = validPassword(oldPasswordField); // Can't use a one-line function here due to lazy evaluation
     const b = validPassword(newPasswordField);
-    const c = passwordsEqual(newPasswordField,confirmPasswordField);
+    const c = passwordsEqual(newPasswordField, confirmPasswordField);
     return a && b && c
 }
 
@@ -23,9 +23,8 @@ async function tryResetPassword(): Promise<void> {
     if (checkFields()) {
         const tempAlert: ChildNode | null = addTempAlert();
         try {
-            const response: AxiosResponse<string> = await axios.post(`/reset_password/${pk}/${token}`, {'password' : newPasswordField.value}) as AxiosResponse<string>;
-            const responseData: string = response.data;
-            addAlert(`That worked. TODO: redirect`, AlertType.success, tempAlert)
+            await axios.post(`/reset_password/${pk}/${token}`, {'password': newPasswordField.value});
+            window.location.href = "/password_has_been_reset";
         } catch (error) {
             addErrorAlert(error, tempAlert)
         }
@@ -33,5 +32,5 @@ async function tryResetPassword(): Promise<void> {
 }
 
 window.onload = () => {
-    newPasswordButton.addEventListener("click",tryResetPassword)
-}
+    newPasswordButton.addEventListener("click", tryResetPassword)
+};

@@ -13,6 +13,7 @@ export function generateAlertHTML(errorMessage: string, alertType: AlertType, di
             ${buttonString}
             </div>`
 }
+
 export function addAlert(errorMessage: string, alertType: AlertType, tempAlert: ChildNode | null = null): void {
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
@@ -61,10 +62,12 @@ export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null) 
 
         // check for specific errors
 
-        if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
+        if (response.status === 403 && (response.data as string) === "token expired") {
+            addAlert("Your token has expired. Try requesting another password reset email", AlertType.danger)
+        } else if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
             // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
             addAlert("You already have database credentials for this course", AlertType.danger)
-        } else if ( errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists."){
+        } else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
             addAlert("Another user is already registered using this e-mail", AlertType.danger)
 
 

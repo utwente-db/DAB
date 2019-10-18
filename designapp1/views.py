@@ -943,7 +943,6 @@ def logout(request):
     request.session.flush()
     return render(request, 'login.html', {'form': LoginForm(), 'message': "You have been logged out"})
 
-
 # Function for debug purposes only; just returns a small web page with the a button to log out.
 @require_GET
 def logout_button(request):
@@ -1060,6 +1059,7 @@ def change_password(request):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+
 @require_POST
 def resend_verification(request):
     body = None
@@ -1105,7 +1105,6 @@ def request_reset_password(request, email):
 
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
-#TODO: make front-end for this
 @require_http_methods(["GET", "POST"])
 def reset_password(request, pk, token):
     #do checks first
@@ -1132,12 +1131,17 @@ def reset_password(request, pk, token):
             return HttpResponse("Incorrect JSON formatting", status=status.HTTP_400_BAD_REQUEST)
         if not "password" in body:
             return HttpResponse("Missing key 'password' in body", status=status.HTTP_400_BAD_REQUEST)
-        print(body["password"])
+        # print(body["password"])
         db.password = hash.make(body["password"])
         db.token = None
         db.tokenExpire = None
         db.save()
         return HttpResponse()
+
+@require_GET
+def password_has_been_reset(request):
+    return render(request, 'login.html', {'form': LoginForm(), 'message': "You may now log in with your new password"})
+
 
 @require_GET
 def student_view(request):
