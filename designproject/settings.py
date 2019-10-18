@@ -35,6 +35,9 @@ DATABASE_SERVER = 'thebias.nl'
 EMAIL_SERVER = 'localhost'
 EMAIL_SENDER = 'no-reply@thebias.nl'
 
+# LOGFILE: needs write permissions
+LOGFILE = '/var/log/dab.log'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -165,7 +168,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/dab.log',
+            'filename': LOGFILE,
             'formatter':'verbose'
         },
     },
