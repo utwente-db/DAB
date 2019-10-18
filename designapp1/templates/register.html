@@ -21,7 +21,7 @@
                     <div class="mt-5 form-group row align-items-center">
                         <label for="email" class="col-12 col-md-4 col-form-label">UT e-mail address</label>
                         <div class="col-12 col-md-8 align-middle">
-                            {{ form.mail }}
+                            <input type="email" name="mail" class="form-control my-1" id="register-email-field" autofocus="True" maxlength="256" required>
                             <div class="invalid-feedback"></div>
                         </div>
 
@@ -29,14 +29,14 @@
                     <div class="form-group row align-items-center">
                         <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
                         <div class="col-12 col-md-8">
-                            {{ form.password }}
+                            <input type="password" name="password" class="form-control" id="register-password-field" required>
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="form-group row align-items-center mb-4">
                         <label for="passwordConfirm" class="col-12 col-md-4 col-form-label">Confirm Password</label>
                         <div class="col-12 col-md-8">
-                            {{ form.passwordConfirm }}
+                            <input type="password" name="passwordConfirm" class="form-control" id="register-password-confirm-field" required>
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
