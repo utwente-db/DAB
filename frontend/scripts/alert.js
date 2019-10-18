@@ -194,23 +194,28 @@ function addErrorAlert(error, tempAlert) {
     }
     var responseError = error;
     var response = responseError.response;
-    var stringResponse = responseError.response;
     if (response) {
         // This is an axios error
-        if (typeof response.data === "string") {
-            // This is an axios error with string body
-            addAlert(response.data, AlertType.danger);
-            // TODO include 403 token error here
-        }
-        else if (typeof response.data === "undefined" || response.data === null) {
-            // This is an axios error with empty body
+        if (response.data === undefined || response.data === null || response.data === "") {
+            // This is an axios error with empty body, just print standard error message with status code
             addAlert(error.message, AlertType.danger);
         }
+        else if (typeof response.data === "string") {
+            var errorString = response.data;
+            // This is an axios error with string body
+            if (response.status === 403 && errorString === "token expired") {
+                addAlert("Your reset token has expired. Please request a new one.", AlertType.danger);
+            }
+            else {
+                // Print the string
+                addAlert(errorString, AlertType.danger);
+            }
+        }
         else {
-            // This is an axios error with django eror body
-            var objectResponse = responseError.response;
-            var errorKeys = Object.keys(objectResponse.data);
-            var errorMessages = Object.values(objectResponse.data);
+            // This is an axios error with django error body
+            var errorObject = response.data;
+            var errorKeys = Object.keys(errorObject);
+            var errorMessages = Object.values(errorObject);
             // check for specific errors
             if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
                 // If this is a specific alert for requesting a database as user and getting a 409 with this message back:

@@ -60,23 +60,27 @@ export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null) 
     }
     const responseError: AxiosError = error as AxiosError;
     const response: AxiosResponse | undefined = responseError.response;
-    const stringResponse: AxiosResponse<string> | undefined = responseError.response;
 
     if (response) {
         // This is an axios error
-        if (typeof response.data === "string") {
-            // This is an axios error with string body
-            addAlert(response.data, AlertType.danger)
-            // TODO include 403 token error here
-        } else if (typeof response.data === "undefined" || response.data === null) {
-            // This is an axios error with empty body
+        if (response.data === undefined || response.data === null || response.data === "") {
+            // This is an axios error with empty body, just print standard error message with status code
             addAlert(error.message, AlertType.danger)
+        } else if (typeof response.data === "string") {
+            const errorString = response.data as string;
+            // This is an axios error with string body
+            if (response.status === 403 && errorString === "token expired") {
+                addAlert("Your reset token has expired. Please request a new one.", AlertType.danger)
+            } else {
+                // Print the string
+                addAlert(errorString, AlertType.danger)
+            }
         } else {
-            // This is an axios error with django eror body
-            const objectResponse: AxiosResponse<ErrorBody> | undefined = responseError.response;
+            // This is an axios error with django error body
+            const errorObject: ErrorBody = (response as AxiosResponse<ErrorBody>).data;
 
-            const errorKeys: string[] = Object.keys(objectResponse!.data);
-            const errorMessages: string[][] = Object.values(objectResponse!.data);
+            const errorKeys: string[] = Object.keys(errorObject);
+            const errorMessages: string[][] = Object.values(errorObject);
 
             // check for specific errors
 
