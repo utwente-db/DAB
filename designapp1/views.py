@@ -1014,6 +1014,34 @@ def verify(request, token):
         return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
 
 @require_POST
+@authenticated
+def change_password(request):
+    body = None
+    new = None
+    current = None
+
+    try:
+        body = JSONParser().parse(request)
+    except ParseError as e:
+        return HttpResponse("Your JSON did not parse", status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        new = body["new"]
+        current = body["current"]
+    except KeyError as e:
+        return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
+
+    user = dbmusers.objects.get(id=request.session["user"])
+
+    if(hash.verify(user.password, current)):
+        new = hash.make(new)
+        user.password = new
+        user.save()
+        return HttpResponse()
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+@require_POST
 def resend_verification(request):
     body = None
     user = None

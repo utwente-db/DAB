@@ -189,6 +189,10 @@ GET -> search for the value, based on emailaddress
 
 GET -> gives back the info about the currently logged in user
 
+### /dbmusers/course/value
+
+GET -> gives back the users that have a database in that course
+
 ## TABLE: TAs
 
 ### /tas/
@@ -244,7 +248,7 @@ POST -> Sends an password reset email
 
 Email contains a link that is valid for 4 hours.
 
-## /reset_password/[user id]/[token]
+## /reset_password/[user id]/[token] \(NOT /rest !!!)
 
 GET -> Displays a "new password" prompt //TODO
 POST -> Takes in a JSON object with one key, "password", and sets the password to that password.
@@ -252,6 +256,17 @@ POST -> Takes in a JSON object with one key, "password", and sets the password t
 Both of these will return errors if the token is invalid or expired.
 
 The link sent will be valid for 4 hours.
+
+## /change_password/ (NOT /rest !!!)
+
+POST -> Takes in the following JSON
+
+    {
+    "current": "aoeu", [CURRENT USER PASSWORD]
+    "new": "ueoa" [NEW PASSWORD]
+    }
+
+and sets the password of the user to the new password, if the current one is correct.
 
 # Permissions
 
