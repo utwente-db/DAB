@@ -165,7 +165,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/django/dab/backend.log',
+            'filename': '/var/log/dab.log',
             'formatter':'verbose'
         },
     },
