@@ -1,5 +1,5 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "axios";
 import {validEmail} from "./register";
 
 const passwordButton = document.getElementById("password-button") as HTMLButtonElement;
@@ -14,11 +14,16 @@ async function tryRequestPassword() {
             // const responseData = response.data;
             addAlert(`Please check your e-mail to reset your password`, AlertType.success, tempAlert)
         } catch (error) {
-            addErrorAlert(error, tempAlert)
+            const ae = error as AxiosError
+            if (ae.response && ae.response.status === 404) {
+                addAlert("This e-mail was not found", AlertType.danger,tempAlert)
+            } else {
+                addErrorAlert(error, tempAlert)
+            }
         }
     }
 }
 
-document.onload = () => {
+window.onload = () => {
     passwordButton.addEventListener("click", tryRequestPassword);
 }

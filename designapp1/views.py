@@ -1086,4 +1086,8 @@ def redirect(request):
 
 @require_GET
 def forgot_password_page(request):
-    return render(request, 'forgot_password_page.html')
+    if ('user' in request.session):
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+    else:
+        return render(request, 'forgot_password_page.html')
+
