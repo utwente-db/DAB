@@ -53,6 +53,7 @@ This file contains many settings that do not need to be edited, but some do:
 - `DEBUG`: Whether the server is in debug mode. Set to `True` on development, and to `False` on production
 - `EMAIL_SERVER` and `EMAIL_SENDER`: will be discussed under the "email" heading below.
 - `DATABASE_SERVER`: the database server; this will be displayed to students as the server they should connect to
+- `HOST_SERVER`: the domain that this service is hosted on. Used for links sent in emails
 - `LOGFILE`: the file that the server logs to. The server must have write permissions on this file, or it will crash
 
 Private settings are stored in the file `secret.py`.

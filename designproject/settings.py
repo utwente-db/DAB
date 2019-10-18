@@ -30,6 +30,7 @@ ALLOWED_HOSTS = ['*']
 
 # For display to users only; please edit
 DATABASE_SERVER = 'thebias.nl'
+HOST_SERVER = 'db.thebias.nl'
 
 # EMAIL SETTINGS: (please edit)
 EMAIL_SERVER = 'localhost'
