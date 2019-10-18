@@ -55,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'designapp1.middleware.errorhandling.customerrorhandling'
 ]
 
 ROOT_URLCONF = 'designproject.urls'
@@ -164,7 +165,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/django/backend.log',
+            'filename': '/var/log/dab.log',
             'formatter':'verbose'
         },
     },
