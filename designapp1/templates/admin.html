@@ -10,9 +10,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css"> -->
-
-    <script defer type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+    <!-- <script defer type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script> -->
 
     <script defer src="/static/scripts/admin.js"></script>
 
@@ -26,10 +24,10 @@
       });
     });
 
-    // datatables encounters some error because of undefined
-    $(document).ready( function () {
-        $("#user_table").DataTable();
-    });
+    // // datatables encounters some error because of undefined
+    // $(document).ready( function () {
+    //     $("#user_table").DataTable();
+    // });
 
     </script>
 
@@ -40,14 +38,6 @@
     {% include 'navbar.html' %}
 
     <div class="container bg-light p-4">
-        <!-- Website title -->
-        <!-- <div class="row">
-            <div class="col-12 text-center">
-                <h1>Admin homepage</h1>
-                <hr/>
-
-            </div>
-        </div> -->
         <div class="row mt-2">
             <div class="col-5">
                 <h2 class="text-center">Courses</h2>
@@ -71,7 +61,7 @@
                     <table id="user_table" class="table table-sm table-hover table-fixed table-borderless table-striped">
                         <thead class="thead-dark">
                             <tr>
-                                <th class="th-sm" scope="col">&#8645 #</th>
+                                <th class="th-sm" scope="col">#</th>
                                 <th class="th-sm" scope="col">Role</th>
                                 <th class="th-sm" scope="col">E-Mail</th>
                                 <th class="th-sm" scope="col">Verified</th>

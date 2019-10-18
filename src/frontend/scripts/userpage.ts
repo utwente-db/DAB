@@ -1,13 +1,18 @@
 import axios, {AxiosResponse} from 'axios';
 
 import * as $ from "jquery";
-import "popper.js"
-import "bootstrap"
+import "popper.js";
+import "bootstrap";
+import {addAlert, addErrorAlert, AlertType} from "./alert";
+import Swal from 'sweetalert2';
 
 import {displayWhoami} from "./navbar";
 
 const urlParams = new URLSearchParams(window.location.search);
 var userid: number = 0;
+
+// let user: User;
+// let databases: Database[];
 
 const x: string | null = urlParams.get("id");
 if (x != null) {
@@ -25,6 +30,7 @@ const roleHtml: HTMLDivElement = document.getElementById("role") as HTMLDivEleme
 const verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement;
 
 const deleteButton: HTMLButtonElement = document.getElementById("delete_button") as HTMLButtonElement;
+const changeRoleButton: HTMLButtonElement = document.getElementById("change_role") as HTMLButtonElement;
 
 interface User {
     id: number;
@@ -61,7 +67,7 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
 }
 
 async function getUserPromise(): Promise<User> {
-    const path: string = "/rest/dbmusers/" + userid + "/";
+    const path: string = `/rest/dbmusers/${userid}/`;
     const response: AxiosResponse = await axios.get(path);
     return response.data;
 }
@@ -137,14 +143,68 @@ async function displayUserDetails(): Promise<void> {
     verifiedHtml.innerHTML += (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
 }
 
-// TODO: add are you sure and confimation of deletion
-async function deleteUser() {
-    await axios.delete(`/rest/dbmusers/${userid}/`);
+async function deleteUser(): Promise<boolean> {
+    const user: User = await getUserPromise();
+    const result = await Swal.fire({
+        title: `Are you sure you want to delete <strong>${user.email}<strong> from the system?`,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success;
+
+    try {
+        await axios.delete(`/rest/dbmusers/${userid}/`);
+        alert("User succesfully deleted!");
+        window.location.href = '../';
+        success = true;
+    } catch (error) {
+        addErrorAlert(error);
+        success = false;
+    }
+    return success;
+}
+
+async function changeRole(): Promise<boolean> {
+    const user: User = await getUserPromise();
+    // TODO correctly find selected option
+    const selectedRole: HTMLSelectElement = document.getElementById("change_role") as HTMLSelectElement;
+    const role: string = selectedRole.value;
+    const result = await Swal.fire({
+        text: `Are you sure you want change the role of <strong>${user.email}</strong> to ${role}?`,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success;
+
+    try {
+        await axios.post(`/rest/set_role/`, {"user": user.id, "role": role});
+        addAlert("Role changed!", AlertType.primary);
+        success = true;
+    } catch (error) {
+        addErrorAlert(error);
+        success = false;
+    }
+    return success;
 }
 
 window.onload = async () => {
-    deleteButton.addEventListener("click", deleteUser);
-    await displayUserDetails();
-    await displayWhoami();
-    await displayCoursesAndDatabases();
+    await Promise.all([
+        changeRoleButton.addEventListener("click", changeRole),
+        deleteButton.addEventListener("click", deleteUser),
+        await displayUserDetails(),
+        await displayWhoami(),
+        await displayCoursesAndDatabases()
+    ]);
 }
