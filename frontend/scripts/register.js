@@ -23213,23 +23213,33 @@ function tryRegister() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!checkFields()) return [3 /*break*/, 4];
+                    if (!checkFields()) return [3 /*break*/, 5];
                     credentials = { email: registerEmailField.value, password: registerPasswordField.value };
                     tempAlert = alert_1.addTempAlert();
+                    registerEmailField.disabled = true;
+                    registerPasswordField.disabled = true;
+                    registerPasswordConfirmField.disabled = true;
+                    registerButton.disabled = true;
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    _a.trys.push([1, 3, 4, 5]);
                     return [4 /*yield*/, axios_1.default.post("/rest/dbmusers/", credentials)];
                 case 2:
                     response = _a.sent();
                     responseData = response.data;
                     alert_1.addAlert("Please check your inbox to confirm your e-mail", alert_1.AlertType.success, tempAlert);
-                    return [3 /*break*/, 4];
+                    return [3 /*break*/, 5];
                 case 3:
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1, tempAlert);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 5];
+                case 4:
+                    registerEmailField.disabled = false;
+                    registerPasswordField.disabled = false;
+                    registerPasswordConfirmField.disabled = false;
+                    registerButton.disabled = false;
+                    return [7 /*endfinally*/];
+                case 5: return [2 /*return*/];
             }
         });
     });

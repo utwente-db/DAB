@@ -1031,33 +1031,36 @@ def verify(request, token):
     except dbmusers.DoesNotExist as e:
         return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
 
-@require_POST
+@require_http_methods(["GET", "POST"])
 @authenticated
 def change_password(request):
-    body = None
-    new = None
-    current = None
-
-    try:
-        body = JSONParser().parse(request)
-    except ParseError as e:
-        return HttpResponse("Your JSON did not parse", status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        new = body["new"]
-        current = body["current"]
-    except KeyError as e:
-        return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
-
-    user = dbmusers.objects.get(id=request.session["user"])
-
-    if(hash.verify(user.password, current)):
-        new = hash.make(new)
-        user.password = new
-        user.save()
-        return HttpResponse()
+    if request.method == "GET":
+        return render(request, 'change_password.html')
     else:
-        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+        body = None
+        new = None
+        current = None
+
+        try:
+            body = JSONParser().parse(request)
+        except ParseError as e:
+            return HttpResponse("Your JSON did not parse", status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            new = body["new"]
+            current = body["current"]
+        except KeyError as e:
+            return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
+
+        user = dbmusers.objects.get(id=request.session["user"])
+
+        if(hash.verify(user.password, current)):
+            new = hash.make(new)
+            user.password = new
+            user.save()
+            return HttpResponse()
+        else:
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
 @require_POST
