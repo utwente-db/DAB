@@ -30,10 +30,14 @@ ALLOWED_HOSTS = ['*']
 
 # For display to users only; please edit
 DATABASE_SERVER = 'thebias.nl'
+HOST_SERVER = 'db.thebias.nl'
 
 # EMAIL SETTINGS: (please edit)
 EMAIL_SERVER = 'localhost'
 EMAIL_SENDER = 'no-reply@thebias.nl'
+
+# LOGFILE: needs write permissions
+LOGFILE = '/var/log/dab.log'
 
 # Application definition
 
@@ -165,7 +169,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/log/dab.log',
+            'filename': LOGFILE,
             'formatter':'verbose'
         },
     },

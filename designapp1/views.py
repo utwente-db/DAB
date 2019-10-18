@@ -253,12 +253,36 @@ def get_own_response(request, dbname):
 
 @require_GET
 @authenticated
-def get_course_ta(request, courseid):
+def get_course_ta(request, pk):
     course = None
     try:
-        course = Courses.objects.get(courseid=courseid)
+        course = Courses.objects.get(courseid=pk)
     except Courses.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
+        data = TAs.objects.filter(courseid=course.courseid)
+        serializer = TasSerializer(data, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+@require_GET
+@authenticated
+def search_dbmusers_on_course(request, pk):
+    course = None
+    try:
+        course = Courses.objects.get(courseid=pk)
+    except Courses.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
+        data = dbmusers.objects.raw("SELECT u.* FROM dbmusers u, studentdatabases d where d.course=%s and u.id=d.fid", [course.courseid])
+        serializer = dbmusersSerializer(data, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
 def post_base_dbmusers_response(request):
@@ -273,6 +297,7 @@ def post_base_dbmusers_response(request):
         unhashed_password = databases['password']
         databases['password'] = hash.make(unhashed_password)
         databases["token"] = hash.token()
+        databases["tokenExpire"] = timezone.now() + timezone.timedelta(hours=24)
         if check_role(request, admin):
             pass
             # databases['role'] = databases['role']
@@ -332,6 +357,16 @@ def post_base_response(request, db_parameters):
                     elif not check_role(request, teacher) and databases["fid"] != request.session["user"]:
                         # you should not be able to request a db for somebody else if you are a student...
                         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+                    # Check that the course is active
+                    try: 
+                        course = Courses.objects.get(courseid=databases["course"])
+                        if not course.active:
+                            #unless you are a teacher or ta
+                            if not course.owner().id == request.session["user"] and not am_i_ta_of_this_course(request.session["user"], course.courseid):
+                                return HttpResponse("Course is not active!", status=status.HTTP_403_FORBIDDEN)
+                    except Courses.DoesNotExist as e:
+                        return HttpResponse("Course does not exist", status=status.HTTP_409_CONFLICT)
 
                     # generate data for student
                     username = ""
@@ -981,6 +1016,14 @@ def whoami(request):
 def verify(request, token):
     try:
         user = dbmusers.objects.get(token=token)
+
+        if(user.tokenExpire < timezone.now()):
+            user.token = hash.token()
+            user.tokenExpire = timezone.now() + timezone.timedelta(hours=24)
+            user.save()
+            mail.send_verification(user.__dict__)
+            return HttpResponse("Your token was expired; we have resent the email")
+
         user.verified = True
         user.token = None
         user.save()
@@ -988,6 +1031,34 @@ def verify(request, token):
                   {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
     except dbmusers.DoesNotExist as e:
         return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
+
+@require_POST
+@authenticated
+def change_password(request):
+    body = None
+    new = None
+    current = None
+
+    try:
+        body = JSONParser().parse(request)
+    except ParseError as e:
+        return HttpResponse("Your JSON did not parse", status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        new = body["new"]
+        current = body["current"]
+    except KeyError as e:
+        return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
+
+    user = dbmusers.objects.get(id=request.session["user"])
+
+    if(hash.verify(user.password, current)):
+        new = hash.make(new)
+        user.password = new
+        user.save()
+        return HttpResponse()
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 @require_POST
 def resend_verification(request):
