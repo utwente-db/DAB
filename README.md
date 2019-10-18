@@ -204,3 +204,4 @@ On the UT campus, the only edit that needs to be made to Postfix is the followin
 
 Once this is configured, the server should be able to create email.
 
+Once finished, please edit some of the settings in designproject/settings.py as they will affect what the address of the database is that will be displayed to users

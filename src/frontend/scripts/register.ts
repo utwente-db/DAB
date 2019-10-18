@@ -47,7 +47,7 @@ function passwordsEqual(): boolean {
     }
 }
 
-function validEmail(): boolean {
+export function validEmail(): boolean {
     const emailPattern: RegExp = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
     const utwentePattern: RegExp = /.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$/;
     const email: string = registerEmailField.value;
@@ -95,11 +95,11 @@ async function tryRegister(): Promise<void> {
             addErrorAlert(error, tempAlert)
         }
     }
-
-
 }
 
 
 window.onload = () => {
-    registerButton.addEventListener("click", tryRegister)
+    if (registerButton) {
+        registerButton.addEventListener("click", tryRegister);
+    }
 };

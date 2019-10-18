@@ -29,7 +29,7 @@ from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
 from django.db.utils import OperationalError
 
-
+from designproject.settings import DATABASE_SERVER
 from designapp1 import statements
 from . import hash
 from .forms import *
@@ -1071,7 +1071,7 @@ def reset_password(request, pk, token):
 
 @require_GET
 def student_view(request):
-    return render(request, 'student_view.html')
+    return render(request, 'student_view.html', { 'server_address' : DATABASE_SERVER})
 
 @require_GET
 # @auth_redirect

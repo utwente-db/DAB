@@ -23164,6 +23164,7 @@ function validEmail() {
     }
     return false;
 }
+exports.validEmail = validEmail;
 function validPassword() {
     var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
     var password = registerPasswordField.value;
@@ -23210,7 +23211,9 @@ function tryRegister() {
     });
 }
 window.onload = function () {
-    registerButton.addEventListener("click", tryRegister);
+    if (registerButton) {
+        registerButton.addEventListener("click", tryRegister);
+    }
 };
 
 
