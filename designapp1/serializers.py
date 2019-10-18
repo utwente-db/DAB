@@ -36,10 +36,11 @@ class dbmusersSerializer(serializers.ModelSerializer):
         if not create:
             self.fields.pop('token')
             self.fields.pop('password')
+            self.fields.pop('tokenExpire')
 
     class Meta:
         model = dbmusers
-        fields = ('id', 'email', 'role', 'password', 'verified', 'token')
+        fields = ('id', 'email', 'role', 'password', 'verified', 'token', 'tokenExpire')
 
 
 class TasSerializer(serializers.ModelSerializer):

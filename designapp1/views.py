@@ -297,6 +297,7 @@ def post_base_dbmusers_response(request):
         unhashed_password = databases['password']
         databases['password'] = hash.make(unhashed_password)
         databases["token"] = hash.token()
+        databases["tokenExpire"] = timezone.now() + timezone.timedelta(hours=24)
         if check_role(request, admin):
             pass
             # databases['role'] = databases['role']
@@ -1015,6 +1016,14 @@ def whoami(request):
 def verify(request, token):
     try:
         user = dbmusers.objects.get(token=token)
+
+        if(user.tokenExpire < timezone.now()):
+            user.token = hash.token()
+            user.tokenExpire = timezone.now() + timezone.timedelta(hours=24)
+            user.save()
+            mail.send_verification(user.__dict__)
+            return HttpResponse("Your token was expired; we have resent the email")
+
         user.verified = True
         user.token = None
         user.save()
