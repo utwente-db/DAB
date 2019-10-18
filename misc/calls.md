@@ -241,7 +241,7 @@ Email contains a link that is valid for 4 hours.
 
 ## /reset_password/[user id]/[token]
 
-GET -> Displays a "new password" prompt //TODO
+GET -> Displays a "new password" prompt
 POST -> Takes in a JSON object with one key, "password", and sets the password to that password.
 
 Both of these will return errors if the token is invalid or expired.

@@ -21,12 +21,11 @@ function checkFields(): boolean {
 
 async function tryResetPassword(): Promise<void> {
     if (checkFields()) {
-        // const credentials: Credentials = {email: registerEmailField.value, password: registerPasswordField.value};
         const tempAlert: ChildNode | null = addTempAlert();
         try {
-            const response: AxiosResponse<string> = await axios.post("/rest/dbmusers/") as AxiosResponse<string>;
+            const response: AxiosResponse<string> = await axios.post(`/reset_password/${pk}/${token}`, {'password' : newPasswordField.value}) as AxiosResponse<string>;
             const responseData: string = response.data;
-            addAlert(`Please check your inbox to confirm your e-mail`, AlertType.success, tempAlert)
+            addAlert(`That worked. TODO: redirect`, AlertType.success, tempAlert)
         } catch (error) {
             addErrorAlert(error, tempAlert)
         }
