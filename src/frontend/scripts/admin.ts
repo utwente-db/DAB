@@ -7,7 +7,7 @@ import {Course, getCoursesPromise} from "./courses";
 const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
-
+const filterForm = document.getElementById("filter-form") as HTMLFormElement;
 
 async function displayCourses(): Promise<void> {
     const courses: Course[] = await getCoursesPromise();
@@ -73,6 +73,10 @@ async function displayUsers(): Promise<void> {
 
 window.onload = async () => {
     await Promise.all([
+        filterForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            // TODO actually figure out how to include filter here
+        }),
         displayWhoami(),
         displayUsers(),
         displayCourses()
