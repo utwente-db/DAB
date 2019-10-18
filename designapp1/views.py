@@ -927,21 +927,21 @@ def login(request):
 
 
                 else:
-                    return render(request, 'login.html', {'form': form, 'message': incorrect_message})
+                    return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
             except dbmusers.DoesNotExist:
-                return render(request, 'login.html', {'form': form, 'message': incorrect_message})
+                return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
         else:
             form = LoginForm()
-            return render(request, 'login.html', {"form": form, "message": "Could not parse form"})
+            return render(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
     form = LoginForm()
-    return render(request, 'login.html', {'form': form, 'message': ""})
+    return render(request, 'login.html', {'form': form})
 
 
 @require_POST
 @authenticated
 def logout(request):
     request.session.flush()
-    return render(request, 'login.html', {'form': LoginForm(), 'message': "You have been logged out"})
+    return render(request, 'login.html', {'form': LoginForm(), 'template_class': "you-have-been-logged-out"})
 
 # Function for debug purposes only; just returns a small web page with the a button to log out.
 @require_GET
@@ -1027,7 +1027,7 @@ def verify(request, token):
         user.token = None
         user.save()
         return render(request, 'login.html',
-                  {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+                  {"form": LoginForm(), 'template_class': 'account-verified'})
     except dbmusers.DoesNotExist as e:
         return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
 
@@ -1143,7 +1143,7 @@ def reset_password(request, pk, token):
 
 @require_GET
 def password_has_been_reset(request):
-    return render(request, 'login.html', {'form': LoginForm(), 'message': "You may now log in with your new password"})
+    return render(request, 'login.html', {'form': LoginForm(), 'template_class': "new-password"})
 
 
 @require_GET

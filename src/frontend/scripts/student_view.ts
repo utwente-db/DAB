@@ -213,7 +213,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         // await changeViewToHaveCredentials()
-        addAlert("Deleted database", AlertType.primary);
+        addAlert("The database has been successfully deleted", AlertType.primary);
         await changeView(false);
         success = true;
     } catch (error) {
@@ -243,7 +243,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
     disableElementsOnPage();
     try {
         await axios.post(`/rest/reset/${dbID}/`);
-        addAlert("Reset database", AlertType.primary);
+        addAlert("The database has been succesfully reset", AlertType.primary);
         success = true;
     } catch (error) {
         addErrorAlert(error);

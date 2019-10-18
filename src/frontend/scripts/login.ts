@@ -81,7 +81,18 @@ window.onload = () => {
 
             tryResendVerificationEmail(tempAlert);
         })
+    } else if (djangoTemplate.classList.contains("incorrect-message")) {
+        addAlert("Wrong email or password", AlertType.danger)
+    } else if (djangoTemplate.classList.contains("could-not-parse-form")) {
+        addAlert("Could not parse form", AlertType.danger)
+    } else if (djangoTemplate.classList.contains("you-have-been-logged-out")) {
+        addAlert("You have been logged out", AlertType.primary)
+    } else if (djangoTemplate.classList.contains("account-verified")) {
+        addAlert("Your account has been verified and you can now log in", AlertType.success)
+    } else if (djangoTemplate.classList.contains("new-password")) {
+        addAlert("You may now log in with your new password", AlertType.success)
     }
+
 
     if (loginForm) {
         loginForm.addEventListener("submit", (event) => {

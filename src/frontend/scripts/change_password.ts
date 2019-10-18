@@ -37,7 +37,7 @@ async function tryResetPassword(): Promise<void> {
         } catch (error) {
             const ae = error as AxiosError
             if (ae.response && ae.response.status === 403) {
-                addAlert("The password enter in the current password field is incorrect", AlertType.danger, tempAlert)
+                addAlert("The password entered in the current password field is incorrect", AlertType.danger, tempAlert)
             } else {
                 addErrorAlert(error, tempAlert)
             }

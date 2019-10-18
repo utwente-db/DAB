@@ -26512,7 +26512,7 @@ function prepareToDeleteCredentials(dbID) {
                 case 3:
                     _a.sent();
                     // await changeViewToHaveCredentials()
-                    alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
+                    alert_1.addAlert("The database has been successfully deleted", alert_1.AlertType.primary);
                     return [4 /*yield*/, changeView(false)];
                 case 4:
                     _a.sent();
@@ -26556,7 +26556,7 @@ function resetDatabase(dbID) {
                     return [4 /*yield*/, axios_1.default.post("/rest/reset/" + dbID + "/")];
                 case 3:
                     _a.sent();
-                    alert_1.addAlert("Reset database", alert_1.AlertType.primary);
+                    alert_1.addAlert("The database has been succesfully reset", alert_1.AlertType.primary);
                     success = true;
                     return [3 /*break*/, 6];
                 case 4:
