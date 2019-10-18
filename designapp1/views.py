@@ -913,7 +913,7 @@ def login(request):
                 print(user)
                 if not user.verified:
                     return render(request, 'login.html',
-                                  {'form': LoginForm, 'message': "Please verify your email first"})
+                                  {'form': LoginForm, 'template_class' : 'resend-verification ' + user.email})
 
                 if hash.verify(user.password, data["password"]):
                     request.session["user"] = user.id

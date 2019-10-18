@@ -42,7 +42,8 @@ class LoginForm(forms.Form):
             attrs={
                 'class': 'form-control mb-4',
                 'placeholder': 'E-Mail Address',
-                'autofocus': 'True'
+                'autofocus': True,
+                'id': 'email-input'
             }
         ), max_length=100, required=True, label=''
     )
@@ -51,6 +52,7 @@ class LoginForm(forms.Form):
             attrs={
                 'class': 'form-control mb-4',
                 'placeholder': 'Password',
+                'id': 'password-input'
             }
         ), required=True, label=''
     )

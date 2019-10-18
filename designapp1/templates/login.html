@@ -4,7 +4,13 @@
     <title>Login</title>
 {% endblock %}
 
+{% block scripts %}
+    <script defer src="/static/scripts/login.js"></script>
+{% endblock %}
+
 {% block content %}
+        <template class="{{ template_class }}" id="django-template"></template>
+
     <div class="container-fluid py-3 py-md-5">
         <div class="row">
             <div class="col-11 col-md-7 col-xl-4 center-block
@@ -22,11 +28,12 @@
                         {{ message }}
                     </div>
                     <!-- Forgot Password -->
-                    <a href="forgot_password_page">Forgot password?</a>
+                    <a href="forgot_password_page" id="forgot-password-link">Forgot password?</a>
                     <!-- Sign in button -->
-                    <button class="btn btn-info btn-block my-4" type="submit">Sign in</button>
+                    <button class="btn btn-info btn-block my-4" type="submit" id="login-button">Sign in</button>
                     <!-- Register -->
-                    No account? <a href="register">Register here</a>
+                    No account? <a href="register" id="register-link">Register here</a>
+                    <div id="alert-div" class="mt-3"></div>
                 </form>
             </div>
         </div>

@@ -23,7 +23,7 @@ async function tryResetPassword(): Promise<void> {
         oldPasswordField.disabled = true;
         confirmPasswordField.disabled = true;
         newPasswordButton.disabled = true;
-        homepageRef.classList.add("disabled");
+        homepageRef.toggleAttribute("href");
         const tempAlert: ChildNode | null = addTempAlert();
         try {
             await axios.post(`/change_password/`, {'current': oldPasswordField.value, 'new': newPasswordField.value});
@@ -46,7 +46,7 @@ async function tryResetPassword(): Promise<void> {
             oldPasswordField.disabled = false;
             confirmPasswordField.disabled = false;
             newPasswordButton.disabled = false;
-            homepageRef.classList.remove("disabled");
+            homepageRef.toggleAttribute("href");
 
         }
     }
