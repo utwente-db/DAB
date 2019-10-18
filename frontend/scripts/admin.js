@@ -23155,7 +23155,9 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     var tempAlert = alertDiv.lastChild;
     // noinspection JSIgnoredPromiseFromCall
-    removeAlertOnTimeout(tempAlert, ms, timeOutError);
+    if (ms > 0) {
+        removeAlertOnTimeout(tempAlert, ms, timeOutError);
+    }
     return tempAlert;
 }
 exports.addTempAlert = addTempAlert;

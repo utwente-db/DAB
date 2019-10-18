@@ -45,7 +45,9 @@ export function addTempAlert(errorMessage = "Please wait...", alertType = AlertT
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     const tempAlert: ChildNode | null = alertDiv.lastChild;
     // noinspection JSIgnoredPromiseFromCall
-    removeAlertOnTimeout(tempAlert, ms, timeOutError);
+    if (ms > 0) {
+        removeAlertOnTimeout(tempAlert, ms, timeOutError);
+    }
     return tempAlert
 
 }

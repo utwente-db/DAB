@@ -1,23 +1,14 @@
-import {addErrorAlert, addTempAlert} from "./alert";
-import axios from "axios";
+import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import axios, {AxiosError} from "axios";
 import {passwordsEqual, validPassword} from "./register";
 
-const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement;
 const newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement;
 
 const oldPasswordField = document.getElementById("old-password-field") as HTMLInputElement;
 const newPasswordField = document.getElementById("new-password-field") as HTMLInputElement;
 const confirmPasswordField = document.getElementById("confirm-password-field") as HTMLInputElement;
 const content = document.getElementById('content') as HTMLFormElement;
-
-
-const pk = Number(djangoTemplate.classList[0]);
-const token = djangoTemplate.classList[1];
-
-    // {
-    // "current": "aoeu", [CURRENT USER PASSWORD]
-    // "new": "ueoa" [NEW PASSWORD]
-    // }
+const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
 function checkFields(): boolean {
     const a = validPassword(oldPasswordField); // Can't use a one-line function here due to lazy evaluation
@@ -32,18 +23,31 @@ async function tryResetPassword(): Promise<void> {
         oldPasswordField.disabled = true;
         confirmPasswordField.disabled = true;
         newPasswordButton.disabled = true;
-
+        homepageRef.classList.add("disabled");
         const tempAlert: ChildNode | null = addTempAlert();
         try {
-            await axios.post(`/reset_password/${pk}/${token}`, {'password': newPasswordField.value});
-            window.location.href = "/password_has_been_reset";
+            await axios.post(`/change_password/`, {'current': oldPasswordField.value, 'new': newPasswordField.value});
+            if (tempAlert && document.body.contains(tempAlert)) {
+                tempAlert.remove();
+            }
+            addTempAlert("Your password has been changed. You will soon be redirected to the homepage.", AlertType.success, false, 0)
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            window.location.href = "/";
+
         } catch (error) {
-            addErrorAlert(error, tempAlert)
+            const ae = error as AxiosError
+            if (ae.response && ae.response.status === 403) {
+                addAlert("The password enter in the current password field is incorrect", AlertType.danger, tempAlert)
+            } else {
+                addErrorAlert(error, tempAlert)
+            }
         } finally {
             newPasswordField.disabled = false;
             oldPasswordField.disabled = false;
             confirmPasswordField.disabled = false;
             newPasswordButton.disabled = false;
+            homepageRef.classList.remove("disabled");
+
         }
     }
 }
