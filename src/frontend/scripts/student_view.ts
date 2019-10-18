@@ -73,16 +73,10 @@ async function populateHaveCredentialsPane(i: number) {
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
         const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-            if (!deleteButton.classList.contains("disabled")) {
                 prepareToDeleteCredentials(id);
-
-            }
         });
         resetButton.addEventListener("click", () => {
-            if (!resetButton.classList.contains("disabled")) {
                 resetDatabase(id);
-
-            }
         });
 
     });
@@ -96,30 +90,20 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
     const templateString = `<a id="${i}" class="nav-link ${credentialsClass} ${activeString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
-    if (fragment.firstChild) {
-        if (!haveCredentials) {
-            fragment.firstChild.addEventListener("click", () => {
-                if (fragment.firstChild && !(fragment.firstChild as Element).classList.contains("disabled")) {
-                    populateNoCredentialsPane(i);
-
-                }
-            });
-        } else {
-            fragment.firstChild.addEventListener("click", () => {
-                if (fragment.firstChild && !(fragment.firstChild as Element).classList.contains("disabled")) {
-                    populateHaveCredentialsPane(i);
-
-                }
-            });
-        }
-
-        fragment.firstChild.addEventListener("click", () => {
-            if ( fragment.firstChild && !(fragment.firstChild as Element).classList.contains("disabled")) {
-                currentCourse = courses[i].courseid;
-                alertDiv.innerHTML = "" // Remove all alerts when switching course
-            }
+    if (!haveCredentials) {
+        fragment.firstChild!.addEventListener("click", () => {
+            populateNoCredentialsPane(i);
+        });
+    } else {
+        fragment.firstChild!.addEventListener("click", () => {
+            populateHaveCredentialsPane(i);
         });
     }
+
+    fragment.firstChild!.addEventListener("click", () => {
+        currentCourse = courses[i].courseid;
+        alertDiv.innerHTML = "" // Remove all alerts when switching course
+    });
     return fragment;
 }
 
@@ -159,9 +143,9 @@ async function changeView(hasCredentials: boolean) {
 }
 
 async function prepareToGetCredentials() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
-    credentialsButton.classList.add("disabled");
-    groupInput.classList.add("disabled");
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).disabled = true);
+    credentialsButton.disabled = true;
+    groupInput.disabled=true;
     try {
         const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
@@ -172,42 +156,42 @@ async function prepareToGetCredentials() {
     } catch (error) {
         addErrorAlert(error);
     } finally {
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
-        credentialsButton.classList.remove("disabled");
-        groupInput.classList.remove("disabled");
+        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).disabled=false);
+        credentialsButton.disabled=false;
+        groupInput.disabled=false;
     }
 }
 
 
 function disableElementsOnPage() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).disabled=true);
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
-            deleteButton.classList.add("disabled")
+            deleteButton.disabled=true
         });
     Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((resetButton: HTMLButtonElement) => {
-            resetButton.classList.add("disabled")
+            resetButton.disabled=true
         });
     Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((dumpButton: HTMLButtonElement) => {
-            dumpButton.classList.add("disabled")
+            dumpButton.disabled=true
         });
 }
 
 function enableElementsOnPage() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).disabled=false);
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
-            deleteButton.classList.remove("disabled")
+            deleteButton.disabled=false
         });
     Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((resetButton: HTMLButtonElement) => {
-            resetButton.classList.remove("disabled")
+            resetButton.disabled=false
         });
     Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((dumpButton: HTMLButtonElement) => {
-            dumpButton.classList.remove("disabled")
+            dumpButton.disabled=false
         });
 }
 
@@ -273,9 +257,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
 window.onload = async () => {
     await Promise.all([
         credentialsButton.addEventListener("click", () => {
-            if (!credentialsButton.classList.contains("disabled")) {
                 prepareToGetCredentials()
-            }
         }),
         displayCourses(),
         displayWhoami()
