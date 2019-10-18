@@ -39,7 +39,8 @@ urlpatterns = [
     url(r'^dbmusers/own/?$', views.get_own_response, {"dbname": "dbmusers"}),
     url(r'^dbmusers/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "dbmusers"}),
     url(r'^dbmusers/$', views.baseview, {"dbname": "dbmusers"}),
-    url(r'^dbmusers/email/(?P<search_value>[a-z0-9@.]+)/?$', views.search_on_name, {"dbname": "dbmusers"}),
+    url(r'^dbmusers/email/(?P<search_value>[a-zA-Z0-9@.]+)/?$', views.search_on_name, {"dbname": "dbmusers"}),
+    url(r'^dbmusers/course/(?P<pk>[0-9]+)/?$', views.search_dbmusers_on_course),
 
     # dump
     url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),

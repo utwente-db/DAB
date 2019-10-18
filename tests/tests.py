@@ -114,7 +114,7 @@ class testCourse(unittest.TestCase):
         r = teacher.post(BASE + "/rest/tas/", json=body)
         self.assertEqual(r.status_code, 201)
 
-        r = teacher.get(BASE + "/rest/tas/own")
+        r = teacher.get(BASE + "/rest/tas/course/" + str(test_course["courseid"]))
         self.assertEqual(r.status_code, 200)
         body = r.json()
         relation_id = 0
@@ -128,7 +128,7 @@ class testCourse(unittest.TestCase):
         r = teacher.delete(BASE + "/rest/tas/" + str(relation_id))
         self.assertEqual(r.status_code, 202)
 
-        r = teacher.get(BASE + "/rest/tas/own")
+        r = teacher.get(BASE + "/rest/tas/course/" + str(test_course["courseid"]))
         self.assertEqual(r.status_code, 200)
         body = r.json()
         for entry in body:

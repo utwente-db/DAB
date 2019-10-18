@@ -267,6 +267,23 @@ def get_course_ta(request, pk):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+@require_GET
+@authenticated
+def search_dbmusers_on_course(request, pk):
+    course = None
+    try:
+        course = Courses.objects.get(courseid=pk)
+    except Courses.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
+        data = dbmusers.objects.raw("SELECT u.* FROM dbmusers u, studentdatabases d where d.course=%s and u.id=d.fid", [course.courseid])
+        serializer = dbmusersSerializer(data, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
 
 def post_base_dbmusers_response(request):
     databases = None
