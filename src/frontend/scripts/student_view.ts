@@ -124,7 +124,7 @@ async function displayCourses(): Promise<void> {
 }
 
 async function changeView(hasCredentials: boolean) {
-    const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link active")[0] as HTMLLinkElement;
+    const activeLink: HTMLAnchorElement = document.getElementsByClassName("nav-link active")[0] as HTMLAnchorElement;
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
     const newPane = hasCredentials ? haveCredsPane : noCredsPane;
     const i = Number(activeLink.id);
@@ -143,7 +143,7 @@ async function changeView(hasCredentials: boolean) {
 }
 
 async function prepareToGetCredentials() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).disabled = true);
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
     credentialsButton.disabled = true;
     groupInput.disabled=true;
     try {
@@ -156,7 +156,7 @@ async function prepareToGetCredentials() {
     } catch (error) {
         addErrorAlert(error);
     } finally {
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).disabled=false);
+        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).classList.remove("disabled"));
         credentialsButton.disabled=false;
         groupInput.disabled=false;
     }
@@ -164,7 +164,7 @@ async function prepareToGetCredentials() {
 
 
 function disableElementsOnPage() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).disabled=true);
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
             deleteButton.disabled=true
@@ -180,7 +180,7 @@ function disableElementsOnPage() {
 }
 
 function enableElementsOnPage() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).disabled=false);
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.remove("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
             deleteButton.disabled=false

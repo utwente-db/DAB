@@ -26403,7 +26403,7 @@ function prepareToGetCredentials() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.disabled = true; });
+                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
                     credentialsButton.disabled = true;
                     groupInput.disabled = true;
                     _a.label = 1;
@@ -26423,7 +26423,7 @@ function prepareToGetCredentials() {
                     alert_1.addErrorAlert(error_1);
                     return [3 /*break*/, 7];
                 case 6:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.disabled = false; });
+                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
                     credentialsButton.disabled = false;
                     groupInput.disabled = false;
                     return [7 /*endfinally*/];
@@ -26433,7 +26433,7 @@ function prepareToGetCredentials() {
     });
 }
 function disableElementsOnPage() {
-    coursesNavHtml.childNodes.forEach(function (node) { return node.disabled = true; });
+    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
     Array.from(document.getElementsByClassName("delete-button"))
         .forEach(function (deleteButton) {
         deleteButton.disabled = true;
@@ -26448,7 +26448,7 @@ function disableElementsOnPage() {
     });
 }
 function enableElementsOnPage() {
-    coursesNavHtml.childNodes.forEach(function (node) { return node.disabled = false; });
+    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
     Array.from(document.getElementsByClassName("delete-button"))
         .forEach(function (deleteButton) {
         deleteButton.disabled = false;
