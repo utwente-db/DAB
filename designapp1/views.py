@@ -251,6 +251,15 @@ def get_own_response(request, dbname):
         log_message_with_db(request.session['user'],db_parameters["dbname"],log_get_own," this user has requested its own info in this db") #LOG THIS ACTION
         return JsonResponse(serializer_class.data, safe=False)
 
+@require_GET
+@authenticated
+def get_course_ta(request, courseid):
+    course = None
+    try:
+        course = Courses.objects.get(courseid=courseid)
+    except Courses.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
 
 def post_base_dbmusers_response(request):
     databases = None
@@ -935,7 +944,7 @@ def set_role(request):
     # if you are not admin, make sure you don't demote an admin or something
     if request.session["role"] > 0:
         try:
-            user = dbmusers.objects.get(email=body["user"], role__gt=request.session["role"])
+            user = dbmusers.objects.get(id=body["user"], role__gt=request.session["role"])
             user.role = body["role"]
             user.save()
         except dbmusers.DoesNotExist as e:
@@ -944,7 +953,7 @@ def set_role(request):
     else:
         # admins don't care
         try:
-            user = dbmusers.objects.get(email=body["user"])
+            user = dbmusers.objects.get(id=body["user"])
             user.role = body["role"]
             user.save()
         except dbmusers.DoesNotExist as e:

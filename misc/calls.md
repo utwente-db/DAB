@@ -35,8 +35,12 @@ So a teacher can create ta's and that's about it.
 
 Method: POST
 Body: JSON, containing:
-- role: the role the user should be set to
-- user: the users email. Possibly change to user id?
+
+    body:
+       {
+       "user": 3, [USER ID]
+       "role": 0 [ROLE TO BE SET TO]
+       }
 
 returns:
 - 200 if successful
