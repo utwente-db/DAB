@@ -253,12 +253,19 @@ def get_own_response(request, dbname):
 
 @require_GET
 @authenticated
-def get_course_ta(request, courseid):
+def get_course_ta(request, pk):
     course = None
     try:
-        course = Courses.objects.get(courseid=courseid)
+        course = Courses.objects.get(courseid=pk)
     except Courses.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
+        data = TAs.objects.filter(courseid=course.courseid)
+        serializer = TasSerializer(data, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
 def post_base_dbmusers_response(request):

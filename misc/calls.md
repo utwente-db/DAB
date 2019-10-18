@@ -50,7 +50,7 @@ returns:
 ## /whoami
 
 Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
-If the user is not logged in, returns a 404.
+If the user is not logged in, returns a 401.
 
 ## /dump/<pk>
 
@@ -218,6 +218,11 @@ GET -> only for the teacher (or admin if it owns courses) returned all the tas i
 ### /tas/own/
 
 GET -> gives back the ta information about the currently logged in ta
+
+### /tas/course/courseid
+
+GET -> gives back the tas of that course
+accesible to the teacher and tas of that course
 
 ## /schematransfer/[course]/[database]
 
