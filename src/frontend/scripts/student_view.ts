@@ -73,10 +73,16 @@ async function populateHaveCredentialsPane(i: number) {
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
         const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-            prepareToDeleteCredentials(id);
+            if (!deleteButton.classList.contains("disabled")) {
+                prepareToDeleteCredentials(id);
+
+            }
         });
         resetButton.addEventListener("click", () => {
-            resetDatabase(id);
+            if (!resetButton.classList.contains("disabled")) {
+                resetDatabase(id);
+
+            }
         });
 
     });
@@ -90,21 +96,30 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
     const templateString = `<a id="${i}" class="nav-link ${credentialsClass} ${activeString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
+    if (fragment.firstChild) {
+        if (!haveCredentials) {
+            fragment.firstChild.addEventListener("click", () => {
+                if (fragment.firstChild && !(fragment.firstChild as Element).classList.contains("disabled")) {
+                    populateNoCredentialsPane(i);
 
-    if (!haveCredentials) {
-        fragment.firstChild!.addEventListener("click", () => {
-            populateNoCredentialsPane(i);
-        });
-    } else {
-        fragment.firstChild!.addEventListener("click", () => {
-            populateHaveCredentialsPane(i);
+                }
+            });
+        } else {
+            fragment.firstChild.addEventListener("click", () => {
+                if (fragment.firstChild && !(fragment.firstChild as Element).classList.contains("disabled")) {
+                    populateHaveCredentialsPane(i);
+
+                }
+            });
+        }
+
+        fragment.firstChild.addEventListener("click", () => {
+            if ( fragment.firstChild && !(fragment.firstChild as Element).classList.contains("disabled")) {
+                currentCourse = courses[i].courseid;
+                alertDiv.innerHTML = "" // Remove all alerts when switching course
+            }
         });
     }
-
-    fragment.firstChild!.addEventListener("click", () => {
-        currentCourse = courses[i].courseid;
-        alertDiv.innerHTML = "" // Remove all alerts when switching course
-    });
     return fragment;
 }
 
@@ -257,7 +272,11 @@ async function resetDatabase(dbID: number): Promise<boolean> {
 
 window.onload = async () => {
     await Promise.all([
-        credentialsButton.addEventListener("click", prepareToGetCredentials),
+        credentialsButton.addEventListener("click", () => {
+            if (!credentialsButton.classList.contains("disabled")) {
+                prepareToGetCredentials()
+            }
+        }),
         displayCourses(),
         displayWhoami()
     ])

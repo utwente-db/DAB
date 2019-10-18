@@ -26307,10 +26307,14 @@ function populateHaveCredentialsPane(i) {
                 var deleteButton = document.getElementById("delete-button-" + id);
                 var resetButton = document.getElementById("reset-button-" + id);
                 deleteButton.addEventListener("click", function () {
-                    prepareToDeleteCredentials(id);
+                    if (!deleteButton.classList.contains("disabled")) {
+                        prepareToDeleteCredentials(id);
+                    }
                 });
                 resetButton.addEventListener("click", function () {
-                    resetDatabase(id);
+                    if (!resetButton.classList.contains("disabled")) {
+                        resetDatabase(id);
+                    }
                 });
             });
             return [2 /*return*/];
@@ -26324,20 +26328,28 @@ function createNavLink(haveCredentials, i, active) {
     var activeString = active ? "active" : "";
     var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
     var fragment = document.createRange().createContextualFragment(templateString);
-    if (!haveCredentials) {
+    if (fragment.firstChild) {
+        if (!haveCredentials) {
+            fragment.firstChild.addEventListener("click", function () {
+                if (fragment.firstChild && !fragment.firstChild.classList.contains("disabled")) {
+                    populateNoCredentialsPane(i);
+                }
+            });
+        }
+        else {
+            fragment.firstChild.addEventListener("click", function () {
+                if (fragment.firstChild && !fragment.firstChild.classList.contains("disabled")) {
+                    populateHaveCredentialsPane(i);
+                }
+            });
+        }
         fragment.firstChild.addEventListener("click", function () {
-            populateNoCredentialsPane(i);
+            if (fragment.firstChild && !fragment.firstChild.classList.contains("disabled")) {
+                currentCourse = courses[i].courseid;
+                alertDiv.innerHTML = ""; // Remove all alerts when switching course
+            }
         });
     }
-    else {
-        fragment.firstChild.addEventListener("click", function () {
-            populateHaveCredentialsPane(i);
-        });
-    }
-    fragment.firstChild.addEventListener("click", function () {
-        currentCourse = courses[i].courseid;
-        alertDiv.innerHTML = ""; // Remove all alerts when switching course
-    });
     return fragment;
 }
 function displayCourses() {
@@ -26552,7 +26564,11 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, Promise.all([
-                    credentialsButton.addEventListener("click", prepareToGetCredentials),
+                    credentialsButton.addEventListener("click", function () {
+                        if (!credentialsButton.classList.contains("disabled")) {
+                            prepareToGetCredentials();
+                        }
+                    }),
                     displayCourses(),
                     navbar_1.displayWhoami()
                 ])];
