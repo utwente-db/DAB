@@ -80,7 +80,7 @@ export function validPassword(field: HTMLInputElement): boolean {
 function checkFields(): boolean {
     const a = validEmail(registerEmailField); // Can't use a one-line function here due to lazy evaluation
     const b = validPassword(registerPasswordField);
-    const c = passwordsEqual(registerPasswordField,registerPasswordConfirmField);
+    const c = passwordsEqual(registerPasswordField, registerPasswordConfirmField);
     return a && b && c
 }
 
@@ -88,12 +88,21 @@ async function tryRegister(): Promise<void> {
     if (checkFields()) {
         const credentials: Credentials = {email: registerEmailField.value, password: registerPasswordField.value};
         const tempAlert: ChildNode | null = addTempAlert();
+        registerEmailField.disabled = true;
+        registerPasswordField.disabled = true;
+        registerPasswordConfirmField.disabled = true;
+        registerButton.disabled = true;
         try {
             const response: AxiosResponse<string> = await axios.post("/rest/dbmusers/", credentials) as AxiosResponse<string>;
             const responseData: string = response.data;
             addAlert(`Please check your inbox to confirm your e-mail`, AlertType.success, tempAlert)
         } catch (error) {
             addErrorAlert(error, tempAlert)
+        } finally {
+            registerEmailField.disabled = false;
+            registerPasswordField.disabled = false;
+            registerPasswordConfirmField.disabled = false;
+            registerButton.disabled = false;
         }
     }
 }
