@@ -9,6 +9,9 @@ const content = document.getElementById('content') as HTMLFormElement;
 
 async function tryRequestPassword() {
     if (validEmail(registerEmailField)) {
+        passwordButton.disabled = true;
+        registerEmailField.disabled = true;
+
         const tempAlert: ChildNode | null = addTempAlert();
         try {
             const response: AxiosResponse = await axios.post(`/request_reset_password/${registerEmailField.value}`);
@@ -17,17 +20,20 @@ async function tryRequestPassword() {
         } catch (error) {
             const ae = error as AxiosError
             if (ae.response && ae.response.status === 404) {
-                addAlert("This e-mail was not found", AlertType.danger,tempAlert)
+                addAlert("This e-mail was not found", AlertType.danger, tempAlert)
             } else {
                 addErrorAlert(error, tempAlert)
             }
+        } finally {
+            passwordButton.disabled = false;
+            registerEmailField.disabled = false;
         }
     }
 }
 
 window.onload = () => {
     content.addEventListener("submit", (event) => {
-            event.preventDefault();
-            tryRequestPassword();
-        });
+        event.preventDefault();
+        tryRequestPassword();
+    });
 }

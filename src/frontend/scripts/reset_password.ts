@@ -1,5 +1,5 @@
-import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios, {AxiosResponse} from "axios";
+import {addErrorAlert, addTempAlert} from "./alert";
+import axios from "axios";
 import {passwordsEqual, validPassword} from "./register";
 
 const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement;
@@ -23,19 +23,29 @@ function checkFields(): boolean {
 
 async function tryResetPassword(): Promise<void> {
     if (checkFields()) {
+        newPasswordField.disabled = true;
+        oldPasswordField.disabled = true;
+        confirmPasswordField.disabled = true;
+        newPasswordButton.disabled = true;
+
         const tempAlert: ChildNode | null = addTempAlert();
         try {
             await axios.post(`/reset_password/${pk}/${token}`, {'password': newPasswordField.value});
             window.location.href = "/password_has_been_reset";
         } catch (error) {
             addErrorAlert(error, tempAlert)
+        } finally {
+            newPasswordField.disabled = false;
+            oldPasswordField.disabled = false;
+            confirmPasswordField.disabled = false;
+            newPasswordButton.disabled = false;
         }
     }
 }
 
 window.onload = () => {
     content.addEventListener("submit", (event) => {
-            event.preventDefault();
-            tryResetPassword();
-        });
+        event.preventDefault();
+        tryResetPassword();
+    });
 };
