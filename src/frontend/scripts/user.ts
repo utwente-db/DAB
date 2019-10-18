@@ -1,18 +1,39 @@
 import axios, {AxiosResponse} from 'axios';
-import "popper.js"
-import "bootstrap"
+
+import * as $ from "jquery";
+import "popper.js";
+import "bootstrap";
+import {addAlert, addErrorAlert, AlertType} from "./alert";
+import Swal from 'sweetalert2';
 
 import {displayWhoami} from "./navbar";
 import {Course, StudentDatabase} from "./courses";
 
 //todo: change to selected user ofcourse
-const hardcodedUserID = 73;
+const urlParams = new URLSearchParams(window.location.search);
+var userid: number = 0;
+
+// let user: User;
+// let databases: Database[];
+
+const x: string | null = urlParams.get("id");
+if (x != null) {
+    userid = parseInt(x);
+}
 
 const pageTitleHtml: HTMLTitleElement = document.getElementById("page-title") as HTMLTitleElement;
 const userInfoHtml: HTMLDivElement = document.getElementById("user-info") as HTMLDivElement;
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
+
+
+const usernameHtml: HTMLDivElement = document.getElementById("username") as HTMLDivElement;
+const roleHtml: HTMLDivElement = document.getElementById("role") as HTMLDivElement;
+const verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement;
+
+const deleteButton: HTMLButtonElement = document.getElementById("delete_button") as HTMLButtonElement;
+const changeRoleButton: HTMLButtonElement = document.getElementById("change_role") as HTMLButtonElement;
 
 export interface User {
     id: number;
@@ -35,7 +56,7 @@ export async function getUsersPromise(): Promise<User[]> {
 }
 
 async function getDatabasesPromise(): Promise<StudentDatabase[]> {
-    const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + hardcodedUserID + "/");
+    const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + userid + "/");
     return response.data;
 }
 
@@ -45,7 +66,7 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
 }
 
 async function getUserPromise(): Promise<User> {
-    const path: string = "/rest/dbmusers/" + hardcodedUserID + "/";
+    const path: string = `/rest/dbmusers/${userid}/`;
     const response: AxiosResponse = await axios.get(path);
     return response.data;
 }
@@ -54,6 +75,13 @@ async function displayCoursesAndDatabases(): Promise<void> {
     const databases: StudentDatabase[] = await getDatabasesPromise();
 
     const coursesAndDatabases: Map<number, string> = new Map<number, string>();
+    if (databases.length == 0) {
+        coursesNavHtml.innerHTML = "empty";
+        courseDatabasesHtml.innerHTML = "no content";
+        return;
+    }
+
+    const coursesAndDatabases = new Map<number, string>();
 
     for (let i = 0; i < databases.length; i++) {
         coursesAndDatabases.set(databases[i].course, "");
@@ -68,10 +96,8 @@ async function displayCoursesAndDatabases(): Promise<void> {
             + "fid: " + databases[i].fid + "<br>"
             + "course: " + databases[i].course + "<br>";
 
-        const course: string | undefined = coursesAndDatabases.get(databases[i].course);
-        if (course) {
-            course.concat(html);
-        }
+        // This will mess up if someone has multiple db's in a single course
+        coursesAndDatabases.set(databases[i].course, html);
     }
 
     const resultNav: string[] = [];
@@ -84,18 +110,17 @@ async function displayCoursesAndDatabases(): Promise<void> {
         resultNav.push(
             "<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>"
         );
-        active = "";
         resultContent.push(
             "<div class=\"tab-pane" + active + "\" id=\"course" + course.courseid + "\">"
             + content
-            + "</div>"
+            + "test</div>"
         );
-
-        const resultNavString: string = resultNav.join("\n");
-        const resultContentString: string = resultContent.join("\n");
-        coursesNavHtml.innerHTML += resultNavString;
-        courseDatabasesHtml.innerHTML += resultContentString;
+        active = "";
     }
+    const resultNavString: string = resultNav.join("\n");
+    const resultContentString: string = resultContent.join("\n");
+    coursesNavHtml.innerHTML = resultNavString;
+    courseDatabasesHtml.innerHTML = resultContentString;
 }
 
 async function displayUserDetails(): Promise<void> {
@@ -104,19 +129,82 @@ async function displayUserDetails(): Promise<void> {
 
     let role: string;
     if (user.role === UserRole.admin) {
-        role = "Admin";
+        role = "admin";
     } else if (user.role === UserRole.teacher) {
-        role = "Teacher";
+        role = "teacher";
     } else if (user.role === UserRole.student) {
-        role = "Student";
+        role = "student";
     } else {
-        role = "Unknown";
+        role = "unknown";
     }
+
+    usernameHtml.innerHTML += `<input type=\"text\" class=\"form-control\" value=\"${user.email}\" readonly="">`;
+    roleHtml.innerHTML += `<input type="text" class="form-control" value="${role}" readonly="">`;
+    verifiedHtml.innerHTML += (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
+}
+
+async function deleteUser(): Promise<boolean> {
+    const user: User = await getUserPromise();
+    const result = await Swal.fire({
+        title: `Are you sure you want to delete <strong>${user.email}<strong> from the system?`,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success;
+
+    try {
+        await axios.delete(`/rest/dbmusers/${userid}/`);
+        alert("User succesfully deleted!");
+        window.location.href = '../';
+        success = true;
+    } catch (error) {
+        addErrorAlert(error);
+        success = false;
+    }
+    return success;
+}
+
+async function changeRole(): Promise<boolean> {
+    const user: User = await getUserPromise();
+    // TODO correctly find selected option
+    const selectedRole: HTMLSelectElement = document.getElementById("change_role") as HTMLSelectElement;
+    const role: string = selectedRole.value;
+    const result = await Swal.fire({
+        text: `Are you sure you want change the role of <strong>${user.email}</strong> to ${role}?`,
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success;
+
+    try {
+        await axios.post(`/rest/set_role/`, {"user": user.id, "role": role});
+        addAlert("Role changed!", AlertType.primary);
+        success = true;
+    } catch (error) {
+        addErrorAlert(error);
+        success = false;
+    }
+    return success;
 }
 
 window.onload = async () => {
     await Promise.all([
-        displayUserDetails(),
-        displayWhoami()
+        changeRoleButton.addEventListener("click", changeRole),
+        deleteButton.addEventListener("click", deleteUser),
+        await displayUserDetails(),
+        await displayWhoami(),
+        await displayCoursesAndDatabases()
     ]);
-};
+}

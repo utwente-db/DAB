@@ -1,4 +1,7 @@
+import axios, {AxiosResponse} from 'axios';
 import {displayWhoami} from "./navbar";
+
+import * as $ from "jquery";
 import "popper.js";
 import "bootstrap";
 import {getUsersPromise, User} from "./user";
@@ -33,8 +36,8 @@ async function displayCourses(): Promise<void> {
     }
     const resultNavString: string = resultNav.join("\n");
     const resultContentString: string = resultContent.join("\n");
-    coursesNavHtml.innerHTML += resultNavString;
-    coursesContentHtml.innerHTML += resultContentString;
+    coursesNavHtml.innerHTML = resultNavString;
+    coursesContentHtml.innerHTML = resultContentString;
 }
 
 async function displayUsers(): Promise<void> {
@@ -56,19 +59,15 @@ async function displayUsers(): Promise<void> {
         const verified: boolean = users[i].verified;
         result.push(
             "<tr><th scope=\"row\">" + users[i].id + "</th>"
-            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + role + "</td>"
-            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + users[i].email + "</td>"
-            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage\">" + verified + "</td></tr></a>"
-            // "<tr><th scope=\"row\">" + users[i].id + "</th>"
-            // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + role + "</td>"
-            // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + users[i].email + "</td>"
-            // + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/users#" + users[i].id + "\">" + verified + "</td></tr></a>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + role + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + users[i].email + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + verified + "</td></tr>"
         );
 
     }
 
     const resultString: string = result.join("\n");
-    usersHtml.innerHTML += resultString;
+    usersHtml.innerHTML = resultString;
 }
 
 window.onload = async () => {

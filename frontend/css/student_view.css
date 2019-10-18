@@ -8347,5 +8347,17 @@ a {
   .nav-link.have-credentials-nav.active {
     background-color: #4ecf86 !important; }
 
+.tableFixHead thead th {
+  position: sticky;
+  top: 0;
+  cursor: pointer; }
+
+table {
+  border-collapse: collapse;
+  width: 100%; }
+
+th {
+  background: #eee; }
+
 
 /*# sourceMappingURL=student_view.css.map*/
