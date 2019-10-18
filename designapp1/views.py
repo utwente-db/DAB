@@ -1014,7 +1014,6 @@ def resend_verification(request):
     mail.send_verification(user.__dict__)
     return HttpResponse()
 
-#TODO: make front-end for this
 @require_POST
 def request_reset_password(request, email):
     db = None
@@ -1035,6 +1034,7 @@ def request_reset_password(request, email):
 
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
+#TODO: make front-end for this
 @require_http_methods(["GET", "POST"])
 def reset_password(request, pk, token):
     #do checks first
@@ -1083,3 +1083,7 @@ def redirect(request):
             return admin_view(request)
     else:
         return login(request)
+
+@require_GET
+def forgot_password_page(request):
+    return render(request, 'forgot_password_page.html')

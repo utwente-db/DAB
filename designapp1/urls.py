@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^login/?$', views.login, name="login"),
     url(r'^logout/?$', views.logout, name="logout"),
     url(r'^register/?$', views.register, name="register"),
+    url(r'^forgot_password_page/?$', views.forgot_password_page, name="forgot_password_page"),
     url(r'^request_db/?$', views.request_db, name="request_db"),
     url(r'^logout_button/?$', views.logout_button, name='logout_button'),
     url(r'^courses/?$', views.courses, name='courses'),
