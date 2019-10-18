@@ -37,49 +37,49 @@ function setInvalid(input: HTMLInputElement, error: string): void {
     }
 }
 
-function passwordsEqual(): boolean {
-    if (registerPasswordField.value === registerPasswordConfirmField.value) {
-        setValid(registerPasswordConfirmField);
+export function passwordsEqual(passwordField: HTMLInputElement, passwordConfirmField: HTMLInputElement): boolean {
+    if (passwordField.value === passwordConfirmField.value) {
+        setValid(passwordConfirmField);
         return true;
     } else {
-        setInvalid(registerPasswordConfirmField, "Passwords do not match");
+        setInvalid(passwordConfirmField, "Passwords do not match");
         return false;
     }
 }
 
-export function validEmail(): boolean {
+export function validEmail(field: HTMLInputElement): boolean {
     const emailPattern: RegExp = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
     const utwentePattern: RegExp = /.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$/;
-    const email: string = registerEmailField.value;
+    const email: string = field.value;
     if (emailPattern.test(email)) {
         if (utwentePattern.test(email)) {
-            setValid(registerEmailField);
+            setValid(field);
             return true;
         } else {
-            setInvalid(registerEmailField, "Not a valid utwente.nl address");
+            setInvalid(field, "Not a valid utwente.nl address");
         }
     } else {
-        setInvalid(registerEmailField, "Not a valid e-mail address");
+        setInvalid(field, "Not a valid e-mail address");
     }
     return false;
 }
 
-function validPassword(): boolean {
+export function validPassword(field: HTMLInputElement): boolean {
     const passwordPattern: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    const password: string = registerPasswordField.value;
+    const password: string = field.value;
     if (passwordPattern.test(password)) {
-        setValid(registerPasswordField);
+        setValid(field);
         return true
     } else {
-        setInvalid(registerPasswordField, "Password does not meet the requirements");
+        setInvalid(field, "Password does not meet the requirements");
         return false;
     }
 }
 
 function checkFields(): boolean {
-    const a = validEmail(); // Can't use a one-line function here due to lazy evaluation
-    const b = validPassword();
-    const c = passwordsEqual();
+    const a = validEmail(registerEmailField); // Can't use a one-line function here due to lazy evaluation
+    const b = validPassword(registerPasswordField);
+    const c = passwordsEqual(registerPasswordField,registerPasswordConfirmField);
     return a && b && c
 }
 

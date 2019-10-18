@@ -1051,8 +1051,7 @@ def reset_password(request, pk, token):
         return HttpResponse("token expired", status=status.HTTP_403_FORBIDDEN)
 
     if request.method == "GET":
-        #TODO: make front end with nice password input fields
-        pass
+        return render(request,"reset_password.html", { 'pk' : pk, 'token' : token})
 
     else:
         body = None

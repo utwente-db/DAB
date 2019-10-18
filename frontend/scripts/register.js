@@ -23136,51 +23136,53 @@ function setInvalid(input, error) {
         console.error("No sibling element for input. Contact the front-end devs with this error");
     }
 }
-function passwordsEqual() {
-    if (registerPasswordField.value === registerPasswordConfirmField.value) {
-        setValid(registerPasswordConfirmField);
+function passwordsEqual(passwordField, passwordConfirmField) {
+    if (passwordField.value === passwordConfirmField.value) {
+        setValid(passwordConfirmField);
         return true;
     }
     else {
-        setInvalid(registerPasswordConfirmField, "Passwords do not match");
+        setInvalid(passwordConfirmField, "Passwords do not match");
         return false;
     }
 }
-function validEmail() {
+exports.passwordsEqual = passwordsEqual;
+function validEmail(field) {
     var emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
     var utwentePattern = /.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$/;
-    var email = registerEmailField.value;
+    var email = field.value;
     if (emailPattern.test(email)) {
         if (utwentePattern.test(email)) {
-            setValid(registerEmailField);
+            setValid(field);
             return true;
         }
         else {
-            setInvalid(registerEmailField, "Not a valid utwente.nl address");
+            setInvalid(field, "Not a valid utwente.nl address");
         }
     }
     else {
-        setInvalid(registerEmailField, "Not a valid e-mail address");
+        setInvalid(field, "Not a valid e-mail address");
     }
     return false;
 }
 exports.validEmail = validEmail;
-function validPassword() {
+function validPassword(field) {
     var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    var password = registerPasswordField.value;
+    var password = field.value;
     if (passwordPattern.test(password)) {
-        setValid(registerPasswordField);
+        setValid(field);
         return true;
     }
     else {
-        setInvalid(registerPasswordField, "Password does not meet the requirements");
+        setInvalid(field, "Password does not meet the requirements");
         return false;
     }
 }
+exports.validPassword = validPassword;
 function checkFields() {
-    var a = validEmail(); // Can't use a one-line function here due to lazy evaluation
-    var b = validPassword();
-    var c = passwordsEqual();
+    var a = validEmail(registerEmailField); // Can't use a one-line function here due to lazy evaluation
+    var b = validPassword(registerPasswordField);
+    var c = passwordsEqual(registerPasswordField, registerPasswordConfirmField);
     return a && b && c;
 }
 function tryRegister() {

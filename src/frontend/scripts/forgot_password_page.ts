@@ -7,7 +7,7 @@ const registerEmailField: HTMLInputElement = document.getElementById("register-e
 
 
 async function tryRequestPassword() {
-    if (validEmail()) {
+    if (validEmail(registerEmailField)) {
         const tempAlert: ChildNode | null = addTempAlert();
         try {
             const response: AxiosResponse = await axios.post(`/request_reset_password/${registerEmailField.value}`);
