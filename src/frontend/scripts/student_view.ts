@@ -14,7 +14,7 @@ const haveCredsInfo: HTMLDivElement = document.getElementById("have-credentials-
 const credentialsDiv: HTMLDivElement = document.getElementById("credentials-div") as HTMLDivElement;
 const haveCredsPane: HTMLDivElement = document.getElementById("have-credentials-pane") as HTMLDivElement;
 const noCredsPane: HTMLHeadingElement = document.getElementById("no-credentials-pane") as HTMLDivElement;
-
+const noCredsForm = document.getElementById("no-credentials-form") as HTMLFormElement;
 
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
 
@@ -73,10 +73,10 @@ async function populateHaveCredentialsPane(i: number) {
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
         const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-                prepareToDeleteCredentials(id);
+            prepareToDeleteCredentials(id);
         });
         resetButton.addEventListener("click", () => {
-                resetDatabase(id);
+            resetDatabase(id);
         });
 
     });
@@ -145,7 +145,7 @@ async function changeView(hasCredentials: boolean) {
 async function prepareToGetCredentials() {
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
     credentialsButton.disabled = true;
-    groupInput.disabled=true;
+    groupInput.disabled = true;
     try {
         const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
@@ -157,8 +157,8 @@ async function prepareToGetCredentials() {
         addErrorAlert(error);
     } finally {
         coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).classList.remove("disabled"));
-        credentialsButton.disabled=false;
-        groupInput.disabled=false;
+        credentialsButton.disabled = false;
+        groupInput.disabled = false;
     }
 }
 
@@ -167,15 +167,15 @@ function disableElementsOnPage() {
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
-            deleteButton.disabled=true
+            deleteButton.disabled = true
         });
     Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((resetButton: HTMLButtonElement) => {
-            resetButton.disabled=true
+            resetButton.disabled = true
         });
     Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((dumpButton: HTMLButtonElement) => {
-            dumpButton.disabled=true
+            dumpButton.disabled = true
         });
 }
 
@@ -183,15 +183,15 @@ function enableElementsOnPage() {
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.remove("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
-            deleteButton.disabled=false
+            deleteButton.disabled = false
         });
     Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((resetButton: HTMLButtonElement) => {
-            resetButton.disabled=false
+            resetButton.disabled = false
         });
     Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((dumpButton: HTMLButtonElement) => {
-            dumpButton.disabled=false
+            dumpButton.disabled = false
         });
 }
 
@@ -256,9 +256,11 @@ async function resetDatabase(dbID: number): Promise<boolean> {
 
 window.onload = async () => {
     await Promise.all([
-        credentialsButton.addEventListener("click", () => {
-                prepareToGetCredentials()
+        noCredsForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            prepareToGetCredentials();
         }),
+
         displayCourses(),
         displayWhoami()
     ])

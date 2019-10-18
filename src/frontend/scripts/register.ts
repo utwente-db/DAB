@@ -9,6 +9,7 @@ const registerButton: HTMLButtonElement = document.getElementById("register-butt
 const registerEmailField: HTMLInputElement = document.getElementById("register-email-field") as HTMLInputElement;
 const registerPasswordField: HTMLInputElement = document.getElementById('register-password-field') as HTMLInputElement;
 const registerPasswordConfirmField: HTMLInputElement = document.getElementById('register-password-confirm-field') as HTMLInputElement;
+const content = document.getElementById('content') as HTMLFormElement;
 
 interface Credentials {
     "email": string
@@ -99,7 +100,10 @@ async function tryRegister(): Promise<void> {
 
 
 window.onload = () => {
-    if (registerButton) {
-        registerButton.addEventListener("click", tryRegister);
+    if (content) {
+        content.addEventListener("submit", (event) => {
+            event.preventDefault();
+            tryRegister();
+        });
     }
 };

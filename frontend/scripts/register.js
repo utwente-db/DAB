@@ -23135,6 +23135,7 @@ var registerButton = document.getElementById("register-button");
 var registerEmailField = document.getElementById("register-email-field");
 var registerPasswordField = document.getElementById('register-password-field');
 var registerPasswordConfirmField = document.getElementById('register-password-confirm-field');
+var content = document.getElementById('content');
 function setValid(input) {
     input.classList.remove("is-invalid");
     input.classList.add("is-valid");
@@ -23234,8 +23235,11 @@ function tryRegister() {
     });
 }
 window.onload = function () {
-    if (registerButton) {
-        registerButton.addEventListener("click", tryRegister);
+    if (content) {
+        content.addEventListener("submit", function (event) {
+            event.preventDefault();
+            tryRegister();
+        });
     }
 };
 

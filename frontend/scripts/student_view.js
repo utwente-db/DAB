@@ -26296,6 +26296,7 @@ var haveCredsInfo = document.getElementById("have-credentials-courseinfo");
 var credentialsDiv = document.getElementById("credentials-div");
 var haveCredsPane = document.getElementById("have-credentials-pane");
 var noCredsPane = document.getElementById("no-credentials-pane");
+var noCredsForm = document.getElementById("no-credentials-form");
 var credentialsButton = document.getElementById("credentials-button");
 var groupInput = document.getElementById("group-input");
 var alertDiv = document.getElementById("alert-div");
@@ -26573,7 +26574,8 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, Promise.all([
-                    credentialsButton.addEventListener("click", function () {
+                    noCredsForm.addEventListener("submit", function (event) {
+                        event.preventDefault();
                         prepareToGetCredentials();
                     }),
                     displayCourses(),

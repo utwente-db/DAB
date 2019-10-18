@@ -8,6 +8,8 @@ const newPasswordButton = document.getElementById("new-password-button") as HTML
 const oldPasswordField = document.getElementById("old-password-field") as HTMLInputElement;
 const newPasswordField = document.getElementById("new-password-field") as HTMLInputElement;
 const confirmPasswordField = document.getElementById("confirm-password-field") as HTMLInputElement;
+const content = document.getElementById('content') as HTMLFormElement;
+
 
 const pk = Number(djangoTemplate.classList[0]);
 const token = djangoTemplate.classList[1];
@@ -32,5 +34,8 @@ async function tryResetPassword(): Promise<void> {
 }
 
 window.onload = () => {
-    newPasswordButton.addEventListener("click", tryResetPassword)
+    content.addEventListener("submit", (event) => {
+            event.preventDefault();
+            tryResetPassword();
+        });
 };

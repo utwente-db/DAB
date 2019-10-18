@@ -4,6 +4,7 @@ import {validEmail} from "./register";
 
 const passwordButton = document.getElementById("password-button") as HTMLButtonElement;
 const registerEmailField: HTMLInputElement = document.getElementById("register-email-field") as HTMLInputElement;
+const content = document.getElementById('content') as HTMLFormElement;
 
 
 async function tryRequestPassword() {
@@ -25,5 +26,8 @@ async function tryRequestPassword() {
 }
 
 window.onload = () => {
-    passwordButton.addEventListener("click", tryRequestPassword);
+    content.addEventListener("submit", (event) => {
+            event.preventDefault();
+            tryRequestPassword();
+        });
 }
