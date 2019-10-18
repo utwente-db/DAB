@@ -50,34 +50,52 @@ export function addTempAlert(errorMessage = "Please wait...", alertType = AlertT
 
 }
 
+interface ErrorBody {
+    [key: string]: string[]
+}
+
 export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null) {
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
     }
-    const responseError: AxiosError = error as AxiosError<{ [key: string]: string[] }>;
-    const response: AxiosResponse<{ [key: string]: string[] }> | undefined = responseError.response;
+    const responseError: AxiosError = error as AxiosError;
+    const response: AxiosResponse | undefined = responseError.response;
+    const stringResponse: AxiosResponse<string> | undefined = responseError.response;
+
     if (response) {
-        const errorKeys: string[] = Object.keys(response.data);
-        const errorMessages: string[][] = Object.values(response.data);
+        // This is an axios error
+        if (typeof response.data === "string") {
+            // This is an axios error with string body
+            addAlert(response.data, AlertType.danger)
+            // TODO include 403 token error here
+        } else if (typeof response.data === "undefined" || response.data === null) {
+            // This is an axios error with empty body
+            addAlert(error.message, AlertType.danger)
+        } else {
+            // This is an axios error with django eror body
+            const objectResponse: AxiosResponse<ErrorBody> | undefined = responseError.response;
 
-        // check for specific errors
+            const errorKeys: string[] = Object.keys(objectResponse!.data);
+            const errorMessages: string[][] = Object.values(objectResponse!.data);
 
-        if (response.status === 403 && (response.data as string) === "token expired") {
-            addAlert("Your token has expired. Try requesting another password reset email", AlertType.danger)
-        } else if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
-            // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
-            addAlert("You already have database credentials for this course", AlertType.danger)
-        } else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
-            addAlert("Another user is already registered using this e-mail", AlertType.danger)
+            // check for specific errors
+
+            if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
+                // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
+                addAlert("You already have database credentials for this course", AlertType.danger)
+            } else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
+                addAlert("Another user is already registered using this e-mail", AlertType.danger)
 
 
-        } else { // No longer checking for specific errors
-            // This is a response error (4XX or 5XX etc)
-            let alertMessage = "";
-            for (let i = 0; i < errorKeys.length; i++) {
-                alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>")
+            } else { // No longer checking for specific errors
+                // This is a response error (4XX or 5XX etc)
+                // TODO this fails if response is string
+                let alertMessage = "";
+                for (let i = 0; i < errorKeys.length; i++) {
+                    alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>")
+                }
+                addAlert(error + "<br><br>" + alertMessage, AlertType.danger)
             }
-            addAlert(error + "<br><br>" + alertMessage, AlertType.danger)
         }
     } else {
         // This is a generic javascript error
