@@ -146,7 +146,7 @@ async function displayUserDetails(): Promise<void> {
 async function deleteUser(): Promise<boolean> {
     const user: User = await getUserPromise();
     const result = await Swal.fire({
-        title: `Are you sure you want to delete <strong>${user.email}<strong> from the system?`,
+        text: `Are you sure you want to delete <strong>${user.email}</strong> from the system?`,
         type: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Delete',
@@ -173,7 +173,7 @@ async function deleteUser(): Promise<boolean> {
 async function changeRole(): Promise<boolean> {
     const user: User = await getUserPromise();
     // TODO correctly find selected option
-    const selectedRole: HTMLSelectElement = document.getElementById("change_role") as HTMLSelectElement;
+    const selectedRole: HTMLSelectElement = document.getElementById("selected_role") as HTMLSelectElement;
     const role: string = selectedRole.value;
     const result = await Swal.fire({
         text: `Are you sure you want change the role of <strong>${user.email}</strong> to ${role}?`,
@@ -189,7 +189,11 @@ async function changeRole(): Promise<boolean> {
     let success;
 
     try {
-        await axios.post(`/rest/set_role/`, {"user": user.id, "role": role});
+        await axios.post(`/rest/set_role`, {
+            user: user.id,
+            role: parseInt(role)
+         });
+        window.location.reload(true);
         addAlert("Role changed!", AlertType.primary);
         success = true;
     } catch (error) {

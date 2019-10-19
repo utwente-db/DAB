@@ -23119,7 +23119,7 @@ function deleteUser() {
                 case 1:
                     user = _a.sent();
                     return [4 /*yield*/, sweetalert2_1.default.fire({
-                            title: "Are you sure you want to delete <strong>" + user.email + "<strong> from the system?",
+                            text: "Are you sure you want to delete <strong>" + user.email + "</strong> from the system?",
                             type: 'warning',
                             showCancelButton: true,
                             confirmButtonText: 'Delete',
@@ -23158,7 +23158,7 @@ function changeRole() {
                 case 0: return [4 /*yield*/, getUserPromise()];
                 case 1:
                     user = _a.sent();
-                    selectedRole = document.getElementById("change_role");
+                    selectedRole = document.getElementById("selected_role");
                     role = selectedRole.value;
                     return [4 /*yield*/, sweetalert2_1.default.fire({
                             text: "Are you sure you want change the role of <strong>" + user.email + "</strong> to " + role + "?",
@@ -23175,9 +23175,13 @@ function changeRole() {
                     _a.label = 3;
                 case 3:
                     _a.trys.push([3, 5, , 6]);
-                    return [4 /*yield*/, axios_1.default.post("/rest/set_role/", { "user": user.id, "role": role })];
+                    return [4 /*yield*/, axios_1.default.post("/rest/set_role", {
+                            user: user.id,
+                            role: parseInt(role)
+                        })];
                 case 4:
                     _a.sent();
+                    window.location.reload(true);
                     alert_1.addAlert("Role changed!", alert_1.AlertType.primary);
                     success = true;
                     return [3 /*break*/, 6];
