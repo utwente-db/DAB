@@ -1168,3 +1168,7 @@ def forgot_password_page(request):
     else:
         return render(request, 'forgot_password_page.html')
 
+@require_GET
+@require_role_redirect(admin)
+def add_course(request):
+    return render(request, 'add_course.html')
