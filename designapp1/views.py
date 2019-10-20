@@ -901,40 +901,37 @@ def register(request):
 def request_db(request):
     return render(request, 'request_db.html', {})
 
-@require_http_methods(["GET", "POST"])
+@require_POST
 def login(request):
     incorrect_message = "wrong email or password"
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            try:
-                user = dbmusers.objects.get(email=data["mail"])
-                print(user)
-                if not user.verified:
-                    return render(request, 'login.html',
-                                  {'form': LoginForm, 'template_class' : 'resend-verification ' + user.email})
+    form = LoginForm(request.POST)
+    if form.is_valid():
+        data = form.cleaned_data
+        try:
+            user = dbmusers.objects.get(email=data["mail"])
+            print(user)
+            if not user.verified:
+                return render(request, 'login.html',
+                              {'form': LoginForm, 'template_class' : 'resend-verification ' + user.email})
 
-                if hash.verify(user.password, data["password"]):
-                    request.session["user"] = user.id
-                    request.session["role"] = user.role
-                    request.session.modified = True
+            if hash.verify(user.password, data["password"]):
+                request.session["user"] = user.id
+                request.session["role"] = user.role
+                request.session.modified = True
 
-                    user.lastlogin = timezone.now() #update last login
-                    user.save()
+                user.lastlogin = timezone.now() #update last login
+                user.save()
 
-                    return HttpResponseRedirect("/")
+                return HttpResponseRedirect("/")
 
 
-                else:
-                    return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
-            except dbmusers.DoesNotExist:
+            else:
                 return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
-        else:
-            form = LoginForm()
-            return render(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
-    form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+        except dbmusers.DoesNotExist:
+            return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
+    else:
+        form = LoginForm()
+        return render(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
 
 
 @require_POST
@@ -1159,7 +1156,8 @@ def redirect(request):
         else:
             return admin_view(request)
     else:
-        return login(request)
+        form = LoginForm()
+        return render(request, 'login.html', {'form': form})
 
 @require_GET
 def forgot_password_page(request):
