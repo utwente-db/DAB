@@ -5,14 +5,15 @@ import {setInvalid, setValid} from "./register";
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 
-const coursenameField = document.getElementById("coursename-field") as HTMLInputElement;
+const coursenameField = document.getElementById("course-name-field") as HTMLInputElement;
 const courseInfoField = document.getElementById("course-info-field") as HTMLInputElement;
 const courseFIDfield = document.getElementById("course-fid-field") as HTMLInputElement;
 const schemaField = document.getElementById("schema-field") as HTMLInputElement;
 const activeField = document.getElementById("active-field") as HTMLInputElement;
 
 const content = document.getElementById('content') as HTMLFormElement;
-const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
+
+// const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
 function validCoursename(field: HTMLInputElement): boolean {
     const coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/
@@ -33,11 +34,11 @@ function validcourseInfo(field: HTMLInputElement): boolean {
 function validFID(field: HTMLInputElement): boolean {
     // TODO make FID field integer like group input on student_view
     try {
-        if (Number(field.value) > 0) {
-            setValid(field)
+        if (field.value === "" || Number(field.value) > 0) {
+            setValid(field);
             return true
         } else {
-            setInvalid(field,"Please enter a valid integer")
+            setInvalid(field, "Please enter a valid integer")
             return false
         }
     } catch (error) {
@@ -57,7 +58,6 @@ function checkFields(): boolean {
     const b = validcourseInfo(courseInfoField);
     const c = validFID(courseFIDfield);// todo what is an FID even?
     const d = validSchema(schemaField);
-    // TODO also have an active thing which defaults to true
     return a && b && c && d
 }
 
@@ -69,17 +69,16 @@ async function tryAddSchema(): Promise<void> {
         schemaField.disabled = true;
         activeField.disabled = true;
         addCourseButton.disabled = true;
-        homepageRef.toggleAttribute("href");
         const tempAlert: ChildNode | null = addTempAlert();
 
         const inputCourse: InputCourse = {
             coursename: coursenameField.value,
             info: courseInfoField.value,
-            fid: Number(courseFIDfield.value),
-            // schema? : string,
-            //  TODO add schema field? doesnt work right now
-            active: Boolean(activeField.value) // TODO Fix this boolean thing
+            active: Boolean(activeField.value)
         };
+
+        if (courseFIDfield.value !== "") {inputCourse.fid = Number(courseFIDfield.value)}
+        //  TODO add schema field in obj? doesnt work right now
 
         const schema = schemaField.value; // TODO actually do some verifying here
 
@@ -88,8 +87,10 @@ async function tryAddSchema(): Promise<void> {
             const response = await axios.post(`/rest/courses/`, inputCourse) as AxiosResponse<Course>;
             addAlert("successfully added course, but not schema yet", AlertType.success);
             const courseID = response.data.courseid;
-            await axios.post(`/rest/courses/${courseID}/schema`, schema)
-            addAlert("successfully added schema", AlertType.success);
+            if (schemaField.value !== "") {
+                await axios.post(`/rest/courses/${courseID}/schema`, schema)
+                addAlert("successfully added schema", AlertType.success);
+            }
 
 
             // TODO Maybe clear fields
@@ -102,7 +103,6 @@ async function tryAddSchema(): Promise<void> {
             schemaField.disabled = false;
             activeField.disabled = false;
             addCourseButton.disabled = false;
-            homepageRef.toggleAttribute("href");
 
         }
     }
