@@ -26308,6 +26308,7 @@ var alertDiv = document.getElementById("alert-div");
 var ownDatabases;
 var courses;
 var currentCourse = 0;
+var whoami;
 function populateNoCredentialsPane(i) {
     noCredsCoursename.innerText = courses[i].coursename;
     noCredsInfo.innerText = courses[i].info;
@@ -26369,7 +26370,7 @@ function createNavLink(haveCredentials, i, active) {
 }
 function displayCourses() {
     return __awaiter(this, void 0, void 0, function () {
-        var ownCourses, i, whoami, youHavePrivilege, haveCredentials, fragment;
+        var ownCourses, i, youHavePrivilege, haveCredentials, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
@@ -26381,25 +26382,16 @@ function displayCourses() {
                     ownDatabases = (_a.sent());
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     console.log(ownCourses);
-                    i = 0;
-                    _a.label = 4;
-                case 4:
-                    if (!(i < courses.length)) return [3 /*break*/, 7];
-                    return [4 /*yield*/, navbar_1.getWhoamiPromise()];
-                case 5:
-                    whoami = _a.sent();
-                    youHavePrivilege = (whoami.role === user_1.UserRole.admin || whoami.role === user_1.UserRole.teacher);
-                    // TODO  check if user is TA for course
-                    if (courses[i].active || youHavePrivilege) {
-                        haveCredentials = (ownCourses.includes(courses[i].courseid));
-                        fragment = createNavLink(haveCredentials, i);
-                        coursesNavHtml.appendChild(fragment);
+                    for (i = 0; i < courses.length; i++) {
+                        youHavePrivilege = (whoami.role === user_1.UserRole.admin || whoami.role === user_1.UserRole.teacher);
+                        // TODO  check if user is TA for course
+                        if (courses[i].active || youHavePrivilege) {
+                            haveCredentials = (ownCourses.includes(courses[i].courseid));
+                            fragment = createNavLink(haveCredentials, i);
+                            coursesNavHtml.appendChild(fragment);
+                        }
                     }
-                    _a.label = 6;
-                case 6:
-                    i++;
-                    return [3 /*break*/, 4];
-                case 7: return [2 /*return*/];
+                    return [2 /*return*/];
             }
         });
     });
@@ -26591,15 +26583,18 @@ function resetDatabase(dbID) {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, Promise.all([
-                    noCredsForm.addEventListener("submit", function (event) {
-                        event.preventDefault();
-                        prepareToGetCredentials();
-                    }),
-                    displayCourses(),
-                    navbar_1.displayWhoami()
-                ])];
+            case 0: return [4 /*yield*/, navbar_1.getWhoamiPromise()];
             case 1:
+                whoami = _a.sent();
+                return [4 /*yield*/, Promise.all([
+                        noCredsForm.addEventListener("submit", function (event) {
+                            event.preventDefault();
+                            prepareToGetCredentials();
+                        }),
+                        displayCourses(),
+                        navbar_1.displayWhoami()
+                    ])];
+            case 2:
                 _a.sent();
                 return [2 /*return*/];
         }
