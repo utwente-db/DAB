@@ -14,7 +14,7 @@
 
     <div class="container-fluid py-3 py-md-5">
         <div class="row">
-            <div class="col-11 col-md-7 col-xl-4 center-block
+            <div class="col-12 col-md-10 col-xl-6 center-block
     container border border-dark rounded-lg shadow-lg bg-white">
                 <!-- Register Form -->
                 {#                <p class="text-left small mt-2 mb-0"><a href="/" id="homepage-ref">Back to homepage</a></p>#}
@@ -40,27 +40,33 @@
                     </div>
                     <div class="form-group row align-items-center mb-4">
                         <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course FID
-                            (optional) TODO: make into integer only field</label>
+                            (optional)</label>
                         <div class="col-12 col-md-8">
-                            <input type="text" name="course-fid-field" class="form-control" id="course-fid-field"
-                                   >
+                            <input type="number" name="course-fid-field" class="form-control" id="course-fid-field"
+                            oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="form-group row align-items-center mb-4">
-                        <label for="active-field" class="col-12 col-md-4 col-form-label">Active? TODO: make into
-                            radio button</label>
+                        <label for="active-field" class="col-12 col-md-4 col-form-label">Active?</label>
                         <div class="col-12 col-md-8">
-                            <input type="text" name="active-field" class="form-control" id="active-field"
-                                   required="">
+                            <label class="switch">
+                                <input type="checkbox" class="info" id="active-field" name="active-field" checked>
+                                <span class="slider round"></span>
+                            </label>
                             <div class="invalid-feedback"></div>
+
+
                         </div>
                     </div>
+
+
                     <div class="form-group row align-items-center mb-4">
-                        <label for="schema-field" class="col-12 col-md-4 col-form-label">Schema (optional). TODO: make into large input</label>
+                        <label for="schema-field" class="col-12 col-md-4 col-form-label">Schema (optional)</label>
                         <div class="col-12 col-md-8">
-                            <input type="text" name="schema-field" class="form-control" id="schema-field"
-                                   >
+                              <textarea name="schema-field" class="form-control" id="schema-field"
+                                      ></textarea>
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>

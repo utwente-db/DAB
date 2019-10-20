@@ -8,7 +8,7 @@ const addCourseButton = document.getElementById("add-course-button") as HTMLButt
 const coursenameField = document.getElementById("course-name-field") as HTMLInputElement;
 const courseInfoField = document.getElementById("course-info-field") as HTMLInputElement;
 const courseFIDfield = document.getElementById("course-fid-field") as HTMLInputElement;
-const schemaField = document.getElementById("schema-field") as HTMLInputElement;
+const schemaField = document.getElementById("schema-field") as HTMLTextAreaElement;
 const activeField = document.getElementById("active-field") as HTMLInputElement;
 
 const content = document.getElementById('content') as HTMLFormElement;
@@ -61,7 +61,7 @@ async function tryAddSchema(): Promise<void> {
         const inputCourse: InputCourse = {
             coursename: coursenameField.value,
             info: courseInfoField.value,
-            active: Boolean(activeField.value)
+            active: activeField.checked
         };
 
         if (courseFIDfield.value !== "") {inputCourse.fid = Number(courseFIDfield.value)}
@@ -78,9 +78,6 @@ async function tryAddSchema(): Promise<void> {
                 await axios.post(`/rest/courses/${courseID}/schema`, schema)
                 addAlert("successfully added schema", AlertType.success);
             }
-
-
-            // TODO Maybe clear fields
         } catch (error) {
             addErrorAlert(error, tempAlert)
         } finally {
