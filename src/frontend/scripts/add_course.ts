@@ -75,7 +75,7 @@ async function tryAddSchema(): Promise<void> {
             addAlert("successfully added course, but not schema yet", AlertType.success);
             const courseID = response.data.courseid;
             if (schema !== "") {
-                await axios.post(`/rest/courses/${courseID}/schema`, schema)
+                const response = await axios.post(`/rest/courses/${courseID}/schema`, schema);
                 addAlert("successfully added schema", AlertType.success);
             }
         } catch (error) {
