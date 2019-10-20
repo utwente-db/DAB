@@ -26,13 +26,7 @@ function validCoursename(field: HTMLInputElement): boolean {
     }
 }
 
-function validcourseInfo(field: HTMLInputElement): boolean {
-    // TODO implement
-    return true
-}
-
 function validFID(field: HTMLInputElement): boolean {
-    // TODO make FID field integer like group input on student_view
     try {
         if (field.value === "" || Number(field.value) > 0) {
             setValid(field);
@@ -48,17 +42,10 @@ function validFID(field: HTMLInputElement): boolean {
     }
 }
 
-function validSchema(field: HTMLInputElement): boolean {
-    // TODO Do we need this?
-    return true
-}
-
 function checkFields(): boolean {
     const a = validCoursename(coursenameField);
-    const b = validcourseInfo(courseInfoField);
-    const c = validFID(courseFIDfield);// todo what is an FID even?
-    const d = validSchema(schemaField);
-    return a && b && c && d
+    const b = validFID(courseFIDfield);
+    return a && b
 }
 
 async function tryAddSchema(): Promise<void> {
@@ -80,14 +67,14 @@ async function tryAddSchema(): Promise<void> {
         if (courseFIDfield.value !== "") {inputCourse.fid = Number(courseFIDfield.value)}
         //  TODO add schema field in obj? doesnt work right now
 
-        const schema = schemaField.value; // TODO actually do some verifying here
+        const schema = schemaField.value;
 
         try {
 
             const response = await axios.post(`/rest/courses/`, inputCourse) as AxiosResponse<Course>;
             addAlert("successfully added course, but not schema yet", AlertType.success);
             const courseID = response.data.courseid;
-            if (schemaField.value !== "") {
+            if (schema !== "") {
                 await axios.post(`/rest/courses/${courseID}/schema`, schema)
                 addAlert("successfully added schema", AlertType.success);
             }
