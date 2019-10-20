@@ -34,12 +34,12 @@
 {% endblock %}
 
 {% block content %}
-
+<div class="vh-100 d-flex flex-column">
     {% include 'navbar.html' %}
 
-    <div class="container-fluid py-3 py-lg-5">
-        <div class="row px-0 px-lg-5 center-block flex-row">
-            <div class="col-12 col-lg-6">
+    <div class="container-fluid py-3 py-lg-5 flex-grow-1 d-flex px-2 px-lg-5 ">
+        <div class="row center-block flex-row flex-grow-1">
+            <div class="col-12 col-lg-6 d-flex">
                 <div class=" center-block
     container border border-dark rounded-lg shadow-lg bg-white p-3 py-xl-5 text-center">
                     <p class="text-left small mt-2 mb-0"><a href="/add_course">Add course</a></p>
@@ -70,7 +70,7 @@
             </div>
 
 
-            <div class="col-12 col-lg-6 mt-5 mt-lg-auto">
+            <div class="col-12 col-lg-6 mt-5 mt-lg-0 d-flex">
                 <div class=" center-block
     container border border-dark rounded-lg shadow-lg bg-white p-3 p-xl-5 text-center">
 
@@ -82,7 +82,7 @@
                         </div>
                         <div class="col-12">
                             <input class="form-control mb-3" type="text" id="search" placeholder="Search...">
-                            <div class="overflow-auto tableFixHead" style="height: 800px;">
+                            <div class="overflow-auto tableFixHead" style="height: 300px;">
                                 <table id="user_table"
                                        class="table table-sm table-hover table-fixed table-borderless table-striped">
                                     <thead class="bg-dark text-light">
@@ -94,7 +94,7 @@
                                     </tr>
                                     </thead>
                                     <tbody id="users">
-                                    {#                                    <tr class="spinner-border text-info"></tr>#}
+                                                                        <tr class="spinner-border text-info"></tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -105,5 +105,5 @@
             </div>
         </div>
     </div>
-
+</div>
 {% endblock %}
