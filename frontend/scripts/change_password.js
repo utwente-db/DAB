@@ -23270,6 +23270,7 @@ function setValid(input) {
         console.error("No sibling element for input. Contact the front-end devs with this error");
     }
 }
+exports.setValid = setValid;
 function setInvalid(input, error) {
     input.classList.remove("is-valid");
     input.classList.add("is-invalid");
@@ -23281,6 +23282,7 @@ function setInvalid(input, error) {
         console.error("No sibling element for input. Contact the front-end devs with this error");
     }
 }
+exports.setInvalid = setInvalid;
 function passwordsEqual(passwordField, passwordConfirmField) {
     if (passwordField.value === passwordConfirmField.value) {
         setValid(passwordConfirmField);

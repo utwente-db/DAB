@@ -1,51 +1,107 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios, {AxiosError} from "axios";
-import {passwordsEqual, validPassword} from "./register";
+import axios, {AxiosResponse} from "axios";
+import {Course, InputCourse} from "./courses";
+import {setInvalid, setValid} from "./register";
 
-const newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement;
+const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 
-const oldPasswordField = document.getElementById("old-password-field") as HTMLInputElement;
-const newPasswordField = document.getElementById("new-password-field") as HTMLInputElement;
-const confirmPasswordField = document.getElementById("confirm-password-field") as HTMLInputElement;
+const coursenameField = document.getElementById("coursename-field") as HTMLInputElement;
+const courseInfoField = document.getElementById("course-info-field") as HTMLInputElement;
+const courseFIDfield = document.getElementById("course-fid-field") as HTMLInputElement;
+const schemaField = document.getElementById("schema-field") as HTMLInputElement;
+const activeField = document.getElementById("active-field") as HTMLInputElement;
+
 const content = document.getElementById('content') as HTMLFormElement;
 const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
-function checkFields(): boolean {
-    const a = validPassword(oldPasswordField); // Can't use a one-line function here due to lazy evaluation
-    const b = validPassword(newPasswordField);
-    const c = passwordsEqual(newPasswordField, confirmPasswordField);
-    return a && b && c
+function validCoursename(field: HTMLInputElement): boolean {
+    const coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/
+    if (coursenameRegex.test(field.value)) {
+        setValid(field);
+        return true
+    } else {
+        setInvalid(field, "Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces")
+        return false
+    }
 }
 
-async function tryResetPassword(): Promise<void> {
+function validcourseInfo(field: HTMLInputElement): boolean {
+    // TODO implement
+    return true
+}
+
+function validFID(field: HTMLInputElement): boolean {
+    // TODO make FID field integer like group input on student_view
+    try {
+        if (Number(field.value) > 0) {
+            setValid(field)
+            return true
+        } else {
+            setInvalid(field,"Please enter a valid integer")
+            return false
+        }
+    } catch (error) {
+        // Probably failed to convert to a number
+        addErrorAlert(error);
+        return false
+    }
+}
+
+function validSchema(field: HTMLInputElement): boolean {
+    // TODO Do we need this?
+    return true
+}
+
+function checkFields(): boolean {
+    const a = validCoursename(coursenameField);
+    const b = validcourseInfo(courseInfoField);
+    const c = validFID(courseFIDfield);// todo what is an FID even?
+    const d = validSchema(schemaField);
+    // TODO also have an active thing which defaults to true
+    return a && b && c && d
+}
+
+async function tryAddSchema(): Promise<void> {
     if (checkFields()) {
-        newPasswordField.disabled = true;
-        oldPasswordField.disabled = true;
-        confirmPasswordField.disabled = true;
-        newPasswordButton.disabled = true;
+        courseInfoField.disabled = true;
+        coursenameField.disabled = true;
+        courseFIDfield.disabled = true;
+        schemaField.disabled = true;
+        activeField.disabled = true;
+        addCourseButton.disabled = true;
         homepageRef.toggleAttribute("href");
         const tempAlert: ChildNode | null = addTempAlert();
-        try {
-            await axios.post(`/change_password/`, {'current': oldPasswordField.value, 'new': newPasswordField.value});
-            if (tempAlert && document.body.contains(tempAlert)) {
-                tempAlert.remove();
-            }
-            addTempAlert("Your password has been changed. You will soon be redirected to the homepage.", AlertType.success, false, 0)
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            window.location.href = "/";
 
+        const inputCourse: InputCourse = {
+            coursename: coursenameField.value,
+            info: courseInfoField.value,
+            fid: Number(courseFIDfield.value),
+            // schema? : string,
+            //  TODO add schema field? doesnt work right now
+            active: Boolean(activeField.value) // TODO Fix this boolean thing
+        };
+
+        const schema = schemaField.value; // TODO actually do some verifying here
+
+        try {
+
+            const response = await axios.post(`/rest/courses/`, inputCourse) as AxiosResponse<Course>;
+            addAlert("successfully added course, but not schema yet", AlertType.success);
+            const courseID = response.data.courseid;
+            await axios.post(`/rest/courses/${courseID}/schema`, schema)
+            addAlert("successfully added schema", AlertType.success);
+
+
+            // TODO Maybe clear fields
         } catch (error) {
-            const ae = error as AxiosError
-            if (ae.response && ae.response.status === 403) {
-                addAlert("The password entered in the current password field is incorrect", AlertType.danger, tempAlert)
-            } else {
-                addErrorAlert(error, tempAlert)
-            }
+            addErrorAlert(error, tempAlert)
         } finally {
-            newPasswordField.disabled = false;
-            oldPasswordField.disabled = false;
-            confirmPasswordField.disabled = false;
-            newPasswordButton.disabled = false;
+            courseInfoField.disabled = false;
+            coursenameField.disabled = false;
+            courseFIDfield.disabled = false;
+            schemaField.disabled = false;
+            activeField.disabled = false;
+            addCourseButton.disabled = false;
             homepageRef.toggleAttribute("href");
 
         }
@@ -55,6 +111,6 @@ async function tryResetPassword(): Promise<void> {
 window.onload = () => {
     content.addEventListener("submit", (event) => {
         event.preventDefault();
-        tryResetPassword();
+        tryAddSchema();
     });
 };

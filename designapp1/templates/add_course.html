@@ -17,41 +17,56 @@
             <div class="col-11 col-md-7 col-xl-4 center-block
     container border border-dark rounded-lg shadow-lg bg-white">
                 <!-- Register Form -->
-{#                <p class="text-left small mt-2 mb-0"><a href="/" id="homepage-ref">Back to homepage</a></p>#}
+                {#                <p class="text-left small mt-2 mb-0"><a href="/" id="homepage-ref">Back to homepage</a></p>#}
                 <form class="p-5 form-horizontal" id="content"> {# actual content #}
                     <p class="text-center h4 mb-4">Add course</p>
                     <hr/>
                     <div class="mt-5 form-group row align-items-center">
-                        <label for="old-password-field" class="col-12 col-md-4 col-form-label">Current password</label>
+                        <label for="course-name-field" class="col-12 col-md-4 col-form-label">Course name</label>
                         <div class="col-12 col-md-8 align-middle">
-                            <input type="password" name="password" class="form-control" id="old-password-field"
+                            <input type="password" name="password" class="form-control" id="course-name-field"
                                    required="">
                             <div class="invalid-feedback"></div>
                         </div>
 
                     </div>
                     <div class="form-group row align-items-center">
-                        <label for="new-password-field" class="col-12 col-md-4 col-form-label">New password</label>
+                        <label for="course-info-field" class="col-12 col-md-4 col-form-label">Course info</label>
                         <div class="col-12 col-md-8">
-                            <input type="password" name="password" class="form-control" id="new-password-field"
+                            <input type="password" name="password" class="form-control" id="course-info-field"
                                    required="">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
                     <div class="form-group row align-items-center mb-4">
-                        <label for="confirm-password-field" class="col-12 col-md-4 col-form-label">Confirm new
-                            password</label>
+                        <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course FID
+                            (optional) TODO: make into integer only field</label>
                         <div class="col-12 col-md-8">
-                            <input type="password" name="password" class="form-control" id="confirm-password-field"
+                            <input type="password" name="password" class="form-control" id="course-fid-field"
                                    required="">
                             <div class="invalid-feedback"></div>
                         </div>
                     </div>
-                    <p class="text-center small mb-2">Please use a password that has 8 characters or more, and contains
-                        at least one lowercase letter, one uppercase letter, and one number</p>
+                    <div class="form-group row align-items-center mb-4">
+                        <label for="active-field" class="col-12 col-md-4 col-form-label">Active? TODO: make into
+                            radio button</label>
+                        <div class="col-12 col-md-8">
+                            <input type="password" name="password" class="form-control" id="active-field"
+                                   required="">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="form-group row align-items-center mb-4">
+                        <label for="schema-field" class="col-12 col-md-4 col-form-label">Schema (optional). TODO: make into large input</label>
+                        <div class="col-12 col-md-8">
+                            <input type="password" name="password" class="form-control" id="schema-field"
+                                   required="">
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
                     <hr>
                     <button type="submit" class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3"
-                            id="new-password-button">Change password
+                            id="add-course-button">Add course
                     </button>
                     <div class="mt-5 align-items-center center-block " id="alert-div"></div>
                 </form>

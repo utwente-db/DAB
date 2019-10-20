@@ -16,7 +16,7 @@ interface Credentials {
     "password": string
 }
 
-function setValid(input: HTMLInputElement): void {
+export function setValid(input: HTMLInputElement): void {
     input.classList.remove("is-invalid");
     input.classList.add("is-valid");
     if (input.nextElementSibling) {
@@ -27,7 +27,7 @@ function setValid(input: HTMLInputElement): void {
     }
 }
 
-function setInvalid(input: HTMLInputElement, error: string): void {
+export function setInvalid(input: HTMLInputElement, error: string): void {
     input.classList.remove("is-valid");
     input.classList.add("is-invalid");
     if (input.nextElementSibling) {
