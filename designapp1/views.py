@@ -107,14 +107,8 @@ def get_role(request):
 # REST RESPONSES
 
 def defaultresponse(request):
-    template = loader.get_template('defaultresponse.html')
-    number = 3
-    context = {
-        'number': number,
-        'range': range(number)
-    }
-    log_message(log_default,' default page has been requested')
-    return HttpResponse(template.render(context, request))
+    return HttpResponse("The page that you requested was not found.", status=status.HTTP_404_NOT_FOUND)
+
 
 @authenticated
 def get_base_response(request, db_parameters):
