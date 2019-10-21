@@ -23155,7 +23155,9 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     var tempAlert = alertDiv.lastChild;
     // noinspection JSIgnoredPromiseFromCall
-    removeAlertOnTimeout(tempAlert, ms, timeOutError);
+    if (ms > 0) {
+        removeAlertOnTimeout(tempAlert, ms, timeOutError);
+    }
     return tempAlert;
 }
 exports.addTempAlert = addTempAlert;
@@ -23167,23 +23169,44 @@ function addErrorAlert(error, tempAlert) {
     var responseError = error;
     var response = responseError.response;
     if (response) {
-        var errorKeys = Object.keys(response.data);
-        var errorMessages = Object.values(response.data);
-        // check for specific errors
-        if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
-            // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
-            addAlert("You already have database credentials for this course", AlertType.danger);
+        // This is an axios error
+        if (response.data === undefined || response.data === null || response.data === "") {
+            // This is an axios error with empty body, just print standard error message with status code
+            addAlert(error.message, AlertType.danger);
         }
-        else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
-            addAlert("Another user is already registered using this e-mail", AlertType.danger);
-        }
-        else { // No longer checking for specific errors
-            // This is a response error (4XX or 5XX etc)
-            var alertMessage = "";
-            for (var i = 0; i < errorKeys.length; i++) {
-                alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>");
+        else if (typeof response.data === "string") {
+            var errorString = response.data;
+            // This is an axios error with string body
+            if (response.status === 403 && errorString === "token expired") {
+                addAlert("Your reset token has expired. Please request a new one.", AlertType.danger);
             }
-            addAlert(error + "<br><br>" + alertMessage, AlertType.danger);
+            else {
+                // Print the string
+                addAlert(errorString, AlertType.danger);
+            }
+        }
+        else {
+            // This is an axios error with django error body
+            var errorObject = response.data;
+            var errorKeys = Object.keys(errorObject);
+            var errorMessages = Object.values(errorObject);
+            // check for specific errors
+            if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
+                // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
+                addAlert("You already have database credentials for this course", AlertType.danger);
+            }
+            else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
+                addAlert("Another user is already registered using this e-mail", AlertType.danger);
+            }
+            else { // No longer checking for specific errors
+                // This is a response error (4XX or 5XX etc)
+                // TODO this fails if response is string
+                var alertMessage = "";
+                for (var i = 0; i < errorKeys.length; i++) {
+                    alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>");
+                }
+                addAlert(error + "<br><br>" + alertMessage, AlertType.danger);
+            }
         }
     }
     else {
@@ -23392,6 +23415,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
+var user_1 = __webpack_require__(/*! ./user */ "./src/frontend/scripts/user.ts");
 var whoamiWelcomeHtml = document.getElementById("whoamiWelcome");
 var whoamiButtonHtml = document.getElementById("whoamiButton");
 function getWhoamiPromise() {
@@ -23407,6 +23431,7 @@ function getWhoamiPromise() {
         });
     });
 }
+exports.getWhoamiPromise = getWhoamiPromise;
 function displayWhoami() {
     return __awaiter(this, void 0, void 0, function () {
         var whoami, role;
@@ -23415,13 +23440,13 @@ function displayWhoami() {
                 case 0: return [4 /*yield*/, getWhoamiPromise()];
                 case 1:
                     whoami = _a.sent();
-                    if (whoami.role === 0) {
+                    if (whoami.role === user_1.UserRole.admin) {
                         role = "an admin";
                     }
-                    else if (whoami.role === 1) {
+                    else if (whoami.role === user_1.UserRole.teacher) {
                         role = "a teacher";
                     }
-                    else if (whoami.role === 2) {
+                    else if (whoami.role === user_1.UserRole.student) {
                         role = "a student";
                     }
                     else {
@@ -23494,6 +23519,12 @@ var pageTitleHtml = document.getElementById("page-title");
 var userInfoHtml = document.getElementById("user-info");
 var coursesNavHtml = document.getElementById("courses-nav");
 var courseDatabasesHtml = document.getElementById("courses-db");
+var UserRole;
+(function (UserRole) {
+    UserRole[UserRole["admin"] = 0] = "admin";
+    UserRole[UserRole["teacher"] = 1] = "teacher";
+    UserRole[UserRole["student"] = 2] = "student";
+})(UserRole = exports.UserRole || (exports.UserRole = {}));
 function getUsersPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -23614,13 +23645,13 @@ function displayUserDetails() {
                 case 1:
                     user = _a.sent();
                     pageTitleHtml.innerHTML += "Admin - User " + user.id;
-                    if (user.role === 0) {
+                    if (user.role === UserRole.admin) {
                         role = "Admin";
                     }
-                    else if (user.role === 1) {
+                    else if (user.role === UserRole.teacher) {
                         role = "Teacher";
                     }
-                    else if (user.role === 2) {
+                    else if (user.role === UserRole.student) {
                         role = "Student";
                     }
                     else {

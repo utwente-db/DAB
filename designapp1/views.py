@@ -29,7 +29,7 @@ from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
 from django.db.utils import OperationalError
 
-
+from designproject.settings import DATABASE_SERVER
 from designapp1 import statements
 from . import hash
 from .forms import *
@@ -253,12 +253,36 @@ def get_own_response(request, dbname):
 
 @require_GET
 @authenticated
-def get_course_ta(request, courseid):
+def get_course_ta(request, pk):
     course = None
     try:
-        course = Courses.objects.get(courseid=courseid)
+        course = Courses.objects.get(courseid=pk)
     except Courses.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
+        data = TAs.objects.filter(courseid=course.courseid)
+        serializer = TasSerializer(data, many=True)
+        return JsonResponse(serializer.data, safe=False)
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+@require_GET
+@authenticated
+def search_dbmusers_on_course(request, pk):
+    course = None
+    try:
+        course = Courses.objects.get(courseid=pk)
+    except Courses.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
+        data = dbmusers.objects.raw("SELECT u.* FROM dbmusers u, studentdatabases d where d.course=%s and u.id=d.fid", [course.courseid])
+        serializer = dbmusersSerializer(data, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    else:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 
 def post_base_dbmusers_response(request):
@@ -273,6 +297,7 @@ def post_base_dbmusers_response(request):
         unhashed_password = databases['password']
         databases['password'] = hash.make(unhashed_password)
         databases["token"] = hash.token()
+        databases["tokenExpire"] = timezone.now() + timezone.timedelta(hours=24)
         if check_role(request, admin):
             pass
             # databases['role'] = databases['role']
@@ -332,6 +357,16 @@ def post_base_response(request, db_parameters):
                     elif not check_role(request, teacher) and databases["fid"] != request.session["user"]:
                         # you should not be able to request a db for somebody else if you are a student...
                         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+                    # Check that the course is active
+                    try: 
+                        course = Courses.objects.get(courseid=databases["course"])
+                        if not course.active:
+                            #unless you are a teacher or ta
+                            if not course.owner().id == request.session["user"] and not am_i_ta_of_this_course(request.session["user"], course.courseid):
+                                return HttpResponse("Course is not active!", status=status.HTTP_403_FORBIDDEN)
+                    except Courses.DoesNotExist as e:
+                        return HttpResponse("Course does not exist", status=status.HTTP_409_CONFLICT)
 
                     # generate data for student
                     username = ""
@@ -878,7 +913,7 @@ def login(request):
                 print(user)
                 if not user.verified:
                     return render(request, 'login.html',
-                                  {'form': LoginForm, 'message': "Please verify your email first"})
+                                  {'form': LoginForm, 'template_class' : 'resend-verification ' + user.email})
 
                 if hash.verify(user.password, data["password"]):
                     request.session["user"] = user.id
@@ -892,22 +927,21 @@ def login(request):
 
 
                 else:
-                    return render(request, 'login.html', {'form': form, 'message': incorrect_message})
+                    return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
             except dbmusers.DoesNotExist:
-                return render(request, 'login.html', {'form': form, 'message': incorrect_message})
+                return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
         else:
             form = LoginForm()
-            return render(request, 'login.html', {"form": form, "message": "Could not parse form"})
+            return render(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
     form = LoginForm()
-    return render(request, 'login.html', {'form': form, 'message': ""})
+    return render(request, 'login.html', {'form': form})
 
 
 @require_POST
 @authenticated
 def logout(request):
     request.session.flush()
-    return render(request, 'login.html', {'form': LoginForm(), 'message': "You have been logged out"})
-
+    return render(request, 'login.html', {'form': LoginForm(), 'template_class': "you-have-been-logged-out"})
 
 # Function for debug purposes only; just returns a small web page with the a button to log out.
 @require_GET
@@ -981,13 +1015,53 @@ def whoami(request):
 def verify(request, token):
     try:
         user = dbmusers.objects.get(token=token)
+
+        if(user.tokenExpire < timezone.now()):
+            user.token = hash.token()
+            user.tokenExpire = timezone.now() + timezone.timedelta(hours=24)
+            user.save()
+            mail.send_verification(user.__dict__)
+            return HttpResponse("Your token was expired; we have resent the email")
+
         user.verified = True
         user.token = None
         user.save()
         return render(request, 'login.html',
-                  {"form": LoginForm(), "message": "Your account has been verified and you can now log in"})
+                  {"form": LoginForm(), 'template_class': 'account-verified'})
     except dbmusers.DoesNotExist as e:
         return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
+
+@require_http_methods(["GET", "POST"])
+@authenticated
+def change_password(request):
+    if request.method == "GET":
+        return render(request, 'change_password.html')
+    else:
+        body = None
+        new = None
+        current = None
+
+        try:
+            body = JSONParser().parse(request)
+        except ParseError as e:
+            return HttpResponse("Your JSON did not parse", status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            new = body["new"]
+            current = body["current"]
+        except KeyError as e:
+            return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
+
+        user = dbmusers.objects.get(id=request.session["user"])
+
+        if(hash.verify(user.password, current)):
+            new = hash.make(new)
+            user.password = new
+            user.save()
+            return HttpResponse()
+        else:
+            return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
 
 @require_POST
 def resend_verification(request):
@@ -1014,7 +1088,6 @@ def resend_verification(request):
     mail.send_verification(user.__dict__)
     return HttpResponse()
 
-#TODO: make front-end for this
 @require_POST
 def request_reset_password(request, email):
     db = None
@@ -1051,8 +1124,7 @@ def reset_password(request, pk, token):
         return HttpResponse("token expired", status=status.HTTP_403_FORBIDDEN)
 
     if request.method == "GET":
-        #TODO: make front end with nice password input fields
-        pass
+        return render(request,"reset_password.html", { 'pk' : pk, 'token' : token})
 
     else:
         body = None
@@ -1062,7 +1134,7 @@ def reset_password(request, pk, token):
             return HttpResponse("Incorrect JSON formatting", status=status.HTTP_400_BAD_REQUEST)
         if not "password" in body:
             return HttpResponse("Missing key 'password' in body", status=status.HTTP_400_BAD_REQUEST)
-        print(body["password"])
+        # print(body["password"])
         db.password = hash.make(body["password"])
         db.token = None
         db.tokenExpire = None
@@ -1070,8 +1142,13 @@ def reset_password(request, pk, token):
         return HttpResponse()
 
 @require_GET
+def password_has_been_reset(request):
+    return render(request, 'login.html', {'form': LoginForm(), 'template_class': "new-password"})
+
+
+@require_GET
 def student_view(request):
-    return render(request, 'student_view.html')
+    return render(request, 'student_view.html', { 'server_address' : DATABASE_SERVER})
 
 @require_GET
 # @auth_redirect
@@ -1083,3 +1160,11 @@ def redirect(request):
             return admin_view(request)
     else:
         return login(request)
+
+@require_GET
+def forgot_password_page(request):
+    if ('user' in request.session):
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+    else:
+        return render(request, 'forgot_password_page.html')
+

@@ -23010,7 +23010,9 @@ function addTempAlert(errorMessage, alertType, timeOutError, ms) {
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     var tempAlert = alertDiv.lastChild;
     // noinspection JSIgnoredPromiseFromCall
-    removeAlertOnTimeout(tempAlert, ms, timeOutError);
+    if (ms > 0) {
+        removeAlertOnTimeout(tempAlert, ms, timeOutError);
+    }
     return tempAlert;
 }
 exports.addTempAlert = addTempAlert;
@@ -23022,23 +23024,44 @@ function addErrorAlert(error, tempAlert) {
     var responseError = error;
     var response = responseError.response;
     if (response) {
-        var errorKeys = Object.keys(response.data);
-        var errorMessages = Object.values(response.data);
-        // check for specific errors
-        if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
-            // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
-            addAlert("You already have database credentials for this course", AlertType.danger);
+        // This is an axios error
+        if (response.data === undefined || response.data === null || response.data === "") {
+            // This is an axios error with empty body, just print standard error message with status code
+            addAlert(error.message, AlertType.danger);
         }
-        else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
-            addAlert("Another user is already registered using this e-mail", AlertType.danger);
-        }
-        else { // No longer checking for specific errors
-            // This is a response error (4XX or 5XX etc)
-            var alertMessage = "";
-            for (var i = 0; i < errorKeys.length; i++) {
-                alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>");
+        else if (typeof response.data === "string") {
+            var errorString = response.data;
+            // This is an axios error with string body
+            if (response.status === 403 && errorString === "token expired") {
+                addAlert("Your reset token has expired. Please request a new one.", AlertType.danger);
             }
-            addAlert(error + "<br><br>" + alertMessage, AlertType.danger);
+            else {
+                // Print the string
+                addAlert(errorString, AlertType.danger);
+            }
+        }
+        else {
+            // This is an axios error with django error body
+            var errorObject = response.data;
+            var errorKeys = Object.keys(errorObject);
+            var errorMessages = Object.values(errorObject);
+            // check for specific errors
+            if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields course, fid must make a unique set.") {
+                // If this is a specific alert for requesting a database as user and getting a 409 with this message back:
+                addAlert("You already have database credentials for this course", AlertType.danger);
+            }
+            else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
+                addAlert("Another user is already registered using this e-mail", AlertType.danger);
+            }
+            else { // No longer checking for specific errors
+                // This is a response error (4XX or 5XX etc)
+                // TODO this fails if response is string
+                var alertMessage = "";
+                for (var i = 0; i < errorKeys.length; i++) {
+                    alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>");
+                }
+                addAlert(error + "<br><br>" + alertMessage, AlertType.danger);
+            }
         }
     }
     else {
@@ -23114,6 +23137,7 @@ var registerButton = document.getElementById("register-button");
 var registerEmailField = document.getElementById("register-email-field");
 var registerPasswordField = document.getElementById('register-password-field');
 var registerPasswordConfirmField = document.getElementById('register-password-confirm-field');
+var content = document.getElementById('content');
 function setValid(input) {
     input.classList.remove("is-invalid");
     input.classList.add("is-valid");
@@ -23136,50 +23160,53 @@ function setInvalid(input, error) {
         console.error("No sibling element for input. Contact the front-end devs with this error");
     }
 }
-function passwordsEqual() {
-    if (registerPasswordField.value === registerPasswordConfirmField.value) {
-        setValid(registerPasswordConfirmField);
+function passwordsEqual(passwordField, passwordConfirmField) {
+    if (passwordField.value === passwordConfirmField.value) {
+        setValid(passwordConfirmField);
         return true;
     }
     else {
-        setInvalid(registerPasswordConfirmField, "Passwords do not match");
+        setInvalid(passwordConfirmField, "Passwords do not match");
         return false;
     }
 }
-function validEmail() {
+exports.passwordsEqual = passwordsEqual;
+function validEmail(field) {
     var emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
     var utwentePattern = /.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$/;
-    var email = registerEmailField.value;
+    var email = field.value;
     if (emailPattern.test(email)) {
         if (utwentePattern.test(email)) {
-            setValid(registerEmailField);
+            setValid(field);
             return true;
         }
         else {
-            setInvalid(registerEmailField, "Not a valid utwente.nl address");
+            setInvalid(field, "Not a valid utwente.nl address");
         }
     }
     else {
-        setInvalid(registerEmailField, "Not a valid e-mail address");
+        setInvalid(field, "Not a valid e-mail address");
     }
     return false;
 }
-function validPassword() {
+exports.validEmail = validEmail;
+function validPassword(field) {
     var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    var password = registerPasswordField.value;
+    var password = field.value;
     if (passwordPattern.test(password)) {
-        setValid(registerPasswordField);
+        setValid(field);
         return true;
     }
     else {
-        setInvalid(registerPasswordField, "Password does not meet the requirements");
+        setInvalid(field, "Password does not meet the requirements");
         return false;
     }
 }
+exports.validPassword = validPassword;
 function checkFields() {
-    var a = validEmail(); // Can't use a one-line function here due to lazy evaluation
-    var b = validPassword();
-    var c = passwordsEqual();
+    var a = validEmail(registerEmailField); // Can't use a one-line function here due to lazy evaluation
+    var b = validPassword(registerPasswordField);
+    var c = passwordsEqual(registerPasswordField, registerPasswordConfirmField);
     return a && b && c;
 }
 function tryRegister() {
@@ -23188,29 +23215,44 @@ function tryRegister() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!checkFields()) return [3 /*break*/, 4];
+                    if (!checkFields()) return [3 /*break*/, 5];
                     credentials = { email: registerEmailField.value, password: registerPasswordField.value };
                     tempAlert = alert_1.addTempAlert();
+                    registerEmailField.disabled = true;
+                    registerPasswordField.disabled = true;
+                    registerPasswordConfirmField.disabled = true;
+                    registerButton.disabled = true;
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    _a.trys.push([1, 3, 4, 5]);
                     return [4 /*yield*/, axios_1.default.post("/rest/dbmusers/", credentials)];
                 case 2:
                     response = _a.sent();
                     responseData = response.data;
                     alert_1.addAlert("Please check your inbox to confirm your e-mail", alert_1.AlertType.success, tempAlert);
-                    return [3 /*break*/, 4];
+                    return [3 /*break*/, 5];
                 case 3:
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1, tempAlert);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 5];
+                case 4:
+                    registerEmailField.disabled = false;
+                    registerPasswordField.disabled = false;
+                    registerPasswordConfirmField.disabled = false;
+                    registerButton.disabled = false;
+                    return [7 /*endfinally*/];
+                case 5: return [2 /*return*/];
             }
         });
     });
 }
 window.onload = function () {
-    registerButton.addEventListener("click", tryRegister);
+    if (content) {
+        content.addEventListener("submit", function (event) {
+            event.preventDefault();
+            tryRegister();
+        });
+    }
 };
 
 

@@ -19799,6 +19799,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
+var user_1 = __webpack_require__(/*! ./user */ "./src/frontend/scripts/user.ts");
 var whoamiWelcomeHtml = document.getElementById("whoamiWelcome");
 var whoamiButtonHtml = document.getElementById("whoamiButton");
 function getWhoamiPromise() {
@@ -19814,6 +19815,7 @@ function getWhoamiPromise() {
         });
     });
 }
+exports.getWhoamiPromise = getWhoamiPromise;
 function displayWhoami() {
     return __awaiter(this, void 0, void 0, function () {
         var whoami, role;
@@ -19822,13 +19824,13 @@ function displayWhoami() {
                 case 0: return [4 /*yield*/, getWhoamiPromise()];
                 case 1:
                     whoami = _a.sent();
-                    if (whoami.role === 0) {
+                    if (whoami.role === user_1.UserRole.admin) {
                         role = "an admin";
                     }
-                    else if (whoami.role === 1) {
+                    else if (whoami.role === user_1.UserRole.teacher) {
                         role = "a teacher";
                     }
-                    else if (whoami.role === 2) {
+                    else if (whoami.role === user_1.UserRole.student) {
                         role = "a student";
                     }
                     else {
@@ -19901,6 +19903,12 @@ var pageTitleHtml = document.getElementById("page-title");
 var userInfoHtml = document.getElementById("user-info");
 var coursesNavHtml = document.getElementById("courses-nav");
 var courseDatabasesHtml = document.getElementById("courses-db");
+var UserRole;
+(function (UserRole) {
+    UserRole[UserRole["admin"] = 0] = "admin";
+    UserRole[UserRole["teacher"] = 1] = "teacher";
+    UserRole[UserRole["student"] = 2] = "student";
+})(UserRole = exports.UserRole || (exports.UserRole = {}));
 function getUsersPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -20021,13 +20029,13 @@ function displayUserDetails() {
                 case 1:
                     user = _a.sent();
                     pageTitleHtml.innerHTML += "Admin - User " + user.id;
-                    if (user.role === 0) {
+                    if (user.role === UserRole.admin) {
                         role = "Admin";
                     }
-                    else if (user.role === 1) {
+                    else if (user.role === UserRole.teacher) {
                         role = "Teacher";
                     }
-                    else if (user.role === 2) {
+                    else if (user.role === UserRole.student) {
                         role = "Student";
                     }
                     else {

@@ -17,7 +17,9 @@ export interface Course {
     courseid: number;
     fid: number;
     coursename: string;
-    info: string
+    info: string,
+    active: boolean,
+    databases: number
 }
 
 export interface StudentDatabase {

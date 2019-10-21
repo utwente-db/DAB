@@ -50,7 +50,7 @@ returns:
 ## /whoami
 
 Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
-If the user is not logged in, returns a 404.
+If the user is not logged in, returns a 401.
 
 ## /dump/<pk>
 
@@ -189,6 +189,10 @@ GET -> search for the value, based on emailaddress
 
 GET -> gives back the info about the currently logged in user
 
+### /dbmusers/course/value
+
+GET -> gives back the users that have a database in that course
+
 ## TABLE: TAs
 
 ### /tas/
@@ -219,6 +223,11 @@ GET -> only for the teacher (or admin if it owns courses) returned all the tas i
 
 GET -> gives back the ta information about the currently logged in ta
 
+### /tas/course/courseid
+
+GET -> gives back the tas of that course
+accesible to the teacher and tas of that course
+
 ## /schematransfer/[course]/[database]
 
 Transfers the schema from the database to the course. 
@@ -239,14 +248,25 @@ POST -> Sends an password reset email
 
 Email contains a link that is valid for 4 hours.
 
-## /reset_password/[user id]/[token]
+## /reset_password/[user id]/[token] \(NOT /rest !!!)
 
-GET -> Displays a "new password" prompt //TODO
+GET -> Displays a "new password" prompt
 POST -> Takes in a JSON object with one key, "password", and sets the password to that password.
 
 Both of these will return errors if the token is invalid or expired.
 
 The link sent will be valid for 4 hours.
+
+## /change_password/ (NOT /rest !!!)
+
+POST -> Takes in the following JSON
+
+    {
+    "current": "aoeu", [CURRENT USER PASSWORD]
+    "new": "ueoa" [NEW PASSWORD]
+    }
+
+and sets the password of the user to the new password, if the current one is correct.
 
 # Permissions
 

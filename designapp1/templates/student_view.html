@@ -14,8 +14,7 @@
     <div class="container-fluid py-3 py-md-5">
         <div class="row px-0 px-md-5 center-block flex-row">
             <div class="col-12 col-md-4">
-                <div class=" center-block
-    container border border-dark rounded-lg shadow-lg bg-white p-3 p-xl-5 text-center">
+                <div class=" center-block container border border-dark rounded-lg shadow-lg bg-white p-3 p-xl-5 text-center">
                     <!-- Website title -->
                     <h2>Course list</h2>
                     <hr/>
@@ -26,8 +25,7 @@
                 </div>
             </div>
             <div class="col-12 col-md-8 mt-3 mt-md-0 d-flex">
-                <div class="center-block
-    container border border-dark rounded-lg shadow-lg bg-white p-3  p-xl-5 text-center">
+                <div class="center-block container border border-dark rounded-lg shadow-lg bg-white p-3  p-xl-5 text-center">
 
                     <div class="tab-content" id="courses-content">
 
@@ -42,12 +40,16 @@
                                 for this
                                 course yet</p>
                             <hr>
-                            <div class="form-group row align-items-center px-5">
-                                <label for="group-input" class="col-12 col-md-4">Please select a group</label>
-                                <input type="number" id="group-input" class="form-control col-12 col-md-8"
-                                       oninput="this.value=this.value.replace(/[^0-9]/g,'');">
-                            </div>
-                            <button class="btn btn-info my-4" id="credentials-button">Get credentials</button>
+                            <form id="no-credentials-form" class="form-group">
+                                <div class="form-group row align-items-center px-5">
+                                    <label for="group-input" class="col-12 col-md-4">Please select a group</label>
+                                    <input type="number" id="group-input" class="form-control col-12 col-md-8"
+                                           oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                                </div>
+                                <button type="submit" class="btn btn-info my-4" id="credentials-button">Get
+                                    credentials
+                                </button>
+                            </form>
                         </div>
 
                         <div class="tab-pane" id="have-credentials-pane">
@@ -57,7 +59,10 @@
                             <p id="have-credentials-status" class="text-center text-success">You already have
                                 credentials for this course</p>
                             <hr>
-                            <div id="credentials-div">Credentials blabla</div>
+                            <p class="text-center mb-2" id="have-credentials-database-info">
+                                To use the database, connect to {{ server_address }} using these credentials:
+                            </p>
+                            <div id="credentials-div">Credentials default page</div>
 
                         </div>
 
