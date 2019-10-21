@@ -43,7 +43,8 @@ urlpatterns = [
     url(r'^dbmusers/course/(?P<pk>[0-9]+)/?$', views.search_dbmusers_on_course),
 
     # dump
-    url(r'^dump/(?P<pk>[a-z0-9]+)/?', views.dump),
+    url(r'^dump/(?P<pk>[0-9]+)/?$', views.dump),
+    url(r'^course_dump/(?P<pk>[0-9]+)/?$', views.course_dump),
     url(r'^reset/(?P<pk>[0-9]+)/?', views.reset),
     url(r'^schematransfer/(?P<course>[0-9]+)/(?P<database>[0-9]+)/?', views.transferSchema),
 

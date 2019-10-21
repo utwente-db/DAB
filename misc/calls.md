@@ -242,6 +242,15 @@ POST -> Generates the backup script. Returns the location of said script.
 
 Only accessible to admins
 
+## /course_dump/courseid
+
+GET -> returns a zip file with dumps of every database in the course.
+Dump filenames are named after the user email.
+
+Accessible to admins and the course owner (NOT TA's!)
+
+WARNING: May take a long time. Use with caution.
+
 ## /request_reset_password/[email] \(NOT /rest !!!)
 
 POST -> Sends an password reset email
