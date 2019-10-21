@@ -706,6 +706,30 @@ def dump(request, pk):
     log_message_with_db(request.session['user'],"Studentdatabases",log_dump, message) #LOG THIS ACTION
     return response
 
+@require_GET
+@require_role(teacher)
+def course_dump(request, pk):
+    course = None
+    try:
+        course = Courses.objects.get(courseid=pk)
+    except Courses.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if not course.owner().id == request.session["user"] and not request.session["role"] == admin:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+    file = schemaWriter.dump_course(course)
+
+    if file == None:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+    response = HttpResponse(file, content_type="application/zip")
+    filename = re.sub(r' ', "_", course.coursename)+".zip"
+    response["Content-Disposition"] = "inline; filename=%s" % filename
+    log_message_with_db(request.session["user"],"Courses",log_dump," course "+str(course.courseid)+" has been dumped")
+    return response
+
+
 @require_POST
 @authenticated
 def reset(request, pk):

@@ -14,7 +14,7 @@ db_server = "thebias.nl"
 db_port = 5432
 
 admin = requests.Session()
-r = admin.post(BASE + "/login", {"mail": "info@utwente.nl", "password": "aoeu"})
+r = admin.post(BASE + "/login", {"mail": "info@utwente.nl", "password": "Aoeuaoeu1"})
 
 teacher = requests.Session()
 teacher.post(BASE + "/login", {"mail": "teacher@utwente.nl", "password": "aoeu"})
