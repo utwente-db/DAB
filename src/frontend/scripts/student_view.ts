@@ -207,6 +207,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel'
     });
@@ -238,6 +239,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Reset',
         cancelButtonText: 'Cancel'
     });

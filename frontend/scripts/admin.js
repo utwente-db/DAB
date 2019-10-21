@@ -26617,6 +26617,7 @@ function deleteUser() {
                             text: "Are you sure you want to delete <strong>" + user.email + "</strong> from the system?",
                             type: 'warning',
                             showCancelButton: true,
+                            focusCancel: true,
                             confirmButtonText: 'Delete',
                             cancelButtonText: 'Cancel'
                         })];
@@ -26659,6 +26660,7 @@ function changeRole() {
                             text: "Are you sure you want change the role of <strong>" + user.email + "</strong> to " + role + "?",
                             type: 'warning',
                             showCancelButton: true,
+                            focusCancel: true,
                             confirmButtonText: 'Confirm',
                             cancelButtonText: 'Cancel'
                         })];

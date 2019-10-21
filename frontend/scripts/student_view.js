@@ -26504,6 +26504,7 @@ function prepareToDeleteCredentials(dbID) {
                         text: 'You will not be able to recover your data!',
                         type: 'warning',
                         showCancelButton: true,
+                        focusCancel: true,
                         confirmButtonText: 'Delete',
                         cancelButtonText: 'Cancel'
                     })];
@@ -26549,6 +26550,7 @@ function resetDatabase(dbID) {
                         text: 'You will not be able to recover your data!',
                         type: 'warning',
                         showCancelButton: true,
+                        focusCancel: true,
                         confirmButtonText: 'Reset',
                         cancelButtonText: 'Cancel'
                     })];
@@ -26837,6 +26839,7 @@ function deleteUser() {
                             text: "Are you sure you want to delete <strong>" + user.email + "</strong> from the system?",
                             type: 'warning',
                             showCancelButton: true,
+                            focusCancel: true,
                             confirmButtonText: 'Delete',
                             cancelButtonText: 'Cancel'
                         })];
@@ -26879,6 +26882,7 @@ function changeRole() {
                             text: "Are you sure you want change the role of <strong>" + user.email + "</strong> to " + role + "?",
                             type: 'warning',
                             showCancelButton: true,
+                            focusCancel: true,
                             confirmButtonText: 'Confirm',
                             cancelButtonText: 'Cancel'
                         })];

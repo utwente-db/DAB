@@ -149,6 +149,7 @@ async function deleteUser(): Promise<boolean> {
         text: `Are you sure you want to delete <strong>${user.email}</strong> from the system?`,
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel'
     });
@@ -179,6 +180,7 @@ async function changeRole(): Promise<boolean> {
         text: `Are you sure you want change the role of <strong>${user.email}</strong> to ${role}?`,
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Confirm',
         cancelButtonText: 'Cancel'
     });
