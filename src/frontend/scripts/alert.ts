@@ -14,12 +14,16 @@ export function generateAlertHTML(errorMessage: string, alertType: AlertType, di
             </div>`
 }
 
-export function addAlert(errorMessage: string, alertType: AlertType, tempAlert: ChildNode | null = null): void {
+export function addAlert(errorMessage: string, alertType: AlertType, tempAlert: ChildNode | null = null): ChildNode | null {
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
     }
     const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType);
+    const alert: ChildNode | null = alertDiv.lastChild;
+    // noinspection JSIgnoredPromiseFromCall
+    removeAlertOnTimeout(alert, 10000, false);
+    return alert;
 }
 
 function removeTempAlerts(): void {

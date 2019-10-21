@@ -25895,6 +25895,10 @@ function addAlert(errorMessage, alertType, tempAlert) {
     }
     var alertDiv = document.getElementById("alert-div");
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType);
+    var alert = alertDiv.lastChild;
+    // noinspection JSIgnoredPromiseFromCall
+    removeAlertOnTimeout(alert, 10000, false);
+    return alert;
 }
 exports.addAlert = addAlert;
 function removeTempAlerts() {
@@ -26381,7 +26385,6 @@ function displayCourses() {
                 case 3:
                     ownDatabases = (_a.sent());
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
-                    console.log(ownCourses);
                     for (i = 0; i < courses.length; i++) {
                         youHavePrivilege = (whoami.role === user_1.UserRole.admin || whoami.role === user_1.UserRole.teacher);
                         // TODO  check if user is TA for course

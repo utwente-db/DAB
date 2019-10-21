@@ -114,7 +114,6 @@ async function displayCourses(): Promise<void> {
     ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
-    console.log(ownCourses);
     for (let i = 0; i < courses.length; i++) {
         const youHavePrivilege = (whoami.role === UserRole.admin || whoami.role === UserRole.teacher);
         // TODO  check if user is TA for course
