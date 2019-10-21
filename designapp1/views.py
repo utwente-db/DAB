@@ -461,7 +461,7 @@ def filter_dict_on_keys(incoming,dbname):
 
     return incoming
 
-
+@authenticated
 def update_single_response(request, requested_pk, db_parameters):
     #UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES AND STUDENTDATABASES
     #are we allowed to do this?
