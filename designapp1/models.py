@@ -7,6 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.conf import settings
+from django.utils.html import escape as htmlspecialchars #I'm a PHP programmer after all
 import base64
 import re
 
@@ -77,6 +78,7 @@ class Courses(models.Model):
         if not re.match(r'^[a-zA-Z0-9\.\-\+\/ ]+$', self.coursename):
             raise ValueError("Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces")
         else:
+            self.info = htmlspecialchars(self.info)
             super(Courses, self).save()
 
     def owner(self):

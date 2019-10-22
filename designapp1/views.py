@@ -421,7 +421,7 @@ def post_base_response(request, db_parameters):
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     else:
-                        return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        raise e
             else:
                 #logging.debug(serializer_class.errors)
 
