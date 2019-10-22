@@ -158,7 +158,7 @@ GET -> search for the value, based on the coursename
 
 GET -> gives back all the courses owned by the user currently logged in
 
-### /courses/<pk>/schema
+### /courses/pk/schema
 
 GET -> returns the schema for that database as a sql file
 POST -> Takes the **plaintext** body, and makes it the schema of the database (if it passes verification).

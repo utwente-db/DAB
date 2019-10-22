@@ -483,7 +483,7 @@ def delete_single_response(request, requested_pk, db_parameters):
 def accepted_fields_for_db(table):
 
     if table == "courses":
-        return {'coursename','info','schema','active','databases'}
+        return {'coursename','info','active','databases'}
     if table == "studentdatabases":
         return {'groupid'}
 
@@ -743,7 +743,7 @@ def schema(request, pk):
             response['Content-Disposition'] = "inline; filename=%s" % (course.coursename+".sql")
             return response
         else:
-            if course.owner().id == request.session["user"] or check_role(request, admin):
+            if course.owner().id == request.session["user"] or check_role(request, admin) or am_i_ta_of_this_course(request.session["user"],pk):
                 schema = request.body.decode("utf-8")
                 check = schemaCheck.check(schema)
                 if not check[0]:
