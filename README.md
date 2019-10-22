@@ -34,9 +34,6 @@ Additionally, the following software is needed for the recommended production se
 - an SMTP server (e.g. postfix)
 - libapache2-mod-proxy-uwsgi (when using apache2)
 
-Logging:
-
-- the file /var/log/django/backend.log needs to exist in order to get log messages from the application
 
 Any pip and npm packages will be installed automatically during the installation steps
 
@@ -55,6 +52,9 @@ This file contains many settings that do not need to be edited, but some do:
 
 - `DEBUG`: Whether the server is in debug mode. Set to `True` on development, and to `False` on production
 - `EMAIL_SERVER` and `EMAIL_SENDER`: will be discussed under the "email" heading below.
+- `DATABASE_SERVER`: the database server; this will be displayed to students as the server they should connect to
+- `HOST_SERVER`: the domain that this service is hosted on. Used for links sent in emails
+- `LOGFILE`: the file that the server logs to. The server must have write permissions on this file, or it will crash
 
 Private settings are stored in the file `secret.py`.
 
@@ -204,3 +204,4 @@ On the UT campus, the only edit that needs to be made to Postfix is the followin
 
 Once this is configured, the server should be able to create email.
 
+Once finished, please edit some of the settings in designproject/settings.py as they will affect what the address of the database is that will be displayed to users

@@ -35,8 +35,12 @@ So a teacher can create ta's and that's about it.
 
 Method: POST
 Body: JSON, containing:
-- role: the role the user should be set to
-- user: the users email. Possibly change to user id?
+
+    body:
+       {
+       "user": 3, [USER ID]
+       "role": 0 [ROLE TO BE SET TO]
+       }
 
 returns:
 - 200 if successful
@@ -46,7 +50,12 @@ returns:
 ## /whoami
 
 Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
-If the user is not logged in, returns a 404.
+If the user is not logged in, returns a 401.
+
+## /who
+
+Same as whoami, but only return id and role. 
+Because there is no (explicit) database query, this request is a bit faster
 
 ## /dump/<pk>
 
@@ -154,7 +163,7 @@ GET -> search for the value, based on the coursename
 
 GET -> gives back all the courses owned by the user currently logged in
 
-### /courses/<pk>/schema
+### /courses/pk/schema
 
 GET -> returns the schema for that database as a sql file
 POST -> Takes the **plaintext** body, and makes it the schema of the database (if it passes verification).
@@ -184,6 +193,10 @@ GET -> search for the value, based on emailaddress
 ### /dbmusers/own/
 
 GET -> gives back the info about the currently logged in user
+
+### /dbmusers/course/value
+
+GET -> gives back the users that have a database in that course
 
 ## TABLE: TAs
 
@@ -215,6 +228,11 @@ GET -> only for the teacher (or admin if it owns courses) returned all the tas i
 
 GET -> gives back the ta information about the currently logged in ta
 
+### /tas/course/courseid
+
+GET -> gives back the tas of that course
+accesible to the teacher and tas of that course
+
 ## /schematransfer/[course]/[database]
 
 Transfers the schema from the database to the course. 
@@ -229,20 +247,40 @@ POST -> Generates the backup script. Returns the location of said script.
 
 Only accessible to admins
 
+## /course_dump/courseid
+
+GET -> returns a zip file with dumps of every database in the course.
+Dump filenames are named after the user email.
+
+Accessible to admins and the course owner (NOT TA's!)
+
+WARNING: May take a long time. Use with caution.
+
 ## /request_reset_password/[email] \(NOT /rest !!!)
 
 POST -> Sends an password reset email
 
 Email contains a link that is valid for 4 hours.
 
-## /reset_password/[user id]/[token]
+## /reset_password/[user id]/[token] \(NOT /rest !!!)
 
-GET -> Displays a "new password" prompt //TODO
+GET -> Displays a "new password" prompt
 POST -> Takes in a JSON object with one key, "password", and sets the password to that password.
 
 Both of these will return errors if the token is invalid or expired.
 
 The link sent will be valid for 4 hours.
+
+## /change_password/ (NOT /rest !!!)
+
+POST -> Takes in the following JSON
+
+    {
+    "current": "aoeu", [CURRENT USER PASSWORD]
+    "new": "ueoa" [NEW PASSWORD]
+    }
+
+and sets the password of the user to the new password, if the current one is correct.
 
 # Permissions
 

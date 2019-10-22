@@ -1,15 +1,22 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="/">Database Administration Bundle</a>
-        <ul class="navbar-nav mr-auto text-white">
-            <div id="whoamiWelcome">
+        <button class="btn btn-secondary mx-auto col-12 col-lg-4 font-weight-bolder" onclick="location.href='/'"><span class="font-weight-bold h5">
+            Database Administration Bundle</span>
+        </button>
+        <div class="col-12 col-lg-4"><span class="mr-auto text-white" id="whoamiWelcome"></span></div>
+        {#        <div class="my-2 my-lg-0" id="whoamiButton">#}
+        {##}
+        {#        </div>#}
+        <div class="col-12 col-lg-4 my-2 mx-2 my-lg-0 center-block">
+
+            <div  class="form-inline form-row container">
+                <button class="btn btn-secondary mx-3" onclick="location.href='/change_password'">Change password
+                </button>
+            <form action='/logout' method='POST'>
+                <button class="btn btn-secondary my-2 my-sm-0" type='submit' value='logout'>Log out</button>
+            </form>
             </div>
-        </ul>
-{#        <div class="my-2 my-lg-0" id="whoamiButton">#}
-{##}
-{#        </div>#}
-        <div class="my-2 mx-2 my-lg-0">
-            <form action='/logout' method='POST'><button class="btn btn-secondary my-2 my-sm-0" type='submit' value='logout'>Log out</button></form>
+
         </div>
     </div>
 </nav>

@@ -1,10 +1,11 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {displayWhoami} from "./navbar";
+import {displayWhoami, getWhoamiPromise, Whoami} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
 import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2'
+import {UserRole} from "./user";
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
@@ -14,7 +15,7 @@ const haveCredsInfo: HTMLDivElement = document.getElementById("have-credentials-
 const credentialsDiv: HTMLDivElement = document.getElementById("credentials-div") as HTMLDivElement;
 const haveCredsPane: HTMLDivElement = document.getElementById("have-credentials-pane") as HTMLDivElement;
 const noCredsPane: HTMLHeadingElement = document.getElementById("no-credentials-pane") as HTMLDivElement;
-
+const noCredsForm = document.getElementById("no-credentials-form") as HTMLFormElement;
 
 const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
 
@@ -24,6 +25,7 @@ const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDiv
 let ownDatabases: StudentDatabase[];
 let courses: Course[];
 let currentCourse = 0;
+let whoami: Whoami;
 
 function populateNoCredentialsPane(i: number) {
     noCredsCoursename.innerText = courses[i].coursename;
@@ -90,7 +92,6 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
     const templateString = `<a id="${i}" class="nav-link ${credentialsClass} ${activeString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
-
     if (!haveCredentials) {
         fragment.firstChild!.addEventListener("click", () => {
             populateNoCredentialsPane(i);
@@ -113,19 +114,22 @@ async function displayCourses(): Promise<void> {
     ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
-    console.log(ownCourses);
     for (let i = 0; i < courses.length; i++) {
-        const haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
-        const fragment = createNavLink(haveCredentials, i);
+        const youHavePrivilege = (whoami.role === UserRole.admin || whoami.role === UserRole.teacher);
+        // TODO  check if user is TA for course
+        if (courses[i].active || youHavePrivilege) {
+            const haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
+            const fragment = createNavLink(haveCredentials, i);
 
-        coursesNavHtml.appendChild(fragment);
+            coursesNavHtml.appendChild(fragment);
+        }
 
 
     }
 }
 
 async function changeView(hasCredentials: boolean) {
-    const activeLink: HTMLLinkElement = document.getElementsByClassName("nav-link active")[0] as HTMLLinkElement;
+    const activeLink: HTMLAnchorElement = document.getElementsByClassName("nav-link active")[0] as HTMLAnchorElement;
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
     const newPane = hasCredentials ? haveCredsPane : noCredsPane;
     const i = Number(activeLink.id);
@@ -144,9 +148,9 @@ async function changeView(hasCredentials: boolean) {
 }
 
 async function prepareToGetCredentials() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
-    credentialsButton.classList.add("disabled");
-    groupInput.classList.add("disabled");
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
+    credentialsButton.disabled = true;
+    groupInput.disabled = true;
     try {
         const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
@@ -157,42 +161,42 @@ async function prepareToGetCredentials() {
     } catch (error) {
         addErrorAlert(error);
     } finally {
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
-        credentialsButton.classList.remove("disabled");
-        groupInput.classList.remove("disabled");
+        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).classList.remove("disabled"));
+        credentialsButton.disabled = false;
+        groupInput.disabled = false;
     }
 }
 
 
 function disableElementsOnPage() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.add("disabled"));
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
-            deleteButton.classList.add("disabled")
+            deleteButton.disabled = true
         });
     Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((resetButton: HTMLButtonElement) => {
-            resetButton.classList.add("disabled")
+            resetButton.disabled = true
         });
     Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((dumpButton: HTMLButtonElement) => {
-            dumpButton.classList.add("disabled")
+            dumpButton.disabled = true
         });
 }
 
 function enableElementsOnPage() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as Element).classList.remove("disabled"));
+    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.remove("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
-            deleteButton.classList.remove("disabled")
+            deleteButton.disabled = false
         });
     Array.from(document.getElementsByClassName("reset-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((resetButton: HTMLButtonElement) => {
-            resetButton.classList.remove("disabled")
+            resetButton.disabled = false
         });
     Array.from(document.getElementsByClassName("dump-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((dumpButton: HTMLButtonElement) => {
-            dumpButton.classList.remove("disabled")
+            dumpButton.disabled = false
         });
 }
 
@@ -202,6 +206,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel'
     });
@@ -214,7 +219,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         // await changeViewToHaveCredentials()
-        addAlert("Deleted database", AlertType.primary);
+        addAlert("The database has been successfully deleted", AlertType.primary);
         await changeView(false);
         success = true;
     } catch (error) {
@@ -233,6 +238,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Reset',
         cancelButtonText: 'Cancel'
     });
@@ -244,7 +250,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
     disableElementsOnPage();
     try {
         await axios.post(`/rest/reset/${dbID}/`);
-        addAlert("Reset database", AlertType.primary);
+        addAlert("The database has been succesfully reset", AlertType.primary);
         success = true;
     } catch (error) {
         addErrorAlert(error);
@@ -256,8 +262,14 @@ async function resetDatabase(dbID: number): Promise<boolean> {
 }
 
 window.onload = async () => {
+    whoami = await getWhoamiPromise();
+
     await Promise.all([
-        credentialsButton.addEventListener("click", prepareToGetCredentials),
+        noCredsForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            prepareToGetCredentials();
+        }),
+
         displayCourses(),
         displayWhoami()
     ])

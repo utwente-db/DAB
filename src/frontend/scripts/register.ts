@@ -9,13 +9,14 @@ const registerButton: HTMLButtonElement = document.getElementById("register-butt
 const registerEmailField: HTMLInputElement = document.getElementById("register-email-field") as HTMLInputElement;
 const registerPasswordField: HTMLInputElement = document.getElementById('register-password-field') as HTMLInputElement;
 const registerPasswordConfirmField: HTMLInputElement = document.getElementById('register-password-confirm-field') as HTMLInputElement;
+const content = document.getElementById('content') as HTMLFormElement;
 
 interface Credentials {
     "email": string
     "password": string
 }
 
-function setValid(input: HTMLInputElement): void {
+export function setValid(input: HTMLInputElement): void {
     input.classList.remove("is-invalid");
     input.classList.add("is-valid");
     if (input.nextElementSibling) {
@@ -26,7 +27,7 @@ function setValid(input: HTMLInputElement): void {
     }
 }
 
-function setInvalid(input: HTMLInputElement, error: string): void {
+export function setInvalid(input: HTMLInputElement, error: string): void {
     input.classList.remove("is-valid");
     input.classList.add("is-invalid");
     if (input.nextElementSibling) {
@@ -37,49 +38,49 @@ function setInvalid(input: HTMLInputElement, error: string): void {
     }
 }
 
-function passwordsEqual(): boolean {
-    if (registerPasswordField.value === registerPasswordConfirmField.value) {
-        setValid(registerPasswordConfirmField);
+export function passwordsEqual(passwordField: HTMLInputElement, passwordConfirmField: HTMLInputElement): boolean {
+    if (passwordField.value === passwordConfirmField.value) {
+        setValid(passwordConfirmField);
         return true;
     } else {
-        setInvalid(registerPasswordConfirmField, "Passwords do not match");
+        setInvalid(passwordConfirmField, "Passwords do not match");
         return false;
     }
 }
 
-function validEmail(): boolean {
+export function validEmail(field: HTMLInputElement): boolean {
     const emailPattern: RegExp = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
     const utwentePattern: RegExp = /.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$/;
-    const email: string = registerEmailField.value;
+    const email: string = field.value;
     if (emailPattern.test(email)) {
         if (utwentePattern.test(email)) {
-            setValid(registerEmailField);
+            setValid(field);
             return true;
         } else {
-            setInvalid(registerEmailField, "Not a valid utwente.nl address");
+            setInvalid(field, "Not a valid utwente.nl address");
         }
     } else {
-        setInvalid(registerEmailField, "Not a valid e-mail address");
+        setInvalid(field, "Not a valid e-mail address");
     }
     return false;
 }
 
-function validPassword(): boolean {
+export function validPassword(field: HTMLInputElement): boolean {
     const passwordPattern: RegExp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    const password: string = registerPasswordField.value;
+    const password: string = field.value;
     if (passwordPattern.test(password)) {
-        setValid(registerPasswordField);
+        setValid(field);
         return true
     } else {
-        setInvalid(registerPasswordField, "Password does not meet the requirements");
+        setInvalid(field, "Password does not meet the requirements");
         return false;
     }
 }
 
 function checkFields(): boolean {
-    const a = validEmail(); // Can't use a one-line function here due to lazy evaluation
-    const b = validPassword();
-    const c = passwordsEqual();
+    const a = validEmail(registerEmailField); // Can't use a one-line function here due to lazy evaluation
+    const b = validPassword(registerPasswordField);
+    const c = passwordsEqual(registerPasswordField, registerPasswordConfirmField);
     return a && b && c
 }
 
@@ -87,19 +88,31 @@ async function tryRegister(): Promise<void> {
     if (checkFields()) {
         const credentials: Credentials = {email: registerEmailField.value, password: registerPasswordField.value};
         const tempAlert: ChildNode | null = addTempAlert();
+        registerEmailField.disabled = true;
+        registerPasswordField.disabled = true;
+        registerPasswordConfirmField.disabled = true;
+        registerButton.disabled = true;
         try {
             const response: AxiosResponse<string> = await axios.post("/rest/dbmusers/", credentials) as AxiosResponse<string>;
             const responseData: string = response.data;
             addAlert(`Please check your inbox to confirm your e-mail`, AlertType.success, tempAlert)
         } catch (error) {
             addErrorAlert(error, tempAlert)
+        } finally {
+            registerEmailField.disabled = false;
+            registerPasswordField.disabled = false;
+            registerPasswordConfirmField.disabled = false;
+            registerButton.disabled = false;
         }
     }
-
-
 }
 
 
 window.onload = () => {
-    registerButton.addEventListener("click", tryRegister)
+    if (content) {
+        content.addEventListener("submit", (event) => {
+            event.preventDefault();
+            tryRegister();
+        });
+    }
 };

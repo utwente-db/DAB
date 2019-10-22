@@ -41,6 +41,12 @@ def get_studentdatabase_name(courseid):
 def reset_studentdatabase(db):
     with connection.cursor() as cursor:
         connection.autocommit = False
+        # make sure no one can connect to the database
+        cursor.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '%s'",
+                       [AsIs(db.databasename)])
+        # drop any existing connections
+        cursor.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'",
+                       [AsIs(db.databasename)])
         cursor.execute("DROP DATABASE \"%s\";", [AsIs(db.databasename)])
         cursor.execute("CREATE DATABASE \"%s\" WITH OWNER \"%s\";", [AsIs(db.databasename), AsIs(db.username)])
         cursor.execute("GRANT ALL PRIVILEGES ON DATABASE \"%s\" TO \"%s\";", [AsIs(db.databasename), AsIs(db.username)])
