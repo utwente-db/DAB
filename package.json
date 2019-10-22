@@ -12,6 +12,7 @@
     "bootstrap": "^4.3.1",
     "bootstrap-cookie-alert": "^1.1.1",
     "bootstrap-select": "^1.13.11",
+    "bootstrap-toggle": "^2.2.2",
     "commonjs": "^0.0.1",
     "css-loader": "^3.2.0",
     "datatables.net-responsive": "^2.2.3",

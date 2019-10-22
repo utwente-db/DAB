@@ -22974,6 +22974,10 @@ function addAlert(errorMessage, alertType, tempAlert) {
     }
     var alertDiv = document.getElementById("alert-div");
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType);
+    var alert = alertDiv.lastChild;
+    // noinspection JSIgnoredPromiseFromCall
+    removeAlertOnTimeout(alert, 10000, false);
+    return alert;
 }
 exports.addAlert = addAlert;
 function removeTempAlerts() {
@@ -23249,6 +23253,7 @@ function setValid(input) {
         console.error("No sibling element for input. Contact the front-end devs with this error");
     }
 }
+exports.setValid = setValid;
 function setInvalid(input, error) {
     input.classList.remove("is-valid");
     input.classList.add("is-invalid");
@@ -23260,6 +23265,7 @@ function setInvalid(input, error) {
         console.error("No sibling element for input. Contact the front-end devs with this error");
     }
 }
+exports.setInvalid = setInvalid;
 function passwordsEqual(passwordField, passwordConfirmField) {
     if (passwordField.value === passwordConfirmField.value) {
         setValid(passwordConfirmField);

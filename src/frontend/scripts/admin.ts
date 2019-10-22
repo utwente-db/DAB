@@ -72,10 +72,10 @@ async function displayUsers(): Promise<void> {
 
 window.onload = async () => {
     await Promise.all([
-        filterForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            // TODO actually figure out how to include filter here
-        }),
+        // filterForm.addEventListener("submit", (event) => {
+        //     event.preventDefault();
+        //     TODO actually figure out how to include filter here
+        // }),
         displayWhoami(),
         displayUsers(),
         displayCourses()

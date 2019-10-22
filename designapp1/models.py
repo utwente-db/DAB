@@ -107,6 +107,12 @@ class StudentdatabasesQuerySet(models.query.QuerySet):
             db.password = switchPassword(db.password)
         return out
 
+    def all(self):
+        out = super().all()
+        for db in out:
+            db.password = switchPassword(db.password)
+        return out
+
 class StudentdatabasesManager(models.Manager.from_queryset(StudentdatabasesQuerySet)):
     def all(self):
         out = super().all()

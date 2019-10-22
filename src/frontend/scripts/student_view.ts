@@ -25,6 +25,7 @@ const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDiv
 let ownDatabases: StudentDatabase[];
 let courses: Course[];
 let currentCourse = 0;
+let whoami: Whoami;
 
 function populateNoCredentialsPane(i: number) {
     noCredsCoursename.innerText = courses[i].coursename;
@@ -113,9 +114,7 @@ async function displayCourses(): Promise<void> {
     ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
-    console.log(ownCourses);
     for (let i = 0; i < courses.length; i++) {
-        const whoami: Whoami = await getWhoamiPromise();
         const youHavePrivilege = (whoami.role === UserRole.admin || whoami.role === UserRole.teacher);
         // TODO  check if user is TA for course
         if (courses[i].active || youHavePrivilege) {
@@ -207,6 +206,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel'
     });
@@ -238,6 +238,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         text: 'You will not be able to recover your data!',
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Reset',
         cancelButtonText: 'Cancel'
     });
@@ -261,6 +262,8 @@ async function resetDatabase(dbID: number): Promise<boolean> {
 }
 
 window.onload = async () => {
+    whoami = await getWhoamiPromise();
+
     await Promise.all([
         noCredsForm.addEventListener("submit", (event) => {
             event.preventDefault();

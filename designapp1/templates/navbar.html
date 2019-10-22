@@ -9,12 +9,13 @@
         {#        </div>#}
         <div class="col-12 col-lg-4 my-2 mx-2 my-lg-0 center-block">
 
-            <form action='/logout' method='POST' class="form-inline form-row container">
+            <div  class="form-inline form-row container">
                 <button class="btn btn-secondary mx-3" onclick="location.href='/change_password'">Change password
                 </button>
-
+            <form action='/logout' method='POST'>
                 <button class="btn btn-secondary my-2 my-sm-0" type='submit' value='logout'>Log out</button>
             </form>
+            </div>
 
         </div>
     </div>

@@ -11,14 +11,14 @@ import {Course, StudentDatabase} from "./courses";
 
 //todo: change to selected user ofcourse
 const urlParams = new URLSearchParams(window.location.search);
-var userid: number = 0;
+let userid = 0;
 
 // let user: User;
 // let databases: Database[];
 
 const x: string | null = urlParams.get("id");
 if (x != null) {
-    userid = parseInt(x);
+    userid = Number(x);
 }
 
 const pageTitleHtml: HTMLTitleElement = document.getElementById("page-title") as HTMLTitleElement;
@@ -66,7 +66,7 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
 }
 
 async function getUserPromise(): Promise<User> {
-    const path: string = `/rest/dbmusers/${userid}/`;
+    const path = `/rest/dbmusers/${userid}/`;
     const response: AxiosResponse = await axios.get(path);
     return response.data;
 }
@@ -75,13 +75,13 @@ async function displayCoursesAndDatabases(): Promise<void> {
     const databases: StudentDatabase[] = await getDatabasesPromise();
 
     const coursesAndDatabases: Map<number, string> = new Map<number, string>();
-    if (databases.length == 0) {
+    if (databases.length === 0) {
         coursesNavHtml.innerHTML = "empty";
         courseDatabasesHtml.innerHTML = "no content";
         return;
     }
 
-    const coursesAndDatabases = new Map<number, string>();
+    // const coursesAndDatabases = new Map<number, string>();
 
     for (let i = 0; i < databases.length; i++) {
         coursesAndDatabases.set(databases[i].course, "");
@@ -149,6 +149,7 @@ async function deleteUser(): Promise<boolean> {
         text: `Are you sure you want to delete <strong>${user.email}</strong> from the system?`,
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Delete',
         cancelButtonText: 'Cancel'
     });
@@ -179,6 +180,7 @@ async function changeRole(): Promise<boolean> {
         text: `Are you sure you want change the role of <strong>${user.email}</strong> to ${role}?`,
         type: 'warning',
         showCancelButton: true,
+        focusCancel: true,
         confirmButtonText: 'Confirm',
         cancelButtonText: 'Cancel'
     });
@@ -191,7 +193,7 @@ async function changeRole(): Promise<boolean> {
     try {
         await axios.post(`/rest/set_role`, {
             user: user.id,
-            role: parseInt(role)
+            role: Number(role)
          });
         window.location.reload(true);
         addAlert("Role changed!", AlertType.primary);

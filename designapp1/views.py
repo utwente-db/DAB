@@ -107,14 +107,8 @@ def get_role(request):
 # REST RESPONSES
 
 def defaultresponse(request):
-    template = loader.get_template('defaultresponse.html')
-    number = 3
-    context = {
-        'number': number,
-        'range': range(number)
-    }
-    log_message(log_default,' default page has been requested')
-    return HttpResponse(template.render(context, request))
+    return HttpResponse("The page that you requested was not found.", status=status.HTTP_404_NOT_FOUND)
+
 
 @authenticated
 def get_base_response(request, db_parameters):
@@ -712,6 +706,30 @@ def dump(request, pk):
     log_message_with_db(request.session['user'],"Studentdatabases",log_dump, message) #LOG THIS ACTION
     return response
 
+@require_GET
+@require_role(teacher)
+def course_dump(request, pk):
+    course = None
+    try:
+        course = Courses.objects.get(courseid=pk)
+    except Courses.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if not course.owner().id == request.session["user"] and not request.session["role"] == admin:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+    file = schemaWriter.dump_course(course)
+
+    if file == None:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+    response = HttpResponse(file, content_type="application/zip")
+    filename = re.sub(r' ', "_", course.coursename)+".zip"
+    response["Content-Disposition"] = "inline; filename=%s" % filename
+    log_message_with_db(request.session["user"],"Courses",log_dump," course "+str(course.courseid)+" has been dumped")
+    return response
+
+
 @require_POST
 @authenticated
 def reset(request, pk):
@@ -901,40 +919,37 @@ def register(request):
 def request_db(request):
     return render(request, 'request_db.html', {})
 
-@require_http_methods(["GET", "POST"])
+@require_POST
 def login(request):
     incorrect_message = "wrong email or password"
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            try:
-                user = dbmusers.objects.get(email=data["mail"])
-                print(user)
-                if not user.verified:
-                    return render(request, 'login.html',
-                                  {'form': LoginForm, 'template_class' : 'resend-verification ' + user.email})
+    form = LoginForm(request.POST)
+    if form.is_valid():
+        data = form.cleaned_data
+        try:
+            user = dbmusers.objects.get(email=data["mail"])
+            print(user)
+            if not user.verified:
+                return render(request, 'login.html',
+                              {'form': LoginForm, 'template_class' : 'resend-verification ' + user.email})
 
-                if hash.verify(user.password, data["password"]):
-                    request.session["user"] = user.id
-                    request.session["role"] = user.role
-                    request.session.modified = True
+            if hash.verify(user.password, data["password"]):
+                request.session["user"] = user.id
+                request.session["role"] = user.role
+                request.session.modified = True
 
-                    user.lastlogin = timezone.now() #update last login
-                    user.save()
+                user.lastlogin = timezone.now() #update last login
+                user.save()
 
-                    return HttpResponseRedirect("/")
+                return HttpResponseRedirect("/")
 
 
-                else:
-                    return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
-            except dbmusers.DoesNotExist:
+            else:
                 return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
-        else:
-            form = LoginForm()
-            return render(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
-    form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+        except dbmusers.DoesNotExist:
+            return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
+    else:
+        form = LoginForm()
+        return render(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
 
 
 @require_POST
@@ -1159,7 +1174,8 @@ def redirect(request):
         else:
             return admin_view(request)
     else:
-        return login(request)
+        form = LoginForm()
+        return render(request, 'login.html', {'form': form})
 
 @require_GET
 def forgot_password_page(request):
@@ -1168,3 +1184,7 @@ def forgot_password_page(request):
     else:
         return render(request, 'forgot_password_page.html')
 
+@require_GET
+@require_role_redirect(admin)
+def add_course(request):
+    return render(request, 'add_course.html')
