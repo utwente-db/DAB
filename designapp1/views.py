@@ -1018,7 +1018,18 @@ def whoami(request):
         "id": user.id,
         "email": user.email,
         "role": user.role,
-        "cached_role": request.session["role"]
+        "cached_role": request.session["role"],
+    }
+
+    response = json.JSONEncoder().encode(response)
+    return HttpResponse(str(response), content_type="application/json")
+
+@require_GET
+@authenticated
+def who(request):
+    response = {
+        "id": request.session["user"],
+        "role": request.session["role"],
     }
 
     response = json.JSONEncoder().encode(response)

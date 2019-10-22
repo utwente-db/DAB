@@ -61,6 +61,7 @@ urlpatterns = [
     # path('login/', views.login, name="login"),
 
     url(r'^whoami/?$', views.whoami, name='whoami'),
+    url(r'^who/?$', views.who, name='who'),
     url(r'^set_role/?$', views.set_role, name='set_role'),
 
     # path('test', views.test, name='test'),
