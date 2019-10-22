@@ -52,6 +52,11 @@ returns:
 Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
 If the user is not logged in, returns a 401.
 
+## /who
+
+Same as whoami, but only return id and role. 
+Because there is no (explicit) database query, this request is a bit faster
+
 ## /dump/<pk>
 
 Returns a sql dump of the database corresponding to the specified id.
