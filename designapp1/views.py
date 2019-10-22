@@ -131,16 +131,16 @@ def get_base_response(request, db_parameters):
 
 def does_a_row_exist(sql_result):
 
-        if sql_result.count() > 0:
-            return True
-        else:
-            return False
+    if sql_result.count() > 0:
+        return True
+    else:
+        return False
 
 
 def am_i_ta_of_this_course(current_id,course_id):
 
     try:
-        ta_info = TAs.objects.filter(courseid=course_id,taid=current_id)
+        ta_info = TAs.objects.filter(courseid=course_id,studentid=current_id)
 
         return does_a_row_exist(ta_info) #is this student a ta over this db?
 
@@ -154,7 +154,7 @@ def am_i_ta_of_this_db(current_id,dbid):
     try:
         db_info = Studentdatabases.objects.get(pk=dbid)
         course_id = db_info.course
-        ta_info = TAs.objects.filter(courseid=course_id,taid=current_id)
+        ta_info = TAs.objects.filter(courseid=course_id,studentid=current_id)
 
         return does_a_row_exist(ta_info) #is this student a ta over this db?
 
@@ -254,7 +254,7 @@ def get_course_ta(request, pk):
     except Courses.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-    if course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
+    if request.session["role"] >= admin or course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
         data = TAs.objects.filter(courseid=course.courseid)
         serializer = TasSerializer(data, many=True)
         return JsonResponse(serializer.data, safe=False)
@@ -531,7 +531,7 @@ def update_single_response(request, requested_pk, db_parameters):
             log_message_with_db(request.session['user'],db_parameters["dbname"],log_update_single, message) #LOG THIS ACTION
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
     else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 @authenticated
 def search_on_name(request, search_value, dbname):
@@ -927,7 +927,6 @@ def login(request):
         data = form.cleaned_data
         try:
             user = dbmusers.objects.get(email=data["mail"])
-            print(user)
             if not user.verified:
                 return render(request, 'login.html',
                               {'form': LoginForm, 'template_class' : 'resend-verification ' + user.email})
