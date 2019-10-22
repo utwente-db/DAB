@@ -1038,6 +1038,8 @@ def who(request):
 
 @require_GET
 def verify(request, token):
+    if "user" in request.session:
+        return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     try:
         user = dbmusers.objects.get(token=token)
 
@@ -1090,6 +1092,8 @@ def change_password(request):
 
 @require_POST
 def resend_verification(request):
+    if "user" in request.session:
+        return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     body = None
     user = None
     try:
@@ -1115,6 +1119,8 @@ def resend_verification(request):
 
 @require_POST
 def request_reset_password(request, email):
+    if "user" in request.session:
+        return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     db = None
     try:
         db = dbmusers.objects.get(email=email)
@@ -1135,6 +1141,8 @@ def request_reset_password(request, email):
 
 @require_http_methods(["GET", "POST"])
 def reset_password(request, pk, token):
+    if "user" in request.session:
+        return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     #do checks first
     db = None
     try:
