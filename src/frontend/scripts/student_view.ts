@@ -1,5 +1,5 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {displayWhoami, getWhoamiPromise, getWhoPromise, Who, Whoami} from "./navbar";
+import {displayWhoami, getWhoPromise, Who} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
@@ -110,6 +110,8 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
 }
 
 async function displayCourses(): Promise<void> {
+    who = await getWhoPromise();
+
     courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
     ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     // tslint:disable-next-line:variable-name
@@ -262,14 +264,12 @@ async function resetDatabase(dbID: number): Promise<boolean> {
 }
 
 window.onload = async () => {
-    who = await getWhoPromise();
-
     await Promise.all([
         noCredsForm.addEventListener("submit", (event) => {
             event.preventDefault();
             prepareToGetCredentials();
         }),
-
+        document.getElementById("navbar-student-view")!.classList.add("active"),
         displayCourses(),
         displayWhoami()
     ])

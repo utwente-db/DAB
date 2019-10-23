@@ -26371,12 +26371,15 @@ function displayCourses() {
         var ownCourses, i, youHavePrivilege, haveCredentials, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
+                case 0: return [4 /*yield*/, navbar_1.getWhoPromise()];
                 case 1:
+                    who = _a.sent();
+                    return [4 /*yield*/, courses_1.getCoursesPromise()];
+                case 2:
                     courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
                     return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
-                case 2: return [4 /*yield*/, (_a.sent()).data];
-                case 3:
+                case 3: return [4 /*yield*/, (_a.sent()).data];
+                case 4:
                     ownDatabases = (_a.sent());
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     for (i = 0; i < courses.length; i++) {
@@ -26582,18 +26585,16 @@ function resetDatabase(dbID) {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, navbar_1.getWhoPromise()];
+            case 0: return [4 /*yield*/, Promise.all([
+                    noCredsForm.addEventListener("submit", function (event) {
+                        event.preventDefault();
+                        prepareToGetCredentials();
+                    }),
+                    document.getElementById("navbar-student-view").classList.add("active"),
+                    displayCourses(),
+                    navbar_1.displayWhoami()
+                ])];
             case 1:
-                who = _a.sent();
-                return [4 /*yield*/, Promise.all([
-                        noCredsForm.addEventListener("submit", function (event) {
-                            event.preventDefault();
-                            prepareToGetCredentials();
-                        }),
-                        displayCourses(),
-                        navbar_1.displayWhoami()
-                    ])];
-            case 2:
                 _a.sent();
                 return [2 /*return*/];
         }

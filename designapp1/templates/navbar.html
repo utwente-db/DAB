@@ -14,16 +14,16 @@
 
         <ul class="navbar-nav mr-auto">
             {% if role == 0 or role == 1 %}
-                <li class="nav-item">
-                    <a class="nav-link" href="/edit_course">Edit courses</a>
+                <li class="nav-item" id="navbar-edit-courses">
+                    <a class="nav-link" href="/edit_courses" >Edit courses</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/edit_user">Edit users</a>
+                <li class="nav-item" id="navbar-edit-users">
+                    <a class="nav-link" href="/edit_users" >Edit users</a>
                 </li>
             {% endif %}
 
-            <li class="nav-item">
-                <a class="nav-link" href="/student_view">Student view</a>
+            <li class="nav-item" id="navbar-student-view">
+                <a class="nav-link" href="/student_view" >Student view</a>
             </li>
 
             {#            <button class="btn btn-secondary mr-3" onclick="location.href='/edit_course'">Edit courses</button>#}
@@ -31,17 +31,17 @@
             {#            <button class="btn btn-secondary mr-3" onclick="location.href='/change_password'">Student view</button>#}
 
         </ul>
-        <ul class="navbar-nav mr-5 float-right">
-            <li class="nav-item dropdown">
+        <ul class="navbar-nav float-left float-lg-right ">
+            <li class="nav-item dropdown ">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
                     Options
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="navbarDropdown">
                     {% if role == 0 or role == 1 %}
-                    <a class="dropdown-item d-none" href="/admin-call-example'">Admin call example</a>
+                    <a class="dropdown-item" href="/admin-call-example'">Admin call example</a>
 
-                    <div class="dropdown-divider d-none" id="navbar-options-dropdown-divider"></div>
+                    <div class="dropdown-divider" id="navbar-options-dropdown-divider"></div>
                     {% endif %}
 
                     <a class="dropdown-item" href="/change_password">Change password</a>
