@@ -26891,7 +26891,7 @@ function displayUserDetails(userid) {
                 case 0: return [4 /*yield*/, getUserPromise(userid)];
                 case 1:
                     user = _a.sent();
-                    pageTitleHtml.innerHTML += "Admin - User " + user.id;
+                    pageTitleHtml.innerHTML = "Admin - User " + user.id;
                     if (user.role === UserRole.admin) {
                         role = "admin";
                     }
@@ -26904,9 +26904,9 @@ function displayUserDetails(userid) {
                     else {
                         role = "unknown";
                     }
-                    usernameHtml.innerHTML += "<input type=\"text\" class=\"form-control\" value=\"" + user.email + "\" readonly=\"\">";
-                    roleHtml.innerHTML += "<input type=\"text\" class=\"form-control\" value=\"" + role + "\" readonly=\"\">";
-                    verifiedHtml.innerHTML += (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
+                    usernameHtml.innerHTML = "<input type=\"text\" class=\"form-control\" value=\"" + user.email + "\" readonly=\"\">";
+                    roleHtml.innerHTML = "<input type=\"text\" class=\"form-control\" value=\"" + role + "\" readonly=\"\">";
+                    verifiedHtml.innerHTML = (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
                     return [2 /*return*/];
             }
         });

@@ -177,7 +177,7 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
 
 async function displayUserDetails(userid: number): Promise<void> {
     const user: User = await getUserPromise(userid);
-    pageTitleHtml.innerHTML += "Admin - User " + user.id;
+    pageTitleHtml.innerHTML = "Admin - User " + user.id;
 
     let role: string;
     if (user.role === UserRole.admin) {
@@ -190,9 +190,9 @@ async function displayUserDetails(userid: number): Promise<void> {
         role = "unknown";
     }
 
-    usernameHtml.innerHTML += `<input type=\"text\" class=\"form-control\" value=\"${user.email}\" readonly="">`;
-    roleHtml.innerHTML += `<input type="text" class="form-control" value="${role}" readonly="">`;
-    verifiedHtml.innerHTML += (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
+    usernameHtml.innerHTML = `<input type=\"text\" class=\"form-control\" value=\"${user.email}\" readonly="">`;
+    roleHtml.innerHTML = `<input type="text" class="form-control" value="${role}" readonly="">`;
+    verifiedHtml.innerHTML = (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
 }
 
 async function deleteUser(userid: number): Promise<boolean> {
