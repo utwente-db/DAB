@@ -888,7 +888,7 @@ not_found.status_code = 404
 
 @require_role_redirect(admin)
 def edit_users(request):
-    return render(request, 'edit_users.html')
+    return render(request, 'edit_users.html', {'role' : request.session['role']})
 
 @require_GET
 @require_role_redirect(admin)
@@ -1205,4 +1205,4 @@ def forgot_password_page(request):
 @require_GET
 @require_role_redirect(admin)
 def edit_courses(request):
-    return render(request, 'edit_courses.html')
+    return render(request, 'edit_courses.html', {'role' : request.session['role']})

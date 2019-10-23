@@ -8,37 +8,10 @@ import {getUsersPromise, User} from "./user";
 import {Course, getCoursesPromise} from "./courses";
 
 const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
-const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
-const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
+
 const filterForm = document.getElementById("filter-form") as HTMLFormElement;
 
-async function displayCourses(): Promise<void> {
-    const courses: Course[] = await getCoursesPromise();
-    const resultNav: string[] = [];
-    const resultContent: string[] = [];
 
-    for (let i = 0; i < courses.length; i++) {
-        let active = "";
-        if (i === 0) {
-            active = " active";
-        }
-        resultNav.push(
-            "<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + i + "\">" + courses[i].coursename + "</a>"
-        );
-        resultContent.push(
-            "<div class=\"tab-pane" + active + "\" id=\"course" + i + "\">"
-            + "<ul><li>ID: " + courses[i].courseid + "</li>"
-            + "<li>FID: " + courses[i].fid + "</li>"
-            + "<li>Coursename: " + courses[i].coursename + "</li>"
-            + "<li>Info: " + courses[i].info + "</li></ul>"
-            + "<a class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\" role=\"button\">Edit Course</a></div>"
-        );
-    }
-    const resultNavString: string = resultNav.join("\n");
-    const resultContentString: string = resultContent.join("\n");
-    coursesNavHtml.innerHTML = resultNavString;
-    coursesContentHtml.innerHTML = resultContentString;
-}
 
 async function displayUsers(): Promise<void> {
     const users: User[] = await getUsersPromise();
@@ -78,6 +51,7 @@ window.onload = async () => {
         // }),
         displayWhoami(),
         displayUsers(),
-        displayCourses()
+        document.getElementById("navbar-edit-users")!.classList.add("active"),
+
     ]);
 };
