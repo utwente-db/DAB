@@ -11,11 +11,21 @@ const whoamiButtonHtml: HTMLDivElement = document.getElementById("whoamiButton")
 export interface Whoami {
     id: number;
     email: string;
-    role: number;
+    role: UserRole;
+}
+
+export interface Who {
+    id: number,
+    role: UserRole
 }
 
 export async function getWhoamiPromise(): Promise<Whoami> {
     const response: AxiosResponse = await axios.get("/rest/whoami/");
+    return response.data;
+}
+
+export async function getWhoPromise(): Promise<Who> {
+    const response: AxiosResponse = await axios.get("/rest/who/");
     return response.data;
 }
 

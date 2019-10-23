@@ -1,5 +1,5 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {displayWhoami, getWhoamiPromise, Whoami} from "./navbar";
+import {displayWhoami, getWhoamiPromise, getWhoPromise, Who, Whoami} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
@@ -25,7 +25,7 @@ const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDiv
 let ownDatabases: StudentDatabase[];
 let courses: Course[];
 let currentCourse = 0;
-let whoami: Whoami;
+let who: Who;
 
 function populateNoCredentialsPane(i: number) {
     noCredsCoursename.innerText = courses[i].coursename;
@@ -115,7 +115,7 @@ async function displayCourses(): Promise<void> {
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     for (let i = 0; i < courses.length; i++) {
-        const youHavePrivilege = (whoami.role === UserRole.admin || whoami.role === UserRole.teacher);
+        const youHavePrivilege = (who.role === UserRole.admin || who.role === UserRole.teacher);
         // TODO  check if user is TA for course
         if (courses[i].active || youHavePrivilege) {
             const haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
@@ -262,7 +262,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
 }
 
 window.onload = async () => {
-    whoami = await getWhoamiPromise();
+    who = await getWhoPromise();
 
     await Promise.all([
         noCredsForm.addEventListener("submit", (event) => {

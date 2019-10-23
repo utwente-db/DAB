@@ -1,22 +1,26 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <button class="btn btn-secondary mx-auto col-12 col-lg-4 font-weight-bolder" onclick="location.href='/'"><span class="font-weight-bold h5">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark d-inline-flex  ">
+    <span class="font-weight-bold text-white">
             Database Administration Bundle</span>
+
+    <span class="mr-auto text-white" id="whoamiWelcome"></span>
+    {#        <div class="my-2 my-lg-0" id="whoamiButton">#}
+    {##}
+    {#        </div>#}
+
+{#    <div class="form-inline form-row container d-flex flex-grow-1">#}
+{#        <button class="btn btn-secondary mx-3 flex-grow-1" onclick="location.href='/change_password'">Change password#}
+{#        </button>#}
+{#        <form action='/logout' method='POST' class="float-right">#}
+{#            <button class="btn btn-secondary my-2 my-sm-0" type='submit' value='logout'>Log out</button>#}
+{#        </form>#}
+{#    </div>#}
+
+    <div class="form-inline float-right">
+        <button class="btn btn-secondary" onclick="location.href='/change_password'">Change password
         </button>
-        <div class="col-12 col-lg-4"><span class="mr-auto text-white" id="whoamiWelcome"></span></div>
-        {#        <div class="my-2 my-lg-0" id="whoamiButton">#}
-        {##}
-        {#        </div>#}
-        <div class="col-12 col-lg-4 my-2 mx-2 my-lg-0 center-block">
-
-            <div  class="form-inline form-row container">
-                <button class="btn btn-secondary mx-3" onclick="location.href='/change_password'">Change password
-                </button>
-            <form action='/logout' method='POST'>
-                <button class="btn btn-secondary my-2 my-sm-0" type='submit' value='logout'>Log out</button>
-            </form>
-            </div>
-
-        </div>
+        <form action='/logout' method='POST'>
+            <button class="btn btn-secondary" type='submit' value='logout'>Log out</button>
+        </form>
     </div>
+
 </nav>
