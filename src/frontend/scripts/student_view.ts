@@ -1,5 +1,5 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {displayWhoami, getWhoPromise, navbarEditStudents, Who} from "./navbar";
+import {changeNavbarState, displayWhoami, getWhoPromise, navbarStudentView, Who} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
@@ -21,8 +21,6 @@ const credentialsButton: HTMLButtonElement = document.getElementById("credential
 
 const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
-
-
 
 
 let ownDatabases: StudentDatabase[];
@@ -96,16 +94,16 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
     if (!haveCredentials) {
-        fragment.firstChild!.addEventListener("click", () => {
+        fragment.firstElementChild!.addEventListener("click", () => {
             populateNoCredentialsPane(i);
         });
     } else {
-        fragment.firstChild!.addEventListener("click", () => {
+        fragment.firstElementChild!.addEventListener("click", () => {
             populateHaveCredentialsPane(i);
         });
     }
 
-    fragment.firstChild!.addEventListener("click", () => {
+    fragment.firstElementChild!.addEventListener("click", () => {
         currentCourse = courses[i].courseid;
         alertDiv.innerHTML = "" // Remove all alerts when switching course
     });
@@ -221,6 +219,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
     }
     let success: boolean;
     disableElementsOnPage();
+    changeNavbarState(false);
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         // await changeViewToHaveCredentials()
@@ -232,6 +231,8 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         success = false;
     } finally {
         enableElementsOnPage();
+        changeNavbarState(true);
+        (navbarStudentView.firstElementChild)!.classList.add("disabled");
     }
     return success;
 
@@ -253,6 +254,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
     }
     let success: boolean;
     disableElementsOnPage();
+    changeNavbarState(false);
     try {
         await axios.post(`/rest/reset/${dbID}/`);
         addAlert("The database has been succesfully reset", AlertType.primary);
@@ -262,6 +264,8 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         success = false;
     } finally {
         enableElementsOnPage();
+        changeNavbarState(true);
+        (navbarStudentView.firstElementChild)!.classList.add("disabled");
     }
     return success;
 }
@@ -272,8 +276,8 @@ window.onload = async () => {
             event.preventDefault();
             prepareToGetCredentials();
         }),
-        navbarEditStudents.classList.add("active"),
-        (navbarEditStudents.firstChild as Element)!.classList.add("active"),
+        navbarStudentView.classList.add("active"),
+        (navbarStudentView.firstElementChild)!.classList.add("disabled"),
         displayCourses(),
         displayWhoami()
     ])

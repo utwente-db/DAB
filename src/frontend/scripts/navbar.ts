@@ -8,7 +8,7 @@ const whoamiButtonHtml: HTMLDivElement = document.getElementById("whoamiButton")
 
 export const navbarStudentView = document.getElementById("navbar-student-view") as HTMLLIElement;
 export const navbarEditCourses = document.getElementById("navbar-edit-courses") as HTMLLIElement;
-export const navbarEditStudents = document.getElementById("navbar-edit-students") as HTMLLIElement;
+export const navbarEditUsers = document.getElementById("navbar-edit-users") as HTMLLIElement;
 export const navbarChangePasswordLink = document.getElementById("navbar-change-password") as HTMLAnchorElement;
 export const navbarLogoutLink = document.getElementById("navbar-logout") as HTMLAnchorElement;
 export const navbarDumpAllDatabasesLink = document.getElementById("navbar-dump-all-databases") as HTMLAnchorElement;
@@ -37,16 +37,16 @@ export async function getWhoPromise(): Promise<Who> {
 export function changeNavbarState(enable: boolean) {
 
 
-    [navbarStudentView, navbarEditCourses, navbarEditStudents].forEach((element: HTMLLIElement) => {
+    [navbarStudentView, navbarEditCourses, navbarEditUsers].forEach((element: HTMLLIElement) => {
         if (enable) {
-            (element.firstChild as HTMLAnchorElement)!.classList.remove("disabled")
+            (element.firstElementChild as HTMLAnchorElement)!.classList.remove("disabled")
         } else {
-            (element.firstChild as HTMLAnchorElement)!.classList.add("disabled")
+            (element.firstElementChild as HTMLAnchorElement)!.classList.add("disabled")
 
         }
 
 
-    })
+    });
 
         [navbarChangePasswordLink, navbarLogoutLink, navbarDumpAllDatabasesLink].forEach((element: Element) => {
         if (enable) {
@@ -55,7 +55,7 @@ export function changeNavbarState(enable: boolean) {
             element.classList.add("disabled")
 
         }
-    })
+    });
 
 }
 
