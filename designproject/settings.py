@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECRET KEY: doesn't actually do anything...
 SECRET_KEY = 'z)7pbw!fc(th%m)!(ytsprc3bick1ga-mavn4c8xvujwe(3x21'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -37,7 +37,7 @@ EMAIL_SERVER = 'localhost'
 EMAIL_SENDER = 'no-reply@thebias.nl'
 
 # LOGFILE: needs write permissions
-LOGFILE = '/var/log/dab.log'
+LOGFILE = '/tmp/backend.log'
 
 # Application definition
 
