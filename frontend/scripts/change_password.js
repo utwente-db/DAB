@@ -23201,6 +23201,7 @@ window.onload = function () {
         event.preventDefault();
         tryResetPassword();
     });
+    document.getElementById("navbar-change-password").classList.add("disabled");
 };
 
 

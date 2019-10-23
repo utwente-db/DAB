@@ -39,14 +39,14 @@
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg-right" aria-labelledby="navbarDropdown">
                     {% if role == 0 or role == 1 %}
-                    <a class="dropdown-item" href="/admin-call-example'">Admin call example</a>
+                    <a class="dropdown-item" id="navbar-dump-all-databases" href="/admin-call-example'">Dump all databases</a>
 
                     <div class="dropdown-divider" id="navbar-options-dropdown-divider"></div>
                     {% endif %}
 
-                    <a class="dropdown-item" href="/change_password">Change password</a>
+                    <a class="dropdown-item" href="/change_password" id="navbar-change-password">Change password</a>
                     <form id="logout-form" action="/logout" method="POST">
-                        <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">Log
+                        <a class="dropdown-item" href="#" id="navbar-logout" onclick="document.getElementById('logout-form').submit();">Log
                             out</a>
                     </form>
 

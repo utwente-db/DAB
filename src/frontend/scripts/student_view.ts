@@ -1,5 +1,5 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {displayWhoami, getWhoPromise, Who} from "./navbar";
+import {displayWhoami, getWhoPromise, navbarEditStudents, Who} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
@@ -22,6 +22,9 @@ const credentialsButton: HTMLButtonElement = document.getElementById("credential
 const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
 
+
+
+
 let ownDatabases: StudentDatabase[];
 let courses: Course[];
 let currentCourse = 0;
@@ -29,7 +32,7 @@ let who: Who;
 
 function populateNoCredentialsPane(i: number) {
     noCredsCoursename.innerText = courses[i].coursename;
-    noCredsInfo.innerText = courses[i].info;
+    noCredsInfo.innerHTML = courses[i].info; // We set innerHTML for this field because we know it is sanitized using html special chars
     groupInput.value = "";
 }
 
@@ -38,7 +41,7 @@ async function populateHaveCredentialsPane(i: number) {
     let credentials = "";
     const dbIDs: number[] = [];
     haveCredsCoursename.innerText = courses[i].coursename;
-    haveCredsInfo.innerText = courses[i].info;
+    haveCredsInfo.innerHTML = courses[i].info; // We set innerHTML for this field because we know it is sanitized using html special chars
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
             const html = `<div class="mt-5 form-group row">
@@ -269,7 +272,8 @@ window.onload = async () => {
             event.preventDefault();
             prepareToGetCredentials();
         }),
-        document.getElementById("navbar-student-view")!.classList.add("active"),
+        navbarEditStudents.classList.add("active"),
+        (navbarEditStudents.firstChild as Element)!.classList.add("active"),
         displayCourses(),
         displayWhoami()
     ])

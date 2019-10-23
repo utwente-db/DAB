@@ -57,4 +57,6 @@ window.onload = () => {
         event.preventDefault();
         tryResetPassword();
     });
+    (document.getElementById("navbar-change-password") as HTMLAnchorElement)!.classList.add("disabled")
+
 };
