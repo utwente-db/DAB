@@ -30,17 +30,18 @@ export async function getWhoPromise(): Promise<Who> {
 }
 
 export async function displayWhoami(): Promise<void> {
-    const whoami: Whoami = await getWhoamiPromise();
-    let role: string;
-    if (whoami.role === UserRole.admin) {
-        role = "admin";
-    } else if (whoami.role === UserRole.teacher) {
-        role = "teacher";
-    } else if (whoami.role === UserRole.student) {
-        role = "student";
-    } else {
-        role = "unknown";
-    }
-    whoamiWelcomeHtml.innerHTML += whoami.email + " (" + role +")";
+    return;
+    // const whoami: Whoami = await getWhoamiPromise();
+    // let role: string;
+    // if (whoami.role === UserRole.admin) {
+    //     role = "admin";
+    // } else if (whoami.role === UserRole.teacher) {
+    //     role = "teacher";
+    // } else if (whoami.role === UserRole.student) {
+    //     role = "student";
+    // } else {
+    //     role = "unknown";
+    // }
+    // whoamiWelcomeHtml.innerHTML += whoami.email + " (" + role +")";
     // whoamiButtonHtml.innerHTML += "<button class=\"btn btn-secondary\" href=\"/settings\">Settings</button>";
 }

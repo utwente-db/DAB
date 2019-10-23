@@ -1,26 +1,52 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-inline-flex  ">
-    <span class="font-weight-bold text-white">
+    <span class="font-weight-bold text-white mr-3">
             Database Administration Bundle</span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <span class="mr-auto text-white" id="whoamiWelcome"></span>
     {#        <div class="my-2 my-lg-0" id="whoamiButton">#}
     {##}
     {#        </div>#}
 
-{#    <div class="form-inline form-row container d-flex flex-grow-1">#}
-{#        <button class="btn btn-secondary mx-3 flex-grow-1" onclick="location.href='/change_password'">Change password#}
-{#        </button>#}
-{#        <form action='/logout' method='POST' class="float-right">#}
-{#            <button class="btn btn-secondary my-2 my-sm-0" type='submit' value='logout'>Log out</button>#}
-{#        </form>#}
-{#    </div>#}
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-    <div class="form-inline float-right">
-        <button class="btn btn-secondary" onclick="location.href='/change_password'">Change password
-        </button>
-        <form action='/logout' method='POST'>
-            <button class="btn btn-secondary" type='submit' value='logout'>Log out</button>
-        </form>
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/edit_course">Edit courses</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/edit_user">Edit users</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/student_view">Student view</a>
+            </li>
+
+            {#            <button class="btn btn-secondary mr-3" onclick="location.href='/edit_course'">Edit courses</button>#}
+            {#            <button class="btn btn-secondary mr-3" onclick="location.href='/edit_user'">Edit users</button>#}
+            {#            <button class="btn btn-secondary mr-3" onclick="location.href='/change_password'">Student view</button>#}
+
+        </ul>
+
+        <li class="nav-item dropdown float-right">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                Dropdown
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+        </li>
+{#        <div class="form-inline float-right">#}
+{#            <button class="btn btn-secondary mr-3" onclick="location.href='/change_password'">Change password#}
+{#            </button>#}
+{#            <form action='/logout' method='POST'>#}
+{#                <button class="btn btn-secondary" type='submit' value='logout'>Log out</button>#}
+{#            </form>#}
+{#        </div>#}
     </div>
-
 </nav>

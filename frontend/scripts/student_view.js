@@ -26195,7 +26195,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
-var user_1 = __webpack_require__(/*! ./user */ "./src/frontend/scripts/user.ts");
 var whoamiWelcomeHtml = document.getElementById("whoamiWelcome");
 var whoamiButtonHtml = document.getElementById("whoamiButton");
 function getWhoamiPromise() {
@@ -26228,27 +26227,8 @@ function getWhoPromise() {
 exports.getWhoPromise = getWhoPromise;
 function displayWhoami() {
     return __awaiter(this, void 0, void 0, function () {
-        var whoami, role;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, getWhoamiPromise()];
-                case 1:
-                    whoami = _a.sent();
-                    if (whoami.role === user_1.UserRole.admin) {
-                        role = "admin";
-                    }
-                    else if (whoami.role === user_1.UserRole.teacher) {
-                        role = "teacher";
-                    }
-                    else if (whoami.role === user_1.UserRole.student) {
-                        role = "student";
-                    }
-                    else {
-                        role = "unknown";
-                    }
-                    whoamiWelcomeHtml.innerHTML += whoami.email + " (" + role + ")";
-                    return [2 /*return*/];
-            }
+            return [2 /*return*/];
         });
     });
 }
