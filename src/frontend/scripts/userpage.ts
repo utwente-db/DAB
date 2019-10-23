@@ -135,6 +135,9 @@ async function displayCoursesAndDatabases(): Promise<void> {
             </button>` +
             `<button id="reset-button-${databases[i].dbid}" type="button" class="btn btn-danger">
                 Reset
+            </button>` +
+            `<button id="delete-button-${databases[i].dbid}" type="button" class="btn btn-danger">
+                Delete
             </button>`
 
         ;
@@ -168,8 +171,38 @@ async function displayCoursesAndDatabases(): Promise<void> {
         resetButton.addEventListener("click", () => {
             resetDatabase(id);
         });
+        const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
+        deleteButton.addEventListener("click", () => {
+            deleteDatabase(id);
+        });
     });
 
+}
+
+async function deleteDatabase(dbID: number): Promise<boolean> {
+    const result = await Swal.fire({
+        title: 'Are you sure you want to delete this database?',
+        text: 'You will not be able to recover your data!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success;
+    try {
+        await axios.delete(`/rest/studentdatabases/${dbID}/`);
+        addAlert("Deleted database", AlertType.primary);
+        success = true;
+        window.location.reload(true);
+    } catch (error) {
+        addErrorAlert(error);
+        success = false;
+    }
+    return success;
 }
 
 // Internal server error 500?

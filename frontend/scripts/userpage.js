@@ -23048,7 +23048,8 @@ function displayCoursesAndDatabases() {
                             ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">FID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].fid + "\" readonly=\"\">\n                </div>\n            </div>") +
                             ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Course ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].course + "\" readonly=\"\">\n                </div>\n            </div>") +
                             ("<button type=\"button\" class=\"btn btn-danger\" onclick=\"window.location.replace('/rest/dump/" + databases[i].dbid + "/')\">\n                Download Dump\n            </button>") +
-                            ("<button id=\"reset-button-" + databases[i].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Reset\n            </button>");
+                            ("<button id=\"reset-button-" + databases[i].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Reset\n            </button>") +
+                            ("<button id=\"delete-button-" + databases[i].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Delete\n            </button>");
                         // This will mess up if someone has multiple db's for a single course
                         coursesAndDatabases.set(databases[i].course, html);
                     }
@@ -23082,8 +23083,50 @@ function displayCoursesAndDatabases() {
                         resetButton.addEventListener("click", function () {
                             resetDatabase(id);
                         });
+                        var deleteButton = document.getElementById("delete-button-" + id);
+                        deleteButton.addEventListener("click", function () {
+                            deleteDatabase(id);
+                        });
                     });
                     return [2 /*return*/];
+            }
+        });
+    });
+}
+function deleteDatabase(dbID) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, success, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
+                        title: 'Are you sure you want to delete this database?',
+                        text: 'You will not be able to recover your data!',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel'
+                    })];
+                case 1:
+                    result = _a.sent();
+                    if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
+                        return [2 /*return*/, false];
+                    }
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, axios_1.default.delete("/rest/studentdatabases/" + dbID + "/")];
+                case 3:
+                    _a.sent();
+                    alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
+                    success = true;
+                    window.location.reload(true);
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_1 = _a.sent();
+                    alert_1.addErrorAlert(error_1);
+                    success = false;
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/, success];
             }
         });
     });
@@ -23091,7 +23134,7 @@ function displayCoursesAndDatabases() {
 // Internal server error 500?
 function resetDatabase(dbID) {
     return __awaiter(this, void 0, void 0, function () {
-        var result, success, error_1;
+        var result, success, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
@@ -23117,8 +23160,8 @@ function resetDatabase(dbID) {
                     success = true;
                     return [3 /*break*/, 5];
                 case 4:
-                    error_1 = _a.sent();
-                    alert_1.addErrorAlert(error_1);
+                    error_2 = _a.sent();
+                    alert_1.addErrorAlert(error_2);
                     success = false;
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/, success];
@@ -23157,7 +23200,7 @@ function displayUserDetails() {
 }
 function deleteUser() {
     return __awaiter(this, void 0, void 0, function () {
-        var user, result, success, error_2;
+        var user, result, success, error_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getUserPromise()];
@@ -23186,8 +23229,8 @@ function deleteUser() {
                     success = true;
                     return [3 /*break*/, 6];
                 case 5:
-                    error_2 = _a.sent();
-                    alert_1.addErrorAlert(error_2);
+                    error_3 = _a.sent();
+                    alert_1.addErrorAlert(error_3);
                     success = false;
                     return [3 /*break*/, 6];
                 case 6: return [2 /*return*/, success];
@@ -23197,7 +23240,7 @@ function deleteUser() {
 }
 function changeRole() {
     return __awaiter(this, void 0, void 0, function () {
-        var user, selectedRole, role, result, success, error_3;
+        var user, selectedRole, role, result, success, error_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getUserPromise()];
@@ -23231,8 +23274,8 @@ function changeRole() {
                     success = true;
                     return [3 /*break*/, 6];
                 case 5:
-                    error_3 = _a.sent();
-                    alert_1.addErrorAlert(error_3);
+                    error_4 = _a.sent();
+                    alert_1.addErrorAlert(error_4);
                     success = false;
                     return [3 /*break*/, 6];
                 case 6: return [2 /*return*/, success];
