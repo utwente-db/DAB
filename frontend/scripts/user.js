@@ -22995,6 +22995,7 @@ var x = urlParams.get("id");
 if (x != null) {
     userid = Number(x);
 }
+var usersHtml = document.getElementById("users");
 var pageTitleHtml = document.getElementById("page-title");
 var userInfoHtml = document.getElementById("user-info");
 var coursesNavHtml = document.getElementById("courses-nav");
@@ -23010,6 +23011,42 @@ var UserRole;
     UserRole[UserRole["teacher"] = 1] = "teacher";
     UserRole[UserRole["student"] = 2] = "student";
 })(UserRole = exports.UserRole || (exports.UserRole = {}));
+function displayUsers() {
+    return __awaiter(this, void 0, void 0, function () {
+        var users, result, i, role, verified, resultString;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, getUsersPromise()];
+                case 1:
+                    users = _a.sent();
+                    result = [];
+                    for (i = 0; i < users.length; i++) {
+                        role = void 0;
+                        if (users[i].role === 0) {
+                            role = "Admin";
+                        }
+                        else if (users[i].role === 1) {
+                            role = "Teacher";
+                        }
+                        else if (users[i].role === 2) {
+                            role = "Student";
+                        }
+                        else {
+                            role = "Unknown";
+                        }
+                        verified = users[i].verified;
+                        result.push("<tr><th scope=\"row\">" + users[i].id + "</th>"
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + role + "</td>"
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + users[i].email + "</td>"
+                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + verified + "</td></tr>");
+                    }
+                    resultString = result.join("\n");
+                    usersHtml.innerHTML = resultString;
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 function getUsersPromise() {
     return __awaiter(this, void 0, void 0, function () {
         var response;
@@ -23248,7 +23285,9 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
         switch (_d.label) {
             case 0:
                 _b = (_a = Promise).all;
-                _c = [changeRoleButton.addEventListener("click", changeRole),
+                _c = [displayUsers(),
+                    document.getElementById("navbar-edit-users").classList.add("active"),
+                    changeRoleButton.addEventListener("click", changeRole),
                     deleteButton.addEventListener("click", deleteUser)];
                 return [4 /*yield*/, displayUserDetails()];
             case 1:

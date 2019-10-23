@@ -1,6 +1,4 @@
 import axios, {AxiosResponse} from 'axios';
-
-import * as $ from "jquery";
 import "popper.js";
 import "bootstrap";
 import {addAlert, addErrorAlert, AlertType} from "./alert";
@@ -20,6 +18,7 @@ const x: string | null = urlParams.get("id");
 if (x != null) {
     userid = Number(x);
 }
+const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
 
 const pageTitleHtml: HTMLTitleElement = document.getElementById("page-title") as HTMLTitleElement;
 const userInfoHtml: HTMLDivElement = document.getElementById("user-info") as HTMLDivElement;
@@ -48,6 +47,36 @@ export enum UserRole {
     admin = 0,
     teacher = 1,
     student = 2
+}
+
+async function displayUsers(): Promise<void> {
+    const users: User[] = await getUsersPromise();
+    const result: string[] = [];
+
+    for (let i = 0; i < users.length; i++) {
+        let role: string;
+        if (users[i].role === 0) {
+            role = "Admin";
+        } else if (users[i].role === 1) {
+            role = "Teacher";
+        } else if (users[i].role === 2) {
+            role = "Student";
+        } else {
+            role = "Unknown";
+        }
+
+        const verified: boolean = users[i].verified;
+        result.push(
+            "<tr><th scope=\"row\">" + users[i].id + "</th>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + role + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + users[i].email + "</td>"
+            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + verified + "</td></tr>"
+        );
+
+    }
+
+    const resultString: string = result.join("\n");
+    usersHtml.innerHTML = resultString;
 }
 
 export async function getUsersPromise(): Promise<User[]> {
@@ -194,7 +223,7 @@ async function changeRole(): Promise<boolean> {
         await axios.post(`/rest/set_role`, {
             user: user.id,
             role: Number(role)
-         });
+        });
         window.location.reload(true);
         addAlert("Role changed!", AlertType.primary);
         success = true;
@@ -207,6 +236,9 @@ async function changeRole(): Promise<boolean> {
 
 window.onload = async () => {
     await Promise.all([
+        displayUsers(),
+        document.getElementById("navbar-edit-users")!.classList.add("active"),
+
         changeRoleButton.addEventListener("click", changeRole),
         deleteButton.addEventListener("click", deleteUser),
         await displayUserDetails(),
