@@ -22,7 +22,3 @@ else
     echo Please run this script again once you have set it up
     deactivate
 fi
-
-
-
-

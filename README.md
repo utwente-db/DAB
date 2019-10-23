@@ -184,8 +184,7 @@ Finally, the project is rather useless without an administrator.
 To bootstrap one from a project with an empty database, we recommend the following procedure:
 
 1. Register a student user via the regular register page
-2. Access the master database, using `psql` and the credentials in `secret.py`.
-3. Change the `role` of the created `dbmuser` to `0`
+2. Run the file `promote.sh` in the document root, which will promote the user to admin given the email
 
 The user should now be an administrator, who can create other administrators and teachers.
 
