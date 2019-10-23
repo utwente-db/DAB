@@ -4,7 +4,7 @@ import "bootstrap";
 import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2';
 
-import {navbarEditUsers} from "./navbar";
+import {initNavbar, navbarEditUsers} from "./navbar";
 import {Course, StudentDatabase} from "./courses";
 
 //todo: change to selected user ofcourse
@@ -259,6 +259,7 @@ async function changeRole(userid: number): Promise<boolean> {
 
 window.onload = async () => {
     await Promise.all([
+        initNavbar(),
         displayUsers(),
         navbarEditUsers.classList.add("active"),
         (navbarEditUsers.firstElementChild)!.classList.add("disabled"),

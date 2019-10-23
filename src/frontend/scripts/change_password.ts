@@ -1,7 +1,7 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosError} from "axios";
 import {passwordsEqual, validPassword} from "./register";
-import {changeNavbarState} from "./navbar";
+import {changeNavbarState, initNavbar, navbarEditCourses} from "./navbar";
 
 const newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement;
 
@@ -17,12 +17,25 @@ function checkFields(): boolean {
     return a && b && c
 }
 
-async function tryResetPassword(): Promise<void> {
-    if (checkFields()) {
+function changeChangePasswordState(enable: boolean): void {
+    if (enable) {
+            newPasswordField.disabled = false;
+            oldPasswordField.disabled = false;
+            confirmPasswordField.disabled = false;
+            newPasswordButton.disabled = false;
+                 (document.getElementById("navbar-change-password") as HTMLAnchorElement)!.classList.add("disabled")
+
+    } else {
         newPasswordField.disabled = true;
         oldPasswordField.disabled = true;
         confirmPasswordField.disabled = true;
         newPasswordButton.disabled = true;
+    }
+}
+
+async function tryResetPassword(): Promise<void> {
+    if (checkFields()) {
+        changeChangePasswordState(false);
         changeNavbarState(false);
         const tempAlert: ChildNode | null = addTempAlert();
         try {
@@ -42,18 +55,15 @@ async function tryResetPassword(): Promise<void> {
                 addErrorAlert(error, tempAlert)
             }
         } finally {
-            newPasswordField.disabled = false;
-            oldPasswordField.disabled = false;
-            confirmPasswordField.disabled = false;
-            newPasswordButton.disabled = false;
-            changeNavbarState(true);
-            (document.getElementById("navbar-change-password") as HTMLAnchorElement)!.classList.add("disabled")
 
+            changeNavbarState(true);
+            changeChangePasswordState(false);
         }
     }
 }
 
 window.onload = () => {
+    initNavbar();
     content.addEventListener("submit", (event) => {
         event.preventDefault();
         tryResetPassword();

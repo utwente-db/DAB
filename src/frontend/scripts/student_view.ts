@@ -1,5 +1,5 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {changeNavbarState, displayWhoami, getWhoPromise, navbarStudentView, Who} from "./navbar";
+import {changeNavbarState, displayWhoami, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
@@ -171,7 +171,7 @@ async function prepareToGetCredentials() {
 }
 
 
-function disableElementsOnPage() {
+function disableElementsOnPage(): void {
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
@@ -187,7 +187,7 @@ function disableElementsOnPage() {
         });
 }
 
-function enableElementsOnPage() {
+function enableElementsOnPage(): void {
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.remove("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
@@ -201,6 +201,8 @@ function enableElementsOnPage() {
         .forEach((dumpButton: HTMLButtonElement) => {
             dumpButton.disabled = false
         });
+    (navbarStudentView.firstElementChild)!.classList.add("disabled");
+
 }
 
 async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
@@ -230,12 +232,19 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         addErrorAlert(error);
         success = false;
     } finally {
-        enableElementsOnPage();
         changeNavbarState(true);
-        (navbarStudentView.firstElementChild)!.classList.add("disabled");
+        enableElementsOnPage();
     }
     return success;
 
+}
+
+function changeStudentViewState(enable: boolean) {
+    if (enable) {
+        enableElementsOnPage();
+    } else {
+        disableElementsOnPage();
+    }
 }
 
 async function resetDatabase(dbID: number): Promise<boolean> {
@@ -263,15 +272,15 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         addErrorAlert(error);
         success = false;
     } finally {
-        enableElementsOnPage();
         changeNavbarState(true);
-        (navbarStudentView.firstElementChild)!.classList.add("disabled");
+        enableElementsOnPage();
     }
     return success;
 }
 
 window.onload = async () => {
     await Promise.all([
+        initNavbar(),
         noCredsForm.addEventListener("submit", (event) => {
             event.preventDefault();
             prepareToGetCredentials();

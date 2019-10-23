@@ -2,6 +2,8 @@ import axios, {AxiosResponse} from 'axios';
 import "popper.js"
 import "bootstrap"
 import {UserRole} from "./user";
+import Swal from "sweetalert2";
+import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 
 const whoamiWelcomeHtml: HTMLDivElement = document.getElementById("whoamiWelcome") as HTMLDivElement;
 const whoamiButtonHtml: HTMLDivElement = document.getElementById("whoamiButton") as HTMLDivElement;
@@ -34,7 +36,7 @@ export async function getWhoPromise(): Promise<Who> {
     return response.data;
 }
 
-export function changeNavbarState(enable: boolean) {
+export function changeNavbarState(enable: boolean): void {
 
 
     [navbarStudentView, navbarEditCourses, navbarEditUsers].forEach((element: HTMLLIElement) => {
@@ -48,7 +50,7 @@ export function changeNavbarState(enable: boolean) {
 
     });
 
-        [navbarChangePasswordLink, navbarLogoutLink, navbarDumpAllDatabasesLink].forEach((element: Element) => {
+    [navbarChangePasswordLink, navbarLogoutLink, navbarDumpAllDatabasesLink].forEach((element: Element) => {
         if (enable) {
             element.classList.remove("disabled")
         } else {
@@ -56,6 +58,55 @@ export function changeNavbarState(enable: boolean) {
 
         }
     });
+
+}
+
+async function dumpAlldatabases(): Promise<boolean> {
+    const result = await Swal.fire({
+        title: 'title',
+        text: 'do some migration',
+        type: 'warning',
+        showCancelButton: true,
+        focusCancel: true,
+        confirmButtonText: 'migrate',
+        cancelButtonText: 'Cancel'
+    });
+
+    // TODO pass your "changePageState" to this and make it disable the whole page
+    // TODO maybe make changenavbarstate always call the other changepagestate after it
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success: boolean;
+
+    changeNavbarState(false);
+    const tempAlert: ChildNode | null = addTempAlert();
+    try {
+        const response = await axios.post(`/rest/generate_migration/`) as AxiosResponse<string>;
+        const data=response.data;
+        console.log(data);
+        addAlert(data, AlertType.success);
+        success=true;
+    } catch (error) {
+        addErrorAlert(error, tempAlert);
+        success=false;
+    } finally {
+        changeNavbarState(true);
+    }
+
+    return success;
+
+}
+
+export function initNavbar(): void {
+    if (navbarDumpAllDatabasesLink) {
+        navbarDumpAllDatabasesLink.addEventListener("click", (event) => {
+            event.preventDefault();
+            dumpAlldatabases();
+        })
+    }
+
 
 }
 

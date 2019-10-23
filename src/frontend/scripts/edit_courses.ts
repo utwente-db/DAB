@@ -2,7 +2,7 @@ import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
 import {Course, getCoursesPromise, InputCourse} from "./courses";
 import {setInvalid, setValid} from "./register";
-import {changeNavbarState, navbarEditCourses} from "./navbar";
+import {changeNavbarState, initNavbar, navbarEditCourses} from "./navbar";
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -78,14 +78,28 @@ function checkFields(): boolean {
     return a && b
 }
 
-async function tryAddSchema(): Promise<void> {
-    if (checkFields()) {
+function changeEditCoursesState(enable: boolean): void {
+    if (enable) {
+        courseInfoField.disabled = false;
+        coursenameField.disabled = false;
+        courseFIDfield.disabled = false;
+        schemaField.disabled = false;
+        activeField.disabled = false;
+        addCourseButton.disabled = false;
+        (navbarEditCourses.firstElementChild)!.classList.add("disabled");
+    } else {
         courseInfoField.disabled = true;
         coursenameField.disabled = true;
         courseFIDfield.disabled = true;
         schemaField.disabled = true;
         activeField.disabled = true;
         addCourseButton.disabled = true;
+    }
+}
+
+async function tryAddSchema(): Promise<void> {
+    if (checkFields()) {
+        changeEditCoursesState(false);
         changeNavbarState(false);
         const tempAlert: ChildNode | null = addTempAlert();
 
@@ -114,14 +128,8 @@ async function tryAddSchema(): Promise<void> {
         } catch (error) {
             addErrorAlert(error, tempAlert)
         } finally {
-            courseInfoField.disabled = false;
-            coursenameField.disabled = false;
-            courseFIDfield.disabled = false;
-            schemaField.disabled = false;
-            activeField.disabled = false;
-            addCourseButton.disabled = false;
             changeNavbarState(true);
-            (navbarEditCourses.firstElementChild)!.classList.add("disabled");
+            changeEditCoursesState(true);
 
         }
     }
@@ -129,7 +137,7 @@ async function tryAddSchema(): Promise<void> {
 
 window.onload = async () => {
     await Promise.all([
-
+        initNavbar(),
         content.addEventListener("submit", (event) => {
             event.preventDefault();
             tryAddSchema();

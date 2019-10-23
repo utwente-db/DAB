@@ -22892,6 +22892,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
 __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
+var sweetalert2_1 = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
 var whoamiWelcomeHtml = document.getElementById("whoamiWelcome");
 var whoamiButtonHtml = document.getElementById("whoamiButton");
 exports.navbarStudentView = document.getElementById("navbar-student-view");
@@ -22947,6 +22949,62 @@ function changeNavbarState(enable) {
     });
 }
 exports.changeNavbarState = changeNavbarState;
+function dumpAlldatabases() {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, success, tempAlert, response, data, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
+                        title: 'title',
+                        text: 'do some migration',
+                        type: 'warning',
+                        showCancelButton: true,
+                        focusCancel: true,
+                        confirmButtonText: 'migrate',
+                        cancelButtonText: 'Cancel'
+                    })];
+                case 1:
+                    result = _a.sent();
+                    // TODO pass your "changePageState" to this and make it disable the whole page
+                    // TODO maybe make changenavbarstate always call the other changepagestate after it
+                    if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
+                        return [2 /*return*/, false];
+                    }
+                    changeNavbarState(false);
+                    tempAlert = alert_1.addTempAlert();
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, 5, 6]);
+                    return [4 /*yield*/, axios_1.default.post("/rest/generate_migration/")];
+                case 3:
+                    response = _a.sent();
+                    data = response.data;
+                    console.log(data);
+                    alert_1.addAlert(data, alert_1.AlertType.success);
+                    success = true;
+                    return [3 /*break*/, 6];
+                case 4:
+                    error_1 = _a.sent();
+                    alert_1.addErrorAlert(error_1, tempAlert);
+                    success = false;
+                    return [3 /*break*/, 6];
+                case 5:
+                    changeNavbarState(true);
+                    return [7 /*endfinally*/];
+                case 6: return [2 /*return*/, success];
+            }
+        });
+    });
+}
+function initNavbar() {
+    if (exports.navbarDumpAllDatabasesLink) {
+        exports.navbarDumpAllDatabasesLink.addEventListener("click", function (event) {
+            event.preventDefault();
+            dumpAlldatabases();
+        });
+    }
+}
+exports.initNavbar = initNavbar;
 function displayWhoami() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -23326,6 +23384,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, Promise.all([
+                    navbar_1.initNavbar(),
                     displayUsers(),
                     navbar_1.navbarEditUsers.classList.add("active"),
                     (navbar_1.navbarEditUsers.firstElementChild).classList.add("disabled"),
