@@ -887,8 +887,8 @@ not_found.status_code = 404
     #logging.debug(self.request)
 
 @require_role_redirect(admin)
-def userpage(request):
-    return render(request, 'userpage.html')
+def edit_users(request):
+    return render(request, 'edit_users.html')
 
 @require_GET
 @require_role_redirect(admin)
@@ -1205,4 +1205,4 @@ def forgot_password_page(request):
 @require_GET
 @require_role_redirect(admin)
 def edit_courses(request):
-    return render(request, 'add_course.html')
+    return render(request, 'edit_courses.html')
