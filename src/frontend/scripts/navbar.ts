@@ -91,7 +91,7 @@ async function dumpAlldatabases(disableCallback: Function): Promise<boolean> {
         const response = await axios.post(`/rest/generate_migration/`) as AxiosResponse<string>;
         const data=response.data;
         console.log(data);
-        addAlert(data, AlertType.success);
+        addAlert(data, AlertType.success, tempAlert);
         success=true;
     } catch (error) {
         addErrorAlert(error, tempAlert);

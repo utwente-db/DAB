@@ -22982,7 +22982,7 @@ function dumpAlldatabases(disableCallback) {
                     response = _a.sent();
                     data = response.data;
                     console.log(data);
-                    alert_1.addAlert(data, alert_1.AlertType.success);
+                    alert_1.addAlert(data, alert_1.AlertType.success, tempAlert);
                     success = true;
                     return [3 /*break*/, 6];
                 case 4:

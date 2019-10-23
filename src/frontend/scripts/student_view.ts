@@ -28,14 +28,14 @@ let courses: Course[];
 let currentCourse = 0;
 let who: Who;
 
-function populateNoCredentialsPane(i: number) {
+function populateNoCredentialsPane(i: number): void {
     noCredsCoursename.innerText = courses[i].coursename;
     noCredsInfo.innerHTML = courses[i].info; // We set innerHTML for this field because we know it is sanitized using html special chars
     groupInput.value = "";
 }
 
 
-async function populateHaveCredentialsPane(i: number) {
+async function populateHaveCredentialsPane(i: number): Promise<void> {
     let credentials = "";
     const dbIDs: number[] = [];
     haveCredsCoursename.innerText = courses[i].coursename;
@@ -131,7 +131,7 @@ async function displayCourses(): Promise<void> {
     }
 }
 
-async function changeView(hasCredentials: boolean) {
+async function changeView(hasCredentials: boolean): Promise<void> {
     const activeLink: HTMLAnchorElement = document.getElementsByClassName("nav-link active")[0] as HTMLAnchorElement;
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
     const newPane = hasCredentials ? haveCredsPane : noCredsPane;
@@ -150,10 +150,8 @@ async function changeView(hasCredentials: boolean) {
     }
 }
 
-async function prepareToGetCredentials() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
-    credentialsButton.disabled = true;
-    groupInput.disabled = true;
+async function prepareToGetCredentials(): Promise<void> {
+    disableElementsOnPage();
     try {
         const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
@@ -164,14 +162,14 @@ async function prepareToGetCredentials() {
     } catch (error) {
         addErrorAlert(error);
     } finally {
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).classList.remove("disabled"));
-        credentialsButton.disabled = false;
-        groupInput.disabled = false;
+        enableElementsOnPage();
     }
 }
 
 
 function disableElementsOnPage(): void {
+    credentialsButton.disabled = true;
+    groupInput.disabled = true;
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
@@ -188,6 +186,8 @@ function disableElementsOnPage(): void {
 }
 
 function enableElementsOnPage(): void {
+    credentialsButton.disabled = false;
+    groupInput.disabled = false;
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.remove("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {

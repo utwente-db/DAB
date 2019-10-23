@@ -7,7 +7,7 @@ const registerEmailField: HTMLInputElement = document.getElementById("register-e
 const content = document.getElementById('content') as HTMLFormElement;
 
 
-async function tryRequestPassword() {
+async function tryRequestPassword(): Promise<void> {
     if (validEmail(registerEmailField)) {
         passwordButton.disabled = true;
         registerEmailField.disabled = true;

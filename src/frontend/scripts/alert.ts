@@ -34,7 +34,7 @@ function removeTempAlerts(): void {
     }
 }
 
-async function removeAlertOnTimeout(tempAlert: ChildNode | null, ms: number, timeOutError: boolean) {
+async function removeAlertOnTimeout(tempAlert: ChildNode | null, ms: number, timeOutError: boolean): Promise<void> {
     await delay(ms);
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
@@ -60,7 +60,7 @@ interface ErrorBody {
     [key: string]: string[]
 }
 
-export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null) {
+export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null): void {
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
     }

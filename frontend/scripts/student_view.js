@@ -26285,7 +26285,7 @@ function dumpAlldatabases(disableCallback) {
                     response = _a.sent();
                     data = response.data;
                     console.log(data);
-                    alert_1.addAlert(data, alert_1.AlertType.success);
+                    alert_1.addAlert(data, alert_1.AlertType.success, tempAlert);
                     success = true;
                     return [3 /*break*/, 6];
                 case 4:
@@ -26520,9 +26520,7 @@ function prepareToGetCredentials() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
-                    credentialsButton.disabled = true;
-                    groupInput.disabled = true;
+                    disableElementsOnPage();
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 5, 6, 7]);
@@ -26540,9 +26538,7 @@ function prepareToGetCredentials() {
                     alert_1.addErrorAlert(error_1);
                     return [3 /*break*/, 7];
                 case 6:
-                    coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
-                    credentialsButton.disabled = false;
-                    groupInput.disabled = false;
+                    enableElementsOnPage();
                     return [7 /*endfinally*/];
                 case 7: return [2 /*return*/];
             }
@@ -26550,6 +26546,8 @@ function prepareToGetCredentials() {
     });
 }
 function disableElementsOnPage() {
+    credentialsButton.disabled = true;
+    groupInput.disabled = true;
     coursesNavHtml.childNodes.forEach(function (node) { return node.classList.add("disabled"); });
     Array.from(document.getElementsByClassName("delete-button"))
         .forEach(function (deleteButton) {
@@ -26565,6 +26563,8 @@ function disableElementsOnPage() {
     });
 }
 function enableElementsOnPage() {
+    credentialsButton.disabled = false;
+    groupInput.disabled = false;
     coursesNavHtml.childNodes.forEach(function (node) { return node.classList.remove("disabled"); });
     Array.from(document.getElementsByClassName("delete-button"))
         .forEach(function (deleteButton) {
