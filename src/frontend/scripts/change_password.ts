@@ -1,6 +1,7 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosError} from "axios";
 import {passwordsEqual, validPassword} from "./register";
+import {changeNavbarState} from "./navbar";
 
 const newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement;
 
@@ -8,7 +9,6 @@ const oldPasswordField = document.getElementById("old-password-field") as HTMLIn
 const newPasswordField = document.getElementById("new-password-field") as HTMLInputElement;
 const confirmPasswordField = document.getElementById("confirm-password-field") as HTMLInputElement;
 const content = document.getElementById('content') as HTMLFormElement;
-const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
 function checkFields(): boolean {
     const a = validPassword(oldPasswordField); // Can't use a one-line function here due to lazy evaluation
@@ -23,7 +23,7 @@ async function tryResetPassword(): Promise<void> {
         oldPasswordField.disabled = true;
         confirmPasswordField.disabled = true;
         newPasswordButton.disabled = true;
-        homepageRef.toggleAttribute("href");
+        changeNavbarState(false);
         const tempAlert: ChildNode | null = addTempAlert();
         try {
             await axios.post(`/change_password/`, {'current': oldPasswordField.value, 'new': newPasswordField.value});
@@ -46,7 +46,8 @@ async function tryResetPassword(): Promise<void> {
             oldPasswordField.disabled = false;
             confirmPasswordField.disabled = false;
             newPasswordButton.disabled = false;
-            homepageRef.toggleAttribute("href");
+            changeNavbarState(true);
+            (document.getElementById("navbar-change-password") as HTMLAnchorElement)!.classList.add("disabled")
 
         }
     }
@@ -58,5 +59,6 @@ window.onload = () => {
         tryResetPassword();
     });
     (document.getElementById("navbar-change-password") as HTMLAnchorElement)!.classList.add("disabled")
+
 
 };

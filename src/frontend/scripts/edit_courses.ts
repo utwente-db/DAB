@@ -2,6 +2,7 @@ import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
 import {Course, getCoursesPromise, InputCourse} from "./courses";
 import {setInvalid, setValid} from "./register";
+import {changeNavbarState, navbarEditCourses} from "./navbar";
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -85,6 +86,7 @@ async function tryAddSchema(): Promise<void> {
         schemaField.disabled = true;
         activeField.disabled = true;
         addCourseButton.disabled = true;
+        changeNavbarState(false);
         const tempAlert: ChildNode | null = addTempAlert();
 
         const inputCourse: InputCourse = {
@@ -118,6 +120,8 @@ async function tryAddSchema(): Promise<void> {
             schemaField.disabled = false;
             activeField.disabled = false;
             addCourseButton.disabled = false;
+            changeNavbarState(true);
+            (navbarEditCourses.firstElementChild)!.classList.add("disabled");
 
         }
     }
@@ -130,7 +134,8 @@ window.onload = async () => {
             event.preventDefault();
             tryAddSchema();
         }),
-        document.getElementById("navbar-edit-courses")!.classList.add("active"),
+        navbarEditCourses.classList.add("active"),
+        (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
         displayCourses()
     ]);
 };

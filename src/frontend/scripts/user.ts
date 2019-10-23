@@ -4,7 +4,7 @@ import "bootstrap";
 import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2';
 
-import {displayWhoami} from "./navbar";
+import {displayWhoami, navbarEditCourses, navbarEditUsers} from "./navbar";
 import {Course, StudentDatabase} from "./courses";
 
 //todo: change to selected user ofcourse
@@ -237,7 +237,8 @@ async function changeRole(): Promise<boolean> {
 window.onload = async () => {
     await Promise.all([
         displayUsers(),
-        document.getElementById("navbar-edit-users")!.classList.add("active"),
+        navbarEditUsers.classList.add("active"),
+        (navbarEditUsers.firstElementChild)!.classList.add("disabled"),
 
         changeRoleButton.addEventListener("click", changeRole),
         deleteButton.addEventListener("click", deleteUser),

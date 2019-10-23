@@ -26988,7 +26988,8 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
             case 0:
                 _b = (_a = Promise).all;
                 _c = [displayUsers(),
-                    document.getElementById("navbar-edit-users").classList.add("active"),
+                    navbar_1.navbarEditUsers.classList.add("active"),
+                    (navbar_1.navbarEditUsers.firstElementChild).classList.add("disabled"),
                     changeRoleButton.addEventListener("click", changeRole),
                     deleteButton.addEventListener("click", deleteUser)];
                 return [4 /*yield*/, displayUserDetails()];
