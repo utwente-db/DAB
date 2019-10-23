@@ -1204,5 +1204,5 @@ def forgot_password_page(request):
 
 @require_GET
 @require_role_redirect(admin)
-def add_course(request):
+def edit_courses(request):
     return render(request, 'add_course.html')
