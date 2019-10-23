@@ -36,10 +36,8 @@ export async function getWhoPromise(): Promise<Who> {
     return response.data;
 }
 
-export function changeNavbarState(enable: boolean): void {
-
-
-    [navbarStudentView, navbarEditCourses, navbarEditUsers].forEach((element: HTMLLIElement) => {
+function changeNavbarState(enable: boolean): void {
+        [navbarStudentView, navbarEditCourses, navbarEditUsers].forEach((element: HTMLLIElement) => {
         if (enable) {
             (element.firstElementChild as HTMLAnchorElement)!.classList.remove("disabled")
         } else {
@@ -58,10 +56,20 @@ export function changeNavbarState(enable: boolean): void {
 
         }
     });
+}
+
+export function changePageState(enable: boolean, callback: Function): void {
+
+
+    changeNavbarState(enable);
+
+    callback(enable);
+
+
 
 }
 
-async function dumpAlldatabases(): Promise<boolean> {
+async function dumpAlldatabases(disableCallback: Function): Promise<boolean> {
     const result = await Swal.fire({
         title: 'title',
         text: 'do some migration',
@@ -72,15 +80,12 @@ async function dumpAlldatabases(): Promise<boolean> {
         cancelButtonText: 'Cancel'
     });
 
-    // TODO pass your "changePageState" to this and make it disable the whole page
-    // TODO maybe make changenavbarstate always call the other changepagestate after it
-
     if (result.dismiss === Swal.DismissReason.cancel) {
         return false;
     }
     let success: boolean;
 
-    changeNavbarState(false);
+    changePageState(false, disableCallback);
     const tempAlert: ChildNode | null = addTempAlert();
     try {
         const response = await axios.post(`/rest/generate_migration/`) as AxiosResponse<string>;
@@ -92,18 +97,18 @@ async function dumpAlldatabases(): Promise<boolean> {
         addErrorAlert(error, tempAlert);
         success=false;
     } finally {
-        changeNavbarState(true);
+        changePageState(true, disableCallback);
     }
 
     return success;
 
 }
 
-export function initNavbar(): void {
+export function initNavbar(disableCallback: Function): void {
     if (navbarDumpAllDatabasesLink) {
         navbarDumpAllDatabasesLink.addEventListener("click", (event) => {
             event.preventDefault();
-            dumpAlldatabases();
+            dumpAlldatabases(disableCallback);
         })
     }
 

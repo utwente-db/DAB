@@ -1,5 +1,5 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {changeNavbarState, displayWhoami, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
+import {changePageState, displayWhoami, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
 import axios from 'axios';
 import "popper.js"
 import "bootstrap"
@@ -220,8 +220,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         return false;
     }
     let success: boolean;
-    disableElementsOnPage();
-    changeNavbarState(false);
+    changePageState(false, changeStudentViewState);
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         // await changeViewToHaveCredentials()
@@ -232,8 +231,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         addErrorAlert(error);
         success = false;
     } finally {
-        changeNavbarState(true);
-        enableElementsOnPage();
+        changePageState(true, changeStudentViewState);
     }
     return success;
 
@@ -262,8 +260,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         return false;
     }
     let success: boolean;
-    disableElementsOnPage();
-    changeNavbarState(false);
+    changePageState(false, changeStudentViewState);
     try {
         await axios.post(`/rest/reset/${dbID}/`);
         addAlert("The database has been succesfully reset", AlertType.primary);
@@ -272,15 +269,14 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         addErrorAlert(error);
         success = false;
     } finally {
-        changeNavbarState(true);
-        enableElementsOnPage();
+        changePageState(true, changeStudentViewState);
     }
     return success;
 }
 
 window.onload = async () => {
     await Promise.all([
-        initNavbar(),
+        initNavbar(changeStudentViewState),
         noCredsForm.addEventListener("submit", (event) => {
             event.preventDefault();
             prepareToGetCredentials();

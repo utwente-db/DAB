@@ -2,7 +2,7 @@ import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
 import {Course, getCoursesPromise, InputCourse} from "./courses";
 import {setInvalid, setValid} from "./register";
-import {changeNavbarState, initNavbar, navbarEditCourses} from "./navbar";
+import {changePageState, initNavbar, navbarEditCourses} from "./navbar";
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -99,8 +99,7 @@ function changeEditCoursesState(enable: boolean): void {
 
 async function tryAddSchema(): Promise<void> {
     if (checkFields()) {
-        changeEditCoursesState(false);
-        changeNavbarState(false);
+        changePageState(false,changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
 
         const inputCourse: InputCourse = {
@@ -128,8 +127,7 @@ async function tryAddSchema(): Promise<void> {
         } catch (error) {
             addErrorAlert(error, tempAlert)
         } finally {
-            changeNavbarState(true);
-            changeEditCoursesState(true);
+            changePageState(true,changeEditCoursesState);
 
         }
     }
@@ -137,7 +135,7 @@ async function tryAddSchema(): Promise<void> {
 
 window.onload = async () => {
     await Promise.all([
-        initNavbar(),
+        initNavbar(changeEditCoursesState),
         content.addEventListener("submit", (event) => {
             event.preventDefault();
             tryAddSchema();

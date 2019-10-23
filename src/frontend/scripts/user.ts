@@ -257,9 +257,13 @@ async function changeRole(userid: number): Promise<boolean> {
     return success;
 }
 
+function changeEditUserState(enable: boolean): void {
+    return;
+}
+
 window.onload = async () => {
     await Promise.all([
-        initNavbar(),
+        initNavbar(changeEditUserState),
         displayUsers(),
         navbarEditUsers.classList.add("active"),
         (navbarEditUsers.firstElementChild)!.classList.add("disabled"),

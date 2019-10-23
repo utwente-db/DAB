@@ -1,7 +1,7 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosError} from "axios";
 import {passwordsEqual, validPassword} from "./register";
-import {changeNavbarState, initNavbar, navbarEditCourses} from "./navbar";
+import {changePageState, initNavbar, navbarEditCourses} from "./navbar";
 
 const newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement;
 
@@ -35,8 +35,7 @@ function changeChangePasswordState(enable: boolean): void {
 
 async function tryResetPassword(): Promise<void> {
     if (checkFields()) {
-        changeChangePasswordState(false);
-        changeNavbarState(false);
+        changePageState(false, changeChangePasswordState);
         const tempAlert: ChildNode | null = addTempAlert();
         try {
             await axios.post(`/change_password/`, {'current': oldPasswordField.value, 'new': newPasswordField.value});
@@ -56,14 +55,13 @@ async function tryResetPassword(): Promise<void> {
             }
         } finally {
 
-            changeNavbarState(true);
-            changeChangePasswordState(false);
+            changePageState(true,changeChangePasswordState);
         }
     }
 }
 
 window.onload = () => {
-    initNavbar();
+    initNavbar(changeChangePasswordState);
     content.addEventListener("submit", (event) => {
         event.preventDefault();
         tryResetPassword();

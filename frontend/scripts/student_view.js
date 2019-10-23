@@ -26251,8 +26251,12 @@ function changeNavbarState(enable) {
         }
     });
 }
-exports.changeNavbarState = changeNavbarState;
-function dumpAlldatabases() {
+function changePageState(enable, callback) {
+    changeNavbarState(enable);
+    callback(enable);
+}
+exports.changePageState = changePageState;
+function dumpAlldatabases(disableCallback) {
     return __awaiter(this, void 0, void 0, function () {
         var result, success, tempAlert, response, data, error_1;
         return __generator(this, function (_a) {
@@ -26268,12 +26272,10 @@ function dumpAlldatabases() {
                     })];
                 case 1:
                     result = _a.sent();
-                    // TODO pass your "changePageState" to this and make it disable the whole page
-                    // TODO maybe make changenavbarstate always call the other changepagestate after it
                     if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
                         return [2 /*return*/, false];
                     }
-                    changeNavbarState(false);
+                    changePageState(false, disableCallback);
                     tempAlert = alert_1.addTempAlert();
                     _a.label = 2;
                 case 2:
@@ -26292,18 +26294,18 @@ function dumpAlldatabases() {
                     success = false;
                     return [3 /*break*/, 6];
                 case 5:
-                    changeNavbarState(true);
+                    changePageState(true, disableCallback);
                     return [7 /*endfinally*/];
                 case 6: return [2 /*return*/, success];
             }
         });
     });
 }
-function initNavbar() {
+function initNavbar(disableCallback) {
     if (exports.navbarDumpAllDatabasesLink) {
         exports.navbarDumpAllDatabasesLink.addEventListener("click", function (event) {
             event.preventDefault();
-            dumpAlldatabases();
+            dumpAlldatabases(disableCallback);
         });
     }
 }
@@ -26597,8 +26599,7 @@ function prepareToDeleteCredentials(dbID) {
                     if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
                         return [2 /*return*/, false];
                     }
-                    disableElementsOnPage();
-                    navbar_1.changeNavbarState(false);
+                    navbar_1.changePageState(false, changeStudentViewState);
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 5, 6, 7]);
@@ -26618,8 +26619,7 @@ function prepareToDeleteCredentials(dbID) {
                     success = false;
                     return [3 /*break*/, 7];
                 case 6:
-                    navbar_1.changeNavbarState(true);
-                    enableElementsOnPage();
+                    navbar_1.changePageState(true, changeStudentViewState);
                     return [7 /*endfinally*/];
                 case 7: return [2 /*return*/, success];
             }
@@ -26653,8 +26653,7 @@ function resetDatabase(dbID) {
                     if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
                         return [2 /*return*/, false];
                     }
-                    disableElementsOnPage();
-                    navbar_1.changeNavbarState(false);
+                    navbar_1.changePageState(false, changeStudentViewState);
                     _a.label = 2;
                 case 2:
                     _a.trys.push([2, 4, 5, 6]);
@@ -26670,8 +26669,7 @@ function resetDatabase(dbID) {
                     success = false;
                     return [3 /*break*/, 6];
                 case 5:
-                    navbar_1.changeNavbarState(true);
-                    enableElementsOnPage();
+                    navbar_1.changePageState(true, changeStudentViewState);
                     return [7 /*endfinally*/];
                 case 6: return [2 /*return*/, success];
             }
@@ -26682,7 +26680,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, Promise.all([
-                    navbar_1.initNavbar(),
+                    navbar_1.initNavbar(changeStudentViewState),
                     noCredsForm.addEventListener("submit", function (event) {
                         event.preventDefault();
                         prepareToGetCredentials();
@@ -27065,11 +27063,14 @@ function changeRole(userid) {
         });
     });
 }
+function changeEditUserState(enable) {
+    return;
+}
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, Promise.all([
-                    navbar_1.initNavbar(),
+                    navbar_1.initNavbar(changeEditUserState),
                     displayUsers(),
                     navbar_1.navbarEditUsers.classList.add("active"),
                     (navbar_1.navbarEditUsers.firstElementChild).classList.add("disabled"),
