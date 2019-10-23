@@ -378,3 +378,4 @@ node_modules/**/*
 node_modules/**/*.*
 *.map
 designproject/secret.py
+package-lock.json
