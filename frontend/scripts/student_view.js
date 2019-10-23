@@ -26399,12 +26399,13 @@ function populateNoCredentialsPane(i) {
 }
 function populateHaveCredentialsPane(i) {
     return __awaiter(this, void 0, void 0, function () {
-        var credentials, dbIDs;
+        var credentials, dbIDs, courseInactiveString;
         return __generator(this, function (_a) {
             credentials = "";
             dbIDs = [];
             haveCredsCoursename.innerText = courses[i].coursename;
-            haveCredsInfo.innerHTML = courses[i].info; // We set innerHTML for this field because we know it is sanitized using html special chars
+            courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>";
+            haveCredsInfo.innerHTML = courses[i].info + courseInactiveString; // We set innerHTML for this field because we know it is sanitized using html special chars
             ownDatabases.forEach(function (db) {
                 if (db.course === courses[i].courseid) {
                     var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"align-items-center align-items-stretch row\">\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"delete-button-" + db.dbid + "\" class=\"btn btn-danger delete-button btn-block\">Delete database and release credentials</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"reset-button-" + db.dbid + "\" class=\"btn btn-info reset-button btn-block\">Reset database</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button onclick=\"window.location.replace('/rest/dump/" + db.dbid + "/')\" id=\"dump-button-" + db.dbid + "\" class=\"btn btn-secondary dump-button btn-block\">Get dump of database</button>\n                            </div>\n                        </div>\n                        <hr>";
@@ -26428,14 +26429,15 @@ function populateHaveCredentialsPane(i) {
         });
     });
 }
-function createNavLink(haveCredentials, i, active) {
+function createNavLink(courseIsActive, makeGreen, i, active) {
     if (active === void 0) { active = false; }
-    var credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
-    var hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
+    var credentialsClass = makeGreen ? "have-credentials-nav" : "no-credentials-nav";
+    var hrefString = makeGreen ? "have-credentials-pane" : "no-credentials-pane";
+    var inactiveCourseString = courseIsActive ? "" : "inactive-course";
     var activeString = active ? "active" : "";
-    var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
+    var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + " " + inactiveCourseString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
     var fragment = document.createRange().createContextualFragment(templateString);
-    if (!haveCredentials) {
+    if (!makeGreen) {
         fragment.firstElementChild.addEventListener("click", function () {
             populateNoCredentialsPane(i);
         });
@@ -26485,7 +26487,7 @@ function displayCourses(userRole) {
                             else if (userRole === user_1.UserRole.student) {
                                 haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
                             }
-                            fragment = createNavLink(haveCredentials, i);
+                            fragment = createNavLink(courses[i].active, haveCredentials, i);
                             coursesNavHtml.appendChild(fragment);
                         }
                     }
@@ -26505,7 +26507,7 @@ function changeView(hasCredentials) {
                     oldPane = hasCredentials ? noCredsPane : haveCredsPane;
                     newPane = hasCredentials ? haveCredsPane : noCredsPane;
                     i = Number(activeLink.id);
-                    fragment = createNavLink(hasCredentials, i, true);
+                    fragment = createNavLink(courses[i].active, hasCredentials, i, true);
                     activeLink.classList.remove("active");
                     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild);
                     activeLink.remove();

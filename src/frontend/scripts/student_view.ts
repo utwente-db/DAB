@@ -39,7 +39,8 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
     let credentials = "";
     const dbIDs: number[] = [];
     haveCredsCoursename.innerText = courses[i].coursename;
-    haveCredsInfo.innerHTML = courses[i].info; // We set innerHTML for this field because we know it is sanitized using html special chars
+    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>"
+    haveCredsInfo.innerHTML = courses[i].info + courseInactiveString // We set innerHTML for this field because we know it is sanitized using html special chars
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
             const html = `<div class="mt-5 form-group row">
@@ -86,14 +87,15 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
 
 }
 
-function createNavLink(haveCredentials: boolean, i: number, active = false): DocumentFragment {
-    const credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
-    const hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
+function createNavLink(courseIsActive: boolean, makeGreen: boolean, i: number, active = false): DocumentFragment {
+    const credentialsClass = makeGreen ? "have-credentials-nav" : "no-credentials-nav";
+    const hrefString = makeGreen ? "have-credentials-pane" : "no-credentials-pane";
+    const inactiveCourseString = courseIsActive ? "" : "inactive-course";
     const activeString = active ? "active" : "";
-    const templateString = `<a id="${i}" class="nav-link ${credentialsClass} ${activeString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
+    const templateString = `<a id="${i}" class="nav-link ${credentialsClass} ${activeString} ${inactiveCourseString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
-    if (!haveCredentials) {
+    if (!makeGreen) {
         fragment.firstElementChild!.addEventListener("click", () => {
             populateNoCredentialsPane(i);
         });
@@ -131,7 +133,7 @@ export async function displayCourses(userRole = UserRole.student): Promise<void>
             } else if (userRole === UserRole.student) {
                 haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
             }
-            const fragment = createNavLink(haveCredentials, i);
+            const fragment = createNavLink(courses[i].active, haveCredentials, i);
 
             coursesNavHtml.appendChild(fragment);
         }
@@ -145,7 +147,7 @@ async function changeView(hasCredentials: boolean): Promise<void> {
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
     const newPane = hasCredentials ? haveCredsPane : noCredsPane;
     const i = Number(activeLink.id);
-    const fragment = createNavLink(hasCredentials, i, true);
+    const fragment = createNavLink(courses[i].active,hasCredentials, i, true);
     activeLink.classList.remove("active");
     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild!);
     activeLink.remove();
