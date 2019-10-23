@@ -26690,13 +26690,10 @@ var sweetalert2_1 = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweet
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
 //todo: change to selected user ofcourse
 var urlParams = new URLSearchParams(window.location.search);
-var userid = 0;
+var users;
 // let user: User;
 // let databases: Database[];
 var x = urlParams.get("id");
-if (x != null) {
-    userid = Number(x);
-}
 var usersHtml = document.getElementById("users");
 var pageTitleHtml = document.getElementById("page-title");
 var userInfoHtml = document.getElementById("user-info");
@@ -26715,7 +26712,7 @@ var UserRole;
 })(UserRole = exports.UserRole || (exports.UserRole = {}));
 function displayUsers() {
     return __awaiter(this, void 0, void 0, function () {
-        var users, result, i, role, verified, resultString;
+        var result, i, role, verified, resultString, _loop_1, i;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getUsersPromise()];
@@ -26737,13 +26734,34 @@ function displayUsers() {
                             role = "Unknown";
                         }
                         verified = users[i].verified;
-                        result.push("<tr><th scope=\"row\">" + users[i].id + "</th>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + role + "</td>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + users[i].email + "</td>"
-                            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + verified + "</td></tr>");
+                        result.push(("<tr><th scope=\"row\">" + users[i].id + "</th>\n             <td><a class=\"user-link-" + i + "\" style=\"display:block; height:100%; width:100%\" href='#'>" + role + "</td>\n             <td><a class=\"user-link-" + i + "\" style=\"display:block; height:100%; width:100%\" href='#'>" + users[i].email + "</td>\n             <td><a class=\"user-link-" + i + "\" style=\"display:block; height:100%; width:100%\" href='#'>" + verified + "</td></tr>").trim());
                     }
                     resultString = result.join("\n");
                     usersHtml.innerHTML = resultString;
+                    _loop_1 = function (i) {
+                        var links = document.getElementsByClassName("user-link-" + i);
+                        for (var j = 0; j < links.length; j++) {
+                            links.item(j).addEventListener("click", function () {
+                                var changeRoleButtonClone = changeRoleButton.cloneNode(true);
+                                changeRoleButton.parentNode.replaceChild(changeRoleButtonClone, changeRoleButton);
+                                changeRoleButton = changeRoleButtonClone;
+                                var deleteButtonClone = deleteButton.cloneNode(true);
+                                deleteButton.parentNode.replaceChild(deleteButtonClone, deleteButton);
+                                deleteButton = deleteButtonClone;
+                                changeRoleButton.addEventListener("click", function () {
+                                    changeRole(users[i].id);
+                                });
+                                deleteButton.addEventListener("click", function () {
+                                    deleteUser(users[i].id);
+                                });
+                                displayUserDetails(users[i].id);
+                                displayCoursesAndDatabases(users[i].id);
+                            });
+                        }
+                    };
+                    for (i = 0; i < users.length; i++) {
+                        _loop_1(i);
+                    }
                     return [2 /*return*/];
             }
         });
@@ -26763,7 +26781,7 @@ function getUsersPromise() {
     });
 }
 exports.getUsersPromise = getUsersPromise;
-function getDatabasesPromise() {
+function getDatabasesPromise(userid) {
     return __awaiter(this, void 0, void 0, function () {
         var response;
         return __generator(this, function (_a) {
@@ -26789,7 +26807,7 @@ function getCourseByIDPromise(id) {
         });
     });
 }
-function getUserPromise() {
+function getUserPromise(userid) {
     return __awaiter(this, void 0, void 0, function () {
         var path, response;
         return __generator(this, function (_a) {
@@ -26804,12 +26822,12 @@ function getUserPromise() {
         });
     });
 }
-function displayCoursesAndDatabases() {
+function displayCoursesAndDatabases(userid) {
     return __awaiter(this, void 0, void 0, function () {
         var databases, coursesAndDatabases, i, i, html, resultNav, resultContent, active, _i, _a, entry, courseNumber, content, course, resultNavString, resultContentString;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, getDatabasesPromise()];
+                case 0: return [4 /*yield*/, getDatabasesPromise(userid)];
                 case 1:
                     databases = _b.sent();
                     coursesAndDatabases = new Map();
@@ -26865,12 +26883,12 @@ function displayCoursesAndDatabases() {
         });
     });
 }
-function displayUserDetails() {
+function displayUserDetails(userid) {
     return __awaiter(this, void 0, void 0, function () {
         var user, role;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, getUserPromise()];
+                case 0: return [4 /*yield*/, getUserPromise(userid)];
                 case 1:
                     user = _a.sent();
                     pageTitleHtml.innerHTML += "Admin - User " + user.id;
@@ -26894,12 +26912,12 @@ function displayUserDetails() {
         });
     });
 }
-function deleteUser() {
+function deleteUser(userid) {
     return __awaiter(this, void 0, void 0, function () {
         var user, result, success, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, getUserPromise()];
+                case 0: return [4 /*yield*/, getUserPromise(userid)];
                 case 1:
                     user = _a.sent();
                     return [4 /*yield*/, sweetalert2_1.default.fire({
@@ -26935,12 +26953,12 @@ function deleteUser() {
         });
     });
 }
-function changeRole() {
+function changeRole(userid) {
     return __awaiter(this, void 0, void 0, function () {
         var user, selectedRole, role, result, success, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, getUserPromise()];
+                case 0: return [4 /*yield*/, getUserPromise(userid)];
                 case 1:
                     user = _a.sent();
                     selectedRole = document.getElementById("selected_role");
@@ -26982,32 +27000,15 @@ function changeRole() {
     });
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, _b, _c;
-    return __generator(this, function (_d) {
-        switch (_d.label) {
-            case 0:
-                _b = (_a = Promise).all;
-                _c = [displayUsers(),
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, Promise.all([
+                    displayUsers(),
                     navbar_1.navbarEditUsers.classList.add("active"),
                     (navbar_1.navbarEditUsers.firstElementChild).classList.add("disabled"),
-                    changeRoleButton.addEventListener("click", changeRole),
-                    deleteButton.addEventListener("click", deleteUser)];
-                return [4 /*yield*/, displayUserDetails()];
+                ])];
             case 1:
-                _c = _c.concat([
-                    _d.sent()
-                ]);
-                return [4 /*yield*/, navbar_1.displayWhoami()];
-            case 2:
-                _c = _c.concat([
-                    _d.sent()
-                ]);
-                return [4 /*yield*/, displayCoursesAndDatabases()];
-            case 3: return [4 /*yield*/, _b.apply(_a, [_c.concat([
-                        _d.sent()
-                    ])])];
-            case 4:
-                _d.sent();
+                _a.sent();
                 return [2 /*return*/];
         }
     });

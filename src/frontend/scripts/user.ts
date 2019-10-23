@@ -4,20 +4,16 @@ import "bootstrap";
 import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2';
 
-import {displayWhoami, navbarEditCourses, navbarEditUsers} from "./navbar";
+import {navbarEditUsers} from "./navbar";
 import {Course, StudentDatabase} from "./courses";
 
 //todo: change to selected user ofcourse
 const urlParams = new URLSearchParams(window.location.search);
-let userid = 0;
-
+let users: User[];
 // let user: User;
 // let databases: Database[];
 
 const x: string | null = urlParams.get("id");
-if (x != null) {
-    userid = Number(x);
-}
 const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
 
 const pageTitleHtml: HTMLTitleElement = document.getElementById("page-title") as HTMLTitleElement;
@@ -31,8 +27,8 @@ const usernameHtml: HTMLDivElement = document.getElementById("username") as HTML
 const roleHtml: HTMLDivElement = document.getElementById("role") as HTMLDivElement;
 const verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement;
 
-const deleteButton: HTMLButtonElement = document.getElementById("delete_button") as HTMLButtonElement;
-const changeRoleButton: HTMLButtonElement = document.getElementById("change_role") as HTMLButtonElement;
+let deleteButton: HTMLButtonElement = document.getElementById("delete_button") as HTMLButtonElement;
+let changeRoleButton: HTMLButtonElement = document.getElementById("change_role") as HTMLButtonElement;
 
 export interface User {
     id: number;
@@ -50,7 +46,7 @@ export enum UserRole {
 }
 
 async function displayUsers(): Promise<void> {
-    const users: User[] = await getUsersPromise();
+    users = await getUsersPromise();
     const result: string[] = [];
 
     for (let i = 0; i < users.length; i++) {
@@ -67,16 +63,43 @@ async function displayUsers(): Promise<void> {
 
         const verified: boolean = users[i].verified;
         result.push(
-            "<tr><th scope=\"row\">" + users[i].id + "</th>"
-            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + role + "</td>"
-            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + users[i].email + "</td>"
-            + "<td><a style=\"display:block; height:100%; width:100%\" href=\"/userpage?id=" + users[i].id + "\">" + verified + "</td></tr>"
+            `<tr><th scope="row">${users[i].id}</th>
+             <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${role}</td>
+             <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${users[i].email}</td>
+             <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${verified}</td></tr>`.trim()
         );
 
     }
 
     const resultString: string = result.join("\n");
     usersHtml.innerHTML = resultString;
+
+    for (let i = 0; i < users.length; i++) {
+        const links = document.getElementsByClassName(`user-link-${i}`) as HTMLCollectionOf<HTMLAnchorElement>;
+        for (let j = 0; j < links.length; j++) {
+            links.item(j)!.addEventListener("click", () => {
+
+                const changeRoleButtonClone = changeRoleButton!.cloneNode(true) as HTMLButtonElement;
+                changeRoleButton.parentNode!.replaceChild(changeRoleButtonClone, changeRoleButton);
+                changeRoleButton = changeRoleButtonClone;
+
+                const deleteButtonClone = deleteButton!.cloneNode(true) as HTMLButtonElement;
+                deleteButton.parentNode!.replaceChild(deleteButtonClone, deleteButton);
+                deleteButton = deleteButtonClone;
+
+
+                changeRoleButton.addEventListener("click", () => {
+                    changeRole(users[i].id)
+                });
+                deleteButton.addEventListener("click", () => {
+                    deleteUser(users[i].id)
+                });
+                displayUserDetails(users[i].id);
+                displayCoursesAndDatabases(users[i].id);
+            })
+        }
+
+    }
 }
 
 export async function getUsersPromise(): Promise<User[]> {
@@ -84,7 +107,7 @@ export async function getUsersPromise(): Promise<User[]> {
     return response.data;
 }
 
-async function getDatabasesPromise(): Promise<StudentDatabase[]> {
+async function getDatabasesPromise(userid: number): Promise<StudentDatabase[]> {
     const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + userid + "/");
     return response.data;
 }
@@ -94,14 +117,14 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
     return response.data;
 }
 
-async function getUserPromise(): Promise<User> {
+async function getUserPromise(userid: number): Promise<User> {
     const path = `/rest/dbmusers/${userid}/`;
     const response: AxiosResponse = await axios.get(path);
     return response.data;
 }
 
-async function displayCoursesAndDatabases(): Promise<void> {
-    const databases: StudentDatabase[] = await getDatabasesPromise();
+async function displayCoursesAndDatabases(userid: number): Promise<void> {
+    const databases: StudentDatabase[] = await getDatabasesPromise(userid);
 
     const coursesAndDatabases: Map<number, string> = new Map<number, string>();
     if (databases.length === 0) {
@@ -152,8 +175,8 @@ async function displayCoursesAndDatabases(): Promise<void> {
     courseDatabasesHtml.innerHTML = resultContentString;
 }
 
-async function displayUserDetails(): Promise<void> {
-    const user: User = await getUserPromise();
+async function displayUserDetails(userid: number): Promise<void> {
+    const user: User = await getUserPromise(userid);
     pageTitleHtml.innerHTML += "Admin - User " + user.id;
 
     let role: string;
@@ -172,8 +195,8 @@ async function displayUserDetails(): Promise<void> {
     verifiedHtml.innerHTML += (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
 }
 
-async function deleteUser(): Promise<boolean> {
-    const user: User = await getUserPromise();
+async function deleteUser(userid: number): Promise<boolean> {
+    const user: User = await getUserPromise(userid);
     const result = await Swal.fire({
         text: `Are you sure you want to delete <strong>${user.email}</strong> from the system?`,
         type: 'warning',
@@ -200,8 +223,8 @@ async function deleteUser(): Promise<boolean> {
     return success;
 }
 
-async function changeRole(): Promise<boolean> {
-    const user: User = await getUserPromise();
+async function changeRole(userid: number): Promise<boolean> {
+    const user: User = await getUserPromise(userid);
     // TODO correctly find selected option
     const selectedRole: HTMLSelectElement = document.getElementById("selected_role") as HTMLSelectElement;
     const role: string = selectedRole.value;
@@ -240,10 +263,5 @@ window.onload = async () => {
         navbarEditUsers.classList.add("active"),
         (navbarEditUsers.firstElementChild)!.classList.add("disabled"),
 
-        changeRoleButton.addEventListener("click", changeRole),
-        deleteButton.addEventListener("click", deleteUser),
-        await displayUserDetails(),
-        await displayWhoami(),
-        await displayCoursesAndDatabases()
     ]);
 }
