@@ -2,7 +2,8 @@ import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
 import {Course, getCoursesPromise, InputCourse} from "./courses";
 import {setInvalid, setValid} from "./register";
-import {changePageState, initNavbar, navbarEditCourses} from "./navbar";
+import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
+import {displayCourses} from "./student_view";
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -14,36 +15,8 @@ const schemaField = document.getElementById("schema-field") as HTMLTextAreaEleme
 const activeField = document.getElementById("active-field") as HTMLInputElement;
 
 const content = document.getElementById('content') as HTMLFormElement;
-
+let who: Who;
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
-
-async function displayCourses(): Promise<void> {
-    const courses: Course[] = await getCoursesPromise();
-    const resultNav: string[] = [];
-    const resultContent: string[] = [];
-
-    for (let i = 0; i < courses.length; i++) {
-        let active = "";
-        if (i === 0) {
-            active = " active";
-        }
-        resultNav.push(
-            "<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + i + "\">" + courses[i].coursename + "</a>"
-        );
-        resultContent.push(
-            "<div class=\"tab-pane" + active + "\" id=\"course" + i + "\">"
-            + "<ul><li>ID: " + courses[i].courseid + "</li>"
-            + "<li>FID: " + courses[i].fid + "</li>"
-            + "<li>Coursename: " + courses[i].coursename + "</li>"
-            + "<li>Info: " + courses[i].info + "</li></ul>"
-            + "<a class=\"btn btn-secondary\" href=\"/courses#" + courses[i].courseid + "\" role=\"button\">Edit Course</a></div>"
-        );
-    }
-    const resultNavString: string = resultNav.join("\n");
-    const resultContentString: string = resultContent.join("\n");
-    coursesNavHtml.innerHTML = resultNavString;
-    coursesContentHtml.innerHTML = resultContentString;
-}
 
 function validCoursename(field: HTMLInputElement): boolean {
     const coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/
@@ -134,6 +107,7 @@ async function tryAddSchema(): Promise<void> {
 }
 
 window.onload = async () => {
+    who = await getWhoamiPromise();
     await Promise.all([
         initNavbar(changeEditCoursesState),
         content.addEventListener("submit", (event) => {
@@ -142,6 +116,10 @@ window.onload = async () => {
         }),
         navbarEditCourses.classList.add("active"),
         (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
-        displayCourses()
+        displayCourses(who.role)
+        // TODO maak displaycourses grijze achtergrond als course disabled is
+        // TODO ook bij teacher
+        // TODO do dit ook bij student view
+        // TODO maak displaycourses en grijsgroen als hij van jou is maar disabled
     ]);
 };

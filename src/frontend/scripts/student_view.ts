@@ -110,18 +110,27 @@ function createNavLink(haveCredentials: boolean, i: number, active = false): Doc
     return fragment;
 }
 
-async function displayCourses(): Promise<void> {
+export async function displayCourses(userRole = UserRole.student): Promise<void> {
     who = await getWhoPromise();
 
     courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-    ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
+    if (userRole === UserRole.student) {
+        ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
+    } else {
+        ownDatabases = [];
+    }
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     for (let i = 0; i < courses.length; i++) {
-        const youHavePrivilege = (who.role === UserRole.admin || who.role === UserRole.teacher);
+        const youHavePrivilege = (who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id));
         // TODO  check if user is TA for course
         if (courses[i].active || youHavePrivilege) {
-            const haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
+            let haveCredentials = false;
+            if (userRole === UserRole.admin) {
+                haveCredentials = courses[i].fid === who.id // The user owns this course
+            } else if (userRole === UserRole.student) {
+                haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
+            }
             const fragment = createNavLink(haveCredentials, i);
 
             coursesNavHtml.appendChild(fragment);

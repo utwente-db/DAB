@@ -12,104 +12,117 @@
 {% block content %}
     <div class="vh-100 d-flex flex-column">
         {% include 'navbar.html' %}
-
-        <div class="container-fluid py-3 py-lg-5 flex-grow-1 d-flex px-2 px-lg-5 ">
-            <div class="row center-block flex-row flex-grow-1">
-                <div class="col-12 col-lg-6 d-flex">
-                    <div class=" center-block
-    container border border-dark rounded-lg shadow-lg bg-white p-3 py-xl-5 text-center">
-                        <p class="text-left small mt-2 mb-0"><a href="/add_course">Add course</a></p>
-
+        <div class="container-fluid d-flex py-3 py-md-5 flex-grow-1">
+            <div class="row px-0 px-md-5 center-block flex-row flex-grow-1">
+                <div class="col-12 col-md-4 d-flex">
+                    <div class=" center-block container border border-dark rounded-lg shadow-lg bg-white p-3 p-xl-5 text-center">
                         <!-- Website title -->
-                        <div class="row">
-                            <div class="col-12 text-center">
-                                <h3>Courses</h3>
-                                <hr/>
-                            </div>
-                        </div>
-                        <div class="row mt-4 d-flex flex-column-reverse flex-lg-row">
-                            <div class="col-12 col-lg-4 my-3 my-lg-0">
-                                <div class="overflow-auto border-rounded" style="height: 300px;">
-                                    <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
-                                        {#                                    <div class="spinner-border text-info"></div>#}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-8">
-                                <div class="tab-content" id="courses-content">
-                                    {#                                <div class="spinner-border text-info"></div>#}
-                                </div>
-                            </div>
+                        <h2>Course list</h2>
+                        <hr/>
+                        <div class="overflow-auto" style="height: 300px;">
+                            <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
                         </div>
 
                     </div>
                 </div>
+                <div class="col-12 col-md-8 mt-3 mt-md-0 d-flex">
+                    <div class="center-block container border border-dark rounded-lg shadow-lg bg-white p-3  p-xl-5 text-center">
+
+                        <div class="tab-content" id="courses-content">
 
 
-                <div class="col-12 col-lg-6 mt-5 mt-lg-0 d-flex">
-                    <div class=" center-block
-    container border border-dark rounded-lg shadow-lg bg-white p-5 text-center">
-                    <form class="form-horizontal" id="content"> {# actual content #}
-                        <p class="text-center h4 mb-4">Add course</p>
-                        <hr/>
-                        <div class="mt-5 form-group row align-items-center">
-                            <label for="course-name-field" class="col-12 col-md-4 col-form-label">Course name</label>
-                            <div class="col-12 col-md-8 align-middle">
-                                <input type="text" name="course-name-field" class="form-control" id="course-name-field"
-                                       required="">
-                                <div class="invalid-feedback"></div>
-                            </div>
+                            <div class="tab-pane active m-5"><h1>Please select a course</h1></div>
 
-                        </div>
-                        <div class="form-group row align-items-center">
-                            <label for="course-info-field" class="col-12 col-md-4 col-form-label">Course info</label>
-                            <div class="col-12 col-md-8">
-                                <input type="text" name="course-info-field" class="form-control" id="course-info-field"
-                                       required="">
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="form-group row align-items-center mb-4">
-                            <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course owner ID
-                                (optional)</label>
-                            <div class="col-12 col-md-8">
-                                <input type="number" name="course-fid-field" class="form-control" id="course-fid-field"
-                                       oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                            <div class="tab-pane" id="new-course-pane">
+                                <form class="form-horizontal" id="content"> {# actual content #}
+                                    <p class="text-center h4 mb-4">Add course</p>
+                                    <hr/>
+                                    <div class="mt-5 form-group row align-items-center">
+                                        <label for="course-name-field" class="col-12 col-md-4 col-form-label">Course
+                                            name</label>
+                                        <div class="col-12 col-md-8 align-middle">
+                                            <input type="text" name="course-name-field" class="form-control"
+                                                   id="course-name-field"
+                                                   required="">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
 
-                                <div class="invalid-feedback"></div>
-                            </div>
-                        </div>
-                        <div class="form-group row align-items-center mb-4">
-                            <label for="active-field" class="col-12 col-md-4 col-form-label">Active?</label>
-                            <div class="col-12 col-md-8">
-                                <label class="switch">
-                                    <input type="checkbox" class="info" id="active-field" name="active-field" checked>
-                                    <span class="slider round"></span>
-                                </label>
-                                <div class="invalid-feedback"></div>
+                                    </div>
+                                    <div class="form-group row align-items-center">
+                                        <label for="course-info-field" class="col-12 col-md-4 col-form-label">Course
+                                            info</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="text" name="course-info-field" class="form-control"
+                                                   id="course-info-field"
+                                                   required="">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course
+                                            owner ID
+                                            (optional)</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="number" name="course-fid-field" class="form-control"
+                                                   id="course-fid-field"
+                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="active-field" class="col-12 col-md-4 col-form-label">Active?</label>
+                                        <div class="col-12 col-md-8">
+                                            <label class="switch">
+                                                <input type="checkbox" class="info" id="active-field"
+                                                       name="active-field" checked>
+                                                <span class="slider round"></span>
+                                            </label>
+                                            <div class="invalid-feedback"></div>
 
 
-                            </div>
-                        </div>
+                                        </div>
+                                    </div>
 
 
-                        <div class="form-group row align-items-center mb-4">
-                            <label for="schema-field" class="col-12 col-md-4 col-form-label">Schema (optional)</label>
-                            <div class="col-12 col-md-8">
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="schema-field" class="col-12 col-md-4 col-form-label">Schema
+                                            (optional)</label>
+                                        <div class="col-12 col-md-8">
                               <textarea name="schema-field" class="form-control" id="schema-field"
                               ></textarea>
-                                <div class="invalid-feedback"></div>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <button type="submit" class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3"
+                                            id="add-course-button">Add course
+                                    </button>
+                                    <div class="mt-5 align-items-center center-block " id="alert-div"></div>
+                                </form>
                             </div>
+
+                            <div class="tab-pane" id="existing-course-pane">
+{#                                <p class="h2" id="have-credentials-coursename">Have credentials coursename</p>#}
+{#                                <p class="text-center small mb-2" id="have-credentials-courseinfo">Have credentials#}
+{#                                    courseinfo</p>#}
+{#                                <p id="have-credentials-status" class="text-center text-success">You already have#}
+{#                                    credentials for this course</p>#}
+{#                                <hr>#}
+{#                                <p class="text-center mb-2" id="have-credentials-database-info">#}
+{#                                    To use the database, connect to {{ server_address }} using these credentials:#}
+{#                                </p>#}
+{#                                <div id="credentials-div">Credentials default page</div>#}
+
+                            </div>
+
                         </div>
-                        <hr>
-                        <button type="submit" class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3"
-                                id="add-course-button">Add course
-                        </button>
-                        <div class="mt-5 align-items-center center-block " id="alert-div"></div>
-                    </form>
+                        <div id="alert-div"></div>
+
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 {% endblock %}

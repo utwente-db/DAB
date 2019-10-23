@@ -26451,7 +26451,8 @@ function createNavLink(haveCredentials, i, active) {
     });
     return fragment;
 }
-function displayCourses() {
+function displayCourses(userRole) {
+    if (userRole === void 0) { userRole = user_1.UserRole.student; }
     return __awaiter(this, void 0, void 0, function () {
         var ownCourses, i, youHavePrivilege, haveCredentials, fragment;
         return __generator(this, function (_a) {
@@ -26462,16 +26463,28 @@ function displayCourses() {
                     return [4 /*yield*/, courses_1.getCoursesPromise()];
                 case 2:
                     courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
+                    if (!(userRole === user_1.UserRole.student)) return [3 /*break*/, 5];
                     return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
                 case 3: return [4 /*yield*/, (_a.sent()).data];
                 case 4:
                     ownDatabases = (_a.sent());
+                    return [3 /*break*/, 6];
+                case 5:
+                    ownDatabases = [];
+                    _a.label = 6;
+                case 6:
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     for (i = 0; i < courses.length; i++) {
-                        youHavePrivilege = (who.role === user_1.UserRole.admin || who.role === user_1.UserRole.teacher);
+                        youHavePrivilege = (who.role === user_1.UserRole.admin || (who.role === user_1.UserRole.teacher && courses[i].fid === who.id));
                         // TODO  check if user is TA for course
                         if (courses[i].active || youHavePrivilege) {
-                            haveCredentials = (ownCourses.includes(courses[i].courseid));
+                            haveCredentials = false;
+                            if (userRole === user_1.UserRole.admin) {
+                                haveCredentials = courses[i].fid === who.id; // The user owns this course
+                            }
+                            else if (userRole === user_1.UserRole.student) {
+                                haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
+                            }
                             fragment = createNavLink(haveCredentials, i);
                             coursesNavHtml.appendChild(fragment);
                         }
@@ -26481,6 +26494,7 @@ function displayCourses() {
         });
     });
 }
+exports.displayCourses = displayCourses;
 function changeView(hasCredentials) {
     return __awaiter(this, void 0, void 0, function () {
         var activeLink, oldPane, newPane, i, fragment;
