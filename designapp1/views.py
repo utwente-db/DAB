@@ -893,7 +893,7 @@ def userpage(request):
 @require_GET
 @require_role_redirect(admin)
 def admin_view(request):
-    return render(request, 'admin.html')
+    return render(request, 'admin.html', {'role' : request.session['role']} )
 
 
 def test(request):
@@ -1062,7 +1062,7 @@ def verify(request, token):
 @authenticated
 def change_password(request):
     if request.method == "GET":
-        return render(request, 'change_password.html')
+        return render(request, 'change_password.html', {'role' : request.session['role']})
     else:
         body = None
         new = None
@@ -1181,7 +1181,7 @@ def password_has_been_reset(request):
 
 @require_GET
 def student_view(request):
-    return render(request, 'student_view.html', { 'server_address' : DATABASE_SERVER})
+    return render(request, 'student_view.html', { 'server_address' : DATABASE_SERVER, 'role' : request.session['role']})
 
 @require_GET
 # @auth_redirect

@@ -13,12 +13,15 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/edit_course">Edit courses</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/edit_user">Edit users</a>
-            </li>
+            {% if role == 0 or role == 1 %}
+                <li class="nav-item">
+                    <a class="nav-link" href="/edit_course">Edit courses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/edit_user">Edit users</a>
+                </li>
+            {% endif %}
+
             <li class="nav-item">
                 <a class="nav-link" href="/student_view">Student view</a>
             </li>
@@ -28,25 +31,34 @@
             {#            <button class="btn btn-secondary mr-3" onclick="location.href='/change_password'">Student view</button>#}
 
         </ul>
+        <ul class="navbar-nav mr-5 float-right">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    Options
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    {% if role == 0 or role == 1 %}
+                    <a class="dropdown-item d-none" href="/admin-call-example'">Admin call example</a>
 
-        <li class="nav-item dropdown float-right">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-               aria-haspopup="true" aria-expanded="false">
-                Dropdown
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-        </li>
-{#        <div class="form-inline float-right">#}
-{#            <button class="btn btn-secondary mr-3" onclick="location.href='/change_password'">Change password#}
-{#            </button>#}
-{#            <form action='/logout' method='POST'>#}
-{#                <button class="btn btn-secondary" type='submit' value='logout'>Log out</button>#}
-{#            </form>#}
-{#        </div>#}
+                    <div class="dropdown-divider d-none" id="navbar-options-dropdown-divider"></div>
+                    {% endif %}
+
+                    <a class="dropdown-item" href="/change_password">Change password</a>
+                    <form id="logout-form" action="/logout" method="POST">
+                        <a class="dropdown-item" href="#" onclick="document.getElementById('logout-form').submit();">Log
+                            out</a>
+                    </form>
+
+                </div>
+            </li>
+        </ul>
+        {#        <div class="form-inline float-right">#}
+        {#            <button class="btn btn-secondary mr-3" onclick="location.href='/change_password'">Change password#}
+        {#            </button>#}
+        {#                    <form action='/logout' method='POST'>#}
+        {#                        <button class="btn btn-secondary" type='submit' value='logout'>Log out</button>#}
+        {#                    </form>#}
+        {#        </div>#}
     </div>
 </nav>
