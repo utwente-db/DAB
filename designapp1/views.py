@@ -131,16 +131,16 @@ def get_base_response(request, db_parameters):
 
 def does_a_row_exist(sql_result):
 
-        if sql_result.count() > 0:
-            return True
-        else:
-            return False
+    if sql_result.count() > 0:
+        return True
+    else:
+        return False
 
 
 def am_i_ta_of_this_course(current_id,course_id):
 
     try:
-        ta_info = TAs.objects.filter(courseid=course_id,taid=current_id)
+        ta_info = TAs.objects.filter(courseid=course_id,studentid=current_id)
 
         return does_a_row_exist(ta_info) #is this student a ta over this db?
 
@@ -154,7 +154,7 @@ def am_i_ta_of_this_db(current_id,dbid):
     try:
         db_info = Studentdatabases.objects.get(pk=dbid)
         course_id = db_info.course
-        ta_info = TAs.objects.filter(courseid=course_id,taid=current_id)
+        ta_info = TAs.objects.filter(courseid=course_id,studentid=current_id)
 
         return does_a_row_exist(ta_info) #is this student a ta over this db?
 
@@ -254,7 +254,7 @@ def get_course_ta(request, pk):
     except Courses.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-    if course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
+    if request.session["role"] >= admin or course.owner().id == request.session["user"] or am_i_ta_of_this_course(request.session["user"], course.courseid):
         data = TAs.objects.filter(courseid=course.courseid)
         serializer = TasSerializer(data, many=True)
         return JsonResponse(serializer.data, safe=False)
@@ -421,7 +421,7 @@ def post_base_response(request, db_parameters):
                     if "duplicate key" in str(e.__cause__) or "already exists" in str(e.__cause__):
                         return HttpResponse(status=status.HTTP_409_CONFLICT)
                     else:
-                        return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        raise e
             else:
                 #logging.debug(serializer_class.errors)
 
@@ -477,7 +477,7 @@ def delete_single_response(request, requested_pk, db_parameters):
 def accepted_fields_for_db(table):
 
     if table == "courses":
-        return {'coursename','info','schema','active','databases'}
+        return {'coursename','info','active','databases'}
     if table == "studentdatabases":
         return {'groupid'}
 
@@ -531,7 +531,7 @@ def update_single_response(request, requested_pk, db_parameters):
             log_message_with_db(request.session['user'],db_parameters["dbname"],log_update_single, message) #LOG THIS ACTION
             return HttpResponse(status=status.HTTP_202_ACCEPTED)
     else:
-        return HttpResponse(status=status.HTTP_401_UNAUTHORIZED)
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
 @authenticated
 def search_on_name(request, search_value, dbname):
@@ -706,6 +706,30 @@ def dump(request, pk):
     log_message_with_db(request.session['user'],"Studentdatabases",log_dump, message) #LOG THIS ACTION
     return response
 
+@require_GET
+@require_role(teacher)
+def course_dump(request, pk):
+    course = None
+    try:
+        course = Courses.objects.get(courseid=pk)
+    except Courses.DoesNotExist as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+    if not course.owner().id == request.session["user"] and not request.session["role"] == admin:
+        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+
+    file = schemaWriter.dump_course(course)
+
+    if file == None:
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+    response = HttpResponse(file, content_type="application/zip")
+    filename = re.sub(r' ', "_", course.coursename)+".zip"
+    response["Content-Disposition"] = "inline; filename=%s" % filename
+    log_message_with_db(request.session["user"],"Courses",log_dump," course "+str(course.courseid)+" has been dumped")
+    return response
+
+
 @require_POST
 @authenticated
 def reset(request, pk):
@@ -737,7 +761,7 @@ def schema(request, pk):
             response['Content-Disposition'] = "inline; filename=%s" % (course.coursename+".sql")
             return response
         else:
-            if course.owner().id == request.session["user"] or check_role(request, admin):
+            if course.owner().id == request.session["user"] or check_role(request, admin) or am_i_ta_of_this_course(request.session["user"],pk):
                 schema = request.body.decode("utf-8")
                 check = schemaCheck.check(schema)
                 if not check[0]:
@@ -903,7 +927,6 @@ def login(request):
         data = form.cleaned_data
         try:
             user = dbmusers.objects.get(email=data["mail"])
-            print(user)
             if not user.verified:
                 return render(request, 'login.html',
                               {'form': LoginForm, 'template_class' : 'resend-verification ' + user.email})
@@ -995,7 +1018,18 @@ def whoami(request):
         "id": user.id,
         "email": user.email,
         "role": user.role,
-        "cached_role": request.session["role"]
+        "cached_role": request.session["role"],
+    }
+
+    response = json.JSONEncoder().encode(response)
+    return HttpResponse(str(response), content_type="application/json")
+
+@require_GET
+@authenticated
+def who(request):
+    response = {
+        "id": request.session["user"],
+        "role": request.session["role"],
     }
 
     response = json.JSONEncoder().encode(response)
@@ -1004,6 +1038,8 @@ def whoami(request):
 
 @require_GET
 def verify(request, token):
+    if "user" in request.session:
+        return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     try:
         user = dbmusers.objects.get(token=token)
 
@@ -1056,6 +1092,8 @@ def change_password(request):
 
 @require_POST
 def resend_verification(request):
+    if "user" in request.session:
+        return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     body = None
     user = None
     try:
@@ -1081,6 +1119,8 @@ def resend_verification(request):
 
 @require_POST
 def request_reset_password(request, email):
+    if "user" in request.session:
+        return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     db = None
     try:
         db = dbmusers.objects.get(email=email)
@@ -1101,6 +1141,8 @@ def request_reset_password(request, email):
 
 @require_http_methods(["GET", "POST"])
 def reset_password(request, pk, token):
+    if "user" in request.session:
+        return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     #do checks first
     db = None
     try:

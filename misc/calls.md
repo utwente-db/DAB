@@ -52,6 +52,11 @@ returns:
 Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
 If the user is not logged in, returns a 401.
 
+## /who
+
+Same as whoami, but only return id and role. 
+Because there is no (explicit) database query, this request is a bit faster
+
 ## /dump/<pk>
 
 Returns a sql dump of the database corresponding to the specified id.
@@ -158,7 +163,7 @@ GET -> search for the value, based on the coursename
 
 GET -> gives back all the courses owned by the user currently logged in
 
-### /courses/<pk>/schema
+### /courses/pk/schema
 
 GET -> returns the schema for that database as a sql file
 POST -> Takes the **plaintext** body, and makes it the schema of the database (if it passes verification).
@@ -241,6 +246,15 @@ Default schema (named after the user) is preserved from the target database
 POST -> Generates the backup script. Returns the location of said script.
 
 Only accessible to admins
+
+## /course_dump/courseid
+
+GET -> returns a zip file with dumps of every database in the course.
+Dump filenames are named after the user email.
+
+Accessible to admins and the course owner (NOT TA's!)
+
+WARNING: May take a long time. Use with caution.
 
 ## /request_reset_password/[email] \(NOT /rest !!!)
 
