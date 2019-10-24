@@ -1,11 +1,11 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
 import {changePageState, displayWhoami, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
-import axios from 'axios';
+import axios, {AxiosResponse} from 'axios';
 import "popper.js"
 import "bootstrap"
 import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2'
-import {UserRole} from "./user";
+import {TA, UserRole} from "./user";
 import {goToExistingCoursePane} from "./edit_courses";
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -145,16 +145,25 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
     } else {
         ownDatabases = [];
     }
+
+    let taCourses: number[] = [];
+    if (who.role === UserRole.student) {
+        const taResponse: AxiosResponse<TA[]> = await axios.get("/rest/tas/own/") as AxiosResponse<TA[]>;
+        const taList: TA[] = taResponse.data;
+        taCourses = taList.map((ta: TA) => ta.courseid);
+    }
+
+
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     for (let i = 0; i < courses.length; i++) {
         let youHavePrivilege = false;
+        const youAreTA = taCourses.includes(courses[i].courseid)
         if (fromEditCourses) {
-            const youAreTA = false; // TODO implement TA check
             youHavePrivilege = (who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id) || youAreTA);
 
         } else {
-            youHavePrivilege = (courses[i].active || who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id));
+            youHavePrivilege = (courses[i].active || who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id) || youAreTA);
 
         }
         if (youHavePrivilege) {

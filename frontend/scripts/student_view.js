@@ -27028,7 +27028,7 @@ function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
 function displayCourses(optionalCourses, optionalWho, fromEditCourses) {
     if (fromEditCourses === void 0) { fromEditCourses = false; }
     return __awaiter(this, void 0, void 0, function () {
-        var ownCourses, i, youHavePrivilege, youAreTA, haveCredentials, fragment;
+        var taCourses, taResponse, taList, ownCourses, i, youHavePrivilege, youAreTA, haveCredentials, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -27048,15 +27048,24 @@ function displayCourses(optionalCourses, optionalWho, fromEditCourses) {
                     ownDatabases = [];
                     _a.label = 4;
                 case 4:
+                    taCourses = [];
+                    if (!(who.role === user_1.UserRole.student)) return [3 /*break*/, 6];
+                    return [4 /*yield*/, axios_1.default.get("/rest/tas/own/")];
+                case 5:
+                    taResponse = _a.sent();
+                    taList = taResponse.data;
+                    taCourses = taList.map(function (ta) { return ta.courseid; });
+                    _a.label = 6;
+                case 6:
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     for (i = 0; i < courses.length; i++) {
                         youHavePrivilege = false;
+                        youAreTA = taCourses.includes(courses[i].courseid);
                         if (fromEditCourses) {
-                            youAreTA = false;
                             youHavePrivilege = (who.role === user_1.UserRole.admin || (who.role === user_1.UserRole.teacher && courses[i].fid === who.id) || youAreTA);
                         }
                         else {
-                            youHavePrivilege = (courses[i].active || who.role === user_1.UserRole.admin || (who.role === user_1.UserRole.teacher && courses[i].fid === who.id));
+                            youHavePrivilege = (courses[i].active || who.role === user_1.UserRole.admin || (who.role === user_1.UserRole.teacher && courses[i].fid === who.id) || youAreTA);
                         }
                         if (youHavePrivilege) {
                             haveCredentials = false;

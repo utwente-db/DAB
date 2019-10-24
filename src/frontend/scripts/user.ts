@@ -45,6 +45,12 @@ export enum UserRole {
     student = 2
 }
 
+export interface TA {
+    courseid: number,
+    studentid: number,
+    taid: number
+}
+
 async function displayUsers(): Promise<void> {
     users = await getUsersPromise();
     const result: string[] = [];

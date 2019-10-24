@@ -1062,7 +1062,12 @@ def verify(request, token):
 @authenticated
 def change_password(request):
     if request.method == "GET":
-        return render(request, 'change_password.html', {'role' : request.session['role']})
+        TA_count = TAs.objects.filter(studentid=request.session['user']).count();
+        context = {
+            'role': request.session['role'],
+            'TA_count': TA_count
+        }
+        return render(request, 'change_password.html', context)
     else:
         body = None
         new = None
@@ -1181,7 +1186,8 @@ def password_has_been_reset(request):
 
 @require_GET
 def student_view(request):
-    return render(request, 'student_view.html', { 'server_address' : DATABASE_SERVER, 'role' : request.session['role']})
+    TA_count = TAs.objects.filter(studentid=request.session['user']).count();
+    return render(request, 'student_view.html', { 'server_address' : DATABASE_SERVER, 'role' : request.session['role'], 'TA_count' : TA_count})
 
 @require_GET
 # @auth_redirect
@@ -1203,6 +1209,16 @@ def forgot_password_page(request):
         return render(request, 'forgot_password_page.html')
 
 @require_GET
-@require_role_redirect(teacher)
+@auth_redirect
 def edit_courses(request):
-    return render(request, 'edit_courses.html', {'role' : request.session['role']})
+    TA_count = TAs.objects.filter(studentid=request.session['user']).count();
+
+    if (request.session['role'] < student or TA_count > 0):
+        context = {
+            'role' : request.session['role'],
+           'TA_count' : TA_count
+        }
+        return render(request, 'edit_courses.html', context)
+    else:
+        return HttpResponse("You are not authorized",status=status.HTTP_403_FORBIDDEN)
+
