@@ -277,9 +277,9 @@ async function getSchema(newSchemaRadioTextarea: HTMLInputElement, newSchemaText
 
 async function tryAddCourse(): Promise<void> {
     if (checkFields(newCourseInfoField, newCoursenameField, newCourseFIDField,
-                     newSchemaRadioNone, newSchemaRadioTextarea, newSchemaTextarea,
-                     newSchemaRadioUpload, newSchemaUpload, newSchemaRadioTransfer,
-                     newSchemaTransfer)) {
+        newSchemaRadioNone, newSchemaRadioTextarea, newSchemaTextarea,
+        newSchemaRadioUpload, newSchemaUpload, newSchemaRadioTransfer,
+        newSchemaTransfer)) {
         changePageState(false, changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
 
@@ -300,7 +300,7 @@ async function tryAddCourse(): Promise<void> {
             addAlert("Successfully created course (without schema)", AlertType.success, tempAlert);
             const courseID = course.courseid;
             const schema: string = await getSchema(newSchemaRadioTextarea, newSchemaTextarea, newSchemaRadioUpload,
-                         newSchemaUpload);
+                newSchemaUpload);
 
             if (schema !== "") {
 
@@ -383,9 +383,9 @@ async function tryEditCourse(): Promise<void> {
     // TODO maybe repopulate on cancel changes?
 
     if (checkFields(existingCourseInfoField, existingCoursenameField, existingCourseFIDField,
-                     existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea,
-                     existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer,
-                     existingSchemaTransfer)) {
+        existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea,
+        existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer,
+        existingSchemaTransfer)) {
         changePageState(false, changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
 
@@ -403,7 +403,7 @@ async function tryEditCourse(): Promise<void> {
             const response = await axios.put(`/rest/courses/${existingCourseIDField.value}`, inputCourse) as AxiosResponse;
             addAlert("Successfully edited course (without schema)", AlertType.success, tempAlert);
             const schema: string = await getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload,
-                         existingSchemaUpload);
+                existingSchemaUpload);
 
             if (schema !== "") {
 
@@ -431,7 +431,8 @@ async function tryEditCourse(): Promise<void> {
 
 function tryDumpCourse(id: number): boolean {
     // TODO implement
-    return false;
+    window.location.href = `/rest/course_dump/${id}`;
+    return true;
 }
 
 window.onload = async () => {
@@ -506,20 +507,24 @@ window.onload = async () => {
             if (addCourseLink) {
                 addCourseLink.addEventListener("click", goToAddCoursePane)
             }
+            if (deleteCourseButton){
+            deleteCourseButton.addEventListener("click", () => {
+                tryDeleteCourse(Number(existingCourseIDField.value));
+            })
+            }
+            if (dumpCourseButton) {
+                dumpCourseButton.addEventListener("click", () => {
+                    tryDumpCourse(Number(existingCourseIDField.value));
+
+                }) }
+
         })(),
 
-        deleteCourseButton.addEventListener("click", () => {
-            tryDeleteCourse(Number(existingCourseIDField.value));
-        }),
 
         editCourseButton.addEventListener("click", () => {
             tryEditCourse();
         }),
 
-        dumpCourseButton.addEventListener("click", () => {
-            tryDumpCourse(Number(existingCourseIDField.value));
-
-        }),
 
         populateNewCoursePane(),
 

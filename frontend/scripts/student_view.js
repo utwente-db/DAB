@@ -26635,7 +26635,8 @@ function tryEditCourse() {
 }
 function tryDumpCourse(id) {
     // TODO implement
-    return false;
+    window.location.href = "/rest/course_dump/" + id;
+    return true;
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -26710,15 +26711,19 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                         if (addCourseLink) {
                             addCourseLink.addEventListener("click", goToAddCoursePane);
                         }
+                        if (deleteCourseButton) {
+                            deleteCourseButton.addEventListener("click", function () {
+                                tryDeleteCourse(Number(existingCourseIDField.value));
+                            });
+                        }
+                        if (dumpCourseButton) {
+                            dumpCourseButton.addEventListener("click", function () {
+                                tryDumpCourse(Number(existingCourseIDField.value));
+                            });
+                        }
                     })(),
-                    deleteCourseButton.addEventListener("click", function () {
-                        tryDeleteCourse(Number(existingCourseIDField.value));
-                    }),
                     editCourseButton.addEventListener("click", function () {
                         tryEditCourse();
-                    }),
-                    dumpCourseButton.addEventListener("click", function () {
-                        tryDumpCourse(Number(existingCourseIDField.value));
                     }),
                     populateNewCoursePane(),
                     navbar_1.navbarEditCourses.classList.add("active"),

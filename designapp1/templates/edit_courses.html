@@ -309,21 +309,25 @@
 
                                     <hr>
                                     <div class="align-items-center align-items-stretch row">
+                                        {% if role < 2 %}
                                         <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
                                             <button id="delete-course-button"
                                                     class="btn btn-danger delete-button btn-block">Delete course
                                             </button>
                                         </div>
+                                        {% endif %}
                                         <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
                                             <button id="edit-course-button"
                                                     class="btn btn-info reset-button btn-block">Edit course
                                             </button>
                                         </div>
+                                    {% if role < 2 %}
                                         <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
                                             <button id="dump-course-button"
                                                     class="btn btn-secondary dump-button btn-block">Get dump of course
                                             </button>
                                         </div>
+                                    {% endif %}
                                     </div>
                                 </div>
                             </div>
