@@ -26212,6 +26212,9 @@ var newSchemaRadioTransfer = document.getElementById("new-schema-radio-transfer"
 var newSchemaTextarea = document.getElementById("new-schema-textarea");
 var newSchemaUpload = document.getElementById("new-schema-upload");
 var newSchemaTransfer = document.getElementById("new-schema-transfer");
+var newSchemaTextareaDiv = document.getElementById("new-schema-textarea-div");
+var newSchemaUploadDiv = document.getElementById("new-schema-upload-div");
+var newSchemaTransferDiv = document.getElementById("new-schema-transfer-div");
 var newCourseContent = document.getElementById('new-course-content');
 var who;
 // tslint:disable-next-line:prefer-const
@@ -26230,14 +26233,13 @@ function validCoursename(field) {
 }
 function fillStudentDatabasesDropdown() {
     return __awaiter(this, void 0, void 0, function () {
-        var response, databases, result, child, i, optionNode;
+        var response, databases, child, i, optionNode;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/")];
                 case 1:
                     response = _a.sent();
-                    databases = response.data;
-                    result = [];
+                    databases = (response.data).sort(function (a, b) { return a.databasename.localeCompare(b.databasename); });
                     while (newSchemaTransfer.lastElementChild !== newSchemaTransfer.firstElementChild) {
                         child = newSchemaTransfer.lastElementChild;
                         newSchemaTransfer.removeChild(child);
@@ -26258,12 +26260,14 @@ function populateNewCoursePane() {
     newCourseFIDField.value = "";
     newCourseInfoField.value = "";
     newCoursenameField.value = "";
-    newSchemaTextarea.value = "";
     newActiveField.checked = true;
+    newSchemaRadioUpload.checked = false;
+    newSchemaRadioTransfer.checked = false;
+    newSchemaRadioTextarea.checked = false;
+    newSchemaRadioNone.checked = true;
+    newSchemaTextarea.value = "";
+    newSchemaUpload.value = "";
     fillStudentDatabasesDropdown();
-    // TODO fill the dropdown
-    // TODO rename fields that i addded new in front of
-    // TODO Depopulate other fields (schema and such)
 }
 function populateExistingCoursePane() {
     // TODO implement
@@ -26441,13 +26445,33 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                             event.preventDefault();
                             tryAddSchema();
                         }),
+                        newSchemaRadioNone.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.add("d-none");
+                            newSchemaTransferDiv.classList.add("d-none");
+                            newSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        newSchemaRadioTextarea.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.remove("d-none");
+                            newSchemaTransferDiv.classList.add("d-none");
+                            newSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        newSchemaRadioTransfer.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.add("d-none");
+                            newSchemaTransferDiv.classList.remove("d-none");
+                            newSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        newSchemaRadioUpload.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.add("d-none");
+                            newSchemaTransferDiv.classList.add("d-none");
+                            newSchemaUploadDiv.classList.remove("d-none");
+                        }),
                         navbar_1.navbarEditCourses.classList.add("active"),
                         (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
                         student_view_1.displayCourses(who.role)
                     ])];
             case 2:
                 _a.sent();
-                $('select').selectpicker(); // Style all selects
+                $('select').selectpicker(); // TODO maybe remove this line as it can break selects
                 return [2 /*return*/];
         }
     });

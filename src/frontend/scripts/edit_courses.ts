@@ -1,6 +1,6 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
-import {Course, InputCourse, StudentDatabase} from "./courses";
+import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses";
 import {setInvalid, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
@@ -26,6 +26,9 @@ const newSchemaTextarea = document.getElementById("new-schema-textarea") as HTML
 const newSchemaUpload = document.getElementById("new-schema-upload") as HTMLInputElement;
 const newSchemaTransfer = document.getElementById("new-schema-transfer") as HTMLSelectElement;
 
+const newSchemaTextareaDiv = document.getElementById("new-schema-textarea-div") as HTMLDivElement;
+const newSchemaUploadDiv = document.getElementById("new-schema-upload-div") as HTMLDivElement;
+const newSchemaTransferDiv = document.getElementById("new-schema-transfer-div") as HTMLDivElement;
 
 const newCourseContent = document.getElementById('new-course-content') as HTMLFormElement;
 let who: Who;
@@ -47,8 +50,8 @@ function validCoursename(field: HTMLInputElement): boolean {
 
 async function fillStudentDatabasesDropdown(): Promise<void> {
     const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
-    const databases: StudentDatabase[] = response.data;
-    const result: string[] = [];
+    const databases: StudentDatabase[] = (response.data).sort( (a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename)  );
+
     while (newSchemaTransfer.lastElementChild !== newSchemaTransfer.firstElementChild) {
         const child: Element = newSchemaTransfer.lastElementChild!;
         newSchemaTransfer.removeChild(child!);
@@ -69,12 +72,17 @@ function populateNewCoursePane(): void {
     newCourseFIDField.value = "";
     newCourseInfoField.value = "";
     newCoursenameField.value = "";
-    newSchemaTextarea.value = "";
     newActiveField.checked = true;
+
+    newSchemaRadioUpload.checked = false;
+    newSchemaRadioTransfer.checked = false;
+    newSchemaRadioTextarea.checked = false;
+    newSchemaRadioNone.checked = true;
+
+    newSchemaTextarea.value = "";
+    newSchemaUpload.value = "";
     fillStudentDatabasesDropdown();
-    // TODO fill the dropdown
-    // TODO rename fields that i addded new in front of
-    // TODO Depopulate other fields (schema and such)
+
 }
 
 export function populateExistingCoursePane(): void {
@@ -94,6 +102,7 @@ function validFID(field: HTMLInputElement): boolean {
         // Probably failed to convert to a number
         addErrorAlert(error);
         return false
+
     }
 }
 
@@ -227,11 +236,38 @@ window.onload = async () => {
             event.preventDefault();
             tryAddSchema();
         }),
+
+        newSchemaRadioNone.parentElement!.addEventListener("click", () => {
+            newSchemaTextareaDiv.classList.add("d-none");
+            newSchemaTransferDiv.classList.add("d-none");
+            newSchemaUploadDiv.classList.add("d-none");
+        }),
+
+        newSchemaRadioTextarea.parentElement!.addEventListener("click", () => {
+            newSchemaTextareaDiv.classList.remove("d-none");
+            newSchemaTransferDiv.classList.add("d-none");
+            newSchemaUploadDiv.classList.add("d-none");
+        }),
+
+
+        newSchemaRadioTransfer.parentElement!.addEventListener("click", () => {
+            newSchemaTextareaDiv.classList.add("d-none");
+            newSchemaTransferDiv.classList.remove("d-none");
+            newSchemaUploadDiv.classList.add("d-none");
+        }),
+
+        newSchemaRadioUpload.parentElement!.addEventListener("click", () => {
+            newSchemaTextareaDiv.classList.add("d-none");
+            newSchemaTransferDiv.classList.add("d-none");
+            newSchemaUploadDiv.classList.remove("d-none");
+        }),
+
         navbarEditCourses.classList.add("active"),
         (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
         displayCourses(who.role)
-    ]);
+    ])
+    ;
 
-    $('select').selectpicker(); // Style all selects
+    $('select').selectpicker(); // TODO maybe remove this line as it can break selects
 
 };
