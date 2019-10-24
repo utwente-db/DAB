@@ -8,7 +8,7 @@ import {displayCourses} from "./student_view";
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
-const newCoursesContentHtml: HTMLDivElement = document.getElementById("new-courses-content") as HTMLDivElement;
+const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
 const newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement;
 const newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement;
 const newCourseFIDField = document.getElementById("new-course-fid-field") as HTMLInputElement;
@@ -30,7 +30,11 @@ const newSchemaUploadDiv = document.getElementById("new-schema-upload-div") as H
 const newSchemaTransferDiv = document.getElementById("new-schema-transfer-div") as HTMLDivElement;
 
 const newCourseContent = document.getElementById('new-course-content') as HTMLFormElement;
-const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
+let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
+
+const existingCoursePane = document.getElementById("existing-course-pane") as HTMLDivElement;
+const newCoursePane = document.getElementById("new-course-pane") as HTMLDivElement;
+
 let who: Who;
 let courses: Course[];
 // tslint:disable-next-line:prefer-const
@@ -71,7 +75,7 @@ async function fillStudentDatabasesDropdown(): Promise<void> {
 }
 
 function populateNewCoursePane(): void {
-    Array.from(coursesNavHtml.children).forEach((child: HTMLAnchorElement) => {
+    Array.from(coursesNavHtml.children).forEach((child) => {
         child.classList.remove("active");
     });
 
@@ -277,6 +281,20 @@ window.onload = async () => {
             newSchemaTextareaDiv.classList.add("d-none");
             newSchemaTransferDiv.classList.add("d-none");
             newSchemaUploadDiv.classList.remove("d-none");
+        }),
+
+        addCourseLink.addEventListener("click", (event) => {
+            // event.preventDefault();
+            populateNewCoursePane();
+            const addcourseLinkClone = addCourseLink!.cloneNode(true) as HTMLAnchorElement;
+            addCourseLink.parentNode!.replaceChild(addcourseLinkClone, addCourseLink);
+            addCourseLink = addcourseLinkClone;
+            addCourseLink.toggleAttribute("href");
+            Array.from(coursesContentHtml.children).forEach((child) => {
+                child.classList.remove("active");
+            });
+            newCoursePane.classList.add("active");
+            // TODO re-add this event listener when you click on a course
         }),
 
         populateNewCoursePane(),
