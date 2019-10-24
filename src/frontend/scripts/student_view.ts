@@ -6,7 +6,7 @@ import "bootstrap"
 import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2'
 import {UserRole} from "./user";
-import {populateExistingCoursePane} from "./edit_courses";
+import {goToExistingCoursePane} from "./edit_courses";
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
@@ -93,7 +93,7 @@ function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGr
     let inactiveCourseString: string;
     let activeString: string;
     if (fromEditCourses) {
-        hrefString = "existing-course-pane";
+        hrefString = "";
     } else {
         hrefString = makeGreen ? "have-credentials-pane" : "no-credentials-pane";
     }
@@ -106,8 +106,9 @@ function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGr
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
     if (fromEditCourses) {
-        fragment.firstElementChild!.addEventListener("click", () => {
-            populateExistingCoursePane(i);
+        fragment.firstElementChild!.addEventListener("click", (event) => {
+            event.preventDefault();
+            goToExistingCoursePane(i);
         });
 
     } else {

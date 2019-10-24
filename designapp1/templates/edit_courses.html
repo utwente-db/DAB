@@ -63,7 +63,13 @@
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
-                                    <div class="form-group row align-items-center mb-4">
+
+
+                                    <div class="form-group row align-items-center mb-4
+                                        {% if role > 0 %}
+                                        d-none
+                                        {% endif %}
+                                        ">
                                         <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course
                                             owner ID
                                             (optional)</label>
@@ -211,7 +217,7 @@
                                         <div class="col-12 col-md-8">
                                             <input type="number" name="course-fid-field" class="form-control"
                                                    id="existing-course-fid-field"
-                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'');" disabled>
 
                                             <div class="invalid-feedback"></div>
                                         </div>

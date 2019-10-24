@@ -26276,7 +26276,7 @@ function populateNewCoursePane() {
     newSchemaUpload.value = "";
     fillStudentDatabasesDropdown();
 }
-function goToAddCourse(event) {
+function goToAddCoursePane(event) {
     event.preventDefault();
     populateNewCoursePane();
     var addcourseLinkClone = addCourseLink.cloneNode(true);
@@ -26288,12 +26288,16 @@ function goToAddCourse(event) {
     });
     newCoursePane.classList.add("active");
 }
-function populateExistingCoursePane(i) {
-    addCourseLink.addEventListener("click", goToAddCourse);
+function goToExistingCoursePane(i) {
+    addCourseLink.addEventListener("click", goToAddCoursePane);
     addCourseLink.toggleAttribute("href");
-    // TODO actually implement
+    // TODO actually implement populate
+    Array.from(coursesContentHtml.children).forEach(function (child) {
+        child.classList.remove("active");
+    });
+    existingCoursePane.classList.add("active");
 }
-exports.populateExistingCoursePane = populateExistingCoursePane;
+exports.goToExistingCoursePane = goToExistingCoursePane;
 function validFID(field) {
     try {
         if (field.value === "" || Number(field.value) > 0) {
@@ -26444,7 +26448,7 @@ function tryAddSchema() {
                     populateNewCoursePane();
                     courses.push(response.data);
                     courses = courses.sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
-                    populateExistingCoursePane(courses.indexOf(course));
+                    goToExistingCoursePane(courses.indexOf(course));
                     return [3 /*break*/, 8];
                 case 6:
                     error_1 = _a.sent();
@@ -26503,7 +26507,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                         newSchemaTransferDiv.classList.add("d-none");
                         newSchemaUploadDiv.classList.remove("d-none");
                     }),
-                    addCourseLink.addEventListener("click", goToAddCourse),
+                    addCourseLink.addEventListener("click", goToAddCoursePane),
                     populateNewCoursePane(),
                     navbar_1.navbarEditCourses.classList.add("active"),
                     (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
@@ -26987,7 +26991,7 @@ function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
     var inactiveCourseString;
     var activeString;
     if (fromEditCourses) {
-        hrefString = "existing-course-pane";
+        hrefString = "";
     }
     else {
         hrefString = makeGreen ? "have-credentials-pane" : "no-credentials-pane";
@@ -26998,8 +27002,9 @@ function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
     var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + " " + inactiveCourseString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
     var fragment = document.createRange().createContextualFragment(templateString);
     if (fromEditCourses) {
-        fragment.firstElementChild.addEventListener("click", function () {
-            edit_courses_1.populateExistingCoursePane(i);
+        fragment.firstElementChild.addEventListener("click", function (event) {
+            event.preventDefault();
+            edit_courses_1.goToExistingCoursePane(i);
         });
     }
     else {

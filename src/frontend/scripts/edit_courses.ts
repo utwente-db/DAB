@@ -95,7 +95,7 @@ function populateNewCoursePane(): void {
 
 }
 
-function goToAddCourse(event: Event): void {
+function goToAddCoursePane(event: Event): void {
     event.preventDefault();
     populateNewCoursePane();
     const addcourseLinkClone = addCourseLink!.cloneNode(true) as HTMLAnchorElement;
@@ -108,10 +108,15 @@ function goToAddCourse(event: Event): void {
     newCoursePane.classList.add("active");
 }
 
-export function populateExistingCoursePane(i: number): void {
-    addCourseLink.addEventListener("click", goToAddCourse);
+export function goToExistingCoursePane(i: number): void {
+    addCourseLink.addEventListener("click", goToAddCoursePane);
     addCourseLink.toggleAttribute("href");
-    // TODO actually implement
+    // TODO actually implement populate
+
+     Array.from(coursesContentHtml.children).forEach((child) => {
+        child.classList.remove("active");
+    });
+    existingCoursePane.classList.add("active");
 }
 
 function validFID(field: HTMLInputElement): boolean {
@@ -248,7 +253,7 @@ async function tryAddSchema(): Promise<void> {
             populateNewCoursePane();
             courses.push(response.data);
             courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-            populateExistingCoursePane(courses.indexOf(course))
+            goToExistingCoursePane(courses.indexOf(course))
         } catch (error) {
             addErrorAlert(error, tempAlert)
         } finally {
@@ -298,7 +303,7 @@ window.onload = async () => {
             newSchemaUploadDiv.classList.remove("d-none");
         }),
 
-        addCourseLink.addEventListener("click", goToAddCourse),
+        addCourseLink.addEventListener("click", goToAddCoursePane),
 
         populateNewCoursePane(),
 
