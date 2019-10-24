@@ -6,6 +6,7 @@ import "bootstrap"
 import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2'
 import {UserRole} from "./user";
+import {populateExistingCoursePane} from "./edit_courses";
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
@@ -67,7 +68,6 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
                             </div>
                         </div>
                         <hr>`;
-            // TODO make third button mobile-friendly
             credentials += html.trim();
             dbIDs.push(db.dbid)
         }
@@ -87,36 +87,49 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
 
 }
 
-function createNavLink(courseIsActive: boolean, makeGreen: boolean, i: number, active = false): DocumentFragment {
-    const credentialsClass = makeGreen ? "have-credentials-nav" : "no-credentials-nav";
-    const hrefString = makeGreen ? "have-credentials-pane" : "no-credentials-pane";
-    const inactiveCourseString = courseIsActive ? "" : "inactive-course";
-    const activeString = active ? "active" : "";
+function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGreen: boolean, i: number, active = false): DocumentFragment {
+    let credentialsClass: string;
+    let hrefString: string;
+    let inactiveCourseString: string;
+    let activeString: string;
+    if (fromEditCourses) {
+        hrefString = "existing-course-pane";
+    } else {
+        hrefString = makeGreen ? "have-credentials-pane" : "no-credentials-pane";
+    }
+    credentialsClass = makeGreen ? "green-nav" : "not-green-nav";
+    activeString = active ? "active" : "";
+    inactiveCourseString = courseIsActive ? "" : "inactive-course";
+
+
     const templateString = `<a id="${i}" class="nav-link ${credentialsClass} ${activeString} ${inactiveCourseString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
-    if (!makeGreen) {
-        fragment.firstElementChild!.addEventListener("click", () => {
-            populateNoCredentialsPane(i);
-        });
+    if (fromEditCourses) {
+        populateExistingCoursePane();
     } else {
-        fragment.firstElementChild!.addEventListener("click", () => {
-            populateHaveCredentialsPane(i);
-        });
+        if (!makeGreen) {
+            fragment.firstElementChild!.addEventListener("click", () => {
+                populateNoCredentialsPane(i);
+            });
+        } else {
+            fragment.firstElementChild!.addEventListener("click", () => {
+                populateHaveCredentialsPane(i);
+            });
+        }
     }
 
     fragment.firstElementChild!.addEventListener("click", () => {
         currentCourse = courses[i].courseid;
-        alertDiv.innerHTML = "" // Remove all alerts when switching course
     });
     return fragment;
 }
 
-export async function displayCourses(userRole = UserRole.student): Promise<void> {
+export async function displayCourses(userRole = UserRole.student, fromEditCourses = false): Promise<void> {
     who = await getWhoPromise();
 
     courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-    if (userRole === UserRole.student) {
+    if (!fromEditCourses) {
         ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     } else {
         ownDatabases = [];
@@ -128,12 +141,12 @@ export async function displayCourses(userRole = UserRole.student): Promise<void>
         // TODO  check if user is TA for course
         if (courses[i].active || youHavePrivilege) {
             let haveCredentials = false;
-            if (userRole === UserRole.admin) {
+            if (userRole === UserRole.admin && fromEditCourses) {
                 haveCredentials = courses[i].fid === who.id // The user owns this course
-            } else if (userRole === UserRole.student) {
+            } else if (!fromEditCourses) {
                 haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
             }
-            const fragment = createNavLink(courses[i].active, haveCredentials, i);
+            const fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i);
 
             coursesNavHtml.appendChild(fragment);
         }
@@ -147,7 +160,7 @@ async function changeView(hasCredentials: boolean): Promise<void> {
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
     const newPane = hasCredentials ? haveCredsPane : noCredsPane;
     const i = Number(activeLink.id);
-    const fragment = createNavLink(courses[i].active,hasCredentials, i, true);
+    const fragment = createNavLink(false,courses[i].active, hasCredentials, i, true);
     activeLink.classList.remove("active");
     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild!);
     activeLink.remove();

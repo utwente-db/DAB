@@ -26146,6 +26146,203 @@ exports.tryGetCredentials = tryGetCredentials;
 
 /***/ }),
 
+/***/ "./src/frontend/scripts/edit_courses.ts":
+/*!**********************************************!*\
+  !*** ./src/frontend/scripts/edit_courses.ts ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
+var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+var register_1 = __webpack_require__(/*! ./register */ "./src/frontend/scripts/register.ts");
+var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
+var student_view_1 = __webpack_require__(/*! ./student_view */ "./src/frontend/scripts/student_view.ts");
+var addCourseButton = document.getElementById("add-course-button");
+var coursesNavHtml = document.getElementById("courses-nav");
+var newCoursesContentHtml = document.getElementById("new-courses-content");
+var newCoursenameField = document.getElementById("new-course-name-field");
+var newCourseInfoField = document.getElementById("new-course-info-field");
+var newCourseFIDField = document.getElementById("new-course-fid-field");
+var newSchemaField = document.getElementById("new-schema-field");
+var newActiveField = document.getElementById("new-active-field");
+var content = document.getElementById('content');
+var who;
+var currentCourse = 0;
+// const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
+function validCoursename(field) {
+    var coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/;
+    if (coursenameRegex.test(field.value)) {
+        register_1.setValid(field);
+        return true;
+    }
+    else {
+        register_1.setInvalid(field, "Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces");
+        return false;
+    }
+}
+function depopulateNewCoursePane() {
+    newCourseFIDField.value = "";
+    newCourseInfoField.value = "";
+    newCoursenameField.value = "";
+    newSchemaField.value = "";
+    newActiveField.checked = true;
+}
+function populateExistingCoursePane() {
+    // TODO implement
+}
+exports.populateExistingCoursePane = populateExistingCoursePane;
+function validFID(field) {
+    try {
+        if (field.value === "" || Number(field.value) > 0) {
+            register_1.setValid(field);
+            return true;
+        }
+        else {
+            register_1.setInvalid(field, "Please enter a valid integer");
+            return false;
+        }
+    }
+    catch (error) {
+        // Probably failed to convert to a number
+        alert_1.addErrorAlert(error);
+        return false;
+    }
+}
+function checkFields() {
+    var a = validCoursename(newCoursenameField);
+    var b = validFID(newCourseFIDField);
+    return a && b;
+}
+function changeEditCoursesState(enable) {
+    if (enable) {
+        newCourseInfoField.disabled = false;
+        newCoursenameField.disabled = false;
+        newCourseFIDField.disabled = false;
+        newSchemaField.disabled = false;
+        newActiveField.disabled = false;
+        addCourseButton.disabled = false;
+        (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled");
+    }
+    else {
+        newCourseInfoField.disabled = true;
+        newCoursenameField.disabled = true;
+        newCourseFIDField.disabled = true;
+        newSchemaField.disabled = true;
+        newActiveField.disabled = true;
+        addCourseButton.disabled = true;
+    }
+}
+function tryAddSchema() {
+    return __awaiter(this, void 0, void 0, function () {
+        var tempAlert, inputCourse, schema, response, courseID, response_1, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!checkFields()) return [3 /*break*/, 7];
+                    navbar_1.changePageState(false, changeEditCoursesState);
+                    tempAlert = alert_1.addTempAlert();
+                    inputCourse = {
+                        coursename: newCoursenameField.value,
+                        info: newCourseInfoField.value,
+                        active: newActiveField.checked
+                    };
+                    if (newCourseFIDField.value !== "") {
+                        inputCourse.fid = Number(newCourseFIDField.value);
+                    }
+                    schema = newSchemaField.value;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 5, 6, 7]);
+                    return [4 /*yield*/, axios_1.default.post("/rest/courses/", inputCourse)];
+                case 2:
+                    response = _a.sent();
+                    alert_1.addAlert("successfully added course, but not schema yet", alert_1.AlertType.success);
+                    courseID = response.data.courseid;
+                    if (!(schema !== "")) return [3 /*break*/, 4];
+                    return [4 /*yield*/, axios_1.default.post("/rest/courses/" + courseID + "/schema", schema)];
+                case 3:
+                    response_1 = _a.sent();
+                    alert_1.addAlert("successfully added schema", alert_1.AlertType.success);
+                    _a.label = 4;
+                case 4: return [3 /*break*/, 7];
+                case 5:
+                    error_1 = _a.sent();
+                    alert_1.addErrorAlert(error_1, tempAlert);
+                    return [3 /*break*/, 7];
+                case 6:
+                    navbar_1.changePageState(true, changeEditCoursesState);
+                    return [7 /*endfinally*/];
+                case 7: return [2 /*return*/];
+            }
+        });
+    });
+}
+window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, navbar_1.getWhoamiPromise()];
+            case 1:
+                who = _a.sent();
+                return [4 /*yield*/, Promise.all([
+                        navbar_1.initNavbar(changeEditCoursesState),
+                        content.addEventListener("submit", function (event) {
+                            event.preventDefault();
+                            tryAddSchema();
+                        }),
+                        navbar_1.navbarEditCourses.classList.add("active"),
+                        (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
+                        student_view_1.displayCourses(who.role)
+                    ])];
+            case 2:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
+
+
+/***/ }),
+
 /***/ "./src/frontend/scripts/navbar.ts":
 /*!****************************************!*\
   !*** ./src/frontend/scripts/navbar.ts ***!
@@ -26322,6 +26519,185 @@ exports.displayWhoami = displayWhoami;
 
 /***/ }),
 
+/***/ "./src/frontend/scripts/register.ts":
+/*!******************************************!*\
+  !*** ./src/frontend/scripts/register.ts ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+__webpack_require__(/*! ../sass/main.sass */ "./src/frontend/sass/main.sass");
+__webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js");
+__webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
+__webpack_require__(/*! bootstrap-select */ "./node_modules/bootstrap-select/dist/js/bootstrap-select.js");
+var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
+var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+var registerButton = document.getElementById("register-button");
+var registerEmailField = document.getElementById("register-email-field");
+var registerPasswordField = document.getElementById('register-password-field');
+var registerPasswordConfirmField = document.getElementById('register-password-confirm-field');
+var content = document.getElementById('content');
+function setValid(input) {
+    input.classList.remove("is-invalid");
+    input.classList.add("is-valid");
+    if (input.nextElementSibling) {
+        var errorField = input.nextElementSibling;
+        errorField.textContent = "";
+    }
+    else {
+        console.error("No sibling element for input. Contact the front-end devs with this error");
+    }
+}
+exports.setValid = setValid;
+function setInvalid(input, error) {
+    input.classList.remove("is-valid");
+    input.classList.add("is-invalid");
+    if (input.nextElementSibling) {
+        var errorField = input.nextElementSibling;
+        errorField.textContent = error;
+    }
+    else {
+        console.error("No sibling element for input. Contact the front-end devs with this error");
+    }
+}
+exports.setInvalid = setInvalid;
+function passwordsEqual(passwordField, passwordConfirmField) {
+    if (passwordField.value === passwordConfirmField.value) {
+        setValid(passwordConfirmField);
+        return true;
+    }
+    else {
+        setInvalid(passwordConfirmField, "Passwords do not match");
+        return false;
+    }
+}
+exports.passwordsEqual = passwordsEqual;
+function validEmail(field) {
+    var emailPattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    var utwentePattern = /.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$/;
+    var email = field.value;
+    if (emailPattern.test(email)) {
+        if (utwentePattern.test(email)) {
+            setValid(field);
+            return true;
+        }
+        else {
+            setInvalid(field, "Not a valid utwente.nl address");
+        }
+    }
+    else {
+        setInvalid(field, "Not a valid e-mail address");
+    }
+    return false;
+}
+exports.validEmail = validEmail;
+function validPassword(field) {
+    var passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+    var password = field.value;
+    if (passwordPattern.test(password)) {
+        setValid(field);
+        return true;
+    }
+    else {
+        setInvalid(field, "Password does not meet the requirements");
+        return false;
+    }
+}
+exports.validPassword = validPassword;
+function checkFields() {
+    var a = validEmail(registerEmailField); // Can't use a one-line function here due to lazy evaluation
+    var b = validPassword(registerPasswordField);
+    var c = passwordsEqual(registerPasswordField, registerPasswordConfirmField);
+    return a && b && c;
+}
+function tryRegister() {
+    return __awaiter(this, void 0, void 0, function () {
+        var credentials, tempAlert, response, responseData, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!checkFields()) return [3 /*break*/, 5];
+                    credentials = { email: registerEmailField.value, password: registerPasswordField.value };
+                    tempAlert = alert_1.addTempAlert();
+                    registerEmailField.disabled = true;
+                    registerPasswordField.disabled = true;
+                    registerPasswordConfirmField.disabled = true;
+                    registerButton.disabled = true;
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, 4, 5]);
+                    return [4 /*yield*/, axios_1.default.post("/rest/dbmusers/", credentials)];
+                case 2:
+                    response = _a.sent();
+                    responseData = response.data;
+                    alert_1.addAlert("Please check your inbox to confirm your e-mail", alert_1.AlertType.success, tempAlert);
+                    return [3 /*break*/, 5];
+                case 3:
+                    error_1 = _a.sent();
+                    alert_1.addErrorAlert(error_1, tempAlert);
+                    return [3 /*break*/, 5];
+                case 4:
+                    registerEmailField.disabled = false;
+                    registerPasswordField.disabled = false;
+                    registerPasswordConfirmField.disabled = false;
+                    registerButton.disabled = false;
+                    return [7 /*endfinally*/];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+window.onload = function () {
+    if (content) {
+        content.addEventListener("submit", function (event) {
+            event.preventDefault();
+            tryRegister();
+        });
+    }
+};
+
+
+/***/ }),
+
 /***/ "./src/frontend/scripts/student_view.ts":
 /*!**********************************************!*\
   !*** ./src/frontend/scripts/student_view.ts ***!
@@ -26376,6 +26752,7 @@ __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap
 var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
 var sweetalert2_1 = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 var user_1 = __webpack_require__(/*! ./user */ "./src/frontend/scripts/user.ts");
+var edit_courses_1 = __webpack_require__(/*! ./edit_courses */ "./src/frontend/scripts/edit_courses.ts");
 var coursesNavHtml = document.getElementById("courses-nav");
 var noCredsCoursename = document.getElementById("no-credentials-coursename");
 var noCredsInfo = document.getElementById("no-credentials-courseinfo");
@@ -26409,7 +26786,6 @@ function populateHaveCredentialsPane(i) {
             ownDatabases.forEach(function (db) {
                 if (db.course === courses[i].courseid) {
                     var html = "<div class=\"mt-5 form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Username:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.username + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"form-group row\">\n                            <label class=\"col-12 col-md-4 col-form-label\">Password:</label>\n                            <div class=\"col-12 col-md-8\">\n                                <input type=\"text\" class=\"form-control\" value=\"" + db.password + "\" readonly=\"\">\n                            </div>\n                        </div>\n                        <div class=\"align-items-center align-items-stretch row\">\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"delete-button-" + db.dbid + "\" class=\"btn btn-danger delete-button btn-block\">Delete database and release credentials</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button id=\"reset-button-" + db.dbid + "\" class=\"btn btn-info reset-button btn-block\">Reset database</button>\n                            </div>\n                            <div class=\"center-block col-12 col-md-4 my-2 my-md-4 d-flex\">\n                                <button onclick=\"window.location.replace('/rest/dump/" + db.dbid + "/')\" id=\"dump-button-" + db.dbid + "\" class=\"btn btn-secondary dump-button btn-block\">Get dump of database</button>\n                            </div>\n                        </div>\n                        <hr>";
-                    // TODO make third button mobile-friendly
                     credentials += html.trim();
                     dbIDs.push(db.dbid);
                 }
@@ -26429,32 +26805,46 @@ function populateHaveCredentialsPane(i) {
         });
     });
 }
-function createNavLink(courseIsActive, makeGreen, i, active) {
+function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
     if (active === void 0) { active = false; }
-    var credentialsClass = makeGreen ? "have-credentials-nav" : "no-credentials-nav";
-    var hrefString = makeGreen ? "have-credentials-pane" : "no-credentials-pane";
-    var inactiveCourseString = courseIsActive ? "" : "inactive-course";
-    var activeString = active ? "active" : "";
-    var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + " " + inactiveCourseString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
-    var fragment = document.createRange().createContextualFragment(templateString);
-    if (!makeGreen) {
-        fragment.firstElementChild.addEventListener("click", function () {
-            populateNoCredentialsPane(i);
-        });
+    var credentialsClass;
+    var hrefString;
+    var inactiveCourseString;
+    var activeString;
+    if (fromEditCourses) {
+        hrefString = "existing-course-pane";
     }
     else {
-        fragment.firstElementChild.addEventListener("click", function () {
-            populateHaveCredentialsPane(i);
-        });
+        hrefString = makeGreen ? "have-credentials-pane" : "no-credentials-pane";
+    }
+    credentialsClass = makeGreen ? "green-nav" : "not-green-nav";
+    activeString = active ? "active" : "";
+    inactiveCourseString = courseIsActive ? "" : "inactive-course";
+    var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + " " + inactiveCourseString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
+    var fragment = document.createRange().createContextualFragment(templateString);
+    if (fromEditCourses) {
+        edit_courses_1.populateExistingCoursePane();
+    }
+    else {
+        if (!makeGreen) {
+            fragment.firstElementChild.addEventListener("click", function () {
+                populateNoCredentialsPane(i);
+            });
+        }
+        else {
+            fragment.firstElementChild.addEventListener("click", function () {
+                populateHaveCredentialsPane(i);
+            });
+        }
     }
     fragment.firstElementChild.addEventListener("click", function () {
         currentCourse = courses[i].courseid;
-        alertDiv.innerHTML = ""; // Remove all alerts when switching course
     });
     return fragment;
 }
-function displayCourses(userRole) {
+function displayCourses(userRole, fromEditCourses) {
     if (userRole === void 0) { userRole = user_1.UserRole.student; }
+    if (fromEditCourses === void 0) { fromEditCourses = false; }
     return __awaiter(this, void 0, void 0, function () {
         var ownCourses, i, youHavePrivilege, haveCredentials, fragment;
         return __generator(this, function (_a) {
@@ -26465,7 +26855,7 @@ function displayCourses(userRole) {
                     return [4 /*yield*/, courses_1.getCoursesPromise()];
                 case 2:
                     courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
-                    if (!(userRole === user_1.UserRole.student)) return [3 /*break*/, 5];
+                    if (!!fromEditCourses) return [3 /*break*/, 5];
                     return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
                 case 3: return [4 /*yield*/, (_a.sent()).data];
                 case 4:
@@ -26481,13 +26871,13 @@ function displayCourses(userRole) {
                         // TODO  check if user is TA for course
                         if (courses[i].active || youHavePrivilege) {
                             haveCredentials = false;
-                            if (userRole === user_1.UserRole.admin) {
+                            if (userRole === user_1.UserRole.admin && fromEditCourses) {
                                 haveCredentials = courses[i].fid === who.id; // The user owns this course
                             }
-                            else if (userRole === user_1.UserRole.student) {
+                            else if (!fromEditCourses) {
                                 haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
                             }
-                            fragment = createNavLink(courses[i].active, haveCredentials, i);
+                            fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i);
                             coursesNavHtml.appendChild(fragment);
                         }
                     }
@@ -26507,7 +26897,7 @@ function changeView(hasCredentials) {
                     oldPane = hasCredentials ? noCredsPane : haveCredsPane;
                     newPane = hasCredentials ? haveCredsPane : noCredsPane;
                     i = Number(activeLink.id);
-                    fragment = createNavLink(courses[i].active, hasCredentials, i, true);
+                    fragment = createNavLink(false, courses[i].active, hasCredentials, i, true);
                     activeLink.classList.remove("active");
                     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild);
                     activeLink.remove();

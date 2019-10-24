@@ -7,15 +7,17 @@ import {displayCourses} from "./student_view";
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
-const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
-const coursenameField = document.getElementById("course-name-field") as HTMLInputElement;
-const courseInfoField = document.getElementById("course-info-field") as HTMLInputElement;
-const courseFIDfield = document.getElementById("course-fid-field") as HTMLInputElement;
-const schemaField = document.getElementById("schema-field") as HTMLTextAreaElement;
-const activeField = document.getElementById("active-field") as HTMLInputElement;
+const newCoursesContentHtml: HTMLDivElement = document.getElementById("new-courses-content") as HTMLDivElement;
+const newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement;
+const newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement;
+const newCourseFIDField = document.getElementById("new-course-fid-field") as HTMLInputElement;
+const newSchemaField = document.getElementById("new-schema-field") as HTMLTextAreaElement;
+const newActiveField = document.getElementById("new-active-field") as HTMLInputElement;
 
 const content = document.getElementById('content') as HTMLFormElement;
 let who: Who;
+let currentCourse = 0;
+
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
 function validCoursename(field: HTMLInputElement): boolean {
@@ -27,6 +29,18 @@ function validCoursename(field: HTMLInputElement): boolean {
         setInvalid(field, "Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces")
         return false
     }
+}
+
+function depopulateNewCoursePane(): void {
+    newCourseFIDField.value="";
+    newCourseInfoField.value="";
+    newCoursenameField.value="";
+    newSchemaField.value="";
+    newActiveField.checked=true;
+}
+
+export function populateExistingCoursePane(): void {
+    // TODO implement
 }
 
 function validFID(field: HTMLInputElement): boolean {
@@ -46,26 +60,26 @@ function validFID(field: HTMLInputElement): boolean {
 }
 
 function checkFields(): boolean {
-    const a = validCoursename(coursenameField);
-    const b = validFID(courseFIDfield);
+    const a = validCoursename(newCoursenameField);
+    const b = validFID(newCourseFIDField);
     return a && b
 }
 
 function changeEditCoursesState(enable: boolean): void {
     if (enable) {
-        courseInfoField.disabled = false;
-        coursenameField.disabled = false;
-        courseFIDfield.disabled = false;
-        schemaField.disabled = false;
-        activeField.disabled = false;
+        newCourseInfoField.disabled = false;
+        newCoursenameField.disabled = false;
+        newCourseFIDField.disabled = false;
+        newSchemaField.disabled = false;
+        newActiveField.disabled = false;
         addCourseButton.disabled = false;
         (navbarEditCourses.firstElementChild)!.classList.add("disabled");
     } else {
-        courseInfoField.disabled = true;
-        coursenameField.disabled = true;
-        courseFIDfield.disabled = true;
-        schemaField.disabled = true;
-        activeField.disabled = true;
+        newCourseInfoField.disabled = true;
+        newCoursenameField.disabled = true;
+        newCourseFIDField.disabled = true;
+        newSchemaField.disabled = true;
+        newActiveField.disabled = true;
         addCourseButton.disabled = true;
     }
 }
@@ -76,17 +90,15 @@ async function tryAddSchema(): Promise<void> {
         const tempAlert: ChildNode | null = addTempAlert();
 
         const inputCourse: InputCourse = {
-            coursename: coursenameField.value,
-            info: courseInfoField.value,
-            active: activeField.checked
+            coursename: newCoursenameField.value,
+            info: newCourseInfoField.value,
+            active: newActiveField.checked
         };
 
-        if (courseFIDfield.value !== "") {
-            inputCourse.fid = Number(courseFIDfield.value)
+        if (newCourseFIDField.value !== "") {
+            inputCourse.fid = Number(newCourseFIDField.value)
         }
-        //  TODO add schema field in obj? doesnt work right now
-
-        const schema = schemaField.value;
+        const schema = newSchemaField.value;
 
         try {
 
@@ -117,9 +129,5 @@ window.onload = async () => {
         navbarEditCourses.classList.add("active"),
         (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
         displayCourses(who.role)
-        // TODO maak displaycourses grijze achtergrond als course disabled is
-        // TODO ook bij teacher
-        // TODO do dit ook bij student view
-        // TODO maak displaycourses en grijsgroen als hij van jou is maar disabled
     ]);
 };
