@@ -17,9 +17,11 @@
                 <li class="nav-item" id="navbar-edit-courses">
                     <a class="nav-link" href="/edit_courses" >Edit courses</a>
                 </li>
+                {% if role == 0 %}
                 <li class="nav-item" id="navbar-edit-users">
                     <a class="nav-link" href="/edit_users" >Edit users</a>
                 </li>
+                    {% endif %}
             {% endif %}
 
             <li class="nav-item" id="navbar-student-view">

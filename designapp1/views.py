@@ -891,7 +891,7 @@ def edit_users(request):
     return render(request, 'edit_users.html', {'role' : request.session['role']})
 
 @require_GET
-@require_role_redirect(admin)
+@require_role_redirect(teacher)
 def admin_view(request):
     return render(request, 'admin.html', {'role' : request.session['role']} )
 
@@ -1203,6 +1203,6 @@ def forgot_password_page(request):
         return render(request, 'forgot_password_page.html')
 
 @require_GET
-@require_role_redirect(admin)
+@require_role_redirect(teacher)
 def edit_courses(request):
     return render(request, 'edit_courses.html', {'role' : request.session['role']})
