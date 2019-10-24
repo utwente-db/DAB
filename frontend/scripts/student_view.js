@@ -27027,7 +27027,7 @@ function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
 function displayCourses(optionalCourses, optionalWho, fromEditCourses) {
     if (fromEditCourses === void 0) { fromEditCourses = false; }
     return __awaiter(this, void 0, void 0, function () {
-        var ownCourses, i, youHavePrivilege, haveCredentials, fragment;
+        var ownCourses, i, youHavePrivilege, youAreTA, haveCredentials, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -27049,9 +27049,15 @@ function displayCourses(optionalCourses, optionalWho, fromEditCourses) {
                 case 4:
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     for (i = 0; i < courses.length; i++) {
-                        youHavePrivilege = (who.role === user_1.UserRole.admin || (who.role === user_1.UserRole.teacher && courses[i].fid === who.id));
-                        // TODO  check if user is TA for course
-                        if (courses[i].active || youHavePrivilege) {
+                        youHavePrivilege = false;
+                        if (fromEditCourses) {
+                            youAreTA = false;
+                            youHavePrivilege = (who.role === user_1.UserRole.admin || (who.role === user_1.UserRole.teacher && courses[i].fid === who.id) || youAreTA);
+                        }
+                        else {
+                            youHavePrivilege = (courses[i].active || who.role === user_1.UserRole.admin || (who.role === user_1.UserRole.teacher && courses[i].fid === who.id));
+                        }
+                        if (youHavePrivilege) {
                             haveCredentials = false;
                             if (who.role === user_1.UserRole.admin && fromEditCourses) {
                                 haveCredentials = courses[i].fid === who.id; // The user owns this course

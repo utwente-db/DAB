@@ -147,9 +147,16 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     for (let i = 0; i < courses.length; i++) {
-        const youHavePrivilege = (who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id));
-        // TODO  check if user is TA for course
-        if (courses[i].active || youHavePrivilege) {
+        let youHavePrivilege = false;
+        if (fromEditCourses) {
+            const youAreTA = false; // TODO implement TA check
+            youHavePrivilege = (who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id) || youAreTA);
+
+        } else {
+            youHavePrivilege = (courses[i].active || who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id));
+
+        }
+        if (youHavePrivilege) {
             let haveCredentials = false;
             if (who.role === UserRole.admin && fromEditCourses) {
                 haveCredentials = courses[i].fid === who.id // The user owns this course
@@ -271,7 +278,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
 
 }
 
-function changeStudentViewState(enable: boolean) {
+function changeStudentViewState(enable: boolean): void {
     if (enable) {
         enableElementsOnPage();
     } else {
