@@ -22932,19 +22932,29 @@ function getWhoPromise() {
 exports.getWhoPromise = getWhoPromise;
 function changeNavbarState(enable) {
     [exports.navbarStudentView, exports.navbarEditCourses, exports.navbarEditUsers].forEach(function (element) {
-        if (enable) {
-            element.firstElementChild.classList.remove("disabled");
+        try {
+            if (enable) {
+                element.firstElementChild.classList.remove("disabled");
+            }
+            else {
+                element.firstElementChild.classList.add("disabled");
+            }
         }
-        else {
-            element.firstElementChild.classList.add("disabled");
+        catch (error) {
+            console.log(error);
         }
     });
     [exports.navbarChangePasswordLink, exports.navbarLogoutLink, exports.navbarDumpAllDatabasesLink].forEach(function (element) {
-        if (enable) {
-            element.classList.remove("disabled");
+        try {
+            if (enable) {
+                element.classList.remove("disabled");
+            }
+            else {
+                element.classList.add("disabled");
+            }
         }
-        else {
-            element.classList.add("disabled");
+        catch (error) {
+            console.log(error);
         }
     });
 }

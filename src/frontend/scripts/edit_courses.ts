@@ -77,24 +77,27 @@ function validCoursename(field: HTMLInputElement): boolean {
 }
 
 async function fillStudentDatabasesDropdown(dropdown: HTMLSelectElement): Promise<void> {
-    const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
-    databases = (response.data).sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
+    try {
+        const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
+        databases = (response.data).sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
 
-    while (dropdown.lastElementChild !== dropdown.firstElementChild) {
-        const child: Element = dropdown.lastElementChild!;
-        dropdown.removeChild(child!);
+        while (dropdown.lastElementChild !== dropdown.firstElementChild) {
+            const child: Element = dropdown.lastElementChild!;
+            dropdown.removeChild(child!);
+        }
+        for (let i = 0; i < databases.length; i++) {
+            const optionNode = document.createElement("option");
+            optionNode.setAttribute("value", String(databases[i].dbid));
+            optionNode.appendChild(document.createTextNode(databases[i].databasename));
+
+            dropdown.appendChild(optionNode)
+            // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+        }
+        // const resultString: string = result.join("\n");
+        // coursesDropdown.innerHTML += resultString;
+    } catch (error) {
+        addErrorAlert(error)
     }
-    for (let i = 0; i < databases.length; i++) {
-        const optionNode = document.createElement("option");
-        optionNode.setAttribute("value", String(databases[i].dbid));
-        optionNode.appendChild(document.createTextNode(databases[i].databasename));
-
-        dropdown.appendChild(optionNode)
-        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
-    }
-    // const resultString: string = result.join("\n");
-    // coursesDropdown.innerHTML += resultString;
-
 }
 
 function populateNewCoursePane(): void {
@@ -121,17 +124,19 @@ function populateNewCoursePane(): void {
 function goToAddCoursePane(event: Event): void {
     event.preventDefault();
     populateNewCoursePane();
-    const addcourseLinkClone = addCourseLink!.cloneNode(true) as HTMLAnchorElement;
-    addCourseLink.parentNode!.replaceChild(addcourseLinkClone, addCourseLink);
-    addCourseLink = addcourseLinkClone;
-    addCourseLink.toggleAttribute("href");
+    if (addCourseLink) {
+        const addcourseLinkClone = addCourseLink!.cloneNode(true) as HTMLAnchorElement;
+        addCourseLink.parentNode!.replaceChild(addcourseLinkClone, addCourseLink);
+        addCourseLink = addcourseLinkClone;
+        addCourseLink.toggleAttribute("href");
+    }
     Array.from(coursesContentHtml.children).forEach((child) => {
         child.classList.remove("active");
     });
     newCoursePane.classList.add("active");
 }
 
-function populateExistingCoursePane(i: number): void {
+async function populateExistingCoursePane(i: number): Promise<void> {
     existingCourseIDField.value = String(courses[i].courseid);
     existingCourseFIDField.value = String(courses[i].fid);
     existingCourseInfoField.value = courses[i].info
@@ -149,8 +154,10 @@ function populateExistingCoursePane(i: number): void {
 }
 
 export function goToExistingCoursePane(i: number): void {
-    addCourseLink.addEventListener("click", goToAddCoursePane);
-    addCourseLink.toggleAttribute("href");
+    if (addCourseLink) {
+        addCourseLink.addEventListener("click", goToAddCoursePane);
+        addCourseLink.toggleAttribute("href");
+    }
 
     populateExistingCoursePane(i);
 
@@ -279,7 +286,7 @@ async function tryAddSchema(): Promise<void> {
 
             const response = await axios.post(`/rest/courses/`, inputCourse) as AxiosResponse<Course>;
             const course: Course = response.data;
-            addAlert("successfully added course, but not schema yet", AlertType.success, tempAlert);
+            addAlert("Successfully created course (without schema)", AlertType.success, tempAlert);
             const courseID = course.courseid;
             const schema: string = await getSchema();
 
@@ -292,7 +299,7 @@ async function tryAddSchema(): Promise<void> {
             } else if (newSchemaRadioTransfer.checked) {
                 const dbid = Number(newSchemaTransfer.value);
                 await axios.post(`/rest/schematransfer/${courseID}/${dbid}`);
-                addAlert("successfully added schema", AlertType.success);
+                addAlert("Successfully added schema", AlertType.success);
             }
             populateNewCoursePane();
             courses.push(response.data);
@@ -347,7 +354,40 @@ window.onload = async () => {
             newSchemaUploadDiv.classList.remove("d-none");
         }),
 
-        addCourseLink.addEventListener("click", goToAddCoursePane),
+        existingSchemaRadioNone.parentElement!.addEventListener("click", () => {
+            existingSchemaTextareaDiv.classList.add("d-none");
+            existingSchemaTransferDiv.classList.add("d-none");
+            existingSchemaUploadDiv.classList.add("d-none");
+        }),
+
+        existingSchemaRadioTextarea.parentElement!.addEventListener("click", async () => {
+            // existingSchemaTextarea.value = (await axios.get(`/rest/courses/${existingCourseIDField.value}/schema/`) as AxiosResponse<string>).data;
+
+            existingSchemaTextareaDiv.classList.remove("d-none");
+            existingSchemaTransferDiv.classList.add("d-none");
+            existingSchemaUploadDiv.classList.add("d-none");
+        }),
+
+
+        existingSchemaRadioTransfer.parentElement!.addEventListener("click", () => {
+
+            existingSchemaTextareaDiv.classList.add("d-none");
+            existingSchemaTransferDiv.classList.remove("d-none");
+            existingSchemaUploadDiv.classList.add("d-none");
+
+        }),
+
+        existingSchemaRadioUpload.parentElement!.addEventListener("click", () => {
+            existingSchemaTextareaDiv.classList.add("d-none");
+            existingSchemaTransferDiv.classList.add("d-none");
+            existingSchemaUploadDiv.classList.remove("d-none");
+        }),
+        (() => {
+            if (addCourseLink) {
+                addCourseLink.addEventListener("click", goToAddCoursePane)
+            }
+        })(),
+
 
         populateNewCoursePane(),
 

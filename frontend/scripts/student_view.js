@@ -26255,10 +26255,12 @@ function validCoursename(field) {
 }
 function fillStudentDatabasesDropdown(dropdown) {
     return __awaiter(this, void 0, void 0, function () {
-        var response, child, i, optionNode;
+        var response, child, i, optionNode, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/")];
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/")];
                 case 1:
                     response = _a.sent();
                     databases = (response.data).sort(function (a, b) { return a.databasename.localeCompare(b.databasename); });
@@ -26273,7 +26275,12 @@ function fillStudentDatabasesDropdown(dropdown) {
                         dropdown.appendChild(optionNode);
                         // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
                     }
-                    return [2 /*return*/];
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_1 = _a.sent();
+                    alert_1.addErrorAlert(error_1);
+                    return [3 /*break*/, 3];
+                case 3: return [2 /*return*/];
             }
         });
     });
@@ -26297,32 +26304,41 @@ function populateNewCoursePane() {
 function goToAddCoursePane(event) {
     event.preventDefault();
     populateNewCoursePane();
-    var addcourseLinkClone = addCourseLink.cloneNode(true);
-    addCourseLink.parentNode.replaceChild(addcourseLinkClone, addCourseLink);
-    addCourseLink = addcourseLinkClone;
-    addCourseLink.toggleAttribute("href");
+    if (addCourseLink) {
+        var addcourseLinkClone = addCourseLink.cloneNode(true);
+        addCourseLink.parentNode.replaceChild(addcourseLinkClone, addCourseLink);
+        addCourseLink = addcourseLinkClone;
+        addCourseLink.toggleAttribute("href");
+    }
     Array.from(coursesContentHtml.children).forEach(function (child) {
         child.classList.remove("active");
     });
     newCoursePane.classList.add("active");
 }
 function populateExistingCoursePane(i) {
-    existingCourseIDField.value = String(courses[i].courseid);
-    existingCourseFIDField.value = String(courses[i].fid);
-    existingCourseInfoField.value = courses[i].info;
-    existingCoursenameField.value = courses[i].coursename;
-    existingActiveField.checked = courses[i].active;
-    existingSchemaRadioUpload.checked = false;
-    existingSchemaRadioTransfer.checked = false;
-    existingSchemaRadioTextarea.checked = false;
-    existingSchemaRadioNone.checked = true;
-    existingSchemaTextarea.value = "";
-    existingSchemaUpload.value = "";
-    fillStudentDatabasesDropdown(existingSchemaTransfer);
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            existingCourseIDField.value = String(courses[i].courseid);
+            existingCourseFIDField.value = String(courses[i].fid);
+            existingCourseInfoField.value = courses[i].info;
+            existingCoursenameField.value = courses[i].coursename;
+            existingActiveField.checked = courses[i].active;
+            existingSchemaRadioUpload.checked = false;
+            existingSchemaRadioTransfer.checked = false;
+            existingSchemaRadioTextarea.checked = false;
+            existingSchemaRadioNone.checked = true;
+            existingSchemaTextarea.value = "";
+            existingSchemaUpload.value = "";
+            fillStudentDatabasesDropdown(existingSchemaTransfer);
+            return [2 /*return*/];
+        });
+    });
 }
 function goToExistingCoursePane(i) {
-    addCourseLink.addEventListener("click", goToAddCoursePane);
-    addCourseLink.toggleAttribute("href");
+    if (addCourseLink) {
+        addCourseLink.addEventListener("click", goToAddCoursePane);
+        addCourseLink.toggleAttribute("href");
+    }
     populateExistingCoursePane(i);
     Array.from(coursesContentHtml.children).forEach(function (child) {
         child.classList.remove("active");
@@ -26438,7 +26454,7 @@ function getSchema() {
 }
 function tryAddSchema() {
     return __awaiter(this, void 0, void 0, function () {
-        var tempAlert, inputCourse, response, course, courseID, schema, response_1, dbid, error_1;
+        var tempAlert, inputCourse, response, course, courseID, schema, response_1, dbid, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -26460,7 +26476,7 @@ function tryAddSchema() {
                 case 2:
                     response = _a.sent();
                     course = response.data;
-                    alert_1.addAlert("successfully added course, but not schema yet", alert_1.AlertType.success, tempAlert);
+                    alert_1.addAlert("Successfully created course (without schema)", alert_1.AlertType.success, tempAlert);
                     courseID = course.courseid;
                     return [4 /*yield*/, getSchema()];
                 case 3:
@@ -26477,7 +26493,7 @@ function tryAddSchema() {
                     return [4 /*yield*/, axios_1.default.post("/rest/schematransfer/" + courseID + "/" + dbid)];
                 case 6:
                     _a.sent();
-                    alert_1.addAlert("successfully added schema", alert_1.AlertType.success);
+                    alert_1.addAlert("Successfully added schema", alert_1.AlertType.success);
                     _a.label = 7;
                 case 7:
                     populateNewCoursePane();
@@ -26486,8 +26502,8 @@ function tryAddSchema() {
                     goToExistingCoursePane(courses.indexOf(course));
                     return [3 /*break*/, 10];
                 case 8:
-                    error_1 = _a.sent();
-                    alert_1.addErrorAlert(error_1, tempAlert);
+                    error_2 = _a.sent();
+                    alert_1.addErrorAlert(error_2, tempAlert);
                     return [3 /*break*/, 10];
                 case 9:
                     navbar_1.changePageState(true, changeEditCoursesState);
@@ -26542,7 +26558,35 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                         newSchemaTransferDiv.classList.add("d-none");
                         newSchemaUploadDiv.classList.remove("d-none");
                     }),
-                    addCourseLink.addEventListener("click", goToAddCoursePane),
+                    existingSchemaRadioNone.parentElement.addEventListener("click", function () {
+                        existingSchemaTextareaDiv.classList.add("d-none");
+                        existingSchemaTransferDiv.classList.add("d-none");
+                        existingSchemaUploadDiv.classList.add("d-none");
+                    }),
+                    existingSchemaRadioTextarea.parentElement.addEventListener("click", function () { return __awaiter(void 0, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            // existingSchemaTextarea.value = (await axios.get(`/rest/courses/${existingCourseIDField.value}/schema/`) as AxiosResponse<string>).data;
+                            existingSchemaTextareaDiv.classList.remove("d-none");
+                            existingSchemaTransferDiv.classList.add("d-none");
+                            existingSchemaUploadDiv.classList.add("d-none");
+                            return [2 /*return*/];
+                        });
+                    }); }),
+                    existingSchemaRadioTransfer.parentElement.addEventListener("click", function () {
+                        existingSchemaTextareaDiv.classList.add("d-none");
+                        existingSchemaTransferDiv.classList.remove("d-none");
+                        existingSchemaUploadDiv.classList.add("d-none");
+                    }),
+                    existingSchemaRadioUpload.parentElement.addEventListener("click", function () {
+                        existingSchemaTextareaDiv.classList.add("d-none");
+                        existingSchemaTransferDiv.classList.add("d-none");
+                        existingSchemaUploadDiv.classList.remove("d-none");
+                    }),
+                    (function () {
+                        if (addCourseLink) {
+                            addCourseLink.addEventListener("click", goToAddCoursePane);
+                        }
+                    })(),
                     populateNewCoursePane(),
                     navbar_1.navbarEditCourses.classList.add("active"),
                     (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
@@ -26646,19 +26690,29 @@ function getWhoPromise() {
 exports.getWhoPromise = getWhoPromise;
 function changeNavbarState(enable) {
     [exports.navbarStudentView, exports.navbarEditCourses, exports.navbarEditUsers].forEach(function (element) {
-        if (enable) {
-            element.firstElementChild.classList.remove("disabled");
+        try {
+            if (enable) {
+                element.firstElementChild.classList.remove("disabled");
+            }
+            else {
+                element.firstElementChild.classList.add("disabled");
+            }
         }
-        else {
-            element.firstElementChild.classList.add("disabled");
+        catch (error) {
+            console.log(error);
         }
     });
     [exports.navbarChangePasswordLink, exports.navbarLogoutLink, exports.navbarDumpAllDatabasesLink].forEach(function (element) {
-        if (enable) {
-            element.classList.remove("disabled");
+        try {
+            if (enable) {
+                element.classList.remove("disabled");
+            }
+            else {
+                element.classList.add("disabled");
+            }
         }
-        else {
-            element.classList.add("disabled");
+        catch (error) {
+            console.log(error);
         }
     });
 }

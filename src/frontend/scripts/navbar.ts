@@ -37,23 +37,30 @@ export async function getWhoPromise(): Promise<Who> {
 }
 
 function changeNavbarState(enable: boolean): void {
-        [navbarStudentView, navbarEditCourses, navbarEditUsers].forEach((element: HTMLLIElement) => {
-        if (enable) {
-            (element.firstElementChild as HTMLAnchorElement)!.classList.remove("disabled")
-        } else {
-            (element.firstElementChild as HTMLAnchorElement)!.classList.add("disabled")
+    [navbarStudentView, navbarEditCourses, navbarEditUsers].forEach((element: HTMLLIElement) => {
+        try {
+            if (enable) {
+                (element.firstElementChild as HTMLAnchorElement)!.classList.remove("disabled")
+            } else {
+                (element.firstElementChild as HTMLAnchorElement)!.classList.add("disabled")
 
+            }
+        } catch (error) {
+            console.log(error)
         }
-
 
     });
 
     [navbarChangePasswordLink, navbarLogoutLink, navbarDumpAllDatabasesLink].forEach((element: Element) => {
-        if (enable) {
-            element.classList.remove("disabled")
-        } else {
-            element.classList.add("disabled")
+        try {
+            if (enable) {
+                element.classList.remove("disabled")
+            } else {
+                element.classList.add("disabled")
 
+            }
+        } catch (error) {
+            console.log(error)
         }
     });
 }
@@ -64,7 +71,6 @@ export function changePageState(enable: boolean, callback: Function): void {
     changeNavbarState(enable);
 
     callback(enable);
-
 
 
 }
@@ -89,13 +95,13 @@ async function dumpAlldatabases(disableCallback: Function): Promise<boolean> {
     const tempAlert: ChildNode | null = addTempAlert();
     try {
         const response = await axios.post(`/rest/generate_migration/`) as AxiosResponse<string>;
-        const data=response.data;
+        const data = response.data;
         console.log(data);
         addAlert(data, AlertType.success, tempAlert);
-        success=true;
+        success = true;
     } catch (error) {
         addErrorAlert(error, tempAlert);
-        success=false;
+        success = false;
     } finally {
         changePageState(true, disableCallback);
     }
