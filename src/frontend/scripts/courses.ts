@@ -19,7 +19,7 @@ export interface Course {
     coursename: string;
     info: string,
     active: boolean,
-    databases: number,
+    databases?: number,
 }
 
 export interface InputCourse {

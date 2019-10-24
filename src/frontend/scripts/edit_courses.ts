@@ -218,7 +218,10 @@ function validUpload(uploadElement: HTMLInputElement): boolean {
     }
 }
 
-function checkFields(): boolean {
+function checkFields(newCourseInfoField: HTMLInputElement, newCoursenameField: HTMLInputElement, newCourseFIDField: HTMLInputElement,
+                     newSchemaRadioNone: HTMLInputElement, newSchemaRadioTextarea: HTMLInputElement, newSchemaTextarea: HTMLTextAreaElement,
+                     newSchemaRadioUpload: HTMLInputElement, newSchemaUpload: HTMLInputElement, newSchemaRadioTransfer: HTMLInputElement,
+                     newSchemaTransfer: HTMLSelectElement): boolean {
     setValid(newCourseInfoField);
     const a = validCoursename(newCoursenameField);
     const b = validFID(newCourseFIDField);
@@ -258,7 +261,8 @@ function changeEditCoursesState(enable: boolean): void {
     }
 }
 
-async function getSchema(): Promise<string> {
+async function getSchema(newSchemaRadioTextarea: HTMLInputElement, newSchemaTextarea: HTMLTextAreaElement, newSchemaRadioUpload: HTMLInputElement,
+                         newSchemaUpload: HTMLInputElement): Promise<string> {
     if (newSchemaRadioTextarea.checked) {
         return (newSchemaTextarea.value as string)
     } else if (newSchemaRadioUpload.checked && newSchemaUpload.files) {
@@ -271,8 +275,11 @@ async function getSchema(): Promise<string> {
 
 }
 
-async function tryAddSchema(): Promise<void> {
-    if (checkFields()) {
+async function tryAddCourse(): Promise<void> {
+    if (checkFields(newCourseInfoField, newCoursenameField, newCourseFIDField,
+                     newSchemaRadioNone, newSchemaRadioTextarea, newSchemaTextarea,
+                     newSchemaRadioUpload, newSchemaUpload, newSchemaRadioTransfer,
+                     newSchemaTransfer)) {
         changePageState(false, changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
 
@@ -292,7 +299,8 @@ async function tryAddSchema(): Promise<void> {
             const course: Course = response.data;
             addAlert("Successfully created course (without schema)", AlertType.success, tempAlert);
             const courseID = course.courseid;
-            const schema: string = await getSchema();
+            const schema: string = await getSchema(newSchemaRadioTextarea, newSchemaTextarea, newSchemaRadioUpload,
+                         newSchemaUpload);
 
             if (schema !== "") {
 
@@ -368,16 +376,57 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
         // changePageState(true, changeStudentViewState);
     }
     return success;
-
-    // TODO remove course from nav on the left
-
 }
 
-function tryEditCourse(): boolean {
+async function tryEditCourse(): Promise<void> {
     // TODO give a Swal
     // TODO maybe repopulate on cancel changes?
-    return false;
-    // TODO implement
+
+    if (checkFields(existingCourseInfoField, existingCoursenameField, existingCourseFIDField,
+                     existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea,
+                     existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer,
+                     existingSchemaTransfer)) {
+        changePageState(false, changeEditCoursesState);
+        const tempAlert: ChildNode | null = addTempAlert();
+
+        const inputCourse: Course = {
+            courseid: Number(existingCourseIDField.value),
+            coursename: existingCoursenameField.value,
+            info: existingCourseInfoField.value,
+            active: existingActiveField.checked,
+            fid: Number(existingCourseFIDField.value)
+
+        };
+
+
+        try {
+            const response = await axios.put(`/rest/courses/${existingCourseIDField.value}`, inputCourse) as AxiosResponse;
+            addAlert("Successfully edited course (without schema)", AlertType.success, tempAlert);
+            const schema: string = await getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload,
+                         existingSchemaUpload);
+
+            if (schema !== "") {
+
+                const response = await axios.post(`/rest/courses/${existingCourseIDField.value}/schema`, schema);
+                addAlert("Successfully added schema", AlertType.success);
+
+
+            } else if (newSchemaRadioTransfer.checked) {
+                const dbid = Number(newSchemaTransfer.value);
+                await axios.post(`/rest/schematransfer/${existingCourseIDField.value}/${dbid}`);
+                addAlert("Successfully added schema", AlertType.success);
+            }
+            const navLink = document.getElementsByClassName("nav-link active")[0]! as HTMLAnchorElement;
+            navLink.innerText = existingCoursenameField.value;
+            goToExistingCoursePane(Number(navLink.id))
+        } catch (error) {
+            addErrorAlert(error, tempAlert)
+        } finally {
+            changePageState(true, changeEditCoursesState);
+
+        }
+    }
+
 }
 
 function tryDumpCourse(id: number): boolean {
@@ -397,7 +446,7 @@ window.onload = async () => {
         initNavbar(changeEditCoursesState),
         newCourseContent.addEventListener("submit", (event) => {
             event.preventDefault();
-            tryAddSchema();
+            tryAddCourse();
         }),
 
         newSchemaRadioNone.parentElement!.addEventListener("click", () => {

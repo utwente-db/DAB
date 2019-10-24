@@ -26397,7 +26397,7 @@ function validUpload(uploadElement) {
         return true;
     }
 }
-function checkFields() {
+function checkFields(newCourseInfoField, newCoursenameField, newCourseFIDField, newSchemaRadioNone, newSchemaRadioTextarea, newSchemaTextarea, newSchemaRadioUpload, newSchemaUpload, newSchemaRadioTransfer, newSchemaTransfer) {
     register_1.setValid(newCourseInfoField);
     var a = validCoursename(newCoursenameField);
     var b = validFID(newCourseFIDField);
@@ -26438,7 +26438,7 @@ function changeEditCoursesState(enable) {
         addCourseButton.disabled = true;
     }
 }
-function getSchema() {
+function getSchema(newSchemaRadioTextarea, newSchemaTextarea, newSchemaRadioUpload, newSchemaUpload) {
     return __awaiter(this, void 0, void 0, function () {
         var file;
         return __generator(this, function (_a) {
@@ -26456,13 +26456,13 @@ function getSchema() {
         });
     });
 }
-function tryAddSchema() {
+function tryAddCourse() {
     return __awaiter(this, void 0, void 0, function () {
         var tempAlert, inputCourse, response, course, courseID, schema, response_1, dbid, error_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!checkFields()) return [3 /*break*/, 11];
+                    if (!checkFields(newCourseInfoField, newCoursenameField, newCourseFIDField, newSchemaRadioNone, newSchemaRadioTextarea, newSchemaTextarea, newSchemaRadioUpload, newSchemaUpload, newSchemaRadioTransfer, newSchemaTransfer)) return [3 /*break*/, 11];
                     navbar_1.changePageState(false, changeEditCoursesState);
                     tempAlert = alert_1.addTempAlert();
                     inputCourse = {
@@ -26482,7 +26482,7 @@ function tryAddSchema() {
                     course = response.data;
                     alert_1.addAlert("Successfully created course (without schema)", alert_1.AlertType.success, tempAlert);
                     courseID = course.courseid;
-                    return [4 /*yield*/, getSchema()];
+                    return [4 /*yield*/, getSchema(newSchemaRadioTextarea, newSchemaTextarea, newSchemaRadioUpload, newSchemaUpload)];
                 case 3:
                     schema = _a.sent();
                     if (!(schema !== "")) return [3 /*break*/, 5];
@@ -26577,10 +26577,61 @@ function tryDeleteCourse(courseID) {
     });
 }
 function tryEditCourse() {
-    // TODO give a Swal
-    // TODO maybe repopulate on cancel changes?
-    return false;
-    // TODO implement
+    return __awaiter(this, void 0, void 0, function () {
+        var tempAlert, inputCourse, response, schema, response_2, dbid, navLink, error_4;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!checkFields(existingCourseInfoField, existingCoursenameField, existingCourseFIDField, existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer, existingSchemaTransfer)) return [3 /*break*/, 10];
+                    navbar_1.changePageState(false, changeEditCoursesState);
+                    tempAlert = alert_1.addTempAlert();
+                    inputCourse = {
+                        courseid: Number(existingCourseIDField.value),
+                        coursename: existingCoursenameField.value,
+                        info: existingCourseInfoField.value,
+                        active: existingActiveField.checked,
+                        fid: Number(existingCourseFIDField.value)
+                    };
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 8, 9, 10]);
+                    return [4 /*yield*/, axios_1.default.put("/rest/courses/" + existingCourseIDField.value, inputCourse)];
+                case 2:
+                    response = _a.sent();
+                    alert_1.addAlert("Successfully edited course (without schema)", alert_1.AlertType.success, tempAlert);
+                    return [4 /*yield*/, getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload, existingSchemaUpload)];
+                case 3:
+                    schema = _a.sent();
+                    if (!(schema !== "")) return [3 /*break*/, 5];
+                    return [4 /*yield*/, axios_1.default.post("/rest/courses/" + existingCourseIDField.value + "/schema", schema)];
+                case 4:
+                    response_2 = _a.sent();
+                    alert_1.addAlert("Successfully added schema", alert_1.AlertType.success);
+                    return [3 /*break*/, 7];
+                case 5:
+                    if (!newSchemaRadioTransfer.checked) return [3 /*break*/, 7];
+                    dbid = Number(newSchemaTransfer.value);
+                    return [4 /*yield*/, axios_1.default.post("/rest/schematransfer/" + existingCourseIDField.value + "/" + dbid)];
+                case 6:
+                    _a.sent();
+                    alert_1.addAlert("Successfully added schema", alert_1.AlertType.success);
+                    _a.label = 7;
+                case 7:
+                    navLink = document.getElementsByClassName("nav-link active")[0];
+                    navLink.innerText = existingCoursenameField.value;
+                    goToExistingCoursePane(Number(navLink.id));
+                    return [3 /*break*/, 10];
+                case 8:
+                    error_4 = _a.sent();
+                    alert_1.addErrorAlert(error_4, tempAlert);
+                    return [3 /*break*/, 10];
+                case 9:
+                    navbar_1.changePageState(true, changeEditCoursesState);
+                    return [7 /*endfinally*/];
+                case 10: return [2 /*return*/];
+            }
+        });
+    });
 }
 function tryDumpCourse(id) {
     // TODO implement
@@ -26609,7 +26660,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                     navbar_1.initNavbar(changeEditCoursesState),
                     newCourseContent.addEventListener("submit", function (event) {
                         event.preventDefault();
-                        tryAddSchema();
+                        tryAddCourse();
                     }),
                     newSchemaRadioNone.parentElement.addEventListener("click", function () {
                         newSchemaTextareaDiv.classList.add("d-none");
