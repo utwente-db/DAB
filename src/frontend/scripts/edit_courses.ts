@@ -95,8 +95,23 @@ function populateNewCoursePane(): void {
 
 }
 
+function goToAddCourse(event: Event): void {
+    event.preventDefault();
+    populateNewCoursePane();
+    const addcourseLinkClone = addCourseLink!.cloneNode(true) as HTMLAnchorElement;
+    addCourseLink.parentNode!.replaceChild(addcourseLinkClone, addCourseLink);
+    addCourseLink = addcourseLinkClone;
+    addCourseLink.toggleAttribute("href");
+    Array.from(coursesContentHtml.children).forEach((child) => {
+        child.classList.remove("active");
+    });
+    newCoursePane.classList.add("active");
+}
+
 export function populateExistingCoursePane(i: number): void {
-    // TODO implement
+    addCourseLink.addEventListener("click", goToAddCourse);
+    addCourseLink.toggleAttribute("href");
+    // TODO actually implement
 }
 
 function validFID(field: HTMLInputElement): boolean {
@@ -283,19 +298,7 @@ window.onload = async () => {
             newSchemaUploadDiv.classList.remove("d-none");
         }),
 
-        addCourseLink.addEventListener("click", (event) => {
-            // event.preventDefault();
-            populateNewCoursePane();
-            const addcourseLinkClone = addCourseLink!.cloneNode(true) as HTMLAnchorElement;
-            addCourseLink.parentNode!.replaceChild(addcourseLinkClone, addCourseLink);
-            addCourseLink = addcourseLinkClone;
-            addCourseLink.toggleAttribute("href");
-            Array.from(coursesContentHtml.children).forEach((child) => {
-                child.classList.remove("active");
-            });
-            newCoursePane.classList.add("active");
-            // TODO re-add this event listener when you click on a course
-        }),
+        addCourseLink.addEventListener("click", goToAddCourse),
 
         populateNewCoursePane(),
 

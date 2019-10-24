@@ -26276,8 +26276,22 @@ function populateNewCoursePane() {
     newSchemaUpload.value = "";
     fillStudentDatabasesDropdown();
 }
+function goToAddCourse(event) {
+    event.preventDefault();
+    populateNewCoursePane();
+    var addcourseLinkClone = addCourseLink.cloneNode(true);
+    addCourseLink.parentNode.replaceChild(addcourseLinkClone, addCourseLink);
+    addCourseLink = addcourseLinkClone;
+    addCourseLink.toggleAttribute("href");
+    Array.from(coursesContentHtml.children).forEach(function (child) {
+        child.classList.remove("active");
+    });
+    newCoursePane.classList.add("active");
+}
 function populateExistingCoursePane(i) {
-    // TODO implement
+    addCourseLink.addEventListener("click", goToAddCourse);
+    addCourseLink.toggleAttribute("href");
+    // TODO actually implement
 }
 exports.populateExistingCoursePane = populateExistingCoursePane;
 function validFID(field) {
@@ -26489,19 +26503,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                         newSchemaTransferDiv.classList.add("d-none");
                         newSchemaUploadDiv.classList.remove("d-none");
                     }),
-                    addCourseLink.addEventListener("click", function (event) {
-                        // event.preventDefault();
-                        populateNewCoursePane();
-                        var addcourseLinkClone = addCourseLink.cloneNode(true);
-                        addCourseLink.parentNode.replaceChild(addcourseLinkClone, addCourseLink);
-                        addCourseLink = addcourseLinkClone;
-                        addCourseLink.toggleAttribute("href");
-                        Array.from(coursesContentHtml.children).forEach(function (child) {
-                            child.classList.remove("active");
-                        });
-                        newCoursePane.classList.add("active");
-                        // TODO re-add this event listener when you click on a course
-                    }),
+                    addCourseLink.addEventListener("click", goToAddCourse),
                     populateNewCoursePane(),
                     navbar_1.navbarEditCourses.classList.add("active"),
                     (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
