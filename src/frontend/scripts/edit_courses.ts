@@ -1,9 +1,11 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
-import {Course, InputCourse} from "./courses";
+import {Course, InputCourse, StudentDatabase} from "./courses";
 import {setInvalid, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
+import * as $ from "jquery";
+
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -22,7 +24,7 @@ const newSchemaRadioTransfer = document.getElementById("new-schema-radio-transfe
 
 const newSchemaTextarea = document.getElementById("new-schema-textarea") as HTMLTextAreaElement;
 const newSchemaUpload = document.getElementById("new-schema-upload") as HTMLInputElement;
-const newSchemaTransfer = document.getElementById("new-schema-textarea") as HTMLSelectElement;
+const newSchemaTransfer = document.getElementById("new-schema-transfer") as HTMLSelectElement;
 
 
 const newCourseContent = document.getElementById('new-course-content') as HTMLFormElement;
@@ -43,12 +45,34 @@ function validCoursename(field: HTMLInputElement): boolean {
     }
 }
 
-function depopulateNewCoursePane(): void {
+async function fillStudentDatabasesDropdown(): Promise<void> {
+    const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
+    const databases: StudentDatabase[] = response.data;
+    const result: string[] = [];
+    while (newSchemaTransfer.lastElementChild !== newSchemaTransfer.firstElementChild) {
+        const child: Element = newSchemaTransfer.lastElementChild!;
+        newSchemaTransfer.removeChild(child!);
+    }
+    for (let i = 0; i < databases.length; i++) {
+        const optionNode = document.createElement("option");
+        optionNode.setAttribute("value", String(databases[i].dbid));
+        optionNode.appendChild(document.createTextNode(databases[i].databasename));
+
+        newSchemaTransfer.appendChild(optionNode)
+        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+    }
+    // const resultString: string = result.join("\n");
+    // coursesDropdown.innerHTML += resultString;
+}
+
+function populateNewCoursePane(): void {
     newCourseFIDField.value = "";
     newCourseInfoField.value = "";
     newCoursenameField.value = "";
     newSchemaTextarea.value = "";
     newActiveField.checked = true;
+    fillStudentDatabasesDropdown();
+    // TODO fill the dropdown
     // TODO rename fields that i addded new in front of
     // TODO Depopulate other fields (schema and such)
 }
@@ -94,13 +118,17 @@ function validSelect(select: HTMLSelectElement): boolean {
 }
 
 function validUpload(uploadElement: HTMLInputElement): boolean {
-    // TODO check if upload is non empty
-
-    // https://stackoverflow.com/questions/3292658/get-the-value-of-input-type-file-and-alert-if-empty
-    return true;
+    if (uploadElement.files === null || uploadElement.files.length === 0) {
+        setInvalid(uploadElement, "Please select a file");
+        return false;
+    } else {
+        setValid(uploadElement);
+        return true;
+    }
 }
 
 function checkFields(): boolean {
+    setValid(newCourseInfoField);
     const a = validCoursename(newCoursenameField);
     const b = validFID(newCourseFIDField);
     let c = false;
@@ -109,7 +137,7 @@ function checkFields(): boolean {
     } else if (newSchemaRadioTextarea.checked) {
         c = nonEmptyTextarea(newSchemaTextarea)
     } else if (newSchemaRadioUpload) {
-        c = validUpload(newSchemaRadioUpload)
+        c = validUpload(newSchemaUpload)
     } else if (newSchemaRadioTransfer) {
         c = validSelect(newSchemaTransfer)
     }
@@ -117,7 +145,7 @@ function checkFields(): boolean {
 }
 
 function changeEditCoursesState(enable: boolean): void {
-    // TODO update with new elements
+    // TODO update with new elements and check commented things
 
     if (enable) {
         newCourseInfoField.disabled = false;
@@ -145,10 +173,8 @@ async function getSchema(): Promise<string> {
         // TODO get id in the same way courses does it
         // TODO call schema transfer
     } else if (newSchemaRadioUpload.checked && newSchemaUpload.files) {
-        // TODO return file contents as string
         const file: File = newSchemaUpload.files[0];
         const data: string = await new Response(file).text();
-        console.log(data);
         return data;
 
         // https://stackoverflow.com/questions/36665322/js-get-file-contents
@@ -194,6 +220,8 @@ async function tryAddSchema(): Promise<void> {
 window.onload = async () => {
     who = await getWhoamiPromise();
     await Promise.all([
+        populateNewCoursePane(),
+
         initNavbar(changeEditCoursesState),
         newCourseContent.addEventListener("submit", (event) => {
             event.preventDefault();
@@ -203,4 +231,7 @@ window.onload = async () => {
         (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
         displayCourses(who.role)
     ]);
+
+    $('select').selectpicker(); // Style all selects
+
 };

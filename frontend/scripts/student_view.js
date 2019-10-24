@@ -26197,6 +26197,7 @@ var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 var register_1 = __webpack_require__(/*! ./register */ "./src/frontend/scripts/register.ts");
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
 var student_view_1 = __webpack_require__(/*! ./student_view */ "./src/frontend/scripts/student_view.ts");
+var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 var addCourseButton = document.getElementById("add-course-button");
 var coursesNavHtml = document.getElementById("courses-nav");
 var newCoursesContentHtml = document.getElementById("new-courses-content");
@@ -26210,7 +26211,7 @@ var newSchemaRadioUpload = document.getElementById("new-schema-radio-upload");
 var newSchemaRadioTransfer = document.getElementById("new-schema-radio-transfer");
 var newSchemaTextarea = document.getElementById("new-schema-textarea");
 var newSchemaUpload = document.getElementById("new-schema-upload");
-var newSchemaTransfer = document.getElementById("new-schema-textarea");
+var newSchemaTransfer = document.getElementById("new-schema-transfer");
 var newCourseContent = document.getElementById('new-course-content');
 var who;
 // tslint:disable-next-line:prefer-const
@@ -26227,12 +26228,40 @@ function validCoursename(field) {
         return false;
     }
 }
-function depopulateNewCoursePane() {
+function fillStudentDatabasesDropdown() {
+    return __awaiter(this, void 0, void 0, function () {
+        var response, databases, result, child, i, optionNode;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/")];
+                case 1:
+                    response = _a.sent();
+                    databases = response.data;
+                    result = [];
+                    while (newSchemaTransfer.lastElementChild !== newSchemaTransfer.firstElementChild) {
+                        child = newSchemaTransfer.lastElementChild;
+                        newSchemaTransfer.removeChild(child);
+                    }
+                    for (i = 0; i < databases.length; i++) {
+                        optionNode = document.createElement("option");
+                        optionNode.setAttribute("value", String(databases[i].dbid));
+                        optionNode.appendChild(document.createTextNode(databases[i].databasename));
+                        newSchemaTransfer.appendChild(optionNode);
+                        // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function populateNewCoursePane() {
     newCourseFIDField.value = "";
     newCourseInfoField.value = "";
     newCoursenameField.value = "";
     newSchemaTextarea.value = "";
     newActiveField.checked = true;
+    fillStudentDatabasesDropdown();
+    // TODO fill the dropdown
     // TODO rename fields that i addded new in front of
     // TODO Depopulate other fields (schema and such)
 }
@@ -26278,11 +26307,17 @@ function validSelect(select) {
     }
 }
 function validUpload(uploadElement) {
-    // TODO check if upload is non empty
-    // https://stackoverflow.com/questions/3292658/get-the-value-of-input-type-file-and-alert-if-empty
-    return true;
+    if (uploadElement.files === null || uploadElement.files.length === 0) {
+        register_1.setInvalid(uploadElement, "Please select a file");
+        return false;
+    }
+    else {
+        register_1.setValid(uploadElement);
+        return true;
+    }
 }
 function checkFields() {
+    register_1.setValid(newCourseInfoField);
     var a = validCoursename(newCoursenameField);
     var b = validFID(newCourseFIDField);
     var c = false;
@@ -26293,7 +26328,7 @@ function checkFields() {
         c = nonEmptyTextarea(newSchemaTextarea);
     }
     else if (newSchemaRadioUpload) {
-        c = validUpload(newSchemaRadioUpload);
+        c = validUpload(newSchemaUpload);
     }
     else if (newSchemaRadioTransfer) {
         c = validSelect(newSchemaTransfer);
@@ -26301,7 +26336,7 @@ function checkFields() {
     return a && b && c;
 }
 function changeEditCoursesState(enable) {
-    // TODO update with new elements
+    // TODO update with new elements and check commented things
     if (enable) {
         newCourseInfoField.disabled = false;
         newCoursenameField.disabled = false;
@@ -26340,7 +26375,6 @@ function getSchema() {
                     return [4 /*yield*/, new Response(file).text()];
                 case 3:
                     data = _a.sent();
-                    console.log(data);
                     return [2 /*return*/, data];
                 case 4: return [2 /*return*/, ""];
             }
@@ -26401,6 +26435,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
             case 1:
                 who = _a.sent();
                 return [4 /*yield*/, Promise.all([
+                        populateNewCoursePane(),
                         navbar_1.initNavbar(changeEditCoursesState),
                         newCourseContent.addEventListener("submit", function (event) {
                             event.preventDefault();
@@ -26412,6 +26447,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                     ])];
             case 2:
                 _a.sent();
+                $('select').selectpicker(); // Style all selects
                 return [2 /*return*/];
         }
     });
