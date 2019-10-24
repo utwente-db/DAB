@@ -1,6 +1,6 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
-import {Course, getCoursesPromise, InputCourse} from "./courses";
+import {Course, InputCourse} from "./courses";
 import {setInvalid, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
@@ -25,7 +25,7 @@ const newSchemaUpload = document.getElementById("new-schema-upload") as HTMLInpu
 const newSchemaTransfer = document.getElementById("new-schema-textarea") as HTMLSelectElement;
 
 
-const content = document.getElementById('content') as HTMLFormElement;
+const newCourseContent = document.getElementById('new-course-content') as HTMLFormElement;
 let who: Who;
 // tslint:disable-next-line:prefer-const
 let currentCourse = 0;
@@ -44,11 +44,11 @@ function validCoursename(field: HTMLInputElement): boolean {
 }
 
 function depopulateNewCoursePane(): void {
-    newCourseFIDField.value="";
-    newCourseInfoField.value="";
-    newCoursenameField.value="";
-    newSchemaTextarea.value="";
-    newActiveField.checked=true;
+    newCourseFIDField.value = "";
+    newCourseInfoField.value = "";
+    newCoursenameField.value = "";
+    newSchemaTextarea.value = "";
+    newActiveField.checked = true;
     // TODO rename fields that i addded new in front of
     // TODO Depopulate other fields (schema and such)
 }
@@ -84,26 +84,26 @@ function nonEmptyTextarea(newSchemaTextarea: HTMLTextAreaElement): boolean {
 }
 
 function validSelect(select: HTMLSelectElement): boolean {
-    if (Number(select)>0) {
+    if (Number(select) > 0) {
         setValid(select);
         return true;
     } else {
-        setInvalid(select,"Please select a value from this dropdown");
+        setInvalid(select, "Please select a value from this dropdown");
         return false;
     }
 }
 
 function validUpload(uploadElement: HTMLInputElement): boolean {
-            // TODO check if upload is non empty
+    // TODO check if upload is non empty
 
     // https://stackoverflow.com/questions/3292658/get-the-value-of-input-type-file-and-alert-if-empty
-    return false;
+    return true;
 }
 
 function checkFields(): boolean {
     const a = validCoursename(newCoursenameField);
     const b = validFID(newCourseFIDField);
-    let c: boolean;
+    let c = false;
     if (newSchemaRadioNone.checked) {
         c = true;
     } else if (newSchemaRadioTextarea.checked) {
@@ -117,13 +117,15 @@ function checkFields(): boolean {
 }
 
 function changeEditCoursesState(enable: boolean): void {
+    // TODO update with new elements
+
     if (enable) {
         newCourseInfoField.disabled = false;
         newCoursenameField.disabled = false;
         newCourseFIDField.disabled = false;
         newSchemaTextarea.disabled = false;
         newActiveField.disabled = false;
-        addCourseButton.disabled = false;
+        // addCourseButton.disabled = false;
         (navbarEditCourses.firstElementChild)!.classList.add("disabled");
     } else {
         newCourseInfoField.disabled = true;
@@ -131,26 +133,33 @@ function changeEditCoursesState(enable: boolean): void {
         newCourseFIDField.disabled = true;
         newSchemaTextarea.disabled = true;
         newActiveField.disabled = true;
-        addCourseButton.disabled = true;
+        // addCourseButton.disabled = true;
     }
 }
 
-function getSchema(): string {
-    if (newSchemaRadioNone.checked) {return "";}
-    else if (newSchemaRadioTextarea.checked) {return newSchemaTextarea.value}
-    else if (newSchemaRadioTransfer.checked) {
+async function getSchema(): Promise<string> {
+    if (newSchemaRadioTextarea.checked) {
+        return (newSchemaTextarea.value as string)
+    } else if (newSchemaRadioTransfer.checked) {
+        return ""
         // TODO get id in the same way courses does it
         // TODO call schema transfer
-    }
-    else if (newSchemaRadioUpload.checked) {
+    } else if (newSchemaRadioUpload.checked && newSchemaUpload.files) {
         // TODO return file contents as string
+        const file: File = newSchemaUpload.files[0];
+        const data: string = await new Response(file).text();
+        console.log(data);
+        return data;
+
         // https://stackoverflow.com/questions/36665322/js-get-file-contents
     }
+    return "";
+
 }
 
 async function tryAddSchema(): Promise<void> {
     if (checkFields()) {
-        changePageState(false,changeEditCoursesState);
+        changePageState(false, changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
 
         const inputCourse: InputCourse = {
@@ -162,7 +171,7 @@ async function tryAddSchema(): Promise<void> {
         if (newCourseFIDField.value !== "") {
             inputCourse.fid = Number(newCourseFIDField.value)
         }
-        const schema: string = getSchema();
+        const schema: string = await getSchema();
 
         try {
 
@@ -176,7 +185,7 @@ async function tryAddSchema(): Promise<void> {
         } catch (error) {
             addErrorAlert(error, tempAlert)
         } finally {
-            changePageState(true,changeEditCoursesState);
+            changePageState(true, changeEditCoursesState);
 
         }
     }
@@ -186,7 +195,7 @@ window.onload = async () => {
     who = await getWhoamiPromise();
     await Promise.all([
         initNavbar(changeEditCoursesState),
-        content.addEventListener("submit", (event) => {
+        newCourseContent.addEventListener("submit", (event) => {
             event.preventDefault();
             tryAddSchema();
         }),
