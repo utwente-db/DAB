@@ -19,7 +19,7 @@
                         <!-- Website title -->
                         <h2>Course list</h2>
                         {% if role < 2 %}
-                        <a data-toggle="pill" href="#" id="add-course-link">Add course</a>
+                            <a data-toggle="pill" href="#" id="add-course-link">Add course</a>
                         {% endif %}
 
                         <hr/>
@@ -35,7 +35,7 @@
                         <div class="tab-content" id="courses-content">
 
 
-                            <div class="tab-pane active m-5"><h1>Please select a course</h1></div>
+                            <div class="tab-pane active m-5" id="please-select-a-course"><h1>Please select a course</h1></div>
 
                             <div class="tab-pane" id="new-course-pane">
                                 <form class="form-horizontal" id="new-course-content"> {# actual content #}
@@ -97,7 +97,8 @@
 
 
                                     <div class="form-group row align-items-center mb-4">
-                                        <label for="new-schema-radio" class="col-12 col-md-4 col-form-label">Add schema?</label>
+                                        <label for="new-schema-radio" class="col-12 col-md-4 col-form-label">Add
+                                            schema?</label>
                                         <div class="col-12 col-md-8 btn-group btn-group-toggle" data-toggle="buttons">
                                             <label class="btn btn-secondary active">
                                                 <input type="radio" name="options" id="new-schema-radio-none"
@@ -126,7 +127,8 @@
                                     </div>
 
 
-                                    <div class="form-group row align-items-center mb-4 d-none" id="new-schema-textarea-div">
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="new-schema-textarea-div">
                                         <label for="new-schema-textarea" class="col-12 col-md-4 col-form-label">Schema
                                             text</label>
                                         <div class="col-12 col-md-8">
@@ -137,7 +139,8 @@
                                     </div>
 
 
-                                    <div class="form-group row align-items-center mb-4 d-none" id="new-schema-upload-div">
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="new-schema-upload-div">
                                         <label for="new-schema-upload" class="col-12 col-md-4 col-form-label">Schema
                                             upload</label>
                                         <div class="col-12 col-md-8">
@@ -147,7 +150,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group row align-items-center mb-4 d-none" id="new-schema-transfer-div">
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="new-schema-transfer-div">
                                         <label for="new-schema-transfer" class="col-12 col-md-4 col-form-label">Schema
                                             transfer</label>
                                         <div class="col-12 col-md-8">
@@ -175,7 +179,7 @@
 
 
                             <div class="tab-pane" id="existing-course-pane">
-                                <form class="form-horizontal" id="existing-course-content"> {# actual content #}
+                                <div class="form-horizontal" id="existing-course-content"> {# actual content #}
                                     <p class="text-center h4 mb-4">Edit course</p>
                                     <hr/>
                                     <div class="form-group row align-items-center">
@@ -236,8 +240,9 @@
                                         </div>
                                     </div>
 
-                                                        <div class="form-group row align-items-center mb-4">
-                                        <label for="existing-schema-radio" class="col-12 col-md-4 col-form-label">Edit schema?</label>
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="existing-schema-radio" class="col-12 col-md-4 col-form-label">Edit
+                                            schema?</label>
                                         <div class="col-12 col-md-8 btn-group btn-group-toggle" data-toggle="buttons">
                                             <label class="btn btn-secondary active">
                                                 <input type="radio" name="options" id="existing-schema-radio-none"
@@ -266,7 +271,8 @@
                                     </div>
 
 
-                                    <div class="form-group row align-items-center mb-4 d-none" id="existing-schema-textarea-div">
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="existing-schema-textarea-div">
                                         <label for="existing-schema-textarea" class="col-12 col-md-4 col-form-label">Schema
                                             text</label>
                                         <div class="col-12 col-md-8">
@@ -277,7 +283,8 @@
                                     </div>
 
 
-                                    <div class="form-group row align-items-center mb-4 d-none" id="existing-schema-upload-div">
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="existing-schema-upload-div">
                                         <label for="existing-schema-upload" class="col-12 col-md-4 col-form-label">Schema
                                             upload</label>
                                         <div class="col-12 col-md-8">
@@ -287,7 +294,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group row align-items-center mb-4 d-none" id="existing-schema-transfer-div">
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="existing-schema-transfer-div">
                                         <label for="existing-schema-transfer" class="col-12 col-md-4 col-form-label">Schema
                                             transfer</label>
                                         <div class="col-12 col-md-8">
@@ -300,10 +308,24 @@
                                     </div>
 
                                     <hr>
-                                    <button type="submit" class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3"
-                                            id="edit-course-button">Edit course
-                                    </button>
-                                </form>
+                                    <div class="align-items-center align-items-stretch row">
+                                        <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                            <button id="delete-course-button"
+                                                    class="btn btn-danger delete-button btn-block">Delete course
+                                            </button>
+                                        </div>
+                                        <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                            <button id="edit-course-button"
+                                                    class="btn btn-info reset-button btn-block">Edit course
+                                            </button>
+                                        </div>
+                                        <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                            <button id="dump-course-button"
+                                                    class="btn btn-secondary dump-button btn-block">Get dump of course
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>

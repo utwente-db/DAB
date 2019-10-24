@@ -4,6 +4,7 @@ import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses
 import {setInvalid, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
+import Swal from "sweetalert2";
 
 let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -55,13 +56,15 @@ const existingSchemaTransferDiv = document.getElementById("existing-schema-trans
 const existingCourseContent = document.getElementById('existing-course-content') as HTMLFormElement;
 
 const editCourseButton = document.getElementById("edit-course-button") as HTMLButtonElement;
+const deleteCourseButton = document.getElementById("delete-course-button") as HTMLButtonElement;
+const dumpCourseButton = document.getElementById("dump-course-button") as HTMLButtonElement;
 
 
 let databases: StudentDatabase[];
 let who: Who;
 let courses: Course[];
 // tslint:disable-next-line:prefer-const
-let currentCourse = 0;
+let currentCourse: Course;
 
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
@@ -137,6 +140,7 @@ function goToAddCoursePane(event: Event): void {
 }
 
 async function populateExistingCoursePane(i: number): Promise<void> {
+    currentCourse = courses[i];
     existingCourseIDField.value = String(courses[i].courseid);
     existingCourseFIDField.value = String(courses[i].fid);
     existingCourseInfoField.value = courses[i].info
@@ -308,11 +312,8 @@ async function tryAddSchema(): Promise<void> {
                 coursesNavHtml.removeChild(coursesNavHtml.firstElementChild)
             }
             courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-            // TODO indexOf couorse will not work here
             await displayCourses(courses, who, true, courses.indexOf(course))
 
-            // TODO repopulate entire nav thing (only way)
-            // TODO set active
             goToExistingCoursePane(courses.indexOf(course))
         } catch (error) {
             addErrorAlert(error, tempAlert)
@@ -321,6 +322,67 @@ async function tryAddSchema(): Promise<void> {
 
         }
     }
+}
+
+async function tryDeleteCourse(courseID: number): Promise<boolean> {
+    const result = await Swal.fire({
+        title: 'Are you sure you want to delete this course?',
+        text: 'You will not be able to recover your data!',
+        type: 'warning',
+        showCancelButton: true,
+        focusCancel: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success: boolean;
+    const tempAlert: ChildNode | null = addTempAlert()
+    // changePageState(false, changeStudentViewState);
+    try {
+        await axios.delete(`/rest/courses/${courseID}/`);
+        // await changeViewToHaveCredentials()
+        addAlert("The course has been successfully deleted", AlertType.primary, tempAlert);
+        // await changeView(false);
+        // for (let i = 0; i < courses.length; i++) {
+        //     if (courses[i].courseid === courseID) {
+        //         courses.splice(i, 1)
+        //     }
+        // }
+        // courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+
+        document.getElementsByClassName("nav-link active")[0].remove();
+        Array.from(coursesContentHtml.children).forEach((child) => {
+            child.classList.remove("active");
+        });
+        document.getElementById("please-select-a-course")!.classList.add("active");
+
+        success = true;
+
+    } catch (error) {
+        addErrorAlert(error, tempAlert);
+        success = false;
+    } finally {
+        // changePageState(true, changeStudentViewState);
+    }
+    return success;
+
+    // TODO remove course from nav on the left
+
+}
+
+function tryEditCourse(): boolean {
+    // TODO give a Swal
+    // TODO maybe repopulate on cancel changes?
+    return false;
+    // TODO implement
+}
+
+function tryDumpCourse(id: number): boolean {
+    // TODO implement
+    return false;
 }
 
 window.onload = async () => {
@@ -397,6 +459,18 @@ window.onload = async () => {
             }
         })(),
 
+        deleteCourseButton.addEventListener("click", () => {
+            tryDeleteCourse(Number(existingCourseIDField.value));
+        }),
+
+        editCourseButton.addEventListener("click", () => {
+            tryEditCourse();
+        }),
+
+        dumpCourseButton.addEventListener("click", () => {
+            tryDumpCourse(Number(existingCourseIDField.value));
+
+        }),
 
         populateNewCoursePane(),
 

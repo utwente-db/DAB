@@ -26198,6 +26198,7 @@ var courses_1 = __webpack_require__(/*! ./courses */ "./src/frontend/scripts/cou
 var register_1 = __webpack_require__(/*! ./register */ "./src/frontend/scripts/register.ts");
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
 var student_view_1 = __webpack_require__(/*! ./student_view */ "./src/frontend/scripts/student_view.ts");
+var sweetalert2_1 = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 var addCourseLink = document.getElementById("add-course-link");
 var coursesNavHtml = document.getElementById("courses-nav");
 var coursesContentHtml = document.getElementById("courses-content");
@@ -26236,11 +26237,13 @@ var existingSchemaUploadDiv = document.getElementById("existing-schema-upload-di
 var existingSchemaTransferDiv = document.getElementById("existing-schema-transfer-div");
 var existingCourseContent = document.getElementById('existing-course-content');
 var editCourseButton = document.getElementById("edit-course-button");
+var deleteCourseButton = document.getElementById("delete-course-button");
+var dumpCourseButton = document.getElementById("dump-course-button");
 var databases;
 var who;
 var courses;
 // tslint:disable-next-line:prefer-const
-var currentCourse = 0;
+var currentCourse;
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 function validCoursename(field) {
     var coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/;
@@ -26318,6 +26321,7 @@ function goToAddCoursePane(event) {
 function populateExistingCoursePane(i) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
+            currentCourse = courses[i];
             existingCourseIDField.value = String(courses[i].courseid);
             existingCourseFIDField.value = String(courses[i].fid);
             existingCourseInfoField.value = courses[i].info;
@@ -26502,16 +26506,9 @@ function tryAddSchema() {
                         coursesNavHtml.removeChild(coursesNavHtml.firstElementChild);
                     }
                     courses = courses.sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
-                    // TODO indexOf couorse will not work here
-                    return [4 /*yield*/, student_view_1.displayCourses(courses, who, true, courses.indexOf(course))
-                        // TODO repopulate entire nav thing (only way)
-                        // TODO set active
-                    ];
+                    return [4 /*yield*/, student_view_1.displayCourses(courses, who, true, courses.indexOf(course))];
                 case 8:
-                    // TODO indexOf couorse will not work here
                     _a.sent();
-                    // TODO repopulate entire nav thing (only way)
-                    // TODO set active
                     goToExistingCoursePane(courses.indexOf(course));
                     return [3 /*break*/, 11];
                 case 9:
@@ -26525,6 +26522,69 @@ function tryAddSchema() {
             }
         });
     });
+}
+function tryDeleteCourse(courseID) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, success, tempAlert, error_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
+                        title: 'Are you sure you want to delete this course?',
+                        text: 'You will not be able to recover your data!',
+                        type: 'warning',
+                        showCancelButton: true,
+                        focusCancel: true,
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel'
+                    })];
+                case 1:
+                    result = _a.sent();
+                    if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
+                        return [2 /*return*/, false];
+                    }
+                    tempAlert = alert_1.addTempAlert();
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, 5, 6]);
+                    return [4 /*yield*/, axios_1.default.delete("/rest/courses/" + courseID + "/")];
+                case 3:
+                    _a.sent();
+                    // await changeViewToHaveCredentials()
+                    alert_1.addAlert("The course has been successfully deleted", alert_1.AlertType.primary, tempAlert);
+                    // await changeView(false);
+                    // for (let i = 0; i < courses.length; i++) {
+                    //     if (courses[i].courseid === courseID) {
+                    //         courses.splice(i, 1)
+                    //     }
+                    // }
+                    // courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+                    document.getElementsByClassName("nav-link active")[0].remove();
+                    Array.from(coursesContentHtml.children).forEach(function (child) {
+                        child.classList.remove("active");
+                    });
+                    document.getElementById("please-select-a-course").classList.add("active");
+                    success = true;
+                    return [3 /*break*/, 6];
+                case 4:
+                    error_3 = _a.sent();
+                    alert_1.addErrorAlert(error_3, tempAlert);
+                    success = false;
+                    return [3 /*break*/, 6];
+                case 5: return [7 /*endfinally*/];
+                case 6: return [2 /*return*/, success];
+            }
+        });
+    });
+}
+function tryEditCourse() {
+    // TODO give a Swal
+    // TODO maybe repopulate on cancel changes?
+    return false;
+    // TODO implement
+}
+function tryDumpCourse(id) {
+    // TODO implement
+    return false;
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
@@ -26600,6 +26660,15 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                             addCourseLink.addEventListener("click", goToAddCoursePane);
                         }
                     })(),
+                    deleteCourseButton.addEventListener("click", function () {
+                        tryDeleteCourse(Number(existingCourseIDField.value));
+                    }),
+                    editCourseButton.addEventListener("click", function () {
+                        tryEditCourse();
+                    }),
+                    dumpCourseButton.addEventListener("click", function () {
+                        tryDumpCourse(Number(existingCourseIDField.value));
+                    }),
                     populateNewCoursePane(),
                     navbar_1.navbarEditCourses.classList.add("active"),
                     (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
