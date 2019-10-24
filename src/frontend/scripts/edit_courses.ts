@@ -11,11 +11,23 @@ const newCoursesContentHtml: HTMLDivElement = document.getElementById("new-cours
 const newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement;
 const newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement;
 const newCourseFIDField = document.getElementById("new-course-fid-field") as HTMLInputElement;
-const newSchemaField = document.getElementById("new-schema-field") as HTMLTextAreaElement;
 const newActiveField = document.getElementById("new-active-field") as HTMLInputElement;
+
+
+const newSchemaRadioNone = document.getElementById("new-schema-radio-none") as HTMLInputElement;
+const newSchemaRadioTextarea = document.getElementById("new-schema-radio-textarea") as HTMLInputElement;
+const newSchemaRadioUpload = document.getElementById("new-schema-radio-upload") as HTMLInputElement;
+const newSchemaRadioTransfer = document.getElementById("new-schema-radio-transfer") as HTMLInputElement;
+
+
+const newSchemaTextarea = document.getElementById("new-schema-textarea") as HTMLTextAreaElement;
+const newSchemaUpload = document.getElementById("new-schema-upload") as HTMLInputElement;
+const newSchemaTransfer = document.getElementById("new-schema-textarea") as HTMLSelectElement;
+
 
 const content = document.getElementById('content') as HTMLFormElement;
 let who: Who;
+// tslint:disable-next-line:prefer-const
 let currentCourse = 0;
 
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
@@ -35,8 +47,10 @@ function depopulateNewCoursePane(): void {
     newCourseFIDField.value="";
     newCourseInfoField.value="";
     newCoursenameField.value="";
-    newSchemaField.value="";
+    newSchemaTextarea.value="";
     newActiveField.checked=true;
+    // TODO rename fields that i addded new in front of
+    // TODO Depopulate other fields (schema and such)
 }
 
 export function populateExistingCoursePane(): void {
@@ -59,10 +73,47 @@ function validFID(field: HTMLInputElement): boolean {
     }
 }
 
+function nonEmptyTextarea(newSchemaTextarea: HTMLTextAreaElement): boolean {
+    if (newSchemaTextarea.value === "") {
+        setInvalid(newSchemaTextarea, "Please enter a valid string or select not to add a schema");
+        return false;
+    } else {
+        setValid(newSchemaTextarea)
+        return true;
+    }
+}
+
+function validSelect(select: HTMLSelectElement): boolean {
+    if (Number(select)>0) {
+        setValid(select);
+        return true;
+    } else {
+        setInvalid(select,"Please select a value from this dropdown");
+        return false;
+    }
+}
+
+function validUpload(uploadElement: HTMLInputElement): boolean {
+            // TODO check if upload is non empty
+
+    // https://stackoverflow.com/questions/3292658/get-the-value-of-input-type-file-and-alert-if-empty
+    return false;
+}
+
 function checkFields(): boolean {
     const a = validCoursename(newCoursenameField);
     const b = validFID(newCourseFIDField);
-    return a && b
+    let c: boolean;
+    if (newSchemaRadioNone.checked) {
+        c = true;
+    } else if (newSchemaRadioTextarea.checked) {
+        c = nonEmptyTextarea(newSchemaTextarea)
+    } else if (newSchemaRadioUpload) {
+        c = validUpload(newSchemaRadioUpload)
+    } else if (newSchemaRadioTransfer) {
+        c = validSelect(newSchemaTransfer)
+    }
+    return a && b && c
 }
 
 function changeEditCoursesState(enable: boolean): void {
@@ -70,7 +121,7 @@ function changeEditCoursesState(enable: boolean): void {
         newCourseInfoField.disabled = false;
         newCoursenameField.disabled = false;
         newCourseFIDField.disabled = false;
-        newSchemaField.disabled = false;
+        newSchemaTextarea.disabled = false;
         newActiveField.disabled = false;
         addCourseButton.disabled = false;
         (navbarEditCourses.firstElementChild)!.classList.add("disabled");
@@ -78,9 +129,22 @@ function changeEditCoursesState(enable: boolean): void {
         newCourseInfoField.disabled = true;
         newCoursenameField.disabled = true;
         newCourseFIDField.disabled = true;
-        newSchemaField.disabled = true;
+        newSchemaTextarea.disabled = true;
         newActiveField.disabled = true;
         addCourseButton.disabled = true;
+    }
+}
+
+function getSchema(): string {
+    if (newSchemaRadioNone.checked) {return "";}
+    else if (newSchemaRadioTextarea.checked) {return newSchemaTextarea.value}
+    else if (newSchemaRadioTransfer.checked) {
+        // TODO get id in the same way courses does it
+        // TODO call schema transfer
+    }
+    else if (newSchemaRadioUpload.checked) {
+        // TODO return file contents as string
+        // https://stackoverflow.com/questions/36665322/js-get-file-contents
     }
 }
 
@@ -98,7 +162,7 @@ async function tryAddSchema(): Promise<void> {
         if (newCourseFIDField.value !== "") {
             inputCourse.fid = Number(newCourseFIDField.value)
         }
-        const schema = newSchemaField.value;
+        const schema: string = getSchema();
 
         try {
 
