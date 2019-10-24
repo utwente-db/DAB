@@ -71,8 +71,9 @@ async function fillStudentDatabasesDropdown(): Promise<void> {
 }
 
 function populateNewCoursePane(): void {
-    // TODO call when add course succeeds
-    // TODO deselect whatever is active in course list nav thing
+    Array.from(coursesNavHtml.children).forEach((child: HTMLAnchorElement) => {
+        child.classList.remove("active");
+    });
 
     newCourseFIDField.value = "";
     newCourseInfoField.value = "";
@@ -189,8 +190,7 @@ async function getSchema(): Promise<string> {
         // TODO call schema transfer
     } else if (newSchemaRadioUpload.checked && newSchemaUpload.files) {
         const file: File = newSchemaUpload.files[0];
-        const data: string = await new Response(file).text();
-        return data;
+        return (await new Response(file)).text();
 
         // https://stackoverflow.com/questions/36665322/js-get-file-contents
     }
