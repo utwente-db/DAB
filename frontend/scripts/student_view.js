@@ -26269,7 +26269,7 @@ function populateNewCoursePane() {
     newSchemaUpload.value = "";
     fillStudentDatabasesDropdown();
 }
-function populateExistingCoursePane() {
+function populateExistingCoursePane(i) {
     // TODO implement
 }
 exports.populateExistingCoursePane = populateExistingCoursePane;
@@ -26467,7 +26467,7 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                         }),
                         navbar_1.navbarEditCourses.classList.add("active"),
                         (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
-                        student_view_1.displayCourses(who.role)
+                        student_view_1.displayCourses(who.role, true)
                     ])];
             case 2:
                 _a.sent();
@@ -26960,7 +26960,9 @@ function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
     var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + " " + inactiveCourseString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
     var fragment = document.createRange().createContextualFragment(templateString);
     if (fromEditCourses) {
-        edit_courses_1.populateExistingCoursePane();
+        fragment.firstElementChild.addEventListener("click", function () {
+            edit_courses_1.populateExistingCoursePane(i);
+        });
     }
     else {
         if (!makeGreen) {

@@ -85,7 +85,7 @@ function populateNewCoursePane(): void {
 
 }
 
-export function populateExistingCoursePane(): void {
+export function populateExistingCoursePane(i: number): void {
     // TODO implement
 }
 
@@ -264,7 +264,7 @@ window.onload = async () => {
 
         navbarEditCourses.classList.add("active"),
         (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
-        displayCourses(who.role)
+        displayCourses(who.role,true)
     ])
     ;
 

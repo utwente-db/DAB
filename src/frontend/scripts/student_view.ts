@@ -106,7 +106,10 @@ function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGr
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
     if (fromEditCourses) {
-        populateExistingCoursePane();
+        fragment.firstElementChild!.addEventListener("click", () => {
+                   populateExistingCoursePane(i);
+        });
+
     } else {
         if (!makeGreen) {
             fragment.firstElementChild!.addEventListener("click", () => {
@@ -126,6 +129,7 @@ function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGr
 }
 
 export async function displayCourses(userRole = UserRole.student, fromEditCourses = false): Promise<void> {
+
     who = await getWhoPromise();
 
     courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
@@ -160,7 +164,7 @@ async function changeView(hasCredentials: boolean): Promise<void> {
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
     const newPane = hasCredentials ? haveCredsPane : noCredsPane;
     const i = Number(activeLink.id);
-    const fragment = createNavLink(false,courses[i].active, hasCredentials, i, true);
+    const fragment = createNavLink(false, courses[i].active, hasCredentials, i, true);
     activeLink.classList.remove("active");
     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild!);
     activeLink.remove();
