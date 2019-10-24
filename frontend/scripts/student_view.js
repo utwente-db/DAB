@@ -26219,6 +26219,7 @@ var newSchemaUploadDiv = document.getElementById("new-schema-upload-div");
 var newSchemaTransferDiv = document.getElementById("new-schema-transfer-div");
 var newCourseContent = document.getElementById('new-course-content');
 var addCourseButton = document.getElementById("add-course-button");
+var existingCourseIDField = document.getElementById("existing-course-id-field");
 var existingCoursenameField = document.getElementById("existing-course-name-field");
 var existingCourseInfoField = document.getElementById("existing-course-info-field");
 var existingCourseFIDField = document.getElementById("existing-course-fid-field");
@@ -26252,7 +26253,7 @@ function validCoursename(field) {
         return false;
     }
 }
-function fillStudentDatabasesDropdown() {
+function fillStudentDatabasesDropdown(dropdown) {
     return __awaiter(this, void 0, void 0, function () {
         var response, child, i, optionNode;
         return __generator(this, function (_a) {
@@ -26261,15 +26262,15 @@ function fillStudentDatabasesDropdown() {
                 case 1:
                     response = _a.sent();
                     databases = (response.data).sort(function (a, b) { return a.databasename.localeCompare(b.databasename); });
-                    while (newSchemaTransfer.lastElementChild !== newSchemaTransfer.firstElementChild) {
-                        child = newSchemaTransfer.lastElementChild;
-                        newSchemaTransfer.removeChild(child);
+                    while (dropdown.lastElementChild !== dropdown.firstElementChild) {
+                        child = dropdown.lastElementChild;
+                        dropdown.removeChild(child);
                     }
                     for (i = 0; i < databases.length; i++) {
                         optionNode = document.createElement("option");
                         optionNode.setAttribute("value", String(databases[i].dbid));
                         optionNode.appendChild(document.createTextNode(databases[i].databasename));
-                        newSchemaTransfer.appendChild(optionNode);
+                        dropdown.appendChild(optionNode);
                         // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
                     }
                     return [2 /*return*/];
@@ -26291,7 +26292,7 @@ function populateNewCoursePane() {
     newSchemaRadioNone.checked = true;
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    fillStudentDatabasesDropdown();
+    fillStudentDatabasesDropdown(newSchemaTransfer);
 }
 function goToAddCoursePane(event) {
     event.preventDefault();
@@ -26305,10 +26306,24 @@ function goToAddCoursePane(event) {
     });
     newCoursePane.classList.add("active");
 }
+function populateExistingCoursePane(i) {
+    existingCourseIDField.value = String(courses[i].courseid);
+    existingCourseFIDField.value = String(courses[i].fid);
+    existingCourseInfoField.value = courses[i].info;
+    existingCoursenameField.value = courses[i].coursename;
+    existingActiveField.checked = courses[i].active;
+    existingSchemaRadioUpload.checked = false;
+    existingSchemaRadioTransfer.checked = false;
+    existingSchemaRadioTextarea.checked = false;
+    existingSchemaRadioNone.checked = true;
+    existingSchemaTextarea.value = "";
+    existingSchemaUpload.value = "";
+    fillStudentDatabasesDropdown(existingSchemaTransfer);
+}
 function goToExistingCoursePane(i) {
     addCourseLink.addEventListener("click", goToAddCoursePane);
     addCourseLink.toggleAttribute("href");
-    // TODO actually implement populate
+    populateExistingCoursePane(i);
     Array.from(coursesContentHtml.children).forEach(function (child) {
         child.classList.remove("active");
     });

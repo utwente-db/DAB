@@ -34,6 +34,7 @@ const newCourseContent = document.getElementById('new-course-content') as HTMLFo
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 
+const existingCourseIDField = document.getElementById("existing-course-id-field") as HTMLInputElement;
 const existingCoursenameField = document.getElementById("existing-course-name-field") as HTMLInputElement;
 const existingCourseInfoField = document.getElementById("existing-course-info-field") as HTMLInputElement;
 const existingCourseFIDField = document.getElementById("existing-course-fid-field") as HTMLInputElement;
@@ -75,20 +76,20 @@ function validCoursename(field: HTMLInputElement): boolean {
     }
 }
 
-async function fillStudentDatabasesDropdown(): Promise<void> {
+async function fillStudentDatabasesDropdown(dropdown: HTMLSelectElement): Promise<void> {
     const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
     databases = (response.data).sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
 
-    while (newSchemaTransfer.lastElementChild !== newSchemaTransfer.firstElementChild) {
-        const child: Element = newSchemaTransfer.lastElementChild!;
-        newSchemaTransfer.removeChild(child!);
+    while (dropdown.lastElementChild !== dropdown.firstElementChild) {
+        const child: Element = dropdown.lastElementChild!;
+        dropdown.removeChild(child!);
     }
     for (let i = 0; i < databases.length; i++) {
         const optionNode = document.createElement("option");
         optionNode.setAttribute("value", String(databases[i].dbid));
         optionNode.appendChild(document.createTextNode(databases[i].databasename));
 
-        newSchemaTransfer.appendChild(optionNode)
+        dropdown.appendChild(optionNode)
         // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
     }
     // const resultString: string = result.join("\n");
@@ -113,7 +114,7 @@ function populateNewCoursePane(): void {
 
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    fillStudentDatabasesDropdown();
+    fillStudentDatabasesDropdown(newSchemaTransfer);
 
 }
 
@@ -130,10 +131,28 @@ function goToAddCoursePane(event: Event): void {
     newCoursePane.classList.add("active");
 }
 
+function populateExistingCoursePane(i: number): void {
+    existingCourseIDField.value = String(courses[i].courseid);
+    existingCourseFIDField.value = String(courses[i].fid);
+    existingCourseInfoField.value = courses[i].info
+    existingCoursenameField.value = courses[i].coursename;
+    existingActiveField.checked = courses[i].active;
+
+    existingSchemaRadioUpload.checked = false;
+    existingSchemaRadioTransfer.checked = false;
+    existingSchemaRadioTextarea.checked = false;
+    existingSchemaRadioNone.checked = true;
+
+    existingSchemaTextarea.value = "";
+    existingSchemaUpload.value = "";
+    fillStudentDatabasesDropdown(existingSchemaTransfer);
+}
+
 export function goToExistingCoursePane(i: number): void {
     addCourseLink.addEventListener("click", goToAddCoursePane);
     addCourseLink.toggleAttribute("href");
-    // TODO actually implement populate
+
+    populateExistingCoursePane(i);
 
     Array.from(coursesContentHtml.children).forEach((child) => {
         child.classList.remove("active");
@@ -260,7 +279,7 @@ async function tryAddSchema(): Promise<void> {
 
             const response = await axios.post(`/rest/courses/`, inputCourse) as AxiosResponse<Course>;
             const course: Course = response.data;
-            addAlert("successfully added course, but not schema yet", AlertType.success,tempAlert);
+            addAlert("successfully added course, but not schema yet", AlertType.success, tempAlert);
             const courseID = course.courseid;
             const schema: string = await getSchema();
 
