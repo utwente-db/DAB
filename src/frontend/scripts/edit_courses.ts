@@ -5,21 +5,23 @@ import {setInvalid, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
 
-
-const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
+let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
+
+const existingCoursePane = document.getElementById("existing-course-pane") as HTMLDivElement;
+const newCoursePane = document.getElementById("new-course-pane") as HTMLDivElement;
+
+
 const newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement;
 const newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement;
 const newCourseFIDField = document.getElementById("new-course-fid-field") as HTMLInputElement;
 const newActiveField = document.getElementById("new-active-field") as HTMLInputElement;
 
-
 const newSchemaRadioNone = document.getElementById("new-schema-radio-none") as HTMLInputElement;
 const newSchemaRadioTextarea = document.getElementById("new-schema-radio-textarea") as HTMLInputElement;
 const newSchemaRadioUpload = document.getElementById("new-schema-radio-upload") as HTMLInputElement;
 const newSchemaRadioTransfer = document.getElementById("new-schema-radio-transfer") as HTMLInputElement;
-
 
 const newSchemaTextarea = document.getElementById("new-schema-textarea") as HTMLTextAreaElement;
 const newSchemaUpload = document.getElementById("new-schema-upload") as HTMLInputElement;
@@ -28,13 +30,33 @@ const newSchemaTransfer = document.getElementById("new-schema-transfer") as HTML
 const newSchemaTextareaDiv = document.getElementById("new-schema-textarea-div") as HTMLDivElement;
 const newSchemaUploadDiv = document.getElementById("new-schema-upload-div") as HTMLDivElement;
 const newSchemaTransferDiv = document.getElementById("new-schema-transfer-div") as HTMLDivElement;
-
 const newCourseContent = document.getElementById('new-course-content') as HTMLFormElement;
-let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 
-const existingCoursePane = document.getElementById("existing-course-pane") as HTMLDivElement;
-const newCoursePane = document.getElementById("new-course-pane") as HTMLDivElement;
+const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
 
+const existingCoursenameField = document.getElementById("existing-course-name-field") as HTMLInputElement;
+const existingCourseInfoField = document.getElementById("existing-course-info-field") as HTMLInputElement;
+const existingCourseFIDField = document.getElementById("existing-course-fid-field") as HTMLInputElement;
+const existingActiveField = document.getElementById("existing-active-field") as HTMLInputElement;
+
+const existingSchemaRadioNone = document.getElementById("existing-schema-radio-none") as HTMLInputElement;
+const existingSchemaRadioTextarea = document.getElementById("existing-schema-radio-textarea") as HTMLInputElement;
+const existingSchemaRadioUpload = document.getElementById("existing-schema-radio-upload") as HTMLInputElement;
+const existingSchemaRadioTransfer = document.getElementById("existing-schema-radio-transfer") as HTMLInputElement;
+
+const existingSchemaTextarea = document.getElementById("existing-schema-textarea") as HTMLTextAreaElement;
+const existingSchemaUpload = document.getElementById("existing-schema-upload") as HTMLInputElement;
+const existingSchemaTransfer = document.getElementById("existing-schema-transfer") as HTMLSelectElement;
+
+const existingSchemaTextareaDiv = document.getElementById("existing-schema-textarea-div") as HTMLDivElement;
+const existingSchemaUploadDiv = document.getElementById("existing-schema-upload-div") as HTMLDivElement;
+const existingSchemaTransferDiv = document.getElementById("existing-schema-transfer-div") as HTMLDivElement;
+const existingCourseContent = document.getElementById('existing-course-content') as HTMLFormElement;
+
+const editCourseButton = document.getElementById("edit-course-button") as HTMLButtonElement;
+
+
+let databases: StudentDatabase[];
 let who: Who;
 let courses: Course[];
 // tslint:disable-next-line:prefer-const
@@ -55,7 +77,7 @@ function validCoursename(field: HTMLInputElement): boolean {
 
 async function fillStudentDatabasesDropdown(): Promise<void> {
     const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
-    const databases: StudentDatabase[] = (response.data).sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
+    databases = (response.data).sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
 
     while (newSchemaTransfer.lastElementChild !== newSchemaTransfer.firstElementChild) {
         const child: Element = newSchemaTransfer.lastElementChild!;
@@ -113,7 +135,7 @@ export function goToExistingCoursePane(i: number): void {
     addCourseLink.toggleAttribute("href");
     // TODO actually implement populate
 
-     Array.from(coursesContentHtml.children).forEach((child) => {
+    Array.from(coursesContentHtml.children).forEach((child) => {
         child.classList.remove("active");
     });
     existingCoursePane.classList.add("active");
@@ -147,7 +169,7 @@ function nonEmptyTextarea(newSchemaTextarea: HTMLTextAreaElement): boolean {
 }
 
 function validSelect(select: HTMLSelectElement): boolean {
-    if (Number(select) > 0) {
+    if (Number(select.value) > 0) {
         setValid(select);
         return true;
     } else {
@@ -175,16 +197,18 @@ function checkFields(): boolean {
         c = true;
     } else if (newSchemaRadioTextarea.checked) {
         c = nonEmptyTextarea(newSchemaTextarea)
-    } else if (newSchemaRadioUpload) {
+    } else if (newSchemaRadioUpload.checked) {
         c = validUpload(newSchemaUpload)
-    } else if (newSchemaRadioTransfer) {
+    } else if (newSchemaRadioTransfer.checked) {
         c = validSelect(newSchemaTransfer)
     }
     return a && b && c
 }
 
 function changeEditCoursesState(enable: boolean): void {
-    // TODO update with new elements and check commented things
+    // TODO update with new elements
+    // TODO disable all nav elements like in sutdent view
+    // TODO addCoursesLink
 
     if (enable) {
         newCourseInfoField.disabled = false;
@@ -192,7 +216,7 @@ function changeEditCoursesState(enable: boolean): void {
         newCourseFIDField.disabled = false;
         newSchemaTextarea.disabled = false;
         newActiveField.disabled = false;
-        // addCourseButton.disabled = false;
+        addCourseButton.disabled = false;
         (navbarEditCourses.firstElementChild)!.classList.add("disabled");
     } else {
         newCourseInfoField.disabled = true;
@@ -200,18 +224,13 @@ function changeEditCoursesState(enable: boolean): void {
         newCourseFIDField.disabled = true;
         newSchemaTextarea.disabled = true;
         newActiveField.disabled = true;
-        // addCourseButton.disabled = true;
+        addCourseButton.disabled = true;
     }
 }
 
 async function getSchema(): Promise<string> {
     if (newSchemaRadioTextarea.checked) {
         return (newSchemaTextarea.value as string)
-    } else if (newSchemaRadioTransfer.checked) {
-        return ""
-        // newSchemaTransfer.value
-        // TODO get id in the same way courses does it
-        // TODO call schema transfer
     } else if (newSchemaRadioUpload.checked && newSchemaUpload.files) {
         const file: File = newSchemaUpload.files[0];
         return (await new Response(file)).text();
@@ -236,19 +255,25 @@ async function tryAddSchema(): Promise<void> {
         if (newCourseFIDField.value !== "") {
             inputCourse.fid = Number(newCourseFIDField.value)
         }
-        const schema: string = await getSchema();
 
         try {
 
             const response = await axios.post(`/rest/courses/`, inputCourse) as AxiosResponse<Course>;
             const course: Course = response.data;
-            addAlert("successfully added course, but not schema yet", AlertType.success);
+            addAlert("successfully added course, but not schema yet", AlertType.success,tempAlert);
             const courseID = course.courseid;
+            const schema: string = await getSchema();
+
             if (schema !== "") {
+
                 const response = await axios.post(`/rest/courses/${courseID}/schema`, schema);
                 addAlert("successfully added schema", AlertType.success);
 
 
+            } else if (newSchemaRadioTransfer.checked) {
+                const dbid = Number(newSchemaTransfer.value);
+                await axios.post(`/rest/schematransfer/${courseID}/${dbid}`);
+                addAlert("successfully added schema", AlertType.success);
             }
             populateNewCoursePane();
             courses.push(response.data);
