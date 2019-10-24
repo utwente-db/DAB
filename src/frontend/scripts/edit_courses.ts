@@ -4,7 +4,6 @@ import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses
 import {setInvalid, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
-import * as $ from "jquery";
 
 
 const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
@@ -31,7 +30,9 @@ const newSchemaUploadDiv = document.getElementById("new-schema-upload-div") as H
 const newSchemaTransferDiv = document.getElementById("new-schema-transfer-div") as HTMLDivElement;
 
 const newCourseContent = document.getElementById('new-course-content') as HTMLFormElement;
+const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 let who: Who;
+let courses: Course[];
 // tslint:disable-next-line:prefer-const
 let currentCourse = 0;
 
@@ -50,7 +51,7 @@ function validCoursename(field: HTMLInputElement): boolean {
 
 async function fillStudentDatabasesDropdown(): Promise<void> {
     const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
-    const databases: StudentDatabase[] = (response.data).sort( (a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename)  );
+    const databases: StudentDatabase[] = (response.data).sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
 
     while (newSchemaTransfer.lastElementChild !== newSchemaTransfer.firstElementChild) {
         const child: Element = newSchemaTransfer.lastElementChild!;
@@ -66,9 +67,13 @@ async function fillStudentDatabasesDropdown(): Promise<void> {
     }
     // const resultString: string = result.join("\n");
     // coursesDropdown.innerHTML += resultString;
+
 }
 
 function populateNewCoursePane(): void {
+    // TODO call when add course succeeds
+    // TODO deselect whatever is active in course list nav thing
+
     newCourseFIDField.value = "";
     newCourseInfoField.value = "";
     newCoursenameField.value = "";
@@ -179,6 +184,7 @@ async function getSchema(): Promise<string> {
         return (newSchemaTextarea.value as string)
     } else if (newSchemaRadioTransfer.checked) {
         return ""
+        // newSchemaTransfer.value
         // TODO get id in the same way courses does it
         // TODO call schema transfer
     } else if (newSchemaRadioUpload.checked && newSchemaUpload.files) {
@@ -211,12 +217,19 @@ async function tryAddSchema(): Promise<void> {
         try {
 
             const response = await axios.post(`/rest/courses/`, inputCourse) as AxiosResponse<Course>;
+            const course: Course = response.data;
             addAlert("successfully added course, but not schema yet", AlertType.success);
-            const courseID = response.data.courseid;
+            const courseID = course.courseid;
             if (schema !== "") {
                 const response = await axios.post(`/rest/courses/${courseID}/schema`, schema);
                 addAlert("successfully added schema", AlertType.success);
+
+
             }
+            populateNewCoursePane();
+            courses.push(response.data);
+            courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+            populateExistingCoursePane(courses.indexOf(course))
         } catch (error) {
             addErrorAlert(error, tempAlert)
         } finally {
@@ -227,9 +240,13 @@ async function tryAddSchema(): Promise<void> {
 }
 
 window.onload = async () => {
-    who = await getWhoamiPromise();
     await Promise.all([
-        populateNewCoursePane(),
+        (async () => {
+            who = await getWhoamiPromise();
+            courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+            await displayCourses(courses, who, true)
+
+        })(),
 
         initNavbar(changeEditCoursesState),
         newCourseContent.addEventListener("submit", (event) => {
@@ -262,12 +279,13 @@ window.onload = async () => {
             newSchemaUploadDiv.classList.remove("d-none");
         }),
 
+        populateNewCoursePane(),
+
+
         navbarEditCourses.classList.add("active"),
         (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
-        displayCourses(who.role,true)
-    ])
-    ;
 
-    $('select').selectpicker(); // TODO maybe remove this line as it can break selects
+    ])
+
 
 };

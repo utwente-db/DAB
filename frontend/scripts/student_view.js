@@ -26194,10 +26194,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
 var axios_1 = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+var courses_1 = __webpack_require__(/*! ./courses */ "./src/frontend/scripts/courses.ts");
 var register_1 = __webpack_require__(/*! ./register */ "./src/frontend/scripts/register.ts");
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
 var student_view_1 = __webpack_require__(/*! ./student_view */ "./src/frontend/scripts/student_view.ts");
-var $ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 var addCourseButton = document.getElementById("add-course-button");
 var coursesNavHtml = document.getElementById("courses-nav");
 var newCoursesContentHtml = document.getElementById("new-courses-content");
@@ -26216,7 +26216,9 @@ var newSchemaTextareaDiv = document.getElementById("new-schema-textarea-div");
 var newSchemaUploadDiv = document.getElementById("new-schema-upload-div");
 var newSchemaTransferDiv = document.getElementById("new-schema-transfer-div");
 var newCourseContent = document.getElementById('new-course-content');
+var addCourseLink = document.getElementById("add-course-link");
 var who;
+var courses;
 // tslint:disable-next-line:prefer-const
 var currentCourse = 0;
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
@@ -26257,6 +26259,8 @@ function fillStudentDatabasesDropdown() {
     });
 }
 function populateNewCoursePane() {
+    // TODO call when add course succeeds
+    // TODO deselect whatever is active in course list nav thing
     newCourseFIDField.value = "";
     newCourseInfoField.value = "";
     newCoursenameField.value = "";
@@ -26370,6 +26374,7 @@ function getSchema() {
                 case 1:
                     if (!newSchemaRadioTransfer.checked) return [3 /*break*/, 2];
                     return [2 /*return*/, ""
+                        // newSchemaTransfer.value
                         // TODO get id in the same way courses does it
                         // TODO call schema transfer
                     ];
@@ -26387,7 +26392,7 @@ function getSchema() {
 }
 function tryAddSchema() {
     return __awaiter(this, void 0, void 0, function () {
-        var tempAlert, inputCourse, schema, response, courseID, response_1, error_1;
+        var tempAlert, inputCourse, schema, response, course, courseID, response_1, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -26411,15 +26416,21 @@ function tryAddSchema() {
                     return [4 /*yield*/, axios_1.default.post("/rest/courses/", inputCourse)];
                 case 3:
                     response = _a.sent();
+                    course = response.data;
                     alert_1.addAlert("successfully added course, but not schema yet", alert_1.AlertType.success);
-                    courseID = response.data.courseid;
+                    courseID = course.courseid;
                     if (!(schema !== "")) return [3 /*break*/, 5];
                     return [4 /*yield*/, axios_1.default.post("/rest/courses/" + courseID + "/schema", schema)];
                 case 4:
                     response_1 = _a.sent();
                     alert_1.addAlert("successfully added schema", alert_1.AlertType.success);
                     _a.label = 5;
-                case 5: return [3 /*break*/, 8];
+                case 5:
+                    populateNewCoursePane();
+                    courses.push(response.data);
+                    courses = courses.sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
+                    populateExistingCoursePane(courses.indexOf(course));
+                    return [3 /*break*/, 8];
                 case 6:
                     error_1 = _a.sent();
                     alert_1.addErrorAlert(error_1, tempAlert);
@@ -26435,43 +26446,54 @@ function tryAddSchema() {
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, navbar_1.getWhoamiPromise()];
+            case 0: return [4 /*yield*/, Promise.all([
+                    (function () { return __awaiter(void 0, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, navbar_1.getWhoamiPromise()];
+                                case 1:
+                                    who = _a.sent();
+                                    return [4 /*yield*/, courses_1.getCoursesPromise()];
+                                case 2:
+                                    courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
+                                    return [4 /*yield*/, student_view_1.displayCourses(courses, who, true)];
+                                case 3:
+                                    _a.sent();
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); })(),
+                    navbar_1.initNavbar(changeEditCoursesState),
+                    newCourseContent.addEventListener("submit", function (event) {
+                        event.preventDefault();
+                        tryAddSchema();
+                    }),
+                    newSchemaRadioNone.parentElement.addEventListener("click", function () {
+                        newSchemaTextareaDiv.classList.add("d-none");
+                        newSchemaTransferDiv.classList.add("d-none");
+                        newSchemaUploadDiv.classList.add("d-none");
+                    }),
+                    newSchemaRadioTextarea.parentElement.addEventListener("click", function () {
+                        newSchemaTextareaDiv.classList.remove("d-none");
+                        newSchemaTransferDiv.classList.add("d-none");
+                        newSchemaUploadDiv.classList.add("d-none");
+                    }),
+                    newSchemaRadioTransfer.parentElement.addEventListener("click", function () {
+                        newSchemaTextareaDiv.classList.add("d-none");
+                        newSchemaTransferDiv.classList.remove("d-none");
+                        newSchemaUploadDiv.classList.add("d-none");
+                    }),
+                    newSchemaRadioUpload.parentElement.addEventListener("click", function () {
+                        newSchemaTextareaDiv.classList.add("d-none");
+                        newSchemaTransferDiv.classList.add("d-none");
+                        newSchemaUploadDiv.classList.remove("d-none");
+                    }),
+                    populateNewCoursePane(),
+                    navbar_1.navbarEditCourses.classList.add("active"),
+                    (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
+                ])];
             case 1:
-                who = _a.sent();
-                return [4 /*yield*/, Promise.all([
-                        populateNewCoursePane(),
-                        navbar_1.initNavbar(changeEditCoursesState),
-                        newCourseContent.addEventListener("submit", function (event) {
-                            event.preventDefault();
-                            tryAddSchema();
-                        }),
-                        newSchemaRadioNone.parentElement.addEventListener("click", function () {
-                            newSchemaTextareaDiv.classList.add("d-none");
-                            newSchemaTransferDiv.classList.add("d-none");
-                            newSchemaUploadDiv.classList.add("d-none");
-                        }),
-                        newSchemaRadioTextarea.parentElement.addEventListener("click", function () {
-                            newSchemaTextareaDiv.classList.remove("d-none");
-                            newSchemaTransferDiv.classList.add("d-none");
-                            newSchemaUploadDiv.classList.add("d-none");
-                        }),
-                        newSchemaRadioTransfer.parentElement.addEventListener("click", function () {
-                            newSchemaTextareaDiv.classList.add("d-none");
-                            newSchemaTransferDiv.classList.remove("d-none");
-                            newSchemaUploadDiv.classList.add("d-none");
-                        }),
-                        newSchemaRadioUpload.parentElement.addEventListener("click", function () {
-                            newSchemaTextareaDiv.classList.add("d-none");
-                            newSchemaTransferDiv.classList.add("d-none");
-                            newSchemaUploadDiv.classList.remove("d-none");
-                        }),
-                        navbar_1.navbarEditCourses.classList.add("active"),
-                        (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
-                        student_view_1.displayCourses(who.role, true)
-                    ])];
-            case 2:
                 _a.sent();
-                $('select').selectpicker(); // TODO maybe remove this line as it can break selects
                 return [2 /*return*/];
         }
     });
@@ -26981,36 +27003,36 @@ function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
     });
     return fragment;
 }
-function displayCourses(userRole, fromEditCourses) {
-    if (userRole === void 0) { userRole = user_1.UserRole.student; }
+function displayCourses(optionalCourses, optionalWho, fromEditCourses) {
     if (fromEditCourses === void 0) { fromEditCourses = false; }
     return __awaiter(this, void 0, void 0, function () {
         var ownCourses, i, youHavePrivilege, haveCredentials, fragment;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, navbar_1.getWhoPromise()];
-                case 1:
-                    who = _a.sent();
-                    return [4 /*yield*/, courses_1.getCoursesPromise()];
-                case 2:
-                    courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
-                    if (!!fromEditCourses) return [3 /*break*/, 5];
+                case 0:
+                    if (optionalCourses) {
+                        courses = optionalCourses;
+                    }
+                    if (optionalWho) {
+                        who = optionalWho;
+                    }
+                    if (!!fromEditCourses) return [3 /*break*/, 3];
                     return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/own/")];
-                case 3: return [4 /*yield*/, (_a.sent()).data];
-                case 4:
+                case 1: return [4 /*yield*/, (_a.sent()).data];
+                case 2:
                     ownDatabases = (_a.sent());
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 4];
+                case 3:
                     ownDatabases = [];
-                    _a.label = 6;
-                case 6:
+                    _a.label = 4;
+                case 4:
                     ownCourses = ownDatabases.map(function (db) { return db.course; });
                     for (i = 0; i < courses.length; i++) {
                         youHavePrivilege = (who.role === user_1.UserRole.admin || (who.role === user_1.UserRole.teacher && courses[i].fid === who.id));
                         // TODO  check if user is TA for course
                         if (courses[i].active || youHavePrivilege) {
                             haveCredentials = false;
-                            if (userRole === user_1.UserRole.admin && fromEditCourses) {
+                            if (who.role === user_1.UserRole.admin && fromEditCourses) {
                                 haveCredentials = courses[i].fid === who.id; // The user owns this course
                             }
                             else if (!fromEditCourses) {
@@ -27232,7 +27254,22 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
                     }),
                     navbar_1.navbarStudentView.classList.add("active"),
                     (navbar_1.navbarStudentView.firstElementChild).classList.add("disabled"),
-                    displayCourses(),
+                    (function () { return __awaiter(void 0, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, navbar_1.getWhoPromise()];
+                                case 1:
+                                    who = _a.sent();
+                                    return [4 /*yield*/, courses_1.getCoursesPromise()];
+                                case 2:
+                                    courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
+                                    return [4 /*yield*/, displayCourses()];
+                                case 3:
+                                    _a.sent();
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); })(),
                     navbar_1.displayWhoami()
                 ])];
             case 1:

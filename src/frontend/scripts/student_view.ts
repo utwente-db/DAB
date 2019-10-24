@@ -107,7 +107,7 @@ function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGr
 
     if (fromEditCourses) {
         fragment.firstElementChild!.addEventListener("click", () => {
-                   populateExistingCoursePane(i);
+            populateExistingCoursePane(i);
         });
 
     } else {
@@ -128,11 +128,16 @@ function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGr
     return fragment;
 }
 
-export async function displayCourses(userRole = UserRole.student, fromEditCourses = false): Promise<void> {
+export async function displayCourses(optionalCourses?: Course[], optionalWho?: Who, fromEditCourses = false): Promise<void> {
 
-    who = await getWhoPromise();
+    if (optionalCourses) {
+        courses = optionalCourses;
+    }
 
-    courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+    if (optionalWho) {
+        who = optionalWho;
+    }
+
     if (!fromEditCourses) {
         ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
     } else {
@@ -145,7 +150,7 @@ export async function displayCourses(userRole = UserRole.student, fromEditCourse
         // TODO  check if user is TA for course
         if (courses[i].active || youHavePrivilege) {
             let haveCredentials = false;
-            if (userRole === UserRole.admin && fromEditCourses) {
+            if (who.role === UserRole.admin && fromEditCourses) {
                 haveCredentials = courses[i].fid === who.id // The user owns this course
             } else if (!fromEditCourses) {
                 haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
@@ -303,6 +308,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
 }
 
 window.onload = async () => {
+
     await Promise.all([
         initNavbar(changeStudentViewState),
         noCredsForm.addEventListener("submit", (event) => {
@@ -311,7 +317,12 @@ window.onload = async () => {
         }),
         navbarStudentView.classList.add("active"),
         (navbarStudentView.firstElementChild)!.classList.add("disabled"),
-        displayCourses(),
+        (async () => {
+            who = await getWhoPromise();
+
+            courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+            await displayCourses();
+        })(),
         displayWhoami()
     ])
 };
