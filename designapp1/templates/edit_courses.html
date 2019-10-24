@@ -236,11 +236,39 @@
                                         </div>
                                     </div>
 
-                                    <h3>TODO add radio buttons here</h3>
+                                                        <div class="form-group row align-items-center mb-4">
+                                        <label for="existing-schema-radio" class="col-12 col-md-4 col-form-label">Edit schema?</label>
+                                        <div class="col-12 col-md-8 btn-group btn-group-toggle" data-toggle="buttons">
+                                            <label class="btn btn-secondary active">
+                                                <input type="radio" name="options" id="existing-schema-radio-none"
+                                                       autocomplete="off"
+                                                       checked> No
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <input type="radio" name="options" id="existing-schema-radio-textarea"
+                                                       autocomplete="off">
+                                                Via text field
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <input type="radio" name="options" id="existing-schema-radio-upload"
+                                                       autocomplete="off">
+                                                Via file upload
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <input type="radio" name="options" id="existing-schema-radio-transfer"
+                                                       autocomplete="off">
+                                                Via schema transfer
+                                            </label>
 
-                                    <div class="form-group row align-items-center mb-4">
+                                        </div>
+                                        <div class="invalid-feedback"></div>
+
+                                    </div>
+
+
+                                    <div class="form-group row align-items-center mb-4 d-none" id="existing-schema-textarea-div">
                                         <label for="existing-schema-textarea" class="col-12 col-md-4 col-form-label">Schema
-                                            (optional)</label>
+                                            text</label>
                                         <div class="col-12 col-md-8">
                               <textarea name="schema-field" class="form-control" id="existing-schema-textarea"
                               ></textarea>
@@ -248,9 +276,10 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group row align-items-center mb-4">
+
+                                    <div class="form-group row align-items-center mb-4 d-none" id="existing-schema-upload-div">
                                         <label for="existing-schema-upload" class="col-12 col-md-4 col-form-label">Schema
-                                            (optional)</label>
+                                            upload</label>
                                         <div class="col-12 col-md-8">
                                             <input type="file" id="existing-schema-upload"/>
 
@@ -258,20 +287,21 @@
                                         </div>
                                     </div>
 
-                                    <div class="form-group row align-items-center mb-4">
-                                        <label for="existing-schema-upload" class="col-12 col-md-4 col-form-label">Schema
-                                            (optional)</label>
+                                    <div class="form-group row align-items-center mb-4 d-none" id="existing-schema-transfer-div">
+                                        <label for="existing-schema-transfer" class="col-12 col-md-4 col-form-label">Schema
+                                            transfer</label>
                                         <div class="col-12 col-md-8">
-                                            <input type="file" id="existing-schema-upload"/>
+                                            <select class="form-control" id="existing-schema-transfer">
+                                                <option disabled selected value="0">Select a database</option>
+                                            </select>
 
                                             <div class="invalid-feedback"></div>
                                         </div>
                                     </div>
-
 
                                     <hr>
                                     <button type="submit" class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3"
-                                            id="existing-course-button">Add course
+                                            id="edit-course-button">Edit course
                                     </button>
                                 </form>
                             </div>
