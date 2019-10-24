@@ -31,7 +31,8 @@ let who: Who;
 
 function populateNoCredentialsPane(i: number): void {
     noCredsCoursename.innerText = courses[i].coursename;
-    noCredsInfo.innerHTML = courses[i].info; // We set innerHTML for this field because we know it is sanitized using html special chars
+    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>"
+    noCredsInfo.innerHTML = courses[i].info + courseInactiveString; // We set innerHTML for this field because we know it is sanitized using html special chars
     groupInput.value = "";
 }
 

@@ -26950,7 +26950,8 @@ var currentCourse = 0;
 var who;
 function populateNoCredentialsPane(i) {
     noCredsCoursename.innerText = courses[i].coursename;
-    noCredsInfo.innerHTML = courses[i].info; // We set innerHTML for this field because we know it is sanitized using html special chars
+    var courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>";
+    noCredsInfo.innerHTML = courses[i].info + courseInactiveString; // We set innerHTML for this field because we know it is sanitized using html special chars
     groupInput.value = "";
 }
 function populateHaveCredentialsPane(i) {
