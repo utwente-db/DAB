@@ -26458,7 +26458,7 @@ function tryAddSchema() {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if (!checkFields()) return [3 /*break*/, 10];
+                    if (!checkFields()) return [3 /*break*/, 11];
                     navbar_1.changePageState(false, changeEditCoursesState);
                     tempAlert = alert_1.addTempAlert();
                     inputCourse = {
@@ -26471,7 +26471,7 @@ function tryAddSchema() {
                     }
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 8, 9, 10]);
+                    _a.trys.push([1, 9, 10, 11]);
                     return [4 /*yield*/, axios_1.default.post("/rest/courses/", inputCourse)];
                 case 2:
                     response = _a.sent();
@@ -26498,17 +26498,30 @@ function tryAddSchema() {
                 case 7:
                     populateNewCoursePane();
                     courses.push(response.data);
+                    while (coursesNavHtml.firstElementChild) {
+                        coursesNavHtml.removeChild(coursesNavHtml.firstElementChild);
+                    }
                     courses = courses.sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
-                    goToExistingCoursePane(courses.indexOf(course));
-                    return [3 /*break*/, 10];
+                    // TODO indexOf couorse will not work here
+                    return [4 /*yield*/, student_view_1.displayCourses(courses, who, true, courses.indexOf(course))
+                        // TODO repopulate entire nav thing (only way)
+                        // TODO set active
+                    ];
                 case 8:
+                    // TODO indexOf couorse will not work here
+                    _a.sent();
+                    // TODO repopulate entire nav thing (only way)
+                    // TODO set active
+                    goToExistingCoursePane(courses.indexOf(course));
+                    return [3 /*break*/, 11];
+                case 9:
                     error_2 = _a.sent();
                     alert_1.addErrorAlert(error_2, tempAlert);
-                    return [3 /*break*/, 10];
-                case 9:
+                    return [3 /*break*/, 11];
+                case 10:
                     navbar_1.changePageState(true, changeEditCoursesState);
                     return [7 /*endfinally*/];
-                case 10: return [2 /*return*/];
+                case 11: return [2 /*return*/];
             }
         });
     });
@@ -27114,8 +27127,10 @@ function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
     });
     return fragment;
 }
-function displayCourses(optionalCourses, optionalWho, fromEditCourses) {
+exports.createNavLink = createNavLink;
+function displayCourses(optionalCourses, optionalWho, fromEditCourses, activeI) {
     if (fromEditCourses === void 0) { fromEditCourses = false; }
+    if (activeI === void 0) { activeI = -1; }
     return __awaiter(this, void 0, void 0, function () {
         var taCourses, taResponse, taList, ownCourses, i, youHavePrivilege, youAreTA, haveCredentials, fragment;
         return __generator(this, function (_a) {
@@ -27164,7 +27179,7 @@ function displayCourses(optionalCourses, optionalWho, fromEditCourses) {
                             else if (!fromEditCourses) {
                                 haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
                             }
-                            fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i);
+                            fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i, i === activeI);
                             coursesNavHtml.appendChild(fragment);
                         }
                     }

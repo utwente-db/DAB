@@ -303,7 +303,16 @@ async function tryAddSchema(): Promise<void> {
             }
             populateNewCoursePane();
             courses.push(response.data);
+
+            while (coursesNavHtml.firstElementChild) {
+                coursesNavHtml.removeChild(coursesNavHtml.firstElementChild)
+            }
             courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+            // TODO indexOf couorse will not work here
+            await displayCourses(courses, who, true, courses.indexOf(course))
+
+            // TODO repopulate entire nav thing (only way)
+            // TODO set active
             goToExistingCoursePane(courses.indexOf(course))
         } catch (error) {
             addErrorAlert(error, tempAlert)

@@ -88,7 +88,7 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
 
 }
 
-function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGreen: boolean, i: number, active = false): DocumentFragment {
+export function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGreen: boolean, i: number, active = false): DocumentFragment {
     let credentialsClass: string;
     let hrefString: string;
     let inactiveCourseString: string;
@@ -130,7 +130,7 @@ function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGr
     return fragment;
 }
 
-export async function displayCourses(optionalCourses?: Course[], optionalWho?: Who, fromEditCourses = false): Promise<void> {
+export async function displayCourses(optionalCourses?: Course[], optionalWho?: Who, fromEditCourses = false, activeI = -1): Promise<void> {
 
     if (optionalCourses) {
         courses = optionalCourses;
@@ -173,7 +173,7 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
             } else if (!fromEditCourses) {
                 haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
             }
-            const fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i);
+            const fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i, i===activeI);
 
             coursesNavHtml.appendChild(fragment);
         }
