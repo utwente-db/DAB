@@ -8,6 +8,8 @@ import {initNavbar, navbarEditUsers} from "./navbar";
 import {Course, StudentDatabase} from "./courses";
 
 const urlParams = new URLSearchParams(window.location.search);
+var userid: number = 0;
+
 let users: User[];
 // let user: User;
 // let databases: Database[];
@@ -112,13 +114,15 @@ export async function getUsersPromise(): Promise<User[]> {
     return response.data;
 }
 
+async function getDatabasesPromise(): Promise<Database[]> {
+    const response: AxiosResponse = await axios.get(`/rest/studentdatabases/owner/${userid}/`);
 async function getDatabasesPromise(userid: number): Promise<StudentDatabase[]> {
     const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + userid + "/");
     return response.data;
 }
 
 async function getCourseByIDPromise(id: number): Promise<Course> {
-    const response: AxiosResponse = await axios.get("/rest/courses/" + id + "/");
+    const response: AxiosResponse = await axios.get(`/rest/courses/${id}/`);
     return response.data;
 }
 
@@ -129,6 +133,7 @@ async function getUserPromise(userid: number): Promise<User> {
 }
 
 async function displayCoursesAndDatabases(userid: number): Promise<void> {
+    const dbIDs: number[] = [];
     const databases: StudentDatabase[] = await getDatabasesPromise(userid);
 
     const coursesAndDatabases: Map<number, string> = new Map<number, string>();
@@ -145,15 +150,63 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
     }
 
     for (let i = 0; i < databases.length; i++) {
-        const html: string = "dbid: " + databases[i].dbid + "<br>"
-            + "databasename: " + databases[i].databasename + "<br>"
-            + "username: " + databases[i].username + "<br>"
-            + "password: " + databases[i].password + "<br>"
-            + "groupid: " + databases[i].groupid + "<br>"
-            + "fid: " + databases[i].fid + "<br>"
-            + "course: " + databases[i].course + "<br>";
+        dbIDs.push(databases[i].dbid);
+        const html: string =
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Database ID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[i].dbid}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Database name:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[i].databasename}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Username:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[i].username}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Password:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[i].password}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Group ID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[i].groupid}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">FID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[i].fid}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Course ID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[i].course}" readonly="">
+                </div>
+            </div>` +
+            `<button type="button" class="btn btn-danger" onclick="window.location.replace('/rest/dump/${databases[i].dbid}/')">
+                Download Dump
+            </button>` +
+            `<button id="reset-button-${databases[i].dbid}" type="button" class="btn btn-danger">
+                Reset
+            </button>` +
+            `<button id="delete-button-${databases[i].dbid}" type="button" class="btn btn-danger">
+                Delete
+            </button>`
 
-        // This will mess up if someone has multiple db's in a single course
+        ;
+
+        // This will mess up if someone has multiple db's for a single course
         coursesAndDatabases.set(databases[i].course, html);
     }
 
@@ -165,12 +218,10 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
         const content: string = entry[1];
         const course: Course = await getCourseByIDPromise(courseNumber);
         resultNav.push(
-            "<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>"
+            `<a class="nav-link${active}" data-toggle="pill" href="#course${course.courseid}">${course.coursename}</a>`
         );
         resultContent.push(
-            "<div class=\"tab-pane" + active + "\" id=\"course" + course.courseid + "\">"
-            + content
-            + "test</div>"
+            `<div class="tab-pane${active}" id="course${course.courseid}">${content}</div>`
         );
         active = "";
     }
@@ -178,11 +229,74 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
     const resultContentString: string = resultContent.join("\n");
     coursesNavHtml.innerHTML = resultNavString;
     courseDatabasesHtml.innerHTML = resultContentString;
+
+    dbIDs.forEach((id: number) => {
+        const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
+        resetButton.addEventListener("click", () => {
+            resetDatabase(id);
+        });
+        const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
+        deleteButton.addEventListener("click", () => {
+            deleteDatabase(id);
+        });
+    });
+
+}
+
+async function deleteDatabase(dbID: number): Promise<boolean> {
+    const result = await Swal.fire({
+        title: 'Are you sure you want to delete this database?',
+        text: 'You will not be able to recover your data!',
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success;
+    try {
+        await axios.delete(`/rest/studentdatabases/${dbID}/`);
+        addAlert("Deleted database", AlertType.primary);
+        success = true;
+        window.location.reload(true);
+    } catch (error) {
+        addErrorAlert(error);
+        success = false;
+    }
+    return success;
+}
+
+// Internal server error 500?
+async function resetDatabase(dbID: number): Promise<boolean> {
+    const result = await Swal.fire({
+        title: 'Are you sure you want to reset this database?',
+        text: 'You will not be able to recover your data!',
+        type: 'warning',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+        confirmButtonText: 'Reset'
+    });
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success;
+    try {
+        await axios.post(`/rest/reset/${dbID}/`);
+        addAlert("Reset database", AlertType.primary);
+        success = true;
+    } catch (error) {
+        addErrorAlert(error);
+        success = false;
+    }
+    return success;
 }
 
 async function displayUserDetails(userid: number): Promise<void> {
     const user: User = await getUserPromise(userid);
-    pageTitleHtml.innerHTML = "Admin - User " + user.id;
+    pageTitleHtml.innerHTML = `Admin - User ${user.id}`;
 
     let role: string;
     if (user.role === UserRole.admin) {
@@ -203,7 +317,7 @@ async function displayUserDetails(userid: number): Promise<void> {
 async function deleteUser(userid: number): Promise<boolean> {
     const user: User = await getUserPromise(userid);
     const result = await Swal.fire({
-        text: `Are you sure you want to delete <strong>${user.email}</strong> from the system?`,
+        text: `Are you sure you want to delete ${user.email} from the system?`,
         type: 'warning',
         showCancelButton: true,
         focusCancel: true,
@@ -230,11 +344,10 @@ async function deleteUser(userid: number): Promise<boolean> {
 
 async function changeRole(userid: number): Promise<boolean> {
     const user: User = await getUserPromise(userid);
-    // TODO correctly find selected option
     const selectedRole: HTMLSelectElement = document.getElementById("selected_role") as HTMLSelectElement;
     const role: string = selectedRole.value;
     const result = await Swal.fire({
-        text: `Are you sure you want change the role of <strong>${user.email}</strong> to ${role}?`,
+        text: `Are you sure you want change the role of ${user.email} to ${role}?`,
         type: 'warning',
         showCancelButton: true,
         focusCancel: true,
