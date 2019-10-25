@@ -914,10 +914,13 @@ def remove_missing_database(request):
 
     #We DON'T want to use this to remove a database that we do know about!
     try:
-        db = Studentdatabases.objects.get(databasename=request)
+        db = Studentdatabases.objects.get(databasename=name)
         return HttpResponse("Database is managed", status=status.HTTP_400_BAD_REQUEST)
     except Studentdatabases.DoesNotExist:
         pass
+
+    if name == connection.settings_dict["NAME"]:
+        return HttpResponse("This is the master database", status=status.HTTP_400_BAD_REQUEST)
 
     from django.db import connection
     from psycopg2.extensions import AsIs
