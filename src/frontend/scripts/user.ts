@@ -8,7 +8,6 @@ import {initNavbar, navbarEditUsers} from "./navbar";
 import {Course, StudentDatabase} from "./courses";
 
 const urlParams = new URLSearchParams(window.location.search);
-var userid: number = 0;
 
 let users: User[];
 // let user: User;
@@ -114,10 +113,8 @@ export async function getUsersPromise(): Promise<User[]> {
     return response.data;
 }
 
-async function getDatabasesPromise(): Promise<Database[]> {
-    const response: AxiosResponse = await axios.get(`/rest/studentdatabases/owner/${userid}/`);
 async function getDatabasesPromise(userid: number): Promise<StudentDatabase[]> {
-    const response: AxiosResponse = await axios.get("/rest/studentdatabases/owner/" + userid + "/");
+    const response: AxiosResponse = await axios.get(`/rest/studentdatabases/owner/${userid}/`);
     return response.data;
 }
 

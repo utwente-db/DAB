@@ -27756,10 +27756,12 @@ function getUserPromise(userid) {
 }
 function displayCoursesAndDatabases(userid) {
     return __awaiter(this, void 0, void 0, function () {
-        var databases, coursesAndDatabases, i, i, html, resultNav, resultContent, active, _i, _a, entry, courseNumber, content, course, resultNavString, resultContentString;
+        var dbIDs, databases, coursesAndDatabases, i, i, html, resultNav, resultContent, active, _i, _a, entry, courseNumber, content, course, resultNavString, resultContentString;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, getDatabasesPromise(userid)];
+                case 0:
+                    dbIDs = [];
+                    return [4 /*yield*/, getDatabasesPromise(userid)];
                 case 1:
                     databases = _b.sent();
                     coursesAndDatabases = new Map();
@@ -27773,14 +27775,18 @@ function displayCoursesAndDatabases(userid) {
                         coursesAndDatabases.set(databases[i].course, "");
                     }
                     for (i = 0; i < databases.length; i++) {
-                        html = "dbid: " + databases[i].dbid + "<br>"
-                            + "databasename: " + databases[i].databasename + "<br>"
-                            + "username: " + databases[i].username + "<br>"
-                            + "password: " + databases[i].password + "<br>"
-                            + "groupid: " + databases[i].groupid + "<br>"
-                            + "fid: " + databases[i].fid + "<br>"
-                            + "course: " + databases[i].course + "<br>";
-                        // This will mess up if someone has multiple db's in a single course
+                        dbIDs.push(databases[i].dbid);
+                        html = "<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Database ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].dbid + "\" readonly=\"\">\n                </div>\n            </div>" +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Database name:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].databasename + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Username:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].username + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Password:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].password + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Group ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].groupid + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">FID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].fid + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Course ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].course + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<button type=\"button\" class=\"btn btn-danger\" onclick=\"window.location.replace('/rest/dump/" + databases[i].dbid + "/')\">\n                Download Dump\n            </button>") +
+                            ("<button id=\"reset-button-" + databases[i].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Reset\n            </button>") +
+                            ("<button id=\"delete-button-" + databases[i].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Delete\n            </button>");
+                        // This will mess up if someone has multiple db's for a single course
                         coursesAndDatabases.set(databases[i].course, html);
                     }
                     resultNav = [];
@@ -27797,9 +27803,7 @@ function displayCoursesAndDatabases(userid) {
                 case 3:
                     course = _b.sent();
                     resultNav.push("<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>");
-                    resultContent.push("<div class=\"tab-pane" + active + "\" id=\"course" + course.courseid + "\">"
-                        + content
-                        + "test</div>");
+                    resultContent.push("<div class=\"tab-pane" + active + "\" id=\"course" + course.courseid + "\">" + content + "</div>");
                     active = "";
                     _b.label = 4;
                 case 4:
@@ -27810,7 +27814,93 @@ function displayCoursesAndDatabases(userid) {
                     resultContentString = resultContent.join("\n");
                     coursesNavHtml.innerHTML = resultNavString;
                     courseDatabasesHtml.innerHTML = resultContentString;
+                    dbIDs.forEach(function (id) {
+                        var resetButton = document.getElementById("reset-button-" + id);
+                        resetButton.addEventListener("click", function () {
+                            resetDatabase(id);
+                        });
+                        var deleteButton = document.getElementById("delete-button-" + id);
+                        deleteButton.addEventListener("click", function () {
+                            deleteDatabase(id);
+                        });
+                    });
                     return [2 /*return*/];
+            }
+        });
+    });
+}
+function deleteDatabase(dbID) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, success, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
+                        title: 'Are you sure you want to delete this database?',
+                        text: 'You will not be able to recover your data!',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel'
+                    })];
+                case 1:
+                    result = _a.sent();
+                    if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
+                        return [2 /*return*/, false];
+                    }
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, axios_1.default.delete("/rest/studentdatabases/" + dbID + "/")];
+                case 3:
+                    _a.sent();
+                    alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
+                    success = true;
+                    window.location.reload(true);
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_1 = _a.sent();
+                    alert_1.addErrorAlert(error_1);
+                    success = false;
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/, success];
+            }
+        });
+    });
+}
+// Internal server error 500?
+function resetDatabase(dbID) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, success, error_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
+                        title: 'Are you sure you want to reset this database?',
+                        text: 'You will not be able to recover your data!',
+                        type: 'warning',
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancel',
+                        confirmButtonText: 'Reset'
+                    })];
+                case 1:
+                    result = _a.sent();
+                    if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
+                        return [2 /*return*/, false];
+                    }
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, axios_1.default.post("/rest/reset/" + dbID + "/")];
+                case 3:
+                    _a.sent();
+                    alert_1.addAlert("Reset database", alert_1.AlertType.primary);
+                    success = true;
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_2 = _a.sent();
+                    alert_1.addErrorAlert(error_2);
+                    success = false;
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/, success];
             }
         });
     });
@@ -27846,14 +27936,14 @@ function displayUserDetails(userid) {
 }
 function deleteUser(userid) {
     return __awaiter(this, void 0, void 0, function () {
-        var user, result, success, error_1;
+        var user, result, success, error_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getUserPromise(userid)];
                 case 1:
                     user = _a.sent();
                     return [4 /*yield*/, sweetalert2_1.default.fire({
-                            text: "Are you sure you want to delete <strong>" + user.email + "</strong> from the system?",
+                            text: "Are you sure you want to delete " + user.email + " from the system?",
                             type: 'warning',
                             showCancelButton: true,
                             focusCancel: true,
@@ -27876,8 +27966,8 @@ function deleteUser(userid) {
                     success = true;
                     return [3 /*break*/, 6];
                 case 5:
-                    error_1 = _a.sent();
-                    alert_1.addErrorAlert(error_1);
+                    error_3 = _a.sent();
+                    alert_1.addErrorAlert(error_3);
                     success = false;
                     return [3 /*break*/, 6];
                 case 6: return [2 /*return*/, success];
@@ -27887,7 +27977,7 @@ function deleteUser(userid) {
 }
 function changeRole(userid) {
     return __awaiter(this, void 0, void 0, function () {
-        var user, selectedRole, role, result, success, error_2;
+        var user, selectedRole, role, result, success, error_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getUserPromise(userid)];
@@ -27896,7 +27986,7 @@ function changeRole(userid) {
                     selectedRole = document.getElementById("selected_role");
                     role = selectedRole.value;
                     return [4 /*yield*/, sweetalert2_1.default.fire({
-                            text: "Are you sure you want change the role of <strong>" + user.email + "</strong> to " + role + "?",
+                            text: "Are you sure you want change the role of " + user.email + " to " + role + "?",
                             type: 'warning',
                             showCancelButton: true,
                             focusCancel: true,
@@ -27922,8 +28012,8 @@ function changeRole(userid) {
                     success = true;
                     return [3 /*break*/, 6];
                 case 5:
-                    error_2 = _a.sent();
-                    alert_1.addErrorAlert(error_2);
+                    error_4 = _a.sent();
+                    alert_1.addErrorAlert(error_4);
                     success = false;
                     return [3 /*break*/, 6];
                 case 6: return [2 /*return*/, success];
