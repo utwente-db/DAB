@@ -462,7 +462,7 @@ def delete_single_response(request, requested_pk, db_parameters):
                 else:
                     instance.delete()
             except Exception as e:
-                #logging.debug(e)
+                logging.debug(e)
                 if "protected foreign key" in str(e.__cause__):
                     return HttpResponse(status=status.HTTP_409_CONFLICT)
                 elif db_parameters["dbname"] == "studentdatabases":

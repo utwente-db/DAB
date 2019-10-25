@@ -28,6 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+#student databases prefix
+STUDENT_DB_PREFIX = 'dab_'
+
+
 # For display to users only; please edit
 DATABASE_SERVER = 'thebias.nl'
 HOST_SERVER = 'db.thebias.nl'

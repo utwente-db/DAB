@@ -5,6 +5,7 @@ from django.db import connection
 from django.db import transaction
 from psycopg2.extensions import AsIs
 from . import models
+from designproject.settings import STUDENT_DB_PREFIX
 
 from .schemas import write as writeSchema
 
@@ -32,7 +33,7 @@ def connect(db_name):
 @transaction.atomic
 def get_studentdatabase_name(courseid):
     course = models.Courses.objects.select_for_update().get(courseid=courseid)
-    username = course.coursename + "_" + str(course.databases)
+    username = STUDENT_DB_PREFIX + course.coursename + "_" + str(course.databases)
     course.databases += 1
     course.save()
 
