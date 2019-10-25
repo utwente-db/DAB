@@ -94,41 +94,6 @@ NB: In development mode, emails will be printed to the standard output instead o
 WARNING: do not use this way of setting up a server in production.
 It is not intended for high-demand environments, and using it in production may lead to terrible performance and security risks.
 
-## Installation in a Production environment.
-
-Installing a django system in a production environment is somewhat less trivial than it may seem.
-Correct configuration requires the installation of several specific purpose components, each of which need to be connected to the others.
-
-Because of previous experience, we have chosen to use Nginx as a webserver, and PostFix as an SMPT server.
-Alternatives could also be used with no impact on the functioning of this software, as long as they are configured in similar ways.
-
-The first thing to do would be to install this project and its dependencies, and configure them for use in production.
-To do so, clone this repository into a location of your choice (e.g. /var/www/db/, run `init.sh`, which will set up a virtual environment, and `production.sh`, which will configure the front-end frameworks for production use.
-
-For the basic configuration of uWSGI, Nginx, and this Django project, look no further than [this excellent tutorial from the uWSGI website](https://uwsgi-docs.readthedocs.io/en/latest/tutorials/Django_and_nginx.html). 
-Note that the uwsgi config file is already present in this project under the name of `db_uwsgi.ini`; this is usable for most systems, although you will probably want to edit the file paths.
-
-In most environments, the default python version is lower than Python 3.7; in fact, it is often still Python 2.
-To ensure this software is ran using Python 3.7, a plugin for uWSGI must be installed. 
-To install this plugin, approximately follow [this tutorial](https://www.paulox.net/2019/03/13/how-to-use-uwsgi-with-python-3-7-in-ubuntu-18-x/).
-`db_uwsgi.ini` is already configured to use this plugin.
-
-At this point, you should have set up the following.
-
-- A basic Nginx configuration
-- A uWSGI server in emperor mode
-- A vassal to said server for this project.
-
-This means that you should get a basic page from this software when requesting to `<server>:8000` over http.
-
-You should now look at running this software as an actual website.
-For security reasons, the web server MUST be configured to use SSL, and only allow SSL connections to this software.
-
-All static files are in `<project root>/static`.
-As such, the /media location from the tutorial can be removed.
-
-Finally, email should be setup according to the instructions in the paragraph on it below
-
 ## Installation under Apache
 
 This tutorial will outline the steps required to install the software under Apache.
