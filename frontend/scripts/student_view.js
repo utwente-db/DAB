@@ -26497,6 +26497,7 @@ function tryAddCourse() {
                     return [4 /*yield*/, axios_1.default.post("/rest/courses/" + courseID + "/schema", schema)];
                 case 4:
                     response_1 = _a.sent();
+                    // TODO do something with response
                     alert_1.addAlert("successfully added schema", alert_1.AlertType.success);
                     return [3 /*break*/, 7];
                 case 5:
@@ -26606,6 +26607,7 @@ function tryEditCourse() {
                     return [4 /*yield*/, axios_1.default.put("/rest/courses/" + existingCourseIDField.value, inputCourse)];
                 case 2:
                     response = _a.sent();
+                    // TODO Do something with the response
                     alert_1.addAlert("Successfully edited course (without schema)", alert_1.AlertType.success, tempAlert);
                     return [4 /*yield*/, getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload, existingSchemaUpload)];
                 case 3:

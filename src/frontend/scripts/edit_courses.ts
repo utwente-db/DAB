@@ -69,12 +69,12 @@ let currentCourse: Course;
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
 function validCoursename(field: HTMLInputElement): boolean {
-    const coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/
+    const coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/;
     if (coursenameRegex.test(field.value)) {
         setValid(field);
         return true
     } else {
-        setInvalid(field, "Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces")
+        setInvalid(field, "Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces");
         return false
     }
 }
@@ -153,7 +153,7 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     currentCourse = courses[i];
     existingCourseIDField.value = String(courses[i].courseid);
     existingCourseFIDField.value = String(courses[i].fid);
-    existingCourseInfoField.value = courses[i].info
+    existingCourseInfoField.value = courses[i].info;
     existingCoursenameField.value = courses[i].coursename;
     existingActiveField.checked = courses[i].active;
 
@@ -188,7 +188,7 @@ function validFID(field: HTMLInputElement): boolean {
             setValid(field);
             return true
         } else {
-            setInvalid(field, "Please enter a valid integer")
+            setInvalid(field, "Please enter a valid integer");
             return false
         }
     } catch (error) {
@@ -204,7 +204,7 @@ function nonEmptyTextarea(newSchemaTextarea: HTMLTextAreaElement): boolean {
         setInvalid(newSchemaTextarea, "Please enter a valid string or select not to add a schema");
         return false;
     } else {
-        setValid(newSchemaTextarea)
+        setValid(newSchemaTextarea);
         return true;
     }
 }
@@ -317,6 +317,7 @@ async function tryAddCourse(): Promise<void> {
             if (schema !== "") {
 
                 const response = await axios.post(`/rest/courses/${courseID}/schema`, schema);
+                // TODO do something with response
                 addAlert("successfully added schema", AlertType.success);
 
 
@@ -332,7 +333,7 @@ async function tryAddCourse(): Promise<void> {
                 coursesNavHtml.removeChild(coursesNavHtml.firstElementChild)
             }
             courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-            await displayCourses(courses, who, true, courses.indexOf(course))
+            await displayCourses(courses, who, true, courses.indexOf(course));
 
             goToExistingCoursePane(courses.indexOf(course))
         } catch (error) {
@@ -359,7 +360,7 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
         return false;
     }
     let success: boolean;
-    const tempAlert: ChildNode | null = addTempAlert()
+    const tempAlert: ChildNode | null = addTempAlert();
     // changePageState(false, changeStudentViewState);
     try {
         await axios.delete(`/rest/courses/${courseID}/`);
@@ -415,6 +416,7 @@ async function tryEditCourse(): Promise<void> {
 
         try {
             const response = await axios.put(`/rest/courses/${existingCourseIDField.value}`, inputCourse) as AxiosResponse;
+            // TODO Do something with the response
             addAlert("Successfully edited course (without schema)", AlertType.success, tempAlert);
             const schema: string = await getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload,
                 existingSchemaUpload);
