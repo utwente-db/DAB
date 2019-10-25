@@ -1,8 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 # script for setting up production environment
 
 python3 -m venv venv
-. venv/bin/activate
+
+source venv/bin/activate
 
 pip install -r requirements.txt
 
@@ -21,7 +22,3 @@ else
     echo Please run this script again once you have set it up
     deactivate
 fi
-
-
-
-

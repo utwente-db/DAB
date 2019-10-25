@@ -15,14 +15,13 @@ It is recommended that the PostgreSQL databases not be used for any other purpos
 Install dependencies:
 
 - python3-pip
-- npm (required for installation only)
+- npm 
 
 Run dependencies:
 
-- python3.7
+- python3.6 or newer
 - python3-venv
 - python3-dev
-- postgresql-python-venv
 - libpq-dev
 - postgresql-client-common
 - postgresql-client-[VERSION] \(we use version 10)
@@ -42,7 +41,7 @@ Any pip and npm packages will be installed automatically during the installation
 This service requires a PostgreSQL server to connect to.
 This server SHOULD not be used for any other purposes but this program, as that might cause unexpected behaviour.
 It requires a single superuser on this server.
-To import the schema into the database, [TODO: MIGRATION INSTRUCTION]
+Importing the schema into this database will be done in a later step, when `install.sh` is ran
 
 ## Settings
 
@@ -79,10 +78,9 @@ To create the required 33 bits of data, you could use the command `head -c 33 /d
 The database user MUST exist, and MUST have superuser privileges on the database server.
 The database server MUST run Postgres, and MUST be available from wherever this software is running.
 The database name SHOULD be something memorable and SHOULD NOT end on a number.
-The database server SHOULD not be used for any other purpose than this software.
-Failure to heed the advice in this paragraph results in undefined behaviour.
+Please ensure that there are no databases created outside of this program that use the database prefix
 
-## Installation and running for development
+## Installation and running for development (SKIP IF PRODUCTION)
 
 To install the server for development, simply run init.sh.
 This will create a python virtual environment, and install the required python and node packages within it.
@@ -144,25 +142,32 @@ If your system does not provide these versions, or you have an exceptionally hig
 
 Throughout this tutorial, `[DOCUMENT ROOT]` will be used to indicate the absolute path to the directory in which you cloned this project. Standard practice is putting it somewhere in `/var/www/`
 
+Please make sure all the files are owned by `www-data`, by running `sudo chown www-data:www-data [DOCUMENT ROOT]`
+
 1. Install all the dependencies listed above. Take care to install uwsgi as a pip3 package, and not via the system dependencies (do not use the venv for this). 
 2. If your distribution does not come with Python3.6 or later, compile Python3.7 from source, then follow [this tutorial](https://www.paulox.net/2019/03/13/how-to-use-uwsgi-with-python-3-7-in-ubuntu-18-x/) to ensure uwsgi uses it. Also edit install.sh: the first line, `python3 -m venv venv` MUST use your new python3.7 installation.
 3. Follow the steps in the paragraph on settings above. Take special care to create `secret.py` correctly.
 4. Run install.sh. This will create a virtual environment, install the dependencies for the project in it, and also migrate the database.
 5. Copy/rename uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; the "good practice" is to put it in /var/run, but as this requires permissions, the current default file puts it in /tmp instead. If you get errors related to socket.c, that probably means that you do not have file permissions on the socket file. 
-6. To test if you have correctly configured uwsgi, run `uwsgi --ini uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
-7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` (or any name of your choice) using the init system of your operation system (on Debian and its derivatives this is [SystemD](https://linuxconfig.org/how-to-create-systemd-service-unit-in-linux)). The execute command is `/usr/local/bin/uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini`. Depending on the permissions of the files and the socket, you may need to run this as root; however, we recommend running it as www-data. Start the service, and make sure it is started with Apache at boot time. Please run `which uwsgi` to ensure the file path to the executable is correct.
-8. If the previous step succeeded, we can start configuring apache. We require the modules `proxy` and `proxy_uwsgi` to be enabled and available to the rest of the configuration settings. The easiest way to do this in modern GNU/Linux package of Apache is to use `a2enmod`, as in `a2enmod proxy_uwsgi`. If this is done, you can simply place the configuration below in the place you would normally place the `DocumentRoot` line.
+6. To test if you have correctly configured uwsgi, run `sudo -u www-data uwsgi --ini uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
+7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` by running (as root) `cp dab.service /etc/systemd/system ; systemctl start dab.service`.
+8. If the previous step succeeded, we can start configuring apache. We require the modules `proxy` and `proxy_uwsgi` to be enabled and available to the rest of the configuration settings. The easiest way to do this in modern GNU/Linux package of Apache is to run `a2enmod proxy_uwsgi`. We assume you want to run the program under `/dab`. Unfortunately, you will also have to reserve `/static`. 
 
-The Apache2 configuration for this project is as follows:
+To install, simply add the following to your Apache2 config file (either `apache.conf` or `sites-enabled/000-default.conf`, whichever works).
 
-    DocumentRoot "[DOCUMENT ROOT]"
-    ProxyPass /static !
-    ProxyPass / unix:/var/run/dab.sock|uwsgi://uwsgi-uds-dab/
-    ProxyPassReverse / unix:/tmp/dab.sock|uwsgi://uwsgi-uds-dab/
+    Alias /static/ "[DOCUMENT ROOT]/static"
+
+    <Directory "[DOCUMENT ROOT]/static">
+        Require all granted
+    </Directory>
+    <Location /dab>
+        ProxyPass unix:/data/dab/dab.sock|uwsgi://uwsgi-uds-design/
+        ProxyPassReverse unix:/data/dab/dab.sock|uwsgi://uwsgi-uds-design/
+    </Location>
 
 If you have changed the location of the socket in the previous steps, you must also change it here.
 
-Please ensure that Apache2 has read access to the files in `[DOCUMENT ROOT]/static`, and allows any requests to access those files.
+Please ensure that Apache2 has read access to the files in `[DOCUMENT ROOT]/static`.
 If this is not the case, CSS, Javascript, and media files can't be loaded.
 
 Congratulations! If you run apache, you should now have the basic web page set up. You can test this by trying to access the page, at whatever port Apache runs on.
@@ -170,7 +175,7 @@ There are now three things left to do:
 
 This project MUST run over https. 
 It is the responsibility of the system administrator to ensure there are proper SSL certificates present. 
-After this has been arranged, `SSLRequireSSL` MUST be added to the Apache configuration of this site, to ensure that only SSL connections will be accepted.
+After this has been arranged, `SSLRequireSSL` MUST be added to the Apache configuration of this site, probably in the `<Location /dab>` tag, to ensure that only SSL connections will be accepted.
 Failure to comply with these instructions will cause passwords to be transmitted over unencrypted connections.
 
 The second thing is email, described in the section below.
@@ -179,8 +184,7 @@ Finally, the project is rather useless without an administrator.
 To bootstrap one from a project with an empty database, we recommend the following procedure:
 
 1. Register a student user via the regular register page
-2. Access the master database, using `psql` and the credentials in `secret.py`.
-3. Change the `role` of the created `dbmuser` to `0`
+2. Run the file `promote.sh` in the document root, which will promote the user to admin given the email
 
 The user should now be an administrator, who can create other administrators and teachers.
 
