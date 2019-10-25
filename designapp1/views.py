@@ -782,7 +782,7 @@ def transferSchema(request, course, database):
     except Courses.DoesNotExist as e:
         return HttpResponse("No such course", status=status.HTTP_404_NOT_FOUND)
 
-    if course.owner().id != request.session["user"] and request.session["role"] < admin:
+    if course.owner().id != request.session["user"] and request.session["role"] < admin and not am_i_ta_of_this_course(request.session["user"], course.courseid):
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
     try:
@@ -790,9 +790,9 @@ def transferSchema(request, course, database):
     except Studentdatabases.DoesNotExist as e:
         return HttpResponse("No such database", status=status.HTTP_404_NOT_FOUND)
 
-    if db.course.courseid != course.courseid and db.owner != request.session["user"]:
+    if db.course.courseid != course.courseid and db.owner != request.session["user"] and not am_i_ta_of_this_course(request.session["user"], course.courseid) and request.session["role"] < admin:
         return HttpResponse("You don't own this database", status=status.HTTP_403_FORBIDDEN)
-
+    
     #we are now authorised, and the objects exist
     schema = schemaWriter.dump(db.__dict__)
     #make sure the default schema is not included as such
