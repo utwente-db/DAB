@@ -26292,6 +26292,9 @@ function populateNewCoursePane() {
     Array.from(coursesNavHtml.children).forEach(function (child) {
         child.classList.remove("active");
     });
+    [newCourseFIDField, newCourseInfoField, newCoursenameField, newSchemaTextarea, newSchemaUpload, newSchemaTransfer].forEach(function (el) {
+        register_1.setNeutral(el);
+    });
     newCourseFIDField.value = "";
     newCourseInfoField.value = "";
     newCoursenameField.value = "";
@@ -26303,6 +26306,7 @@ function populateNewCoursePane() {
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
     fillStudentDatabasesDropdown(newSchemaTransfer);
+    newSchemaTransfer.value = String(0);
 }
 function goToAddCoursePane(event) {
     event.preventDefault();
@@ -26321,6 +26325,9 @@ function goToAddCoursePane(event) {
 function populateExistingCoursePane(i) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
+            [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach(function (el) {
+                register_1.setNeutral(el);
+            });
             currentCourse = courses[i];
             existingCourseIDField.value = String(courses[i].courseid);
             existingCourseFIDField.value = String(courses[i].fid);
@@ -26334,6 +26341,7 @@ function populateExistingCoursePane(i) {
             existingSchemaTextarea.value = "";
             existingSchemaUpload.value = "";
             fillStudentDatabasesDropdown(existingSchemaTransfer);
+            existingSchemaTransfer.value = String(0);
             return [2 /*return*/];
         });
     });
@@ -26609,8 +26617,8 @@ function tryEditCourse() {
                     alert_1.addAlert("Successfully added schema", alert_1.AlertType.success);
                     return [3 /*break*/, 7];
                 case 5:
-                    if (!newSchemaRadioTransfer.checked) return [3 /*break*/, 7];
-                    dbid = Number(newSchemaTransfer.value);
+                    if (!existingSchemaRadioTransfer.checked) return [3 /*break*/, 7];
+                    dbid = Number(existingSchemaTransfer.value);
                     return [4 /*yield*/, axios_1.default.post("/rest/schematransfer/" + existingCourseIDField.value + "/" + dbid)];
                 case 6:
                     _a.sent();
@@ -26994,6 +27002,18 @@ function setValid(input) {
     }
 }
 exports.setValid = setValid;
+function setNeutral(input) {
+    input.classList.remove("is-invalid");
+    input.classList.remove("is-valid");
+    if (input.nextElementSibling) {
+        var errorField = input.nextElementSibling;
+        errorField.textContent = "";
+    }
+    else {
+        console.error("No sibling element for input. Contact the front-end devs with this error");
+    }
+}
+exports.setNeutral = setNeutral;
 function setInvalid(input, error) {
     input.classList.remove("is-valid");
     input.classList.add("is-invalid");

@@ -1,7 +1,7 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
 import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses";
-import {setInvalid, setValid} from "./register";
+import {setInvalid, setNeutral, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
 import Swal from "sweetalert2";
@@ -108,6 +108,10 @@ function populateNewCoursePane(): void {
         child.classList.remove("active");
     });
 
+    [newCourseFIDField, newCourseInfoField, newCoursenameField, newSchemaTextarea, newSchemaUpload, newSchemaTransfer].forEach((el) => {
+        setNeutral(el);
+    });
+
     newCourseFIDField.value = "";
     newCourseInfoField.value = "";
     newCoursenameField.value = "";
@@ -121,6 +125,8 @@ function populateNewCoursePane(): void {
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
     fillStudentDatabasesDropdown(newSchemaTransfer);
+        newSchemaTransfer.value = String(0);
+
 
 }
 
@@ -140,6 +146,10 @@ function goToAddCoursePane(event: Event): void {
 }
 
 async function populateExistingCoursePane(i: number): Promise<void> {
+    [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach((el) => {
+        setNeutral(el);
+    });
+
     currentCourse = courses[i];
     existingCourseIDField.value = String(courses[i].courseid);
     existingCourseFIDField.value = String(courses[i].fid);
@@ -155,6 +165,7 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     existingSchemaTextarea.value = "";
     existingSchemaUpload.value = "";
     fillStudentDatabasesDropdown(existingSchemaTransfer);
+    existingSchemaTransfer.value = String(0);
 }
 
 export function goToExistingCoursePane(i: number): void {
@@ -411,8 +422,8 @@ async function tryEditCourse(): Promise<void> {
                 addAlert("Successfully added schema", AlertType.success);
 
 
-            } else if (newSchemaRadioTransfer.checked) {
-                const dbid = Number(newSchemaTransfer.value);
+            } else if (existingSchemaRadioTransfer.checked) {
+                const dbid = Number(existingSchemaTransfer.value);
                 await axios.post(`/rest/schematransfer/${existingCourseIDField.value}/${dbid}`);
                 addAlert("Successfully added schema", AlertType.success);
             }
@@ -507,16 +518,17 @@ window.onload = async () => {
             if (addCourseLink) {
                 addCourseLink.addEventListener("click", goToAddCoursePane)
             }
-            if (deleteCourseButton){
-            deleteCourseButton.addEventListener("click", () => {
-                tryDeleteCourse(Number(existingCourseIDField.value));
-            })
+            if (deleteCourseButton) {
+                deleteCourseButton.addEventListener("click", () => {
+                    tryDeleteCourse(Number(existingCourseIDField.value));
+                })
             }
             if (dumpCourseButton) {
                 dumpCourseButton.addEventListener("click", () => {
                     tryDumpCourse(Number(existingCourseIDField.value));
 
-                }) }
+                })
+            }
 
         })(),
 

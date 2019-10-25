@@ -23154,6 +23154,18 @@ function setValid(input) {
     }
 }
 exports.setValid = setValid;
+function setNeutral(input) {
+    input.classList.remove("is-invalid");
+    input.classList.remove("is-valid");
+    if (input.nextElementSibling) {
+        var errorField = input.nextElementSibling;
+        errorField.textContent = "";
+    }
+    else {
+        console.error("No sibling element for input. Contact the front-end devs with this error");
+    }
+}
+exports.setNeutral = setNeutral;
 function setInvalid(input, error) {
     input.classList.remove("is-valid");
     input.classList.add("is-invalid");
