@@ -16,7 +16,7 @@ interface Credentials {
     "password": string
 }
 
-export function setValid(input: HTMLInputElement): void {
+export function setValid(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement): void {
     input.classList.remove("is-invalid");
     input.classList.add("is-valid");
     if (input.nextElementSibling) {
@@ -27,7 +27,18 @@ export function setValid(input: HTMLInputElement): void {
     }
 }
 
-export function setInvalid(input: HTMLInputElement, error: string): void {
+export function setNeutral(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement): void {
+    input.classList.remove("is-invalid");
+    input.classList.remove("is-valid");
+    if (input.nextElementSibling) {
+        const errorField: Element = input.nextElementSibling;
+        errorField.textContent = "";
+    } else {
+        console.error("No sibling element for input. Contact the front-end devs with this error")
+    }
+}
+
+export function setInvalid(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement, error: string): void {
     input.classList.remove("is-valid");
     input.classList.add("is-invalid");
     if (input.nextElementSibling) {

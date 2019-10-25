@@ -34,7 +34,7 @@ function removeTempAlerts(): void {
     }
 }
 
-async function removeAlertOnTimeout(tempAlert: ChildNode | null, ms: number, timeOutError: boolean) {
+async function removeAlertOnTimeout(tempAlert: ChildNode | null, ms: number, timeOutError: boolean): Promise<void> {
     await delay(ms);
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
@@ -60,7 +60,7 @@ interface ErrorBody {
     [key: string]: string[]
 }
 
-export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null) {
+export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null): void {
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
     }
@@ -99,7 +99,6 @@ export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null) 
 
             } else { // No longer checking for specific errors
                 // This is a response error (4XX or 5XX etc)
-                // TODO this fails if response is string
                 let alertMessage = "";
                 for (let i = 0; i < errorKeys.length; i++) {
                     alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>")

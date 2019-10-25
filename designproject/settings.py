@@ -24,6 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'z)7pbw!fc(th%m)!(ytsprc3bick1ga-mavn4c8xvujwe(3x21'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# TODO move to secret.py for rolling release (if we want to work on this next module)
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
@@ -33,14 +34,17 @@ STUDENT_DB_PREFIX = 'dab_'
 
 
 # For display to users only; please edit
+# TODO move to secret.py for rolling release (if we want to work on this next module)
 DATABASE_SERVER = 'thebias.nl'
 HOST_SERVER = 'db.thebias.nl'
 
 # EMAIL SETTINGS: (please edit)
+# TODO move to secret.py for rolling release (if we want to work on this next module)
 EMAIL_SERVER = 'localhost'
 EMAIL_SENDER = 'no-reply@thebias.nl'
 
 # LOGFILE: needs write permissions
+# TODO move to secret.py for rolling release (if we want to work on this next module)
 LOGFILE = '/tmp/backend.log'
 
 # Application definition
