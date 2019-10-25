@@ -521,6 +521,11 @@ def update_single_response(request, requested_pk, db_parameters):
                 current_row.__dict__.update(filtered_data)
                 current_row.save()
 
+
+                #get the updated row to send back to the user
+                updated_row = db_parameters["db"].objects.get(pk=requested_pk)
+                serializer = db_parameters["serializer"](updated_row, many=False) #serialize this data
+
         except ParseError as e:
             return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -529,7 +534,9 @@ def update_single_response(request, requested_pk, db_parameters):
         else:
             message = "a row has been updated with pk:"+str(requested_pk)
             log_message_with_db(request.session['user'],db_parameters["dbname"],log_update_single, message) #LOG THIS ACTION
-            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+            return JsonResponse(serializer.data, safe=False,status=status.HTTP_202_ACCEPTED)
+
+#            return HttpResponse(status=status.HTTP_202_ACCEPTED)
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
