@@ -77,12 +77,16 @@ export function changePageState(enable: boolean, callback: Function): void {
 
 async function dumpAlldatabases(disableCallback: Function): Promise<boolean> {
     const result = await Swal.fire({
-        title: 'title',
-        text: 'do some migration',
+        title: 'You are about to generate a migration shell script!',
+        html: `Clicking migrate will create a shell script that generate a migration of all databases in the system.
+                The location of this shell script will be shown after it has been generated.<br><br>
+                The script will NOT be ran automatically; you will have to connect to the server and execute it manually.
+                After execution, a tarball will be created containing SQL dumps of all databases.<br><br>
+                This tarball will also include a script to restore these dumps to a new database.`.trim(),
         type: 'warning',
         showCancelButton: true,
         focusCancel: true,
-        confirmButtonText: 'migrate',
+        confirmButtonText: 'Generate script',
         cancelButtonText: 'Cancel'
     });
 
