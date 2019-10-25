@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/student_view.ts");
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/frontend/scripts/edit_courses.ts");
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -27952,4 +27952,4 @@ window.onload = function () { return __awaiter(void 0, void 0, void 0, function 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=student_view.js.map
+//# sourceMappingURL=edit_courses.js.map

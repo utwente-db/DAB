@@ -19,7 +19,7 @@ export interface Course {
     coursename: string;
     info: string,
     active: boolean,
-    databases: number,
+    databases?: number,
 }
 
 export interface InputCourse {
@@ -39,7 +39,6 @@ export interface StudentDatabase {
     "databasename": string,
     "username": string,
     "password": string
-    // TODO update to include groupID field
 }
 
 export async function getCoursesPromise(): Promise<Course[]> {

@@ -894,13 +894,13 @@ not_found.status_code = 404
     #logging.debug(self.request)
 
 @require_role_redirect(admin)
-def userpage(request):
-    return render(request, 'userpage.html')
+def edit_users(request):
+    return render(request, 'edit_users.html', {'role' : request.session['role']})
 
 @require_GET
-@require_role_redirect(admin)
+@require_role_redirect(teacher)
 def admin_view(request):
-    return render(request, 'admin.html')
+    return render(request, 'admin.html', {'role' : request.session['role']} )
 
 
 def test(request):
@@ -1069,7 +1069,12 @@ def verify(request, token):
 @authenticated
 def change_password(request):
     if request.method == "GET":
-        return render(request, 'change_password.html')
+        TA_count = TAs.objects.filter(studentid=request.session['user']).count();
+        context = {
+            'role': request.session['role'],
+            'TA_count': TA_count
+        }
+        return render(request, 'change_password.html', context)
     else:
         body = None
         new = None
@@ -1188,7 +1193,8 @@ def password_has_been_reset(request):
 
 @require_GET
 def student_view(request):
-    return render(request, 'student_view.html', { 'server_address' : DATABASE_SERVER})
+    TA_count = TAs.objects.filter(studentid=request.session['user']).count();
+    return render(request, 'student_view.html', { 'server_address' : DATABASE_SERVER, 'role' : request.session['role'], 'TA_count' : TA_count})
 
 @require_GET
 # @auth_redirect
@@ -1210,6 +1216,16 @@ def forgot_password_page(request):
         return render(request, 'forgot_password_page.html')
 
 @require_GET
-@require_role_redirect(admin)
-def add_course(request):
-    return render(request, 'add_course.html')
+@auth_redirect
+def edit_courses(request):
+    TA_count = TAs.objects.filter(studentid=request.session['user']).count();
+
+    if (request.session['role'] < student or TA_count > 0):
+        context = {
+            'role' : request.session['role'],
+           'TA_count' : TA_count
+        }
+        return render(request, 'edit_courses.html', context)
+    else:
+        return HttpResponse("You are not authorized",status=status.HTTP_403_FORBIDDEN)
+

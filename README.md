@@ -8,6 +8,10 @@ As such, this software will allow students to request databases with pre-loaded 
 
 ## Requirements
 
+To download the archive that contains the DAB, and extract into a folder called design_project, use:
+
+```wget -qO- https://floris.thebias.nl/dab.tar.gz | tar --transform 's/^dbt2-0.37.50.3/dbt2/' -xvz```
+
 Firstly, the software requires full administrative access to a PostgreSQL server.
 This server does not have to be hosted on the same machine.
 It is recommended that the PostgreSQL databases not be used for any other purpose than this software.
@@ -33,6 +37,9 @@ Additionally, the following software is needed for the recommended production se
 - an SMTP server (e.g. postfix)
 - libapache2-mod-proxy-uwsgi (when using apache2)
 
+To install all these dependencies in one go, run:
+
+```sudo apt-get install apache2 libapache2-mod-proxy-uwsgi postfix python3-pip npm python3 python3-venv python3-dev libpq-dev postgresql-client-common postgresql-client-10; pip3 install uwsgi``` 
 
 Any pip and npm packages will be installed automatically during the installation steps
 
@@ -112,10 +119,10 @@ Please make sure all the files are owned by `www-data`, by running `sudo chown w
 1. Install all the dependencies listed above. Take care to install uwsgi as a pip3 package, and not via the system dependencies (do not use the venv for this). 
 2. If your distribution does not come with Python3.6 or later, compile Python3.7 from source, then follow [this tutorial](https://www.paulox.net/2019/03/13/how-to-use-uwsgi-with-python-3-7-in-ubuntu-18-x/) to ensure uwsgi uses it. Also edit install.sh: the first line, `python3 -m venv venv` MUST use your new python3.7 installation.
 3. Follow the steps in the paragraph on settings above. Take special care to create `secret.py` correctly.
-4. Run install.sh. This will create a virtual environment, install the dependencies for the project in it, and also migrate the database.
-5. Copy/rename uwsgi.ini.example to uwsgi.ini. Edit the values in uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; the "good practice" is to put it in /var/run, but as this requires permissions, the current default file puts it in /tmp instead. If you get errors related to socket.c, that probably means that you do not have file permissions on the socket file. 
-6. To test if you have correctly configured uwsgi, run `sudo -u www-data uwsgi --ini uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
-7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` by running (as root) `cp dab.service /etc/systemd/system ; systemctl start dab.service`.
+4. Run [DOCUMENT ROOT]/install.sh. This will create a virtual environment, install the dependencies for the project in it, and also migrate the database.
+5. Copy/rename [DOCUMENT ROOT]/uwsgi.ini.example to [DOCUMENT ROOT]/uwsgi.ini. Edit the values in [DOCUMENT ROOT]/uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; the "good practice" is to put it in /var/run, but as this requires permissions, the current default file puts it in /data/dab/ instead. If you get errors related to socket.c, that probably means that you do not have file permissions on the socket file. 
+6. To test if you have correctly configured uwsgi, run `sudo -u www-data [DOCUMENT ROOT]/uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
+7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` by running (as root) `cp [DOCUMENT ROOT]/dab.service /etc/systemd/system ; systemctl start dab.service`.
 8. If the previous step succeeded, we can start configuring apache. We require the modules `proxy` and `proxy_uwsgi` to be enabled and available to the rest of the configuration settings. The easiest way to do this in modern GNU/Linux package of Apache is to run `a2enmod proxy_uwsgi`. We assume you want to run the program under `/dab`. Unfortunately, you will also have to reserve `/static`. 
 
 To install, simply add the following to your Apache2 config file (either `apache.conf` or `sites-enabled/000-default.conf`, whichever works).
@@ -149,7 +156,7 @@ Finally, the project is rather useless without an administrator.
 To bootstrap one from a project with an empty database, we recommend the following procedure:
 
 1. Register a student user via the regular register page
-2. Run the file `promote.sh` in the document root, which will promote the user to admin given the email
+2. Run the file `[DOCUMENT ROOT]/promote.sh`, which will promote the user to admin given the email
 
 The user should now be an administrator, who can create other administrators and teachers.
 

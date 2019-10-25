@@ -23059,7 +23059,6 @@ function addErrorAlert(error, tempAlert) {
             }
             else { // No longer checking for specific errors
                 // This is a response error (4XX or 5XX etc)
-                // TODO this fails if response is string
                 var alertMessage = "";
                 for (var i = 0; i < errorKeys.length; i++) {
                     alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>");
@@ -23254,6 +23253,18 @@ function setValid(input) {
     }
 }
 exports.setValid = setValid;
+function setNeutral(input) {
+    input.classList.remove("is-invalid");
+    input.classList.remove("is-valid");
+    if (input.nextElementSibling) {
+        var errorField = input.nextElementSibling;
+        errorField.textContent = "";
+    }
+    else {
+        console.error("No sibling element for input. Contact the front-end devs with this error");
+    }
+}
+exports.setNeutral = setNeutral;
 function setInvalid(input, error) {
     input.classList.remove("is-valid");
     input.classList.add("is-invalid");
