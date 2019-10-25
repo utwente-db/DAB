@@ -29,6 +29,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+#student databases prefix
+STUDENT_DB_PREFIX = 'dab_'
+
+
 # For display to users only; please edit
 # TODO move to secret.py for rolling release (if we want to work on this next module)
 DATABASE_SERVER = 'thebias.nl'

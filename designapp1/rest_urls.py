@@ -50,6 +50,9 @@ urlpatterns = [
 
     # Migration
     url(r'^generate_migration/?$', views.generate_migration),
+    url(r'^missing_databases/?$', views.missing_databases),
+    url(r'^missing_databases/all/?$', views.missing_databases, {"all": True}),
+    url(r'^remove_missing_database/?$', views.remove_missing_database),
 
     # Login
 

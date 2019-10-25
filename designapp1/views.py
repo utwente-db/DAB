@@ -462,7 +462,7 @@ def delete_single_response(request, requested_pk, db_parameters):
                 else:
                     instance.delete()
             except Exception as e:
-                #logging.debug(e)
+                logging.debug(e)
                 if "protected foreign key" in str(e.__cause__):
                     return HttpResponse(status=status.HTTP_409_CONFLICT)
                 elif db_parameters["dbname"] == "studentdatabases":
@@ -874,7 +874,67 @@ def generate_migration(request):
 
     return HttpResponse("Migration generated at "+script_file)
 
+@require_GET
+@require_role(admin)
+def missing_databases(request, all=False):
+    from django.db import connection
+    from psycopg2.extensions import AsIs
 
+    output = []
+    known = [connection.settings_dict["NAME"]]
+
+    dbs = Studentdatabases.objects.all()
+
+    for db in dbs:
+        known.append(db.databasename)
+
+    with connection.cursor() as cur:
+        if all:
+            cur.execute("SELECT datname FROM pg_database WHERE datistemplate=false;")
+        else:
+            cur.execute("SELECT datname FROM pg_database WHERE datistemplate=false AND datname LIKE '%s';", [AsIs(settings.STUDENT_DB_PREFIX+'%')])
+        rows = cur.fetchall()
+
+        for row in rows:
+            if not row[0] in known:
+                output.append(row[0])
+
+    return JsonResponse(output, safe=False)
+
+@require_POST
+@require_role(admin)
+def remove_missing_database(request):
+    try:
+        body = JSONParser().parse(request)
+        name = body["databasename"]
+    except ParseError as e:
+        return HttpResponse("Could not Parse JSON", status=status.HTTP_400_BAD_REQUEST)
+    except KeyError as e:
+        return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
+
+    #We DON'T want to use this to remove a database that we do know about!
+    try:
+        db = Studentdatabases.objects.get(databasename=name)
+        return HttpResponse("Database is managed", status=status.HTTP_400_BAD_REQUEST)
+    except Studentdatabases.DoesNotExist:
+        pass
+
+    if name == connection.settings_dict["NAME"]:
+        return HttpResponse("This is the master database", status=status.HTTP_400_BAD_REQUEST)
+
+    from django.db import connection
+    from psycopg2.extensions import AsIs
+
+    with connection.cursor() as cur:
+        # make sure no one can connect to the database
+        cur.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '%s'",
+                       [AsIs(name)])
+        # drop any existing connections
+        cur.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'",
+                       [AsIs(name)])
+        cur.execute("DROP DATABASE \"%s\";", [AsIs(name)])
+
+    return HttpResponse()
 
 
 # -----------------------------------------LOGIN-------------------------------------------------
