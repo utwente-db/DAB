@@ -253,6 +253,7 @@ function changeEditCoursesState(enable: boolean): void {
     // TODO update with new elements
     // TODO disable all nav elements like in sutdent view
     // TODO addCoursesLink
+    // todo call this everywhere with navbar page thing
 
     if (enable) {
         newCourseInfoField.disabled = false;
@@ -392,6 +393,8 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
 async function tryEditCourse(): Promise<void> {
     // TODO give a Swal
     // TODO maybe repopulate on cancel changes?
+    // TODO if you made it inactive/active change style of navlink
+
 
     if (checkFields(existingCourseInfoField, existingCoursenameField, existingCourseFIDField,
         existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea,
@@ -429,6 +432,7 @@ async function tryEditCourse(): Promise<void> {
             }
             const navLink = document.getElementsByClassName("nav-link active")[0]! as HTMLAnchorElement;
             navLink.innerText = existingCoursenameField.value;
+            courses[Number(navLink.id)] = inputCourse; // TODO maybe doesnt have amount of databases field
             goToExistingCoursePane(Number(navLink.id))
         } catch (error) {
             addErrorAlert(error, tempAlert)
@@ -440,10 +444,8 @@ async function tryEditCourse(): Promise<void> {
 
 }
 
-function tryDumpCourse(id: number): boolean {
-    // TODO implement
+function tryDumpCourse(id: number): void {
     window.location.href = `/rest/course_dump/${id}`;
-    return true;
 }
 
 window.onload = async () => {

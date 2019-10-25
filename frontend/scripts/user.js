@@ -22817,7 +22817,6 @@ function addErrorAlert(error, tempAlert) {
             }
             else { // No longer checking for specific errors
                 // This is a response error (4XX or 5XX etc)
-                // TODO this fails if response is string
                 var alertMessage = "";
                 for (var i = 0; i < errorKeys.length; i++) {
                     alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>");
@@ -23081,7 +23080,6 @@ __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap
 var alert_1 = __webpack_require__(/*! ./alert */ "./src/frontend/scripts/alert.ts");
 var sweetalert2_1 = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
-//todo: change to selected user ofcourse
 var urlParams = new URLSearchParams(window.location.search);
 var users;
 // let user: User;

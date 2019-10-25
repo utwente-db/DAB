@@ -99,7 +99,6 @@ export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null):
 
             } else { // No longer checking for specific errors
                 // This is a response error (4XX or 5XX etc)
-                // TODO this fails if response is string
                 let alertMessage = "";
                 for (let i = 0; i < errorKeys.length; i++) {
                     alertMessage += (errorKeys[i] + ":<br>" + errorMessages[i].join("<br>") + "<br<br>")

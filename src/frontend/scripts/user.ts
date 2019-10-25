@@ -7,7 +7,6 @@ import Swal from 'sweetalert2';
 import {initNavbar, navbarEditUsers} from "./navbar";
 import {Course, StudentDatabase} from "./courses";
 
-//todo: change to selected user ofcourse
 const urlParams = new URLSearchParams(window.location.search);
 let users: User[];
 // let user: User;
