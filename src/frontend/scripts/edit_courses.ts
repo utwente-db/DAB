@@ -588,7 +588,34 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
         const response = await axios.post(`/rest/tas/`, taObject) as AxiosResponse<TA>;
         const ta = response.data;
         // TODO change nav and div content on state change using TA object
-        addAlert("User was added as a TA", AlertType.success, tempAlert);
+        addAlert(`${user.email} was added as a TA`, AlertType.success, tempAlert);
+
+        const templateString = `<a class="ta-link nav-link green-nav active" data-toggle="pill" href="#">${user.email}</a>`;
+        const newFragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
+
+        const activeLink: HTMLAnchorElement = document.getElementsByClassName("ta-link nav-link active")[0] as HTMLAnchorElement;
+
+        activeLink.classList.remove("active");
+
+
+        newFragment.firstElementChild!.addEventListener("click", (event) => {
+            const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+            userTAButton.addEventListener("click", () => {
+                removeTA(user, ta.taid, i);
+            });
+        });
+
+        activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild!);
+        activeLink.remove();
+
+        const taFragment = generateTaDivHTML(user, true);
+        taDiv.innerHTML = taFragment;
+
+        const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+        userTAButton.addEventListener("click", () => {
+            removeTA(user, ta.taid, i);
+        });
+
         success = true;
     } catch (error) {
         addErrorAlert(error, tempAlert);
@@ -601,7 +628,7 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
 
 }
 
-async function removeTA(taID: number): Promise<boolean> {
+async function removeTA(user: User, taID: number, i: number): Promise<boolean> {
     // TODO add disabling things
     const tempAlert = addTempAlert();
     let success = false;
@@ -609,7 +636,35 @@ async function removeTA(taID: number): Promise<boolean> {
     try {
         const response = await axios.delete(`/rest/tas/${taID}/`) as AxiosResponse;
         // TODO change nav and div content on state change using TA object
-        addAlert("User is no longer a TA", AlertType.success, tempAlert);
+        addAlert(`${user.email} is no longer a TA`, AlertType.success, tempAlert);
+
+        const templateString = `<a class="ta-link nav-link not-green-nav active" data-toggle="pill" href="#">${user.email}</a>`;
+        const newFragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
+
+        const activeLink: HTMLAnchorElement = document.getElementsByClassName("ta-link nav-link active")[0] as HTMLAnchorElement;
+
+        activeLink.classList.remove("active");
+
+
+        newFragment.firstElementChild!.addEventListener("click", (event) => {
+            const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+            userTAButton.addEventListener("click", () => {
+                makeUserTA(user, i);
+            });
+        });
+
+        activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild!);
+        activeLink.remove();
+
+        const taFragment = generateTaDivHTML(user, false);
+        taDiv.innerHTML = taFragment;
+
+        const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+        userTAButton.addEventListener("click", () => {
+            makeUserTA(user, i);
+        });
+
+
         success = true;
     } catch (error) {
         addErrorAlert(error, tempAlert);
@@ -619,6 +674,15 @@ async function removeTA(taID: number): Promise<boolean> {
         changePageState(true, changeEditCoursesState);
     }
     return success;
+}
+
+function generateTaDivHTML(user: User, userIsTaForCourse: boolean): string {
+    const userIsTaString = userIsTaForCourse ? `<span class="text-success h5">${user.email} is a TA for this course</span>` :
+        `<span class="text-danger h5">${user.email} is not a TA for this course</span>`
+    const userTaButton = `<button class="btn btn-info" id="user-ta-button">Change user TA status</button>`
+    const taDivHTML = `${userIsTaString}<br>
+                           ${userTaButton}`.trim();
+    return taDivHTML;
 }
 
 async function populateTAPane(i: number): Promise<void> {
@@ -647,11 +711,9 @@ async function populateTAPane(i: number): Promise<void> {
         const templateString = `<a class="ta-link nav-link ${greenClass}" data-toggle="pill" href="#">${user.email}</a>`;
         const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
-        const userIsTaString = userIsTaForCourse ? `<span class="text-success h5">User is a TA for this course</span>` :
-            `<span class="text-danger h5">User is not a TA for this course</span>`
-        const userTaButton = `<button class="btn btn-info" id="user-ta-button">Change user TA status</button>`
-        const taDivHTML = `${userIsTaString}<br>
-                           ${userTaButton}`.trim()
+
+        const taDivHTML = generateTaDivHTML(user, userIsTaForCourse);
+
 
         fragment.firstElementChild!.addEventListener("click", (event) => {
             taDiv.innerHTML = taDivHTML;
@@ -662,7 +724,7 @@ async function populateTAPane(i: number): Promise<void> {
             fragment.firstElementChild!.addEventListener("click", (event) => {
                 const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
                 userTAButton.addEventListener("click", () => {
-                    removeTA(taID);
+                    removeTA(user, taID, i);
                 });
             });
         } else {

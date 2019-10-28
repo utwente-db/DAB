@@ -26726,7 +26726,7 @@ function displayStudentDatabasesForCourse(i) {
 }
 function makeUserTA(user, i) {
     return __awaiter(this, void 0, void 0, function () {
-        var taObject, tempAlert, success, response, ta, error_5;
+        var taObject, tempAlert, success, response, ta_1, templateString, newFragment, activeLink, taFragment, userTAButton, error_5;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -26743,9 +26743,27 @@ function makeUserTA(user, i) {
                     return [4 /*yield*/, axios_1.default.post("/rest/tas/", taObject)];
                 case 2:
                     response = _a.sent();
-                    ta = response.data;
+                    ta_1 = response.data;
                     // TODO change nav and div content on state change using TA object
-                    alert_1.addAlert("User was added as a TA", alert_1.AlertType.success, tempAlert);
+                    alert_1.addAlert(user.email + " was added as a TA", alert_1.AlertType.success, tempAlert);
+                    templateString = "<a class=\"ta-link nav-link green-nav active\" data-toggle=\"pill\" href=\"#\">" + user.email + "</a>";
+                    newFragment = document.createRange().createContextualFragment(templateString);
+                    activeLink = document.getElementsByClassName("ta-link nav-link active")[0];
+                    activeLink.classList.remove("active");
+                    newFragment.firstElementChild.addEventListener("click", function (event) {
+                        var userTAButton = document.getElementById("user-ta-button");
+                        userTAButton.addEventListener("click", function () {
+                            removeTA(user, ta_1.taid, i);
+                        });
+                    });
+                    activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild);
+                    activeLink.remove();
+                    taFragment = generateTaDivHTML(user, true);
+                    taDiv.innerHTML = taFragment;
+                    userTAButton = document.getElementById("user-ta-button");
+                    userTAButton.addEventListener("click", function () {
+                        removeTA(user, ta_1.taid, i);
+                    });
                     success = true;
                     return [3 /*break*/, 5];
                 case 3:
@@ -26761,9 +26779,9 @@ function makeUserTA(user, i) {
         });
     });
 }
-function removeTA(taID) {
+function removeTA(user, taID, i) {
     return __awaiter(this, void 0, void 0, function () {
-        var tempAlert, success, response, error_6;
+        var tempAlert, success, response, templateString, newFragment, activeLink, taFragment, userTAButton, error_6;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -26777,7 +26795,25 @@ function removeTA(taID) {
                 case 2:
                     response = _a.sent();
                     // TODO change nav and div content on state change using TA object
-                    alert_1.addAlert("User is no longer a TA", alert_1.AlertType.success, tempAlert);
+                    alert_1.addAlert(user.email + " is no longer a TA", alert_1.AlertType.success, tempAlert);
+                    templateString = "<a class=\"ta-link nav-link not-green-nav active\" data-toggle=\"pill\" href=\"#\">" + user.email + "</a>";
+                    newFragment = document.createRange().createContextualFragment(templateString);
+                    activeLink = document.getElementsByClassName("ta-link nav-link active")[0];
+                    activeLink.classList.remove("active");
+                    newFragment.firstElementChild.addEventListener("click", function (event) {
+                        var userTAButton = document.getElementById("user-ta-button");
+                        userTAButton.addEventListener("click", function () {
+                            makeUserTA(user, i);
+                        });
+                    });
+                    activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild);
+                    activeLink.remove();
+                    taFragment = generateTaDivHTML(user, false);
+                    taDiv.innerHTML = taFragment;
+                    userTAButton = document.getElementById("user-ta-button");
+                    userTAButton.addEventListener("click", function () {
+                        makeUserTA(user, i);
+                    });
                     success = true;
                     return [3 /*break*/, 5];
                 case 3:
@@ -26792,6 +26828,13 @@ function removeTA(taID) {
             }
         });
     });
+}
+function generateTaDivHTML(user, userIsTaForCourse) {
+    var userIsTaString = userIsTaForCourse ? "<span class=\"text-success h5\">" + user.email + " is a TA for this course</span>" :
+        "<span class=\"text-danger h5\">" + user.email + " is not a TA for this course</span>";
+    var userTaButton = "<button class=\"btn btn-info\" id=\"user-ta-button\">Change user TA status</button>";
+    var taDivHTML = (userIsTaString + "<br>\n                           " + userTaButton).trim();
+    return taDivHTML;
 }
 function populateTAPane(i) {
     return __awaiter(this, void 0, void 0, function () {
@@ -26820,10 +26863,7 @@ function populateTAPane(i) {
                         var greenClass = userIsTaForCourse ? "green-nav" : "not-green-nav";
                         var templateString = "<a class=\"ta-link nav-link " + greenClass + "\" data-toggle=\"pill\" href=\"#\">" + user.email + "</a>";
                         var fragment = document.createRange().createContextualFragment(templateString);
-                        var userIsTaString = userIsTaForCourse ? "<span class=\"text-success h5\">User is a TA for this course</span>" :
-                            "<span class=\"text-danger h5\">User is not a TA for this course</span>";
-                        var userTaButton = "<button class=\"btn btn-info\" id=\"user-ta-button\">Change user TA status</button>";
-                        var taDivHTML = (userIsTaString + "<br>\n                           " + userTaButton).trim();
+                        var taDivHTML = generateTaDivHTML(user, userIsTaForCourse);
                         fragment.firstElementChild.addEventListener("click", function (event) {
                             taDiv.innerHTML = taDivHTML;
                         });
@@ -26831,7 +26871,7 @@ function populateTAPane(i) {
                             fragment.firstElementChild.addEventListener("click", function (event) {
                                 var userTAButton = document.getElementById("user-ta-button");
                                 userTAButton.addEventListener("click", function () {
-                                    removeTA(taID);
+                                    removeTA(user, taID, i);
                                 });
                             });
                         }
