@@ -28,6 +28,7 @@ module.exports = (env, argv) => {
 
 
     config = {
+        target: 'web',
         // mode: isDevelopment? 'development' : 'production',
         plugins: [
             new MiniCssExtractPlugin({
@@ -48,7 +49,7 @@ module.exports = (env, argv) => {
             ignored: /node_modules/ // improves performance by a ton
         },
         output: { // Resolves paths locally, a weird hack
-            chunkFilename: './scripts/[name].chunk.js',
+            chunkFilename: './scripts/[id].chunk.js',
             filename: './scripts/[name].js',
             path: path.resolve(__dirname, './frontend/')
         },
@@ -63,16 +64,24 @@ module.exports = (env, argv) => {
 
         optimization: {
             usedExports: true,
-            // splitChunks: {
-            //     chunks: 'all'
-            // }
+            splitChunks: {
+                chunks: 'all'
+            }
         },
 
         module: {
             rules: [
                 { // Rule for how to process ts files
                     test: /\.ts$/,
-                    use: 'ts-loader'
+                    use: [
+                        {
+                            loader: require.resolve('awesome-typescript-loader'),
+                            options: {
+                                // compile with TypeScript, then transpile with Babel
+                                useBabel: true,
+                            },
+                        },
+                    ],
                 },
                 { // Rule for how to process sass/scss
                     test: /\.s[ac]ss$/,

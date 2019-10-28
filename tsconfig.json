@@ -11,11 +11,12 @@
     "pretty": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es5",
+    "target": "esnext",
     "moduleResolution": "node",
     "outDir": "frontend/scripts",
     "importHelpers": true,
     "removeComments": false,
+    "jsx": "preserve",
     "lib": [
       "dom",
       "es5",
