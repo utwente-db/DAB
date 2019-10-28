@@ -380,3 +380,6 @@ node_modules/**/*.*
 designproject/secret.py
 package-lock.json
 uwsgi.ini
+static/admin
+static/admin/*
+static/admin/**/*
