@@ -131,7 +131,7 @@ function populateNewCoursePane(): void {
 
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    if (who.role===UserRole.admin || who.role===UserRole.teacher) {
+    if (who.role === UserRole.admin || who.role === UserRole.teacher) {
         // TODO un hardcode this (maybe only leave for admin)
         // TODO also hide html
         fillStudentDatabasesDropdown(newSchemaTransfer);
@@ -159,12 +159,12 @@ function goToAddCoursePane(event: Event): void {
 async function populateExistingCoursePane(i: number): Promise<void> {
     studentDatabasesNavHtml.innerHTML = "";
     courseDatabasesHtml.innerHTML = "No database selected";
-        if (who.role===UserRole.admin || who.role===UserRole.teacher) {
-            // TODO un hardcode this
-            fillStudentDatabasesDropdown(existingSchemaTransfer);
-            populateTAPane(i);
+    if (who.role === UserRole.admin || who.role === UserRole.teacher) {
+        // TODO un hardcode this
+        fillStudentDatabasesDropdown(existingSchemaTransfer);
+        populateTAPane(i);
 
-        }
+    }
     displayStudentDatabasesForCourse(i);
     [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach((el) => {
         setNeutral(el);
@@ -587,7 +587,7 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
     try {
         const response = await axios.post(`/rest/tas/`, taObject) as AxiosResponse<TA>;
         const ta = response.data;
-            // TODO change nav and div content on state change using TA object
+        // TODO change nav and div content on state change using TA object
         addAlert("User was added as a TA", AlertType.success, tempAlert);
         success = true;
     } catch (error) {
@@ -601,25 +601,51 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
 
 }
 
-function removeTA(TaID: number): boolean {
-    // TODO implement
-    return false;
-    // DELETE /tas/pk where pk is TA id?
+async function removeTA(taID: number): Promise<boolean> {
+    // TODO add disabling things
+    const tempAlert = addTempAlert();
+    let success = false;
+    changePageState(false, changeEditCoursesState);
+    try {
+        const response = await axios.delete(`/rest/tas/${taID}/`) as AxiosResponse;
+        // TODO change nav and div content on state change using TA object
+        addAlert("User is no longer a TA", AlertType.success, tempAlert);
+        success = true;
+    } catch (error) {
+        addErrorAlert(error, tempAlert);
+        success = false;
+
+    } finally {
+        changePageState(true, changeEditCoursesState);
+    }
+    return success;
 }
 
-function populateTAPane(i: number): void {
+async function populateTAPane(i: number): Promise<void> {
     taDiv.innerHTML = "No user selected";
     if (users.length === 0) {
         taNav.innerHTML = "There are no users in the database."
     } else {
         taNav.innerHTML = "";
     }
-    users.forEach((user: User) => {
-        const templateString = `<a class="nav-link" data-toggle="pill" href="#">${user.email}</a>`;
-        const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
-        const userIsTaForCourse = false; // TODO un hardcode this
-        const TaID = 0; // Todo UNHARDCODE THIS
+    // TODO add error handling, disabling here
+
+    const response = await axios.get(`/rest/tas/course/${courses[i].courseid}`) as AxiosResponse<TA[]>;
+    const taList = response.data;
+    const taListByUserID = taList.map((ta: TA) => ta.studentid);
+
+    users.forEach((user: User) => {
+
+        let taID = 0;
+        const userIsTaForCourse = taListByUserID.includes(user.id);
+        if (userIsTaForCourse) {
+            taID = taList[taListByUserID.indexOf(user.id)].taid
+        }
+
+        const greenClass = userIsTaForCourse ? "green-nav" : "not-green-nav";
+        const templateString = `<a class="nav-link ${greenClass}" data-toggle="pill" href="#">${user.email}</a>`;
+        const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
         const userIsTaString = userIsTaForCourse ? `<span class="text-success h5">User is a TA for this course</span>` :
             `<span class="text-danger h5">User is not a TA for this course</span>`
@@ -636,7 +662,7 @@ function populateTAPane(i: number): void {
             fragment.firstElementChild!.addEventListener("click", (event) => {
                 const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
                 userTAButton.addEventListener("click", () => {
-                    removeTA(TaID);
+                    removeTA(taID);
                 });
             });
         } else {
