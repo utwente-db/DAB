@@ -5,6 +5,7 @@ import {setInvalid, setNeutral, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
 import Swal from "sweetalert2";
+import {deleteDatabase, resetDatabase} from "./user";
 
 let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -13,6 +14,8 @@ const coursesContentHtml: HTMLDivElement = document.getElementById("courses-cont
 const existingCoursePane = document.getElementById("existing-course-pane") as HTMLDivElement;
 const newCoursePane = document.getElementById("new-course-pane") as HTMLDivElement;
 
+const studentDatabasesNavHtml: HTMLDivElement = document.getElementById("studentdatabases-nav") as HTMLDivElement;
+const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
 
 const newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement;
 const newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement;
@@ -125,7 +128,7 @@ function populateNewCoursePane(): void {
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
     fillStudentDatabasesDropdown(newSchemaTransfer);
-        newSchemaTransfer.value = String(0);
+    newSchemaTransfer.value = String(0);
 
 
 }
@@ -166,6 +169,7 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     existingSchemaUpload.value = "";
     fillStudentDatabasesDropdown(existingSchemaTransfer);
     existingSchemaTransfer.value = String(0);
+    displayStudentDatabasesForCourse(i)
 }
 
 export function goToExistingCoursePane(i: number): void {
@@ -442,6 +446,119 @@ async function tryEditCourse(): Promise<void> {
             changePageState(true, changeEditCoursesState);
 
         }
+    }
+
+}
+
+async function displayStudentDatabasesForCourse(i: number): Promise<void> {
+    const dbIDs: number[] = [];
+    // TODO use try except and disabling things here
+    const databases: StudentDatabase[] = (await axios.get(`/rest/studentdatabases/course/${courses[i].courseid}`) as AxiosResponse<StudentDatabase[]>).data;
+
+    const dbIDtoHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
+    if (databases.length === 0) {
+        studentDatabasesNavHtml.innerHTML = "There are no databases for this course";
+        courseDatabasesHtml.innerHTML = "No database selected";
+        return;
+    }
+
+    // const coursesAndDatabases = new Map<number, string>();
+
+    for (let j = 0; j < databases.length; j++) {
+        dbIDtoHTMLmap.set(databases[j], "");
+    }
+
+    for (let j = 0; j < databases.length; j++) {
+        dbIDs.push(databases[j].dbid);
+        const html: string =
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Database ID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].dbid}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Database name:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].databasename}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Username:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].username}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Password:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].password}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Group ID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].groupid}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">FID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].fid}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Course ID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].course}" readonly="">
+                </div>
+            </div>` +
+            `<button type="button" class="btn btn-danger" onclick="window.location.replace('/rest/dump/${databases[j].dbid}/')">
+                Download Dump
+            </button>` +
+            `<button id="reset-button-${databases[j].dbid}" type="button" class="btn btn-danger">
+                Reset
+            </button>` +
+            `<button id="delete-button-${databases[j].dbid}" type="button" class="btn btn-danger">
+                Delete
+            </button>`
+
+        ;
+
+        // This will mess up if someone has multiple db's for a single course
+        dbIDtoHTMLmap.set(databases[j], html);
+    }
+
+    const resultNav: string[] = [];
+    const resultContent: string[] = [];
+    for (const entry of Array.from(dbIDtoHTMLmap.entries())) {
+        const db: StudentDatabase = entry[0];
+        const content: string = entry[1];
+
+
+        const templateString = `<a class="nav-link" data-toggle="pill" href="#">${db.databasename}</a>`;
+        const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
+
+        fragment.firstElementChild!.addEventListener("click", (event) => {
+            courseDatabasesHtml.innerHTML = content;
+            // TODO set link as active
+
+            const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${db.dbid}`) as HTMLButtonElement;
+            resetButton.addEventListener("click", () => {
+                resetDatabase(db.dbid);
+            });
+            const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
+            deleteButton.addEventListener("click", () => {
+                deleteDatabase(db.dbid);
+            });
+        });
+
+
+        studentDatabasesNavHtml.appendChild(fragment);
+
+
+
+
     }
 
 }

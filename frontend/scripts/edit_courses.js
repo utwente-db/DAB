@@ -26198,11 +26198,14 @@ var register_1 = __webpack_require__(/*! ./register */ "./src/frontend/scripts/r
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
 var student_view_1 = __webpack_require__(/*! ./student_view */ "./src/frontend/scripts/student_view.ts");
 var sweetalert2_1 = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+var user_1 = __webpack_require__(/*! ./user */ "./src/frontend/scripts/user.ts");
 var addCourseLink = document.getElementById("add-course-link");
 var coursesNavHtml = document.getElementById("courses-nav");
 var coursesContentHtml = document.getElementById("courses-content");
 var existingCoursePane = document.getElementById("existing-course-pane");
 var newCoursePane = document.getElementById("new-course-pane");
+var studentDatabasesNavHtml = document.getElementById("studentdatabases-nav");
+var courseDatabasesHtml = document.getElementById("courses-db");
 var newCoursenameField = document.getElementById("new-course-name-field");
 var newCourseInfoField = document.getElementById("new-course-info-field");
 var newCourseFIDField = document.getElementById("new-course-fid-field");
@@ -26341,6 +26344,7 @@ function populateExistingCoursePane(i) {
             existingSchemaUpload.value = "";
             fillStudentDatabasesDropdown(existingSchemaTransfer);
             existingSchemaTransfer.value = String(0);
+            displayStudentDatabasesForCourse(i);
             return [2 /*return*/];
         });
     });
@@ -26640,6 +26644,71 @@ function tryEditCourse() {
                     navbar_1.changePageState(true, changeEditCoursesState);
                     return [7 /*endfinally*/];
                 case 10: return [2 /*return*/];
+            }
+        });
+    });
+}
+function displayStudentDatabasesForCourse(i) {
+    return __awaiter(this, void 0, void 0, function () {
+        var dbIDs, databases, dbIDtoHTMLmap, j, j, html, resultNav, resultContent, _loop_1, _i, _a, entry;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    dbIDs = [];
+                    return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/course/" + courses[i].courseid)];
+                case 1:
+                    databases = (_b.sent()).data;
+                    dbIDtoHTMLmap = new Map();
+                    if (databases.length === 0) {
+                        studentDatabasesNavHtml.innerHTML = "There are no databases for this course";
+                        courseDatabasesHtml.innerHTML = "No database selected";
+                        return [2 /*return*/];
+                    }
+                    // const coursesAndDatabases = new Map<number, string>();
+                    for (j = 0; j < databases.length; j++) {
+                        dbIDtoHTMLmap.set(databases[j], "");
+                    }
+                    for (j = 0; j < databases.length; j++) {
+                        dbIDs.push(databases[j].dbid);
+                        html = "<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Database ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].dbid + "\" readonly=\"\">\n                </div>\n            </div>" +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Database name:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].databasename + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Username:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].username + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Password:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].password + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Group ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].groupid + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">FID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].fid + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Course ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].course + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<button type=\"button\" class=\"btn btn-danger\" onclick=\"window.location.replace('/rest/dump/" + databases[j].dbid + "/')\">\n                Download Dump\n            </button>") +
+                            ("<button id=\"reset-button-" + databases[j].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Reset\n            </button>") +
+                            ("<button id=\"delete-button-" + databases[j].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Delete\n            </button>");
+                        // This will mess up if someone has multiple db's for a single course
+                        dbIDtoHTMLmap.set(databases[j], html);
+                    }
+                    resultNav = [];
+                    resultContent = [];
+                    _loop_1 = function (entry) {
+                        var db = entry[0];
+                        var content = entry[1];
+                        var templateString = "<a class=\"nav-link\" data-toggle=\"pill\" href=\"#\">" + db.databasename + "</a>";
+                        var fragment = document.createRange().createContextualFragment(templateString);
+                        fragment.firstElementChild.addEventListener("click", function (event) {
+                            courseDatabasesHtml.innerHTML = content;
+                            // TODO set link as active
+                            var resetButton = document.getElementById("reset-button-" + db.dbid);
+                            resetButton.addEventListener("click", function () {
+                                user_1.resetDatabase(db.dbid);
+                            });
+                            var deleteButton = document.getElementById("delete-button-" + db.dbid);
+                            deleteButton.addEventListener("click", function () {
+                                user_1.deleteDatabase(db.dbid);
+                            });
+                        });
+                        studentDatabasesNavHtml.appendChild(fragment);
+                    };
+                    for (_i = 0, _a = Array.from(dbIDtoHTMLmap.entries()); _i < _a.length; _i++) {
+                        entry = _a[_i];
+                        _loop_1(entry);
+                    }
+                    return [2 /*return*/];
             }
         });
     });
@@ -27855,7 +27924,6 @@ function deleteDatabase(dbID) {
                     _a.sent();
                     alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
                     success = true;
-                    window.location.reload(true);
                     return [3 /*break*/, 5];
                 case 4:
                     error_1 = _a.sent();
@@ -27867,6 +27935,7 @@ function deleteDatabase(dbID) {
         });
     });
 }
+exports.deleteDatabase = deleteDatabase;
 // Internal server error 500?
 function resetDatabase(dbID) {
     return __awaiter(this, void 0, void 0, function () {
@@ -27905,6 +27974,7 @@ function resetDatabase(dbID) {
         });
     });
 }
+exports.resetDatabase = resetDatabase;
 function displayUserDetails(userid) {
     return __awaiter(this, void 0, void 0, function () {
         var user, role;
@@ -27962,7 +28032,7 @@ function deleteUser(userid) {
                 case 4:
                     _a.sent();
                     alert("User succesfully deleted!");
-                    window.location.href = '../';
+                    // window.location.href = '../';
                     success = true;
                     return [3 /*break*/, 6];
                 case 5:
@@ -28007,7 +28077,7 @@ function changeRole(userid) {
                         })];
                 case 4:
                     _a.sent();
-                    window.location.reload(true);
+                    // window.location.reload(true);
                     alert_1.addAlert("Role changed!", alert_1.AlertType.primary);
                     success = true;
                     return [3 /*break*/, 6];

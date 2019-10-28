@@ -240,7 +240,7 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
 
 }
 
-async function deleteDatabase(dbID: number): Promise<boolean> {
+export async function deleteDatabase(dbID: number): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to delete this database?',
         text: 'You will not be able to recover your data!',
@@ -258,7 +258,7 @@ async function deleteDatabase(dbID: number): Promise<boolean> {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         addAlert("Deleted database", AlertType.primary);
         success = true;
-        window.location.reload(true);
+        // window.location.reload(true);
     } catch (error) {
         addErrorAlert(error);
         success = false;
@@ -267,7 +267,7 @@ async function deleteDatabase(dbID: number): Promise<boolean> {
 }
 
 // Internal server error 500?
-async function resetDatabase(dbID: number): Promise<boolean> {
+export async function resetDatabase(dbID: number): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to reset this database?',
         text: 'You will not be able to recover your data!',
@@ -330,7 +330,7 @@ async function deleteUser(userid: number): Promise<boolean> {
     try {
         await axios.delete(`/rest/dbmusers/${userid}/`);
         alert("User succesfully deleted!");
-        window.location.href = '../';
+        // window.location.href = '../';
         success = true;
     } catch (error) {
         addErrorAlert(error);
@@ -362,7 +362,7 @@ async function changeRole(userid: number): Promise<boolean> {
             user: user.id,
             role: Number(role)
         });
-        window.location.reload(true);
+        // window.location.reload(true);
         addAlert("Role changed!", AlertType.primary);
         success = true;
     } catch (error) {

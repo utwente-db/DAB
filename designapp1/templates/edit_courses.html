@@ -35,7 +35,8 @@
                         <div class="tab-content" id="courses-content">
 
 
-                            <div class="tab-pane active m-5" id="please-select-a-course"><h1>Please select a course</h1></div>
+                            <div class="tab-pane active m-5" id="please-select-a-course"><h1>Please select a course</h1>
+                            </div>
 
                             <div class="tab-pane" id="new-course-pane">
                                 <form class="form-horizontal" id="new-course-content"> {# actual content #}
@@ -310,24 +311,41 @@
                                     <hr>
                                     <div class="align-items-center align-items-stretch row">
                                         {% if role < 2 %}
-                                        <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
-                                            <button id="delete-course-button"
-                                                    class="btn btn-danger delete-button btn-block">Delete course
-                                            </button>
-                                        </div>
+                                            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                                <button id="delete-course-button"
+                                                        class="btn btn-danger delete-button btn-block">Delete course
+                                                </button>
+                                            </div>
                                         {% endif %}
                                         <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
                                             <button id="edit-course-button"
                                                     class="btn btn-info reset-button btn-block">Edit course
                                             </button>
                                         </div>
-                                    {% if role < 2 %}
-                                        <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
-                                            <button id="dump-course-button"
-                                                    class="btn btn-secondary dump-button btn-block">Get dump of course
-                                            </button>
+                                        {% if role < 2 %}
+                                            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                                <button id="dump-course-button"
+                                                        class="btn btn-secondary dump-button btn-block">Get dump of
+                                                    course
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <hr>
+                                    <h4>Databases for this course</h4>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="overflow-auto border rounded" style="height: 300px;">
+                                                <div class="nav flex-column nav-pills" id="studentdatabases-nav" role="tablist">
+{#                                                    <div class="spinner-border text-info"></div>#}
+                                                </div>
+                                            </div>
                                         </div>
-                                    {% endif %}
+                                        <div class="col-6">
+                                            <div class="tab-content" id="courses-db">
+{#                                                <div class="spinner-border text-info"></div>#}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -23314,7 +23314,6 @@ function deleteDatabase(dbID) {
                     _a.sent();
                     alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
                     success = true;
-                    window.location.reload(true);
                     return [3 /*break*/, 5];
                 case 4:
                     error_1 = _a.sent();
@@ -23326,6 +23325,7 @@ function deleteDatabase(dbID) {
         });
     });
 }
+exports.deleteDatabase = deleteDatabase;
 // Internal server error 500?
 function resetDatabase(dbID) {
     return __awaiter(this, void 0, void 0, function () {
@@ -23364,6 +23364,7 @@ function resetDatabase(dbID) {
         });
     });
 }
+exports.resetDatabase = resetDatabase;
 function displayUserDetails(userid) {
     return __awaiter(this, void 0, void 0, function () {
         var user, role;
@@ -23421,7 +23422,7 @@ function deleteUser(userid) {
                 case 4:
                     _a.sent();
                     alert("User succesfully deleted!");
-                    window.location.href = '../';
+                    // window.location.href = '../';
                     success = true;
                     return [3 /*break*/, 6];
                 case 5:
@@ -23466,7 +23467,7 @@ function changeRole(userid) {
                         })];
                 case 4:
                     _a.sent();
-                    window.location.reload(true);
+                    // window.location.reload(true);
                     alert_1.addAlert("Role changed!", alert_1.AlertType.primary);
                     success = true;
                     return [3 /*break*/, 6];
