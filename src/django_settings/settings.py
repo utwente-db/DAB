@@ -33,19 +33,16 @@ ALLOWED_HOSTS = ['*']
 STUDENT_DB_PREFIX = 'dab_'
 
 
-# For display to users only; please edit
-# TODO move to secret.py for rolling release (if we want to work on this next module)
-DATABASE_SERVER = 'thebias.nl'
-HOST_SERVER = 'db.thebias.nl'
+# For display to users only; please edit in secret.py
+DATABASE_SERVER = secret.DATABASE_SERVER
+HOST_SERVER = secret.HOST_SERVER
 
-# EMAIL SETTINGS: (please edit)
-# TODO move to secret.py for rolling release (if we want to work on this next module)
-EMAIL_SERVER = 'localhost'
-EMAIL_SENDER = 'no-reply@thebias.nl'
+# EMAIL SETTINGS; please edit in secret.py
+EMAIL_SERVER = secret.EMAIL_SERVER
+EMAIL_SENDER = secret.EMAIL_SENDER
 
-# LOGFILE: needs write permissions
-# TODO move to secret.py for rolling release (if we want to work on this next module)
-LOGFILE = '/tmp/backend.log'
+# LOGFILE: needs write permissions; please edit in secret.py
+LOGFILE = secret.LOGFILE
 
 # Application definition
 
