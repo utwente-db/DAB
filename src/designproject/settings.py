@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'designapp1',
+    'src.designapp1',
 ]
 
 MIDDLEWARE = [
@@ -67,10 +67,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'designapp1.middleware.errorhandling.customerrorhandling'
+    'src.designapp1.middleware.errorhandling.customerrorhandling'
 ]
 
-ROOT_URLCONF = 'designproject.urls'
+ROOT_URLCONF = 'src.designproject.urls'
 
 TEMPLATES = [
     {
@@ -88,7 +88,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'designproject.wsgi.application'
+WSGI_APPLICATION = 'src.designproject.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -150,7 +150,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend'),
+    os.path.join(BASE_DIR, '../frontend'),
 ]
 STATIC_ROOT = "static"
 STATIC_URL = '/static/'

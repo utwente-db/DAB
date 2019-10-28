@@ -1,6 +1,5 @@
-from psycopg2.extensions import AsIs
 import psycopg2
-from .studentdb_functions import create_studentdatabase, delete_studentdatabase, connect
+from .studentdb_functions import create_studentdatabase, delete_studentdatabase
 from . import hash
 import os
 import subprocess

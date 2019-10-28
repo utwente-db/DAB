@@ -10,7 +10,7 @@
 # the base directory (please change to your full path)
 chdir = /[DOCUMENT ROOT]
 # Django's wsgi file (does not need changing)
-module = designproject.wsgi
+module = src.designproject.wsgi
 # the virtualenv (please change to your full path + /venv)
 home = /[DOCUMENT ROOT]/venv
 
@@ -27,7 +27,7 @@ chmod-socket = 666
 vacuum = true
 
 # Do not change this!
-env = DJANGO_SETTINGS_MODULE=designproject.settings
+env = DJANGO_SETTINGS_MODULE=src.designproject.settings
 
 # No idea if this setting actually does anything
 deamonize = /data/dab/uwsgi.log

@@ -53,7 +53,7 @@ Importing the schema into this database will be done in a later step, when `inst
 ## Settings
 
 There are two kinds of settings: Public settings and private settings.
-The former can simply be accessed from `designproject/settings.py`, and are as follows.
+The former can simply be accessed from `src/designproject/settings.py`, and are as follows.
 This file contains many settings that do not need to be edited, but some do:
 
 - `DEBUG`: Whether the server is in debug mode. Set to `True` on development, and to `False` on production
@@ -64,7 +64,7 @@ This file contains many settings that do not need to be edited, but some do:
 
 Private settings are stored in the file `secret.py`.
 
-There MUST exist a file `designproject/secret.py`. 
+There MUST exist a file `src/designproject/secret.py`. 
 This file is not included in this repository for obvious reasons.
 The repository does, however, include secret.py.example, which can be used as a template.
 

@@ -2,35 +2,23 @@
 from __future__ import unicode_literals
 
 import json
-import logging
-import re
 import functools
-import base64
 #import os
 #import pwd
 
 
-from django.db.models import Q
 from django.utils import timezone
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
 from django.shortcuts import render
-from django.template import loader
-from django.middleware.csrf import get_token
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.views.decorators.csrf import csrf_protect
 #from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.http import require_http_methods, require_POST, require_GET
-from django.template import RequestContext
-from django.conf import settings
 from rest_framework import status
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
 from django.db.utils import OperationalError
 
-from designproject.settings import DATABASE_SERVER
-from designapp1 import statements
+from src.designproject.settings import DATABASE_SERVER
 from . import hash
 from .forms import *
 from .serializers import *
@@ -960,7 +948,7 @@ def edit_users(request):
 @require_GET
 @require_role_redirect(teacher)
 def admin_view(request):
-    return render(request, 'admin.html', {'role' : request.session['role']} )
+    return render(request, 'admin.html', {'role' : request.session['role']})
 
 
 def test(request):
@@ -1116,7 +1104,7 @@ def verify(request, token):
         user.token = None
         user.save()
         return render(request, 'login.html',
-                  {"form": LoginForm(), 'template_class': 'account-verified'})
+                      {"form": LoginForm(), 'template_class': 'account-verified'})
     except dbmusers.DoesNotExist as e:
         return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
 
@@ -1224,7 +1212,7 @@ def reset_password(request, pk, token):
         return HttpResponse("token expired", status=status.HTTP_403_FORBIDDEN)
 
     if request.method == "GET":
-        return render(request,"reset_password.html", { 'pk' : pk, 'token' : token})
+        return render(request, "reset_password.html", {'pk' : pk, 'token' : token})
 
     else:
         body = None
@@ -1249,7 +1237,7 @@ def password_has_been_reset(request):
 @require_GET
 def student_view(request):
     TA_count = TAs.objects.filter(studentid=request.session['user']).count();
-    return render(request, 'student_view.html', { 'server_address' : DATABASE_SERVER, 'role' : request.session['role'], 'TA_count' : TA_count})
+    return render(request, 'student_view.html', {'server_address' : DATABASE_SERVER, 'role' : request.session['role'], 'TA_count' : TA_count})
 
 @require_GET
 # @auth_redirect
