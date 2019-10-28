@@ -26310,8 +26310,8 @@ function populateNewCoursePane() {
     newSchemaRadioNone.checked = true;
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    if (who.role === user_1.UserRole.admin || who.role === user_1.UserRole.teacher) {
-        // TODO un hardcode this (maybe only leave for admin)
+    if (who.role === user_1.UserRole.admin) {
+        // TODO fix teacher permissions here
         // TODO also hide html
         fillStudentDatabasesDropdown(newSchemaTransfer);
     }
@@ -26336,11 +26336,11 @@ function populateExistingCoursePane(i) {
         return __generator(this, function (_a) {
             studentDatabasesNavHtml.innerHTML = "";
             courseDatabasesHtml.innerHTML = "No database selected";
-            if (who.role === user_1.UserRole.admin || who.role === user_1.UserRole.teacher) {
-                // TODO un hardcode this
+            if (who.role === user_1.UserRole.admin) {
+                // TODO fix permissions for teacher
                 fillStudentDatabasesDropdown(existingSchemaTransfer);
-                populateTAPane(i);
             }
+            populateTAPane(i);
             displayStudentDatabasesForCourse(i);
             [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach(function (el) {
                 register_1.setNeutral(el);

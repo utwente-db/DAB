@@ -131,8 +131,8 @@ function populateNewCoursePane(): void {
 
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    if (who.role === UserRole.admin || who.role === UserRole.teacher) {
-        // TODO un hardcode this (maybe only leave for admin)
+    if (who.role === UserRole.admin) {
+        // TODO fix teacher permissions here
         // TODO also hide html
         fillStudentDatabasesDropdown(newSchemaTransfer);
     }
@@ -159,12 +159,13 @@ function goToAddCoursePane(event: Event): void {
 async function populateExistingCoursePane(i: number): Promise<void> {
     studentDatabasesNavHtml.innerHTML = "";
     courseDatabasesHtml.innerHTML = "No database selected";
-    if (who.role === UserRole.admin || who.role === UserRole.teacher) {
-        // TODO un hardcode this
+    if (who.role === UserRole.admin) {
+        // TODO fix permissions for teacher
         fillStudentDatabasesDropdown(existingSchemaTransfer);
-        populateTAPane(i);
 
     }
+    populateTAPane(i);
+
     displayStudentDatabasesForCourse(i);
     [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach((el) => {
         setNeutral(el);
