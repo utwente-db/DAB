@@ -5,6 +5,7 @@ import {setInvalid, setNeutral, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
 import Swal from "sweetalert2";
+import {deleteDatabase, resetDatabase, TA, User, UserRole} from "./user";
 
 let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -13,6 +14,11 @@ const coursesContentHtml: HTMLDivElement = document.getElementById("courses-cont
 const existingCoursePane = document.getElementById("existing-course-pane") as HTMLDivElement;
 const newCoursePane = document.getElementById("new-course-pane") as HTMLDivElement;
 
+const studentDatabasesNavHtml: HTMLDivElement = document.getElementById("studentdatabases-nav") as HTMLDivElement;
+const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
+
+const taNav: HTMLDivElement = document.getElementById("TA-nav") as HTMLDivElement;
+const taDiv: HTMLDivElement = document.getElementById("TA-div") as HTMLDivElement;
 
 const newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement;
 const newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement;
@@ -65,16 +71,17 @@ let who: Who;
 let courses: Course[];
 // tslint:disable-next-line:prefer-const
 let currentCourse: Course;
+let users: User[] = [];
 
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
 function validCoursename(field: HTMLInputElement): boolean {
-    const coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/
+    const coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/;
     if (coursenameRegex.test(field.value)) {
         setValid(field);
         return true
     } else {
-        setInvalid(field, "Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces")
+        setInvalid(field, "Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces");
         return false
     }
 }
@@ -124,8 +131,12 @@ function populateNewCoursePane(): void {
 
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    fillStudentDatabasesDropdown(newSchemaTransfer);
-        newSchemaTransfer.value = String(0);
+    if (who.role === UserRole.admin) {
+        // TODO fix teacher permissions here
+        // TODO also hide html
+        fillStudentDatabasesDropdown(newSchemaTransfer);
+    }
+    newSchemaTransfer.value = String(0);
 
 
 }
@@ -146,6 +157,16 @@ function goToAddCoursePane(event: Event): void {
 }
 
 async function populateExistingCoursePane(i: number): Promise<void> {
+    studentDatabasesNavHtml.innerHTML = "";
+    courseDatabasesHtml.innerHTML = "No database selected";
+    if (who.role === UserRole.admin) {
+        // TODO fix permissions for teacher
+        fillStudentDatabasesDropdown(existingSchemaTransfer);
+
+    }
+    populateTAPane(i);
+
+    displayStudentDatabasesForCourse(i);
     [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach((el) => {
         setNeutral(el);
     });
@@ -153,7 +174,7 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     currentCourse = courses[i];
     existingCourseIDField.value = String(courses[i].courseid);
     existingCourseFIDField.value = String(courses[i].fid);
-    existingCourseInfoField.value = courses[i].info
+    existingCourseInfoField.value = courses[i].info;
     existingCoursenameField.value = courses[i].coursename;
     existingActiveField.checked = courses[i].active;
 
@@ -164,8 +185,8 @@ async function populateExistingCoursePane(i: number): Promise<void> {
 
     existingSchemaTextarea.value = "";
     existingSchemaUpload.value = "";
-    fillStudentDatabasesDropdown(existingSchemaTransfer);
     existingSchemaTransfer.value = String(0);
+
 }
 
 export function goToExistingCoursePane(i: number): void {
@@ -188,7 +209,7 @@ function validFID(field: HTMLInputElement): boolean {
             setValid(field);
             return true
         } else {
-            setInvalid(field, "Please enter a valid integer")
+            setInvalid(field, "Please enter a valid integer");
             return false
         }
     } catch (error) {
@@ -204,7 +225,7 @@ function nonEmptyTextarea(newSchemaTextarea: HTMLTextAreaElement): boolean {
         setInvalid(newSchemaTextarea, "Please enter a valid string or select not to add a schema");
         return false;
     } else {
-        setValid(newSchemaTextarea)
+        setValid(newSchemaTextarea);
         return true;
     }
 }
@@ -317,6 +338,7 @@ async function tryAddCourse(): Promise<void> {
             if (schema !== "") {
 
                 const response = await axios.post(`/rest/courses/${courseID}/schema`, schema);
+                // TODO do something with response
                 addAlert("successfully added schema", AlertType.success);
 
 
@@ -332,7 +354,7 @@ async function tryAddCourse(): Promise<void> {
                 coursesNavHtml.removeChild(coursesNavHtml.firstElementChild)
             }
             courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-            await displayCourses(courses, who, true, courses.indexOf(course))
+            await displayCourses(courses, who, true, courses.indexOf(course));
 
             goToExistingCoursePane(courses.indexOf(course))
         } catch (error) {
@@ -359,7 +381,7 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
         return false;
     }
     let success: boolean;
-    const tempAlert: ChildNode | null = addTempAlert()
+    const tempAlert: ChildNode | null = addTempAlert();
     // changePageState(false, changeStudentViewState);
     try {
         await axios.delete(`/rest/courses/${courseID}/`);
@@ -373,7 +395,7 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
         // }
         // courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
 
-        document.getElementsByClassName("nav-link active")[0].remove();
+        document.getElementsByClassName("course-link nav-link active")[0].remove();
         Array.from(coursesContentHtml.children).forEach((child) => {
             child.classList.remove("active");
         });
@@ -415,6 +437,7 @@ async function tryEditCourse(): Promise<void> {
 
         try {
             const response = await axios.put(`/rest/courses/${existingCourseIDField.value}`, inputCourse) as AxiosResponse;
+            // TODO Do something with the response
             addAlert("Successfully edited course (without schema)", AlertType.success, tempAlert);
             const schema: string = await getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload,
                 existingSchemaUpload);
@@ -430,7 +453,7 @@ async function tryEditCourse(): Promise<void> {
                 await axios.post(`/rest/schematransfer/${existingCourseIDField.value}/${dbid}`);
                 addAlert("Successfully added schema", AlertType.success);
             }
-            const navLink = document.getElementsByClassName("nav-link active")[0]! as HTMLAnchorElement;
+            const navLink = document.getElementsByClassName("course-link nav-link active")[0]! as HTMLAnchorElement;
             navLink.innerText = existingCoursenameField.value;
             courses[Number(navLink.id)] = inputCourse; // TODO maybe doesnt have amount of databases field
             goToExistingCoursePane(Number(navLink.id))
@@ -444,15 +467,299 @@ async function tryEditCourse(): Promise<void> {
 
 }
 
+async function displayStudentDatabasesForCourse(i: number): Promise<void> {
+    const dbIDs: number[] = [];
+    // TODO use try except and disabling things here
+    const databases: StudentDatabase[] = (await axios.get(`/rest/studentdatabases/course/${courses[i].courseid}`) as AxiosResponse<StudentDatabase[]>).data;
+
+    const dbIDtoHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
+    if (databases.length === 0) {
+        studentDatabasesNavHtml.innerHTML = "There are no databases for this course";
+        return;
+    }
+
+    // const coursesAndDatabases = new Map<number, string>();
+
+    for (let j = 0; j < databases.length; j++) {
+        dbIDtoHTMLmap.set(databases[j], "");
+    }
+
+    for (let j = 0; j < databases.length; j++) {
+        dbIDs.push(databases[j].dbid);
+        const html: string =
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Database ID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].dbid}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Database name:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].databasename}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Username:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].username}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Password:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].password}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Group ID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].groupid}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">FID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].fid}" readonly="">
+                </div>
+            </div>` +
+            `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Course ID:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].course}" readonly="">
+                </div>
+            </div>` +
+            `<button type="button" class="btn btn-danger" onclick="window.location.replace('/rest/dump/${databases[j].dbid}/')">
+                Download Dump
+            </button>` +
+            `<button id="reset-button-${databases[j].dbid}" type="button" class="btn btn-danger">
+                Reset
+            </button>` +
+            `<button id="delete-button-${databases[j].dbid}" type="button" class="btn btn-danger">
+                Delete
+            </button>`
+
+        ;
+
+        // This will mess up if someone has multiple db's for a single course
+        dbIDtoHTMLmap.set(databases[j], html);
+    }
+
+    const resultNav: string[] = [];
+    const resultContent: string[] = [];
+    for (const entry of Array.from(dbIDtoHTMLmap.entries())) {
+        const db: StudentDatabase = entry[0];
+        const content: string = entry[1];
+
+
+        const templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}</a>`;
+        const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
+
+        fragment.firstElementChild!.addEventListener("click", (event) => {
+            courseDatabasesHtml.innerHTML = content;
+
+            const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${db.dbid}`) as HTMLButtonElement;
+            resetButton.addEventListener("click", () => {
+                resetDatabase(db.dbid);
+            });
+            const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
+            deleteButton.addEventListener("click", () => {
+                deleteDatabase(db.dbid, courseDatabasesHtml);
+            });
+        });
+
+
+        studentDatabasesNavHtml.appendChild(fragment);
+
+
+    }
+
+}
+
+async function makeUserTA(user: User, i: number): Promise<boolean> {
+    const taObject: { studentid: number; courseid: number } = {
+        "courseid": courses[i].courseid,
+        "studentid": user.id
+    }
+    // TODO add disabling things
+    const tempAlert = addTempAlert();
+    let success = false;
+    changePageState(false, changeEditCoursesState);
+    try {
+        const response = await axios.post(`/rest/tas/`, taObject) as AxiosResponse<TA>;
+        const ta = response.data;
+        // TODO change nav and div content on state change using TA object
+        addAlert(`${user.email} was added as a TA`, AlertType.success, tempAlert);
+
+        const templateString = `<a class="ta-link nav-link green-nav active" data-toggle="pill" href="#">${user.email}</a>`;
+        const newFragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
+
+        const activeLink: HTMLAnchorElement = document.getElementsByClassName("ta-link nav-link active")[0] as HTMLAnchorElement;
+
+        activeLink.classList.remove("active");
+
+
+        newFragment.firstElementChild!.addEventListener("click", (event) => {
+            const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+            userTAButton.addEventListener("click", () => {
+                removeTA(user, ta.taid, i);
+            });
+        });
+
+        activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild!);
+        activeLink.remove();
+
+        const taFragment = generateTaDivHTML(user, true);
+        taDiv.innerHTML = taFragment;
+
+        const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+        userTAButton.addEventListener("click", () => {
+            removeTA(user, ta.taid, i);
+        });
+
+        success = true;
+    } catch (error) {
+        addErrorAlert(error, tempAlert);
+        success = false;
+
+    } finally {
+        changePageState(true, changeEditCoursesState);
+    }
+    return success;
+
+}
+
+async function removeTA(user: User, taID: number, i: number): Promise<boolean> {
+    // TODO add disabling things
+    const tempAlert = addTempAlert();
+    let success = false;
+    changePageState(false, changeEditCoursesState);
+    try {
+        const response = await axios.delete(`/rest/tas/${taID}/`) as AxiosResponse;
+        // TODO change nav and div content on state change using TA object
+        addAlert(`${user.email} is no longer a TA`, AlertType.success, tempAlert);
+
+        const templateString = `<a class="ta-link nav-link not-green-nav active" data-toggle="pill" href="#">${user.email}</a>`;
+        const newFragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
+
+        const activeLink: HTMLAnchorElement = document.getElementsByClassName("ta-link nav-link active")[0] as HTMLAnchorElement;
+
+        activeLink.classList.remove("active");
+
+
+        newFragment.firstElementChild!.addEventListener("click", (event) => {
+            const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+            userTAButton.addEventListener("click", () => {
+                makeUserTA(user, i);
+            });
+        });
+
+        activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild!);
+        activeLink.remove();
+
+        const taFragment = generateTaDivHTML(user, false);
+        taDiv.innerHTML = taFragment;
+
+        const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+        userTAButton.addEventListener("click", () => {
+            makeUserTA(user, i);
+        });
+
+
+        success = true;
+    } catch (error) {
+        addErrorAlert(error, tempAlert);
+        success = false;
+
+    } finally {
+        changePageState(true, changeEditCoursesState);
+    }
+    return success;
+}
+
+function generateTaDivHTML(user: User, userIsTaForCourse: boolean): string {
+    const userIsTaString = userIsTaForCourse ? `<span class="text-success h5">${user.email} is a TA for this course</span>` :
+        `<span class="text-danger h5">${user.email} is not a TA for this course</span>`
+    const userTaButton = `<button class="btn btn-info" id="user-ta-button">Change user TA status</button>`
+    const taDivHTML = `${userIsTaString}<br>
+                           ${userTaButton}`.trim();
+    return taDivHTML;
+}
+
+async function populateTAPane(i: number): Promise<void> {
+    taDiv.innerHTML = "No user selected";
+    if (users.length === 0) {
+        taNav.innerHTML = "There are no users in the database."
+    } else {
+        taNav.innerHTML = "";
+    }
+
+    // TODO add error handling, disabling here
+
+    const response = await axios.get(`/rest/tas/course/${courses[i].courseid}`) as AxiosResponse<TA[]>;
+    const taList = response.data;
+    const taListByUserID = taList.map((ta: TA) => ta.studentid);
+
+    users.forEach((user: User) => {
+
+        let taID = 0;
+        const userIsTaForCourse = taListByUserID.includes(user.id);
+        if (userIsTaForCourse) {
+            taID = taList[taListByUserID.indexOf(user.id)].taid
+        }
+
+        const greenClass = userIsTaForCourse ? "green-nav" : "not-green-nav";
+        const templateString = `<a class="ta-link nav-link ${greenClass}" data-toggle="pill" href="#">${user.email}</a>`;
+        const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
+
+
+        const taDivHTML = generateTaDivHTML(user, userIsTaForCourse);
+
+
+        fragment.firstElementChild!.addEventListener("click", (event) => {
+            taDiv.innerHTML = taDivHTML;
+        });
+
+        if (userIsTaForCourse) {
+
+            fragment.firstElementChild!.addEventListener("click", (event) => {
+                const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+                userTAButton.addEventListener("click", () => {
+                    removeTA(user, taID, i);
+                });
+            });
+        } else {
+            fragment.firstElementChild!.addEventListener("click", (event) => {
+                const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+                userTAButton.addEventListener("click", () => {
+                    makeUserTA(user, i);
+                });
+            });
+
+        }
+        taNav.appendChild(fragment);
+
+    });
+
+
+}
+
 function tryDumpCourse(id: number): void {
     window.location.href = `/rest/course_dump/${id}`;
 }
 
 window.onload = async () => {
+    who = await getWhoamiPromise();
+
     await Promise.all([
         (async () => {
-            who = await getWhoamiPromise();
             courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+            // TODO add error handlign here
+            if (who.role === UserRole.teacher || who.role === UserRole.admin) {
+                // TODO un hardcode this
+                users = (await axios.get(`/rest/dbmusers/`) as AxiosResponse<User[]>).data;
+
+            }
             await displayCourses(courses, who, true)
 
         })(),

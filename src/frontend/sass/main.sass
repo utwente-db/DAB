@@ -43,13 +43,15 @@ a
   @extend .text-center
 // border-color: #17a2b8
 
-.tableFixHead thead th
+.tableFixHead
+  & thead th
     position: sticky
     top: 0
     cursor: pointer
 
-// .table th .table td
-//     border-top: 0px
+.table
+  & th td
+     border-top: 0px
 
 table
     border-collapse: collapse

@@ -26198,11 +26198,16 @@ var register_1 = __webpack_require__(/*! ./register */ "./src/frontend/scripts/r
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
 var student_view_1 = __webpack_require__(/*! ./student_view */ "./src/frontend/scripts/student_view.ts");
 var sweetalert2_1 = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
+var user_1 = __webpack_require__(/*! ./user */ "./src/frontend/scripts/user.ts");
 var addCourseLink = document.getElementById("add-course-link");
 var coursesNavHtml = document.getElementById("courses-nav");
 var coursesContentHtml = document.getElementById("courses-content");
 var existingCoursePane = document.getElementById("existing-course-pane");
 var newCoursePane = document.getElementById("new-course-pane");
+var studentDatabasesNavHtml = document.getElementById("studentdatabases-nav");
+var courseDatabasesHtml = document.getElementById("courses-db");
+var taNav = document.getElementById("TA-nav");
+var taDiv = document.getElementById("TA-div");
 var newCoursenameField = document.getElementById("new-course-name-field");
 var newCourseInfoField = document.getElementById("new-course-info-field");
 var newCourseFIDField = document.getElementById("new-course-fid-field");
@@ -26243,6 +26248,7 @@ var who;
 var courses;
 // tslint:disable-next-line:prefer-const
 var currentCourse;
+var users = [];
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 function validCoursename(field) {
     var coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/;
@@ -26304,7 +26310,11 @@ function populateNewCoursePane() {
     newSchemaRadioNone.checked = true;
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    fillStudentDatabasesDropdown(newSchemaTransfer);
+    if (who.role === user_1.UserRole.admin) {
+        // TODO fix teacher permissions here
+        // TODO also hide html
+        fillStudentDatabasesDropdown(newSchemaTransfer);
+    }
     newSchemaTransfer.value = String(0);
 }
 function goToAddCoursePane(event) {
@@ -26324,6 +26334,14 @@ function goToAddCoursePane(event) {
 function populateExistingCoursePane(i) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
+            studentDatabasesNavHtml.innerHTML = "";
+            courseDatabasesHtml.innerHTML = "No database selected";
+            if (who.role === user_1.UserRole.admin) {
+                // TODO fix permissions for teacher
+                fillStudentDatabasesDropdown(existingSchemaTransfer);
+            }
+            populateTAPane(i);
+            displayStudentDatabasesForCourse(i);
             [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach(function (el) {
                 register_1.setNeutral(el);
             });
@@ -26339,7 +26357,6 @@ function populateExistingCoursePane(i) {
             existingSchemaRadioNone.checked = true;
             existingSchemaTextarea.value = "";
             existingSchemaUpload.value = "";
-            fillStudentDatabasesDropdown(existingSchemaTransfer);
             existingSchemaTransfer.value = String(0);
             return [2 /*return*/];
         });
@@ -26497,6 +26514,7 @@ function tryAddCourse() {
                     return [4 /*yield*/, axios_1.default.post("/rest/courses/" + courseID + "/schema", schema)];
                 case 4:
                     response_1 = _a.sent();
+                    // TODO do something with response
                     alert_1.addAlert("successfully added schema", alert_1.AlertType.success);
                     return [3 /*break*/, 7];
                 case 5:
@@ -26566,7 +26584,7 @@ function tryDeleteCourse(courseID) {
                     //     }
                     // }
                     // courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-                    document.getElementsByClassName("nav-link active")[0].remove();
+                    document.getElementsByClassName("course-link nav-link active")[0].remove();
                     Array.from(coursesContentHtml.children).forEach(function (child) {
                         child.classList.remove("active");
                     });
@@ -26606,6 +26624,7 @@ function tryEditCourse() {
                     return [4 /*yield*/, axios_1.default.put("/rest/courses/" + existingCourseIDField.value, inputCourse)];
                 case 2:
                     response = _a.sent();
+                    // TODO Do something with the response
                     alert_1.addAlert("Successfully edited course (without schema)", alert_1.AlertType.success, tempAlert);
                     return [4 /*yield*/, getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload, existingSchemaUpload)];
                 case 3:
@@ -26625,7 +26644,7 @@ function tryEditCourse() {
                     alert_1.addAlert("Successfully added schema", alert_1.AlertType.success);
                     _a.label = 7;
                 case 7:
-                    navLink = document.getElementsByClassName("nav-link active")[0];
+                    navLink = document.getElementsByClassName("course-link nav-link active")[0];
                     navLink.innerText = existingCoursenameField.value;
                     courses[Number(navLink.id)] = inputCourse; // TODO maybe doesnt have amount of databases field
                     goToExistingCoursePane(Number(navLink.id));
@@ -26642,101 +26661,336 @@ function tryEditCourse() {
         });
     });
 }
+function displayStudentDatabasesForCourse(i) {
+    return __awaiter(this, void 0, void 0, function () {
+        var dbIDs, databases, dbIDtoHTMLmap, j, j, html, resultNav, resultContent, _loop_1, _i, _a, entry;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    dbIDs = [];
+                    return [4 /*yield*/, axios_1.default.get("/rest/studentdatabases/course/" + courses[i].courseid)];
+                case 1:
+                    databases = (_b.sent()).data;
+                    dbIDtoHTMLmap = new Map();
+                    if (databases.length === 0) {
+                        studentDatabasesNavHtml.innerHTML = "There are no databases for this course";
+                        return [2 /*return*/];
+                    }
+                    // const coursesAndDatabases = new Map<number, string>();
+                    for (j = 0; j < databases.length; j++) {
+                        dbIDtoHTMLmap.set(databases[j], "");
+                    }
+                    for (j = 0; j < databases.length; j++) {
+                        dbIDs.push(databases[j].dbid);
+                        html = "<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Database ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].dbid + "\" readonly=\"\">\n                </div>\n            </div>" +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Database name:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].databasename + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Username:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].username + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Password:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].password + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Group ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].groupid + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">FID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].fid + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Course ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[j].course + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<button type=\"button\" class=\"btn btn-danger\" onclick=\"window.location.replace('/rest/dump/" + databases[j].dbid + "/')\">\n                Download Dump\n            </button>") +
+                            ("<button id=\"reset-button-" + databases[j].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Reset\n            </button>") +
+                            ("<button id=\"delete-button-" + databases[j].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Delete\n            </button>");
+                        // This will mess up if someone has multiple db's for a single course
+                        dbIDtoHTMLmap.set(databases[j], html);
+                    }
+                    resultNav = [];
+                    resultContent = [];
+                    _loop_1 = function (entry) {
+                        var db = entry[0];
+                        var content = entry[1];
+                        var templateString = "<a class=\"studentdatabase-link nav-link\" data-toggle=\"pill\" href=\"#\">" + db.databasename + "</a>";
+                        var fragment = document.createRange().createContextualFragment(templateString);
+                        fragment.firstElementChild.addEventListener("click", function (event) {
+                            courseDatabasesHtml.innerHTML = content;
+                            var resetButton = document.getElementById("reset-button-" + db.dbid);
+                            resetButton.addEventListener("click", function () {
+                                user_1.resetDatabase(db.dbid);
+                            });
+                            var deleteButton = document.getElementById("delete-button-" + db.dbid);
+                            deleteButton.addEventListener("click", function () {
+                                user_1.deleteDatabase(db.dbid, courseDatabasesHtml);
+                            });
+                        });
+                        studentDatabasesNavHtml.appendChild(fragment);
+                    };
+                    for (_i = 0, _a = Array.from(dbIDtoHTMLmap.entries()); _i < _a.length; _i++) {
+                        entry = _a[_i];
+                        _loop_1(entry);
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function makeUserTA(user, i) {
+    return __awaiter(this, void 0, void 0, function () {
+        var taObject, tempAlert, success, response, ta_1, templateString, newFragment, activeLink, taFragment, userTAButton, error_5;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    taObject = {
+                        "courseid": courses[i].courseid,
+                        "studentid": user.id
+                    };
+                    tempAlert = alert_1.addTempAlert();
+                    success = false;
+                    navbar_1.changePageState(false, changeEditCoursesState);
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, 4, 5]);
+                    return [4 /*yield*/, axios_1.default.post("/rest/tas/", taObject)];
+                case 2:
+                    response = _a.sent();
+                    ta_1 = response.data;
+                    // TODO change nav and div content on state change using TA object
+                    alert_1.addAlert(user.email + " was added as a TA", alert_1.AlertType.success, tempAlert);
+                    templateString = "<a class=\"ta-link nav-link green-nav active\" data-toggle=\"pill\" href=\"#\">" + user.email + "</a>";
+                    newFragment = document.createRange().createContextualFragment(templateString);
+                    activeLink = document.getElementsByClassName("ta-link nav-link active")[0];
+                    activeLink.classList.remove("active");
+                    newFragment.firstElementChild.addEventListener("click", function (event) {
+                        var userTAButton = document.getElementById("user-ta-button");
+                        userTAButton.addEventListener("click", function () {
+                            removeTA(user, ta_1.taid, i);
+                        });
+                    });
+                    activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild);
+                    activeLink.remove();
+                    taFragment = generateTaDivHTML(user, true);
+                    taDiv.innerHTML = taFragment;
+                    userTAButton = document.getElementById("user-ta-button");
+                    userTAButton.addEventListener("click", function () {
+                        removeTA(user, ta_1.taid, i);
+                    });
+                    success = true;
+                    return [3 /*break*/, 5];
+                case 3:
+                    error_5 = _a.sent();
+                    alert_1.addErrorAlert(error_5, tempAlert);
+                    success = false;
+                    return [3 /*break*/, 5];
+                case 4:
+                    navbar_1.changePageState(true, changeEditCoursesState);
+                    return [7 /*endfinally*/];
+                case 5: return [2 /*return*/, success];
+            }
+        });
+    });
+}
+function removeTA(user, taID, i) {
+    return __awaiter(this, void 0, void 0, function () {
+        var tempAlert, success, response, templateString, newFragment, activeLink, taFragment, userTAButton, error_6;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    tempAlert = alert_1.addTempAlert();
+                    success = false;
+                    navbar_1.changePageState(false, changeEditCoursesState);
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, 4, 5]);
+                    return [4 /*yield*/, axios_1.default.delete("/rest/tas/" + taID + "/")];
+                case 2:
+                    response = _a.sent();
+                    // TODO change nav and div content on state change using TA object
+                    alert_1.addAlert(user.email + " is no longer a TA", alert_1.AlertType.success, tempAlert);
+                    templateString = "<a class=\"ta-link nav-link not-green-nav active\" data-toggle=\"pill\" href=\"#\">" + user.email + "</a>";
+                    newFragment = document.createRange().createContextualFragment(templateString);
+                    activeLink = document.getElementsByClassName("ta-link nav-link active")[0];
+                    activeLink.classList.remove("active");
+                    newFragment.firstElementChild.addEventListener("click", function (event) {
+                        var userTAButton = document.getElementById("user-ta-button");
+                        userTAButton.addEventListener("click", function () {
+                            makeUserTA(user, i);
+                        });
+                    });
+                    activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild);
+                    activeLink.remove();
+                    taFragment = generateTaDivHTML(user, false);
+                    taDiv.innerHTML = taFragment;
+                    userTAButton = document.getElementById("user-ta-button");
+                    userTAButton.addEventListener("click", function () {
+                        makeUserTA(user, i);
+                    });
+                    success = true;
+                    return [3 /*break*/, 5];
+                case 3:
+                    error_6 = _a.sent();
+                    alert_1.addErrorAlert(error_6, tempAlert);
+                    success = false;
+                    return [3 /*break*/, 5];
+                case 4:
+                    navbar_1.changePageState(true, changeEditCoursesState);
+                    return [7 /*endfinally*/];
+                case 5: return [2 /*return*/, success];
+            }
+        });
+    });
+}
+function generateTaDivHTML(user, userIsTaForCourse) {
+    var userIsTaString = userIsTaForCourse ? "<span class=\"text-success h5\">" + user.email + " is a TA for this course</span>" :
+        "<span class=\"text-danger h5\">" + user.email + " is not a TA for this course</span>";
+    var userTaButton = "<button class=\"btn btn-info\" id=\"user-ta-button\">Change user TA status</button>";
+    var taDivHTML = (userIsTaString + "<br>\n                           " + userTaButton).trim();
+    return taDivHTML;
+}
+function populateTAPane(i) {
+    return __awaiter(this, void 0, void 0, function () {
+        var response, taList, taListByUserID;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    taDiv.innerHTML = "No user selected";
+                    if (users.length === 0) {
+                        taNav.innerHTML = "There are no users in the database.";
+                    }
+                    else {
+                        taNav.innerHTML = "";
+                    }
+                    return [4 /*yield*/, axios_1.default.get("/rest/tas/course/" + courses[i].courseid)];
+                case 1:
+                    response = _a.sent();
+                    taList = response.data;
+                    taListByUserID = taList.map(function (ta) { return ta.studentid; });
+                    users.forEach(function (user) {
+                        var taID = 0;
+                        var userIsTaForCourse = taListByUserID.includes(user.id);
+                        if (userIsTaForCourse) {
+                            taID = taList[taListByUserID.indexOf(user.id)].taid;
+                        }
+                        var greenClass = userIsTaForCourse ? "green-nav" : "not-green-nav";
+                        var templateString = "<a class=\"ta-link nav-link " + greenClass + "\" data-toggle=\"pill\" href=\"#\">" + user.email + "</a>";
+                        var fragment = document.createRange().createContextualFragment(templateString);
+                        var taDivHTML = generateTaDivHTML(user, userIsTaForCourse);
+                        fragment.firstElementChild.addEventListener("click", function (event) {
+                            taDiv.innerHTML = taDivHTML;
+                        });
+                        if (userIsTaForCourse) {
+                            fragment.firstElementChild.addEventListener("click", function (event) {
+                                var userTAButton = document.getElementById("user-ta-button");
+                                userTAButton.addEventListener("click", function () {
+                                    removeTA(user, taID, i);
+                                });
+                            });
+                        }
+                        else {
+                            fragment.firstElementChild.addEventListener("click", function (event) {
+                                var userTAButton = document.getElementById("user-ta-button");
+                                userTAButton.addEventListener("click", function () {
+                                    makeUserTA(user, i);
+                                });
+                            });
+                        }
+                        taNav.appendChild(fragment);
+                    });
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 function tryDumpCourse(id) {
     window.location.href = "/rest/course_dump/" + id;
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, Promise.all([
-                    (function () { return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, navbar_1.getWhoamiPromise()];
-                                case 1:
-                                    who = _a.sent();
-                                    return [4 /*yield*/, courses_1.getCoursesPromise()];
-                                case 2:
-                                    courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
-                                    return [4 /*yield*/, student_view_1.displayCourses(courses, who, true)];
-                                case 3:
-                                    _a.sent();
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); })(),
-                    navbar_1.initNavbar(changeEditCoursesState),
-                    newCourseContent.addEventListener("submit", function (event) {
-                        event.preventDefault();
-                        tryAddCourse();
-                    }),
-                    newSchemaRadioNone.parentElement.addEventListener("click", function () {
-                        newSchemaTextareaDiv.classList.add("d-none");
-                        newSchemaTransferDiv.classList.add("d-none");
-                        newSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    newSchemaRadioTextarea.parentElement.addEventListener("click", function () {
-                        newSchemaTextareaDiv.classList.remove("d-none");
-                        newSchemaTransferDiv.classList.add("d-none");
-                        newSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    newSchemaRadioTransfer.parentElement.addEventListener("click", function () {
-                        newSchemaTextareaDiv.classList.add("d-none");
-                        newSchemaTransferDiv.classList.remove("d-none");
-                        newSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    newSchemaRadioUpload.parentElement.addEventListener("click", function () {
-                        newSchemaTextareaDiv.classList.add("d-none");
-                        newSchemaTransferDiv.classList.add("d-none");
-                        newSchemaUploadDiv.classList.remove("d-none");
-                    }),
-                    existingSchemaRadioNone.parentElement.addEventListener("click", function () {
-                        existingSchemaTextareaDiv.classList.add("d-none");
-                        existingSchemaTransferDiv.classList.add("d-none");
-                        existingSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    existingSchemaRadioTextarea.parentElement.addEventListener("click", function () { return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            // existingSchemaTextarea.value = (await axios.get(`/rest/courses/${existingCourseIDField.value}/schema/`) as AxiosResponse<string>).data;
-                            existingSchemaTextareaDiv.classList.remove("d-none");
+            case 0: return [4 /*yield*/, navbar_1.getWhoamiPromise()];
+            case 1:
+                who = _a.sent();
+                return [4 /*yield*/, Promise.all([
+                        (function () { return __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
+                                    case 1:
+                                        courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
+                                        if (!(who.role === user_1.UserRole.teacher || who.role === user_1.UserRole.admin)) return [3 /*break*/, 3];
+                                        return [4 /*yield*/, axios_1.default.get("/rest/dbmusers/")];
+                                    case 2:
+                                        // TODO un hardcode this
+                                        users = (_a.sent()).data;
+                                        _a.label = 3;
+                                    case 3: return [4 /*yield*/, student_view_1.displayCourses(courses, who, true)];
+                                    case 4:
+                                        _a.sent();
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); })(),
+                        navbar_1.initNavbar(changeEditCoursesState),
+                        newCourseContent.addEventListener("submit", function (event) {
+                            event.preventDefault();
+                            tryAddCourse();
+                        }),
+                        newSchemaRadioNone.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.add("d-none");
+                            newSchemaTransferDiv.classList.add("d-none");
+                            newSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        newSchemaRadioTextarea.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.remove("d-none");
+                            newSchemaTransferDiv.classList.add("d-none");
+                            newSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        newSchemaRadioTransfer.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.add("d-none");
+                            newSchemaTransferDiv.classList.remove("d-none");
+                            newSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        newSchemaRadioUpload.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.add("d-none");
+                            newSchemaTransferDiv.classList.add("d-none");
+                            newSchemaUploadDiv.classList.remove("d-none");
+                        }),
+                        existingSchemaRadioNone.parentElement.addEventListener("click", function () {
+                            existingSchemaTextareaDiv.classList.add("d-none");
                             existingSchemaTransferDiv.classList.add("d-none");
                             existingSchemaUploadDiv.classList.add("d-none");
-                            return [2 /*return*/];
-                        });
-                    }); }),
-                    existingSchemaRadioTransfer.parentElement.addEventListener("click", function () {
-                        existingSchemaTextareaDiv.classList.add("d-none");
-                        existingSchemaTransferDiv.classList.remove("d-none");
-                        existingSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    existingSchemaRadioUpload.parentElement.addEventListener("click", function () {
-                        existingSchemaTextareaDiv.classList.add("d-none");
-                        existingSchemaTransferDiv.classList.add("d-none");
-                        existingSchemaUploadDiv.classList.remove("d-none");
-                    }),
-                    (function () {
-                        if (addCourseLink) {
-                            addCourseLink.addEventListener("click", goToAddCoursePane);
-                        }
-                        if (deleteCourseButton) {
-                            deleteCourseButton.addEventListener("click", function () {
-                                tryDeleteCourse(Number(existingCourseIDField.value));
+                        }),
+                        existingSchemaRadioTextarea.parentElement.addEventListener("click", function () { return __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                // existingSchemaTextarea.value = (await axios.get(`/rest/courses/${existingCourseIDField.value}/schema/`) as AxiosResponse<string>).data;
+                                existingSchemaTextareaDiv.classList.remove("d-none");
+                                existingSchemaTransferDiv.classList.add("d-none");
+                                existingSchemaUploadDiv.classList.add("d-none");
+                                return [2 /*return*/];
                             });
-                        }
-                        if (dumpCourseButton) {
-                            dumpCourseButton.addEventListener("click", function () {
-                                tryDumpCourse(Number(existingCourseIDField.value));
-                            });
-                        }
-                    })(),
-                    editCourseButton.addEventListener("click", function () {
-                        tryEditCourse();
-                    }),
-                    populateNewCoursePane(),
-                    navbar_1.navbarEditCourses.classList.add("active"),
-                    (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
-                ])];
-            case 1:
+                        }); }),
+                        existingSchemaRadioTransfer.parentElement.addEventListener("click", function () {
+                            existingSchemaTextareaDiv.classList.add("d-none");
+                            existingSchemaTransferDiv.classList.remove("d-none");
+                            existingSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        existingSchemaRadioUpload.parentElement.addEventListener("click", function () {
+                            existingSchemaTextareaDiv.classList.add("d-none");
+                            existingSchemaTransferDiv.classList.add("d-none");
+                            existingSchemaUploadDiv.classList.remove("d-none");
+                        }),
+                        (function () {
+                            if (addCourseLink) {
+                                addCourseLink.addEventListener("click", goToAddCoursePane);
+                            }
+                            if (deleteCourseButton) {
+                                deleteCourseButton.addEventListener("click", function () {
+                                    tryDeleteCourse(Number(existingCourseIDField.value));
+                                });
+                            }
+                            if (dumpCourseButton) {
+                                dumpCourseButton.addEventListener("click", function () {
+                                    tryDumpCourse(Number(existingCourseIDField.value));
+                                });
+                            }
+                        })(),
+                        editCourseButton.addEventListener("click", function () {
+                            tryEditCourse();
+                        }),
+                        populateNewCoursePane(),
+                        navbar_1.navbarEditCourses.classList.add("active"),
+                        (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
+                    ])];
+            case 2:
                 _a.sent();
                 return [2 /*return*/];
         }
@@ -26872,12 +27126,12 @@ function dumpAlldatabases(disableCallback) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
-                        title: 'title',
-                        text: 'do some migration',
+                        title: 'You are about to generate a migration shell script!',
+                        html: "Clicking migrate will create a shell script that generate a migration of all databases in the system.\n                The location of this shell script will be shown after it has been generated.<br><br>\n                The script will NOT be ran automatically; you will have to connect to the server and execute it manually.\n                After execution, a tarball will be created containing SQL dumps of all databases.<br><br>\n                This tarball will also include a script to restore these dumps to a new database.".trim(),
                         type: 'warning',
                         showCancelButton: true,
                         focusCancel: true,
-                        confirmButtonText: 'migrate',
+                        confirmButtonText: 'Generate script',
                         cancelButtonText: 'Cancel'
                     })];
                 case 1:
@@ -27246,7 +27500,7 @@ function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
     credentialsClass = makeGreen ? "green-nav" : "not-green-nav";
     activeString = active ? "active" : "";
     inactiveCourseString = courseIsActive ? "" : "inactive-course";
-    var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + " " + inactiveCourseString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
+    var templateString = "<a id=\"" + i + "\" class=\"course-link nav-link " + credentialsClass + " " + activeString + " " + inactiveCourseString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
     var fragment = document.createRange().createContextualFragment(templateString);
     if (fromEditCourses) {
         fragment.firstElementChild.addEventListener("click", function (event) {
@@ -27339,7 +27593,7 @@ function changeView(hasCredentials) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    activeLink = document.getElementsByClassName("nav-link active")[0];
+                    activeLink = document.getElementsByClassName("course-link nav-link active")[0];
                     oldPane = hasCredentials ? noCredsPane : haveCredsPane;
                     newPane = hasCredentials ? haveCredsPane : noCredsPane;
                     i = Number(activeLink.id);
@@ -27754,16 +28008,18 @@ function getUserPromise(userid) {
 }
 function displayCoursesAndDatabases(userid) {
     return __awaiter(this, void 0, void 0, function () {
-        var databases, coursesAndDatabases, i, i, html, resultNav, resultContent, active, _i, _a, entry, courseNumber, content, course, resultNavString, resultContentString;
+        var dbIDs, databases, coursesAndDatabases, i, i, html, resultNav, resultContent, active, _i, _a, entry, courseNumber, content, course, resultNavString, resultContentString;
         return __generator(this, function (_b) {
             switch (_b.label) {
-                case 0: return [4 /*yield*/, getDatabasesPromise(userid)];
+                case 0:
+                    dbIDs = [];
+                    return [4 /*yield*/, getDatabasesPromise(userid)];
                 case 1:
                     databases = _b.sent();
                     coursesAndDatabases = new Map();
                     if (databases.length === 0) {
-                        coursesNavHtml.innerHTML = "empty";
-                        courseDatabasesHtml.innerHTML = "no content";
+                        coursesNavHtml.innerHTML = "This user does not have any databases";
+                        courseDatabasesHtml.innerHTML = "No database selected";
                         return [2 /*return*/];
                     }
                     // const coursesAndDatabases = new Map<number, string>();
@@ -27771,14 +28027,18 @@ function displayCoursesAndDatabases(userid) {
                         coursesAndDatabases.set(databases[i].course, "");
                     }
                     for (i = 0; i < databases.length; i++) {
-                        html = "dbid: " + databases[i].dbid + "<br>"
-                            + "databasename: " + databases[i].databasename + "<br>"
-                            + "username: " + databases[i].username + "<br>"
-                            + "password: " + databases[i].password + "<br>"
-                            + "groupid: " + databases[i].groupid + "<br>"
-                            + "fid: " + databases[i].fid + "<br>"
-                            + "course: " + databases[i].course + "<br>";
-                        // This will mess up if someone has multiple db's in a single course
+                        dbIDs.push(databases[i].dbid);
+                        html = "<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Database ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].dbid + "\" readonly=\"\">\n                </div>\n            </div>" +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Database name:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].databasename + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Username:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].username + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Password:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].password + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Group ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].groupid + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">FID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].fid + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<div class=\"form-group row\">\n                <label class=\"col-12 col-lg-4 col-form-label\">Course ID:</label>\n                <div class=\"col-12 col-lg-8\">\n                    <input type=\"text\" class=\"form-control\" value=\"" + databases[i].course + "\" readonly=\"\">\n                </div>\n            </div>") +
+                            ("<button type=\"button\" class=\"btn btn-danger\" onclick=\"window.location.replace('/rest/dump/" + databases[i].dbid + "/')\">\n                Download Dump\n            </button>") +
+                            ("<button id=\"reset-button-" + databases[i].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Reset\n            </button>") +
+                            ("<button id=\"delete-button-" + databases[i].dbid + "\" type=\"button\" class=\"btn btn-danger\">\n                Delete\n            </button>");
+                        // This will mess up if someone has multiple db's for a single course
                         coursesAndDatabases.set(databases[i].course, html);
                     }
                     resultNav = [];
@@ -27794,10 +28054,8 @@ function displayCoursesAndDatabases(userid) {
                     return [4 /*yield*/, getCourseByIDPromise(courseNumber)];
                 case 3:
                     course = _b.sent();
-                    resultNav.push("<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>");
-                    resultContent.push("<div class=\"tab-pane" + active + "\" id=\"course" + course.courseid + "\">"
-                        + content
-                        + "test</div>");
+                    resultNav.push("<a class=\"studentdatabase-link nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>");
+                    resultContent.push("<div class=\"tab-pane" + active + "\" id=\"course" + course.courseid + "\">" + content + "</div>");
                     active = "";
                     _b.label = 4;
                 case 4:
@@ -27808,11 +28066,100 @@ function displayCoursesAndDatabases(userid) {
                     resultContentString = resultContent.join("\n");
                     coursesNavHtml.innerHTML = resultNavString;
                     courseDatabasesHtml.innerHTML = resultContentString;
+                    dbIDs.forEach(function (id) {
+                        var resetButton = document.getElementById("reset-button-" + id);
+                        resetButton.addEventListener("click", function () {
+                            resetDatabase(id);
+                        });
+                        var deleteButton = document.getElementById("delete-button-" + id);
+                        deleteButton.addEventListener("click", function () {
+                            deleteDatabase(id, courseDatabasesHtml);
+                        });
+                    });
                     return [2 /*return*/];
             }
         });
     });
 }
+function deleteDatabase(dbID, dbDiv) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, success, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
+                        title: 'Are you sure you want to delete this database?',
+                        text: 'You will not be able to recover your data!',
+                        type: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Delete',
+                        cancelButtonText: 'Cancel'
+                    })];
+                case 1:
+                    result = _a.sent();
+                    if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
+                        return [2 /*return*/, false];
+                    }
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, axios_1.default.delete("/rest/studentdatabases/" + dbID + "/")];
+                case 3:
+                    _a.sent();
+                    alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
+                    document.getElementsByClassName("studentdatabase-link nav-link active")[0].remove();
+                    dbDiv.innerHTML = "No database selected";
+                    success = true;
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_1 = _a.sent();
+                    alert_1.addErrorAlert(error_1);
+                    success = false;
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/, success];
+            }
+        });
+    });
+}
+exports.deleteDatabase = deleteDatabase;
+// Internal server error 500?
+function resetDatabase(dbID) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result, success, error_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, sweetalert2_1.default.fire({
+                        title: 'Are you sure you want to reset this database?',
+                        text: 'You will not be able to recover your data!',
+                        type: 'warning',
+                        showCancelButton: true,
+                        cancelButtonText: 'Cancel',
+                        confirmButtonText: 'Reset'
+                    })];
+                case 1:
+                    result = _a.sent();
+                    if (result.dismiss === sweetalert2_1.default.DismissReason.cancel) {
+                        return [2 /*return*/, false];
+                    }
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, axios_1.default.post("/rest/reset/" + dbID + "/")];
+                case 3:
+                    _a.sent();
+                    alert_1.addAlert("Reset database", alert_1.AlertType.primary);
+                    success = true;
+                    return [3 /*break*/, 5];
+                case 4:
+                    error_2 = _a.sent();
+                    alert_1.addErrorAlert(error_2);
+                    success = false;
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/, success];
+            }
+        });
+    });
+}
+exports.resetDatabase = resetDatabase;
 function displayUserDetails(userid) {
     return __awaiter(this, void 0, void 0, function () {
         var user, role;
@@ -27844,14 +28191,14 @@ function displayUserDetails(userid) {
 }
 function deleteUser(userid) {
     return __awaiter(this, void 0, void 0, function () {
-        var user, result, success, error_1;
+        var user, result, success, error_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getUserPromise(userid)];
                 case 1:
                     user = _a.sent();
                     return [4 /*yield*/, sweetalert2_1.default.fire({
-                            text: "Are you sure you want to delete <strong>" + user.email + "</strong> from the system?",
+                            text: "Are you sure you want to delete " + user.email + " from the system?",
                             type: 'warning',
                             showCancelButton: true,
                             focusCancel: true,
@@ -27870,12 +28217,12 @@ function deleteUser(userid) {
                 case 4:
                     _a.sent();
                     alert("User succesfully deleted!");
-                    window.location.href = '../';
+                    // window.location.href = '../';
                     success = true;
                     return [3 /*break*/, 6];
                 case 5:
-                    error_1 = _a.sent();
-                    alert_1.addErrorAlert(error_1);
+                    error_3 = _a.sent();
+                    alert_1.addErrorAlert(error_3);
                     success = false;
                     return [3 /*break*/, 6];
                 case 6: return [2 /*return*/, success];
@@ -27885,7 +28232,7 @@ function deleteUser(userid) {
 }
 function changeRole(userid) {
     return __awaiter(this, void 0, void 0, function () {
-        var user, selectedRole, role, result, success, error_2;
+        var user, selectedRole, role, result, success, newRole, error_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getUserPromise(userid)];
@@ -27894,7 +28241,7 @@ function changeRole(userid) {
                     selectedRole = document.getElementById("selected_role");
                     role = selectedRole.value;
                     return [4 /*yield*/, sweetalert2_1.default.fire({
-                            text: "Are you sure you want change the role of <strong>" + user.email + "</strong> to " + role + "?",
+                            text: "Are you sure you want change the role of " + user.email + " to " + role + "?",
                             type: 'warning',
                             showCancelButton: true,
                             focusCancel: true,
@@ -27915,13 +28262,24 @@ function changeRole(userid) {
                         })];
                 case 4:
                     _a.sent();
-                    window.location.reload(true);
+                    // window.location.reload(true);
                     alert_1.addAlert("Role changed!", alert_1.AlertType.primary);
+                    newRole = "";
+                    if (Number(role) === 0) {
+                        newRole = "admin";
+                    }
+                    else if (Number(role) === 1) {
+                        newRole = "teacher";
+                    }
+                    else if (Number(role) === 2) {
+                        newRole = "student";
+                    }
+                    roleHtml.innerHTML = "<input type=\"text\" class=\"form-control\" value=\"" + newRole + "\" readonly=\"\">";
                     success = true;
                     return [3 /*break*/, 6];
                 case 5:
-                    error_2 = _a.sent();
-                    alert_1.addErrorAlert(error_2);
+                    error_4 = _a.sent();
+                    alert_1.addErrorAlert(error_4);
                     success = false;
                     return [3 /*break*/, 6];
                 case 6: return [2 /*return*/, success];

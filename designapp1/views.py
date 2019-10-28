@@ -112,7 +112,7 @@ def defaultresponse(request):
 
 @authenticated
 def get_base_response(request, db_parameters):
-    if check_role(request, admin) or db_parameters["dbname"] == "courses":
+    if check_role(request, admin) or db_parameters["dbname"] == "courses" or (check_role(request, teacher) and db_parameters["dbname"] == "dbmusers"):
         try:
             database = db_parameters["db"].objects.all()
             serializer_class = db_parameters["serializer"](database, many=True)
