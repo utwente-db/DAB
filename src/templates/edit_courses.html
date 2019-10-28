@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Edit courses</title>
+{% endblock %}
+
+{% block scripts %}
+    <script defer src="/static/scripts/edit_courses.js"></script>
+{% endblock %}
+
+
+{% block content %}
+    <div class="vh-100 d-flex flex-column">
+        {% include 'navbar.html' %}
+        <div class="container-fluid d-flex py-3 py-md-5 flex-grow-1">
+            <div class="row px-0 px-md-5 center-block flex-row flex-grow-1">
+                <div class="col-12 col-md-4 d-flex">
+                    <div class=" center-block container border border-dark rounded-lg shadow-lg bg-white p-3 p-xl-5 text-center">
+                        <!-- Website title -->
+                        <h2>Course list</h2>
+                        {% if role < 2 %}
+                            <a data-toggle="pill" href="#" id="add-course-link">Add course</a>
+                        {% endif %}
+
+                        <hr/>
+                        <div class="overflow-auto" style="height: 300px;">
+                            <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-12 col-md-8 mt-3 mt-md-0 d-flex">
+                    <div class="center-block container border border-dark rounded-lg shadow-lg bg-white p-3  p-xl-5 text-center">
+
+                        <div class="tab-content" id="courses-content">
+
+
+                            <div class="tab-pane active m-5" id="please-select-a-course"><h1>Please select a course</h1>
+                            </div>
+
+                            <div class="tab-pane" id="new-course-pane">
+                                <form class="form-horizontal" id="new-course-content"> {# actual content #}
+                                    <p class="text-center h4 mb-4">Add course</p>
+                                    <hr/>
+
+                                    <div class="form-group row align-items-center">
+                                        <label for="new-course-name-field" class="col-12 col-md-4 col-form-label">Course
+                                            name</label>
+                                        <div class="col-12 col-md-8 align-middle">
+                                            <input type="text" name="course-name-field" class="form-control"
+                                                   id="new-course-name-field"
+                                                   required="">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row align-items-center">
+                                        <label for="course-info-field" class="col-12 col-md-4 col-form-label">Course
+                                            info</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="text" name="course-info-field" class="form-control"
+                                                   id="new-course-info-field"
+                                                   required="">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row align-items-center mb-4
+                                        {% if role > 0 %}
+                                        d-none
+                                        {% endif %}
+                                        ">
+                                        <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course
+                                            owner ID
+                                            (optional)</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="number" name="course-fid-field" class="form-control"
+                                                   id="new-course-fid-field"
+                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="active-field" class="col-12 col-md-4 col-form-label">Active?</label>
+                                        <div class="col-12 col-md-8">
+                                            <label class="switch">
+                                                <input type="checkbox" class="info" id="new-active-field"
+                                                       name="active-field" checked>
+                                                <span class="slider round"></span>
+                                            </label>
+                                            <div class="invalid-feedback"></div>
+
+
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="new-schema-radio" class="col-12 col-md-4 col-form-label">Add
+                                            schema?</label>
+                                        <div class="col-12 col-md-8 btn-group btn-group-toggle" data-toggle="buttons">
+                                            <label class="btn btn-secondary active">
+                                                <input type="radio" name="options" id="new-schema-radio-none"
+                                                       autocomplete="off"
+                                                       checked> No
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <input type="radio" name="options" id="new-schema-radio-textarea"
+                                                       autocomplete="off">
+                                                Via text field
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <input type="radio" name="options" id="new-schema-radio-upload"
+                                                       autocomplete="off">
+                                                Via file upload
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <input type="radio" name="options" id="new-schema-radio-transfer"
+                                                       autocomplete="off">
+                                                Via schema transfer
+                                            </label>
+
+                                        </div>
+                                        <div class="invalid-feedback"></div>
+
+                                    </div>
+
+
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="new-schema-textarea-div">
+                                        <label for="new-schema-textarea" class="col-12 col-md-4 col-form-label">Schema
+                                            text</label>
+                                        <div class="col-12 col-md-8">
+                              <textarea name="schema-field" class="form-control" id="new-schema-textarea"
+                              ></textarea>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="new-schema-upload-div">
+                                        <label for="new-schema-upload" class="col-12 col-md-4 col-form-label">Schema
+                                            upload</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="file" id="new-schema-upload"/>
+
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="new-schema-transfer-div">
+                                        <label for="new-schema-transfer" class="col-12 col-md-4 col-form-label">Schema
+                                            transfer</label>
+                                        <div class="col-12 col-md-8">
+                                            <select class="form-control" id="new-schema-transfer">
+                                                <option disabled selected value="0">Select a database</option>
+                                            </select>
+
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    {#                        <div class="form-group col-md-6">#}
+                                    {#                            <label for="courses-dropdown">Select a course</label>#}
+                                    {#                            <select class="form-control" id="courses-dropdown">#}
+                                    {#                                <option disabled selected value="0"> select an option</option>#}
+                                    {#                            </select>#}
+                                    {#                        </div>#}
+
+
+                                    <hr>
+                                    <button type="submit" class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3"
+                                            id="add-course-button">Add course
+                                    </button>
+                                </form>
+                            </div>
+
+
+                            <div class="tab-pane" id="existing-course-pane">
+                                <div class="form-horizontal" id="existing-course-content"> {# actual content #}
+                                    <p class="text-center h4 mb-4">Edit course</p>
+                                    <hr/>
+                                    <div class="form-group row align-items-center">
+                                        <label for="course-id-field" class="col-12 col-md-4 col-form-label">Course
+                                            ID</label>
+                                        <div class="col-12 col-md-8 align-middle">
+                                            <input type="number" class="form-control"
+                                                   id="existing-course-id-field" disabled
+                                            >
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row align-items-center">
+                                        <label for="course-name-field" class="col-12 col-md-4 col-form-label">Course
+                                            name</label>
+                                        <div class="col-12 col-md-8 align-middle">
+                                            <input type="text" name="course-name-field" class="form-control"
+                                                   id="existing-course-name-field"
+                                                   required="">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row align-items-center">
+                                        <label for="course-info-field" class="col-12 col-md-4 col-form-label">Course
+                                            info</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="text" name="course-info-field" class="form-control"
+                                                   id="existing-course-info-field"
+                                                   required="">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course
+                                            owner ID
+                                            (optional)</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="number" name="course-fid-field" class="form-control"
+                                                   id="existing-course-fid-field"
+                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'');" disabled>
+
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="active-field" class="col-12 col-md-4 col-form-label">Active?</label>
+                                        <div class="col-12 col-md-8">
+                                            <label class="switch">
+                                                <input type="checkbox" class="info" id="existing-active-field"
+                                                       name="active-field" checked>
+                                                <span class="slider round"></span>
+                                            </label>
+                                            <div class="invalid-feedback"></div>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="existing-schema-radio" class="col-12 col-md-4 col-form-label">Edit
+                                            schema?</label>
+                                        <div class="col-12 col-md-8 btn-group btn-group-toggle" data-toggle="buttons">
+                                            <label class="btn btn-secondary active">
+                                                <input type="radio" name="options" id="existing-schema-radio-none"
+                                                       autocomplete="off"
+                                                       checked> No
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <input type="radio" name="options" id="existing-schema-radio-textarea"
+                                                       autocomplete="off">
+                                                Via text field
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <input type="radio" name="options" id="existing-schema-radio-upload"
+                                                       autocomplete="off">
+                                                Via file upload
+                                            </label>
+                                            <label class="btn btn-secondary">
+                                                <input type="radio" name="options" id="existing-schema-radio-transfer"
+                                                       autocomplete="off">
+                                                Via schema transfer
+                                            </label>
+
+                                        </div>
+                                        <div class="invalid-feedback"></div>
+
+                                    </div>
+
+
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="existing-schema-textarea-div">
+                                        <label for="existing-schema-textarea" class="col-12 col-md-4 col-form-label">Schema
+                                            text</label>
+                                        <div class="col-12 col-md-8">
+                              <textarea name="schema-field" class="form-control" id="existing-schema-textarea"
+                              ></textarea>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="existing-schema-upload-div">
+                                        <label for="existing-schema-upload" class="col-12 col-md-4 col-form-label">Schema
+                                            upload</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="file" id="existing-schema-upload"/>
+
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row align-items-center mb-4 d-none"
+                                         id="existing-schema-transfer-div">
+                                        <label for="existing-schema-transfer" class="col-12 col-md-4 col-form-label">Schema
+                                            transfer</label>
+                                        <div class="col-12 col-md-8">
+                                            <select class="form-control" id="existing-schema-transfer">
+                                                <option disabled selected value="0">Select a database</option>
+                                            </select>
+
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+                                    <div class="align-items-center align-items-stretch row">
+                                        {% if role < 2 %}
+                                            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                                <button id="delete-course-button"
+                                                        class="btn btn-danger delete-button btn-block">Delete course
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                        <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                            <button id="edit-course-button"
+                                                    class="btn btn-info reset-button btn-block">Edit course
+                                            </button>
+                                        </div>
+                                        {% if role < 2 %}
+                                            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+                                                <button id="dump-course-button"
+                                                        class="btn btn-secondary dump-button btn-block">Get dump of
+                                                    course
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <hr>
+                                    <h4>Databases for this course</h4>
+                                    <div class="row">
+                                        <div class="col-6 col-lg-5">
+                                            <div class="overflow-auto border rounded" style="height: 300px;">
+                                                <div class="nav flex-column nav-pills" id="studentdatabases-nav"
+                                                     role="tablist">
+                                                    {#                                                    <div class="spinner-border text-info"></div>#}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-lg-7">
+                                            <div class="tab-content" id="courses-db">
+                                                {#                                                <div class="spinner-border text-info"></div>#}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% if role < 2 %}
+
+                                        <hr>
+                                        <h4>Add TAs</h4>
+                                        <div class="row">
+                                            <div class="col-6 col-lg-5">
+                                                <div class="overflow-auto border rounded" style="height: 300px;">
+                                                    <div class="nav flex-column nav-pills" id="TA-nav"
+                                                         role="tablist">
+                                                        {#                                                    <div class="spinner-border text-info"></div>#}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 col-lg-7">
+                                                <div class="tab-content" id="TA-div">
+                                                    {#                                                <div class="spinner-border text-info"></div>#}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                        </div>
+                        <div id="alert-div" class="mt-3"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

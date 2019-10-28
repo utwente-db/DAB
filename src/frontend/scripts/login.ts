@@ -1,6 +1,7 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios from "axios";
 import {validEmail, validPassword} from "./register";
+import "bootstrap-cookie-alert/cookiealert.js"
 
 const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement;
 const emailInput = document.getElementById("email-input") as HTMLInputElement;
@@ -10,7 +11,7 @@ const registerLink = document.getElementById("register-link") as HTMLAnchorEleme
 const forgotPasswordLink = document.getElementById("forgot-password-link") as HTMLAnchorElement;
 const loginForm = document.getElementById("login-form") as HTMLFormElement;
 
-function disableInputs() {
+function disableInputs(): void {
     emailInput.disabled = true;
     passwordInput.disabled = true;
     loginButton.disabled = true;
@@ -18,7 +19,7 @@ function disableInputs() {
     forgotPasswordLink.toggleAttribute("href");
 }
 
-function enableInputs() {
+function enableInputs(): void {
     emailInput.disabled = false;
     passwordInput.disabled = false;
     loginButton.disabled = false;
@@ -26,7 +27,7 @@ function enableInputs() {
     forgotPasswordLink.toggleAttribute("href");
 }
 
-async function tryResendVerificationEmail(tempAlert: ChildNode | null) {
+async function tryResendVerificationEmail(tempAlert: ChildNode | null): Promise<void> {
 
     disableInputs();
     const userEmail: string = djangoTemplate.classList[1];
@@ -46,13 +47,13 @@ async function tryResendVerificationEmail(tempAlert: ChildNode | null) {
 }
 
 
-function checkFields() {
+function checkFields(): boolean {
     const a = validEmail(emailInput);
     const b = validPassword(passwordInput);
     return a && b;
 }
 
-function tryLogin() {
+function tryLogin(): void {
     if (checkFields()) {
         loginForm.submit();
         // disableInputs();

@@ -1,2 +1,6 @@
 import "../sass/main.sass"
-import "bootstrap-cookie-alert/cookiealert.js"
+import axios, {AxiosResponse} from "axios";
+import Swal from "sweetalert2";
+import "popper.js"
+import "bootstrap"
+import "bootstrap-select"

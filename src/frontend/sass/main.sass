@@ -1,13 +1,7 @@
-//@import styleguide
 @import "~bootstrap/scss/bootstrap"
 @import "~bootstrap-select/sass/bootstrap-select"
 @import "~bootstrap-cookie-alert/cookiealert.css"
 @import "~sweetalert2/src/sweetalert2.scss"
-
-// -webkit-appearance: none
-
-//body
-//  font-family: 'Barlow Semi Condensed3', sans-serif
 
 .cookiealert
   position: absolute !important
@@ -19,41 +13,59 @@ a
   background-color: $cyan !important
 
 .nav-link
-  &.have-credentials-nav
+  &.green-nav
     background-color: #d0ffcd
     font-weight: bold
+
     &.active
       background-color: #4ecf86 !important
 
-#alert-div
-  //@extend .row
-  @extend .text-center
-// border-color: #17a2b8
+    &.inactive-course
+      background-color: #a9cfbf !important
 
-.tableFixHead thead th
+      &.active
+        background-color: #3b955f !important
+
+.nav-link
+  &.inactive-course
+    background-color: #f2f2f2
+
+    &.active
+      background-color: lightgray !important
+
+.invalid-feedback
+  display: block !important
+
+#alert-div
+  @extend .text-center
+
+.tableFixHead
+  & thead th
     position: sticky
     top: 0
     cursor: pointer
 
-// .table th .table td
-//     border-top: 0px
+.table
+  & th td
+    border-top: 0px
 
 table
-    border-collapse: collapse
-    width: 100%
-//
+  border-collapse: collapse
+  width: 100%
 
 
 /* --------------------------------------------------------
 /* "Bootstrap V4 Simple Checkbox Switch - No Js"
 /* by pradeep330
 /* https://bootsnipp.com/snippets/GaxR2
+
 /* The switch - the box around the slider */
 .switch
   position: relative
   display: inline-block
   width: 60px
   height: 34px
+
   & input
     display: none
 

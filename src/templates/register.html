@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Register</title>
+{% endblock %}
+
+{% block scripts %}
+    <script defer src="/static/scripts/register.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid py-3 py-md-5">
+        <div class="row">
+            <div class="col-11 col-md-7 col-xl-4 center-block
+    container border border-dark rounded-lg shadow-lg bg-white">
+                <!-- Register Form -->
+                <p class="text-left small mt-2 mb-0"><a href="/login">Back to login page</a></p>
+                <form class="p-5 form-horizontal" id="content"> {# actual content #}
+                    <p class="text-center h4 mb-4">Register</p>
+                    <hr/>
+                    <div class="mt-5 form-group row align-items-center">
+                        <label for="email" class="col-12 col-md-4 col-form-label">UT e-mail address</label>
+                        <div class="col-12 col-md-8 align-middle">
+                            <input type="email" name="mail" class="form-control my-1" id="register-email-field"
+                                   autofocus="True" maxlength="256" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+
+                    </div>
+                    <div class="form-group row align-items-center">
+                        <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
+                        <div class="col-12 col-md-8">
+                            <input type="password" name="password" class="form-control" id="register-password-field"
+                                   required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <div class="form-group row align-items-center mb-4">
+                        <label for="passwordConfirm" class="col-12 col-md-4 col-form-label">Confirm Password</label>
+                        <div class="col-12 col-md-8">
+                            <input type="password" name="passwordConfirm" class="form-control"
+                                   id="register-password-confirm-field" required>
+                            <div class="invalid-feedback"></div>
+                        </div>
+                    </div>
+                    <p class="text-center small mb-2">Please use a password that has 8 characters or more, and contains
+                        at least one lowercase letter, one uppercase letter, and one number</p>
+                    <hr>
+                    <button type='submit' class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3"
+                            id="register-button">Register
+                    </button>
+                    <div class="mt-5 align-items-center center-block " id="alert-div"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{#Basic html template that all pages will extend #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'head.html' %}
+    {% block head %}
+        <title>Database Administration Bundle</title>
+    {% endblock %}
+    {% block stylesheets %}
+        <link rel="stylesheet" href="/static/css/15.css">
+        <link rel="stylesheet" href="/static/css/main.css">
+
+    {% endblock %}
+    <script defer src="/static/scripts/0.chunk.js"></script>
+    <script defer src="/static/scripts/1.chunk.js"></script>
+    <script defer src="/static/scripts/15.chunk.js"></script>
+
+
+    {% block scripts %}
+        <script defer src="/static/scripts/main.js"></script>
+    {% endblock %}
+</head>
+<body>
+{% block content %}{% endblock %}
+</body>
+</html>

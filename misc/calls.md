@@ -75,6 +75,28 @@ Resets the table to the original schema from the course.
 Only accepts post
 Permissions same as DELETE for database
 
+## /missing_databases
+
+GET -> A JSON array of databases that the system does not know about, starting with the prefix
+
+Only accessible to admins
+
+## /missing_databases/all
+
+GET -> A JSON array of ALL databases not managed by DAB
+
+Only accessible to admins
+
+## /remove_missing_database
+
+POST -> Drop the database, IF it is not managed by DAB.
+
+    {
+    databasename: "test200"
+    }
+
+will return 400 if the database in managed by DAB
+
 ## TABLE: studentdatabases
 
 ### /studentdatabases/

@@ -1,11 +1,12 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {displayWhoami, getWhoamiPromise, Whoami} from "./navbar";
-import axios from 'axios';
+import {changePageState, displayWhoami, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
+import axios, {AxiosResponse} from 'axios';
 import "popper.js"
 import "bootstrap"
 import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2'
-import {UserRole} from "./user";
+import {TA, UserRole} from "./user";
+import {goToExistingCoursePane} from "./edit_courses";
 
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
@@ -22,23 +23,26 @@ const credentialsButton: HTMLButtonElement = document.getElementById("credential
 const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
 
+
 let ownDatabases: StudentDatabase[];
 let courses: Course[];
 let currentCourse = 0;
-let whoami: Whoami;
+let who: Who;
 
-function populateNoCredentialsPane(i: number) {
+function populateNoCredentialsPane(i: number): void {
     noCredsCoursename.innerText = courses[i].coursename;
-    noCredsInfo.innerText = courses[i].info;
+    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>"
+    noCredsInfo.innerHTML = courses[i].info + courseInactiveString; // We set innerHTML for this field because we know it is sanitized using html special chars
     groupInput.value = "";
 }
 
 
-async function populateHaveCredentialsPane(i: number) {
+async function populateHaveCredentialsPane(i: number): Promise<void> {
     let credentials = "";
     const dbIDs: number[] = [];
     haveCredsCoursename.innerText = courses[i].coursename;
-    haveCredsInfo.innerText = courses[i].info;
+    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>"
+    haveCredsInfo.innerHTML = courses[i].info + courseInactiveString // We set innerHTML for this field because we know it is sanitized using html special chars
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
             const html = `<div class="mt-5 form-group row">
@@ -65,7 +69,6 @@ async function populateHaveCredentialsPane(i: number) {
                             </div>
                         </div>
                         <hr>`;
-            // TODO make third button mobile-friendly
             credentials += html.trim();
             dbIDs.push(db.dbid)
         }
@@ -85,41 +88,92 @@ async function populateHaveCredentialsPane(i: number) {
 
 }
 
-function createNavLink(haveCredentials: boolean, i: number, active = false): DocumentFragment {
-    const credentialsClass = haveCredentials ? "have-credentials-nav" : "no-credentials-nav";
-    const hrefString = haveCredentials ? "have-credentials-pane" : "no-credentials-pane";
-    const activeString = active ? "active" : "";
-    const templateString = `<a id="${i}" class="nav-link ${credentialsClass} ${activeString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
+export function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGreen: boolean, i: number, active = false): DocumentFragment {
+    let credentialsClass: string;
+    let hrefString: string;
+    let inactiveCourseString: string;
+    let activeString: string;
+    if (fromEditCourses) {
+        hrefString = "";
+    } else {
+        hrefString = makeGreen ? "have-credentials-pane" : "no-credentials-pane";
+    }
+    credentialsClass = makeGreen ? "green-nav" : "not-green-nav";
+    activeString = active ? "active" : "";
+    inactiveCourseString = courseIsActive ? "" : "inactive-course";
+
+
+    const templateString = `<a id="${i}" class="course-link nav-link ${credentialsClass} ${activeString} ${inactiveCourseString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
-    if (!haveCredentials) {
-        fragment.firstChild!.addEventListener("click", () => {
-            populateNoCredentialsPane(i);
+    if (fromEditCourses) {
+        fragment.firstElementChild!.addEventListener("click", (event) => {
+            event.preventDefault();
+            goToExistingCoursePane(i);
         });
+
     } else {
-        fragment.firstChild!.addEventListener("click", () => {
-            populateHaveCredentialsPane(i);
-        });
+        if (!makeGreen) {
+            fragment.firstElementChild!.addEventListener("click", () => {
+                populateNoCredentialsPane(i);
+            });
+        } else {
+            fragment.firstElementChild!.addEventListener("click", () => {
+                populateHaveCredentialsPane(i);
+            });
+        }
     }
 
-    fragment.firstChild!.addEventListener("click", () => {
+    fragment.firstElementChild!.addEventListener("click", () => {
         currentCourse = courses[i].courseid;
-        alertDiv.innerHTML = "" // Remove all alerts when switching course
     });
     return fragment;
 }
 
-async function displayCourses(): Promise<void> {
-    courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-    ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
+export async function displayCourses(optionalCourses?: Course[], optionalWho?: Who, fromEditCourses = false, activeI = -1): Promise<void> {
+
+    if (optionalCourses) {
+        courses = optionalCourses;
+    }
+
+    if (optionalWho) {
+        who = optionalWho;
+    }
+
+    if (!fromEditCourses) {
+        ownDatabases = await (await axios.get("/rest/studentdatabases/own/")).data as StudentDatabase[];
+    } else {
+        ownDatabases = [];
+    }
+
+    let taCourses: number[] = [];
+    if (who.role === UserRole.student) {
+        const taResponse: AxiosResponse<TA[]> = await axios.get("/rest/tas/own/") as AxiosResponse<TA[]>;
+        const taList: TA[] = taResponse.data;
+        taCourses = taList.map((ta: TA) => ta.courseid);
+    }
+
+
     // tslint:disable-next-line:variable-name
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     for (let i = 0; i < courses.length; i++) {
-        const youHavePrivilege = (whoami.role === UserRole.admin || whoami.role === UserRole.teacher);
-        // TODO  check if user is TA for course
-        if (courses[i].active || youHavePrivilege) {
-            const haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
-            const fragment = createNavLink(haveCredentials, i);
+        let youHavePrivilege = false;
+        const youAreTA = taCourses.includes(courses[i].courseid)
+        if (fromEditCourses) {
+            youHavePrivilege = (who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id) || youAreTA);
+
+        } else {
+            youHavePrivilege = (courses[i].active || who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id) || youAreTA);
+
+        }
+        if (youHavePrivilege) {
+            let haveCredentials = false;
+            if (who.role === UserRole.admin && fromEditCourses) {
+                haveCredentials = courses[i].fid === who.id // The user owns this course
+            } else if (!fromEditCourses) {
+                haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
+            }
+            const fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i, i === activeI);
 
             coursesNavHtml.appendChild(fragment);
         }
@@ -128,12 +182,12 @@ async function displayCourses(): Promise<void> {
     }
 }
 
-async function changeView(hasCredentials: boolean) {
-    const activeLink: HTMLAnchorElement = document.getElementsByClassName("nav-link active")[0] as HTMLAnchorElement;
+async function changeView(hasCredentials: boolean): Promise<void> {
+    const activeLink: HTMLAnchorElement = document.getElementsByClassName("course-link nav-link active")[0] as HTMLAnchorElement;
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
     const newPane = hasCredentials ? haveCredsPane : noCredsPane;
     const i = Number(activeLink.id);
-    const fragment = createNavLink(hasCredentials, i, true);
+    const fragment = createNavLink(false, courses[i].active, hasCredentials, i, true);
     activeLink.classList.remove("active");
     activeLink.insertAdjacentElement("afterend", fragment.firstElementChild!);
     activeLink.remove();
@@ -147,10 +201,8 @@ async function changeView(hasCredentials: boolean) {
     }
 }
 
-async function prepareToGetCredentials() {
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
-    credentialsButton.disabled = true;
-    groupInput.disabled = true;
+async function prepareToGetCredentials(): Promise<void> {
+    disableElementsOnPage();
     try {
         const success = await tryGetCredentials(currentCourse, Number(groupInput.value), false);
 
@@ -161,14 +213,14 @@ async function prepareToGetCredentials() {
     } catch (error) {
         addErrorAlert(error);
     } finally {
-        coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLLinkElement).classList.remove("disabled"));
-        credentialsButton.disabled = false;
-        groupInput.disabled = false;
+        enableElementsOnPage();
     }
 }
 
 
-function disableElementsOnPage() {
+function disableElementsOnPage(): void {
+    credentialsButton.disabled = true;
+    groupInput.disabled = true;
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
@@ -184,7 +236,9 @@ function disableElementsOnPage() {
         });
 }
 
-function enableElementsOnPage() {
+function enableElementsOnPage(): void {
+    credentialsButton.disabled = false;
+    groupInput.disabled = false;
     coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.remove("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
@@ -198,6 +252,8 @@ function enableElementsOnPage() {
         .forEach((dumpButton: HTMLButtonElement) => {
             dumpButton.disabled = false
         });
+    (navbarStudentView.firstElementChild)!.classList.add("disabled");
+
 }
 
 async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
@@ -215,7 +271,7 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         return false;
     }
     let success: boolean;
-    disableElementsOnPage();
+    changePageState(false, changeStudentViewState);
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         // await changeViewToHaveCredentials()
@@ -226,10 +282,18 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
         addErrorAlert(error);
         success = false;
     } finally {
-        enableElementsOnPage();
+        changePageState(true, changeStudentViewState);
     }
     return success;
 
+}
+
+function changeStudentViewState(enable: boolean): void {
+    if (enable) {
+        enableElementsOnPage();
+    } else {
+        disableElementsOnPage();
+    }
 }
 
 async function resetDatabase(dbID: number): Promise<boolean> {
@@ -247,7 +311,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         return false;
     }
     let success: boolean;
-    disableElementsOnPage();
+    changePageState(false, changeStudentViewState);
     try {
         await axios.post(`/rest/reset/${dbID}/`);
         addAlert("The database has been succesfully reset", AlertType.primary);
@@ -256,21 +320,27 @@ async function resetDatabase(dbID: number): Promise<boolean> {
         addErrorAlert(error);
         success = false;
     } finally {
-        enableElementsOnPage();
+        changePageState(true, changeStudentViewState);
     }
     return success;
 }
 
 window.onload = async () => {
-    whoami = await getWhoamiPromise();
 
     await Promise.all([
+        initNavbar(changeStudentViewState),
         noCredsForm.addEventListener("submit", (event) => {
             event.preventDefault();
             prepareToGetCredentials();
         }),
+        navbarStudentView.classList.add("active"),
+        (navbarStudentView.firstElementChild)!.classList.add("disabled"),
+        (async () => {
+            who = await getWhoPromise();
 
-        displayCourses(),
+            courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+            await displayCourses();
+        })(),
         displayWhoami()
     ])
 };

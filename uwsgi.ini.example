@@ -8,11 +8,11 @@
 
 # Django-related settings
 # the base directory (please change to your full path)
-chdir = /home/freek/production-test/design
+chdir = /[DOCUMENT ROOT]
 # Django's wsgi file (does not need changing)
-module = designproject.wsgi
+module = src.django_settings.wsgi
 # the virtualenv (please change to your full path + /venv)
-home = /home/freek/production-test/design/venv
+home = /[DOCUMENT ROOT]/venv
 
 # process-related settings
 # master (does not need changing)
@@ -20,15 +20,14 @@ master = true
 # maximum number of worker processes (choose any you like)
 processes = 10
 # the socket (please change to the path where you'd like the socket to be created)
-socket = /tmp/dab.sock
+socket = /data/dab/dab.sock
 # ... with appropriate permissions - may be needed
 chmod-socket = 666
 # clear environment on exit (does not need changing)
 vacuum = true
 
 # Do not change this!
-env = DJANGO_SETTINGS_MODULE=designproject.settings
+env = DJANGO_SETTINGS_MODULE=src.django_settings.settings
 
-# Choose where you'd like your log file
-# you might need to create this file yourself
-deamonize = /var/log/uwsgi/dab.log
+# No idea if this setting actually does anything
+deamonize = /data/dab/uwsgi.log

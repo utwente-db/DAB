@@ -1,6 +1,4 @@
-import "../sass/main.sass"
 import axios, {AxiosResponse} from 'axios';
-import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
@@ -19,7 +17,7 @@ export interface Course {
     coursename: string;
     info: string,
     active: boolean,
-    databases: number,
+    databases?: number,
 }
 
 export interface InputCourse {
@@ -39,7 +37,6 @@ export interface StudentDatabase {
     "databasename": string,
     "username": string,
     "password": string
-    // TODO update to include groupID field
 }
 
 export async function getCoursesPromise(): Promise<Course[]> {
