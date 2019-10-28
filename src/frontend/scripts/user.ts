@@ -135,8 +135,8 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
 
     const coursesAndDatabases: Map<number, string> = new Map<number, string>();
     if (databases.length === 0) {
-        coursesNavHtml.innerHTML = "empty";
-        courseDatabasesHtml.innerHTML = "no content";
+        coursesNavHtml.innerHTML = "This user does not have any databases";
+        courseDatabasesHtml.innerHTML = "No database selected";
         return;
     }
 
@@ -234,7 +234,7 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
         });
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-            deleteDatabase(id,courseDatabasesHtml);
+            deleteDatabase(id, courseDatabasesHtml);
         });
     });
 
@@ -366,6 +366,15 @@ async function changeRole(userid: number): Promise<boolean> {
         });
         // window.location.reload(true);
         addAlert("Role changed!", AlertType.primary);
+        let newRole = "";
+        if (Number(role) === 0) {
+            newRole = "admin";
+        } else if (Number(role) === 1) {
+            newRole = "teacher";
+        } else if (Number(role) === 2) {
+            newRole = "student";
+        }
+        roleHtml.innerHTML = `<input type="text" class="form-control" value="${newRole}" readonly="">`;
         success = true;
     } catch (error) {
         addErrorAlert(error);

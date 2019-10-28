@@ -8364,6 +8364,9 @@ a {
   top: 0;
   cursor: pointer; }
 
+.table th td {
+  border-top: 0px; }
+
 table {
   border-collapse: collapse;
   width: 100%; }

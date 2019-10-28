@@ -28018,8 +28018,8 @@ function displayCoursesAndDatabases(userid) {
                     databases = _b.sent();
                     coursesAndDatabases = new Map();
                     if (databases.length === 0) {
-                        coursesNavHtml.innerHTML = "empty";
-                        courseDatabasesHtml.innerHTML = "no content";
+                        coursesNavHtml.innerHTML = "This user does not have any databases";
+                        courseDatabasesHtml.innerHTML = "No database selected";
                         return [2 /*return*/];
                     }
                     // const coursesAndDatabases = new Map<number, string>();
@@ -28232,7 +28232,7 @@ function deleteUser(userid) {
 }
 function changeRole(userid) {
     return __awaiter(this, void 0, void 0, function () {
-        var user, selectedRole, role, result, success, error_4;
+        var user, selectedRole, role, result, success, newRole, error_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, getUserPromise(userid)];
@@ -28264,6 +28264,17 @@ function changeRole(userid) {
                     _a.sent();
                     // window.location.reload(true);
                     alert_1.addAlert("Role changed!", alert_1.AlertType.primary);
+                    newRole = "";
+                    if (Number(role) === 0) {
+                        newRole = "admin";
+                    }
+                    else if (Number(role) === 1) {
+                        newRole = "teacher";
+                    }
+                    else if (Number(role) === 2) {
+                        newRole = "student";
+                    }
+                    roleHtml.innerHTML = "<input type=\"text\" class=\"form-control\" value=\"" + newRole + "\" readonly=\"\">";
                     success = true;
                     return [3 /*break*/, 6];
                 case 5:
