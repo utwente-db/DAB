@@ -10,6 +10,9 @@ module.exports = (env, argv) => {
     const isDevelopment = argv.mode === 'development'; // Boolean for development / production
     const entries = glob.sync("./src/frontend/scripts/*.ts")
     let fileNames = [];
+    let splitChunksObject = isDevelopment? {} : {
+                chunks: 'all'
+            }
 
     for (let i = 0; i < entries.length; i++) {
         let splitstring = entries[i].split("/");
@@ -28,6 +31,7 @@ module.exports = (env, argv) => {
 
 
     config = {
+        target: 'web',
         // mode: isDevelopment? 'development' : 'production',
         plugins: [
             new MiniCssExtractPlugin({
@@ -48,7 +52,7 @@ module.exports = (env, argv) => {
             ignored: /node_modules/ // improves performance by a ton
         },
         output: { // Resolves paths locally, a weird hack
-            chunkFilename: './scripts/[name].js',
+            chunkFilename: './scripts/[id].chunk.js',
             filename: './scripts/[name].js',
             path: path.resolve(__dirname, './frontend/')
         },
@@ -61,11 +65,10 @@ module.exports = (env, argv) => {
         // Uncomment this to split up imports into seperate js file
         // TODO Freek fix that split chunks are not imported
 
-        // optimization: {
-        //     splitChunks: {
-        //         chunks: 'all'
-        //     }
-        // },
+        optimization: {
+            usedExports: true,
+            splitChunks: splitChunksObject
+        },
 
         module: {
             rules: [

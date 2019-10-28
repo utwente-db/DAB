@@ -15,8 +15,6 @@
     "bootstrap-toggle": "^2.2.2",
     "commonjs": "^0.0.1",
     "css-loader": "^3.2.0",
-    "datatables.net-responsive": "^2.2.3",
-    "datatables.responsive.typings": "^1.0.3",
     "fibers": "^4.0.1",
     "glob": "^7.1.4",
     "gts": "^1.1.0",
@@ -59,5 +57,8 @@
     "url": "https://git.thebias.nl/floris/design.git"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash": "^4.14.144"
+  }
 }

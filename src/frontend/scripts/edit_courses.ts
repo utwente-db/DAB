@@ -1,10 +1,10 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "axios";
+import Swal from "sweetalert2";
 import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses";
 import {setInvalid, setNeutral, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
-import Swal from "sweetalert2";
 import {deleteDatabase, resetDatabase, TA, User, UserRole} from "./user";
 
 let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
