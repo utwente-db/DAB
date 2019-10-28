@@ -563,7 +563,7 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
             });
             const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
             deleteButton.addEventListener("click", () => {
-                deleteDatabase(db.dbid);
+                deleteDatabase(db.dbid, courseDatabasesHtml);
             });
         });
 

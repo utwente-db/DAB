@@ -26710,7 +26710,7 @@ function displayStudentDatabasesForCourse(i) {
                             });
                             var deleteButton = document.getElementById("delete-button-" + db.dbid);
                             deleteButton.addEventListener("click", function () {
-                                user_1.deleteDatabase(db.dbid);
+                                user_1.deleteDatabase(db.dbid, courseDatabasesHtml);
                             });
                         });
                         studentDatabasesNavHtml.appendChild(fragment);
@@ -28014,7 +28014,7 @@ function displayCoursesAndDatabases(userid) {
                     return [4 /*yield*/, getCourseByIDPromise(courseNumber)];
                 case 3:
                     course = _b.sent();
-                    resultNav.push("<a class=\"nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>");
+                    resultNav.push("<a class=\"studentdatabase-link nav-link" + active + "\" data-toggle=\"pill\" href=\"#course" + course.courseid + "\">" + course.coursename + "</a>");
                     resultContent.push("<div class=\"tab-pane" + active + "\" id=\"course" + course.courseid + "\">" + content + "</div>");
                     active = "";
                     _b.label = 4;
@@ -28033,7 +28033,7 @@ function displayCoursesAndDatabases(userid) {
                         });
                         var deleteButton = document.getElementById("delete-button-" + id);
                         deleteButton.addEventListener("click", function () {
-                            deleteDatabase(id);
+                            deleteDatabase(id, courseDatabasesHtml);
                         });
                     });
                     return [2 /*return*/];
@@ -28041,7 +28041,7 @@ function displayCoursesAndDatabases(userid) {
         });
     });
 }
-function deleteDatabase(dbID) {
+function deleteDatabase(dbID, dbDiv) {
     return __awaiter(this, void 0, void 0, function () {
         var result, success, error_1;
         return __generator(this, function (_a) {
@@ -28066,6 +28066,8 @@ function deleteDatabase(dbID) {
                 case 3:
                     _a.sent();
                     alert_1.addAlert("Deleted database", alert_1.AlertType.primary);
+                    document.getElementsByClassName("studentdatabase-link nav-link active")[0].remove();
+                    dbDiv.innerHTML = "No database selected";
                     success = true;
                     return [3 /*break*/, 5];
                 case 4:

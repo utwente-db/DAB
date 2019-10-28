@@ -215,7 +215,7 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
         const content: string = entry[1];
         const course: Course = await getCourseByIDPromise(courseNumber);
         resultNav.push(
-            `<a class="nav-link${active}" data-toggle="pill" href="#course${course.courseid}">${course.coursename}</a>`
+            `<a class="studentdatabase-link nav-link${active}" data-toggle="pill" href="#course${course.courseid}">${course.coursename}</a>`
         );
         resultContent.push(
             `<div class="tab-pane${active}" id="course${course.courseid}">${content}</div>`
@@ -234,13 +234,13 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
         });
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-            deleteDatabase(id);
+            deleteDatabase(id,courseDatabasesHtml);
         });
     });
 
 }
 
-export async function deleteDatabase(dbID: number): Promise<boolean> {
+export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to delete this database?',
         text: 'You will not be able to recover your data!',
@@ -257,6 +257,8 @@ export async function deleteDatabase(dbID: number): Promise<boolean> {
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
         addAlert("Deleted database", AlertType.primary);
+        document.getElementsByClassName("studentdatabase-link nav-link active")[0].remove();
+        dbDiv.innerHTML = "No database selected";
         success = true;
         // window.location.reload(true);
     } catch (error) {
