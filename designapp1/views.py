@@ -981,11 +981,6 @@ def register(request):
     form = RegisterForm()
     return render(request, 'register.html', {'form': form})
 
-
-@require_GET
-def request_db(request):
-    return render(request, 'request_db.html', {})
-
 @require_POST
 def login(request):
     incorrect_message = "wrong email or password"

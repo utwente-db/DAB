@@ -89,10 +89,10 @@ Please ensure that there are no databases created outside of this program that u
 
 ## Installation and running for development (SKIP IF PRODUCTION)
 
-To install the server for development, simply run init.sh.
+To install the server for development, simply run install_development.sh.
 This will create a python virtual environment, and install the required python and node packages within it.
 
-To run the server, simply run start.sh.
+To run the server, simply run start_development.sh.
 This will compile the typescript, move static files to their correct location, and finally start a development server on port 8000.
 Note that this server can only be approached from the local host.
 
