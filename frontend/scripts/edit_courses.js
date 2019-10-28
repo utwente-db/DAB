@@ -26206,6 +26206,8 @@ var existingCoursePane = document.getElementById("existing-course-pane");
 var newCoursePane = document.getElementById("new-course-pane");
 var studentDatabasesNavHtml = document.getElementById("studentdatabases-nav");
 var courseDatabasesHtml = document.getElementById("courses-db");
+var taNav = document.getElementById("TA-nav");
+var taDiv = document.getElementById("TA-div");
 var newCoursenameField = document.getElementById("new-course-name-field");
 var newCourseInfoField = document.getElementById("new-course-info-field");
 var newCourseFIDField = document.getElementById("new-course-fid-field");
@@ -26246,6 +26248,7 @@ var who;
 var courses;
 // tslint:disable-next-line:prefer-const
 var currentCourse;
+var users = [];
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 function validCoursename(field) {
     var coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/;
@@ -26307,7 +26310,11 @@ function populateNewCoursePane() {
     newSchemaRadioNone.checked = true;
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    fillStudentDatabasesDropdown(newSchemaTransfer);
+    if (who.role === user_1.UserRole.admin || who.role === user_1.UserRole.teacher) {
+        // TODO un hardcode this (maybe only leave for admin)
+        // TODO also hide html
+        fillStudentDatabasesDropdown(newSchemaTransfer);
+    }
     newSchemaTransfer.value = String(0);
 }
 function goToAddCoursePane(event) {
@@ -26327,6 +26334,14 @@ function goToAddCoursePane(event) {
 function populateExistingCoursePane(i) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
+            studentDatabasesNavHtml.innerHTML = "";
+            courseDatabasesHtml.innerHTML = "No database selected";
+            if (who.role === user_1.UserRole.admin || who.role === user_1.UserRole.teacher) {
+                // TODO un hardcode this
+                fillStudentDatabasesDropdown(existingSchemaTransfer);
+                populateTAPane(i);
+            }
+            displayStudentDatabasesForCourse(i);
             [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach(function (el) {
                 register_1.setNeutral(el);
             });
@@ -26342,9 +26357,7 @@ function populateExistingCoursePane(i) {
             existingSchemaRadioNone.checked = true;
             existingSchemaTextarea.value = "";
             existingSchemaUpload.value = "";
-            fillStudentDatabasesDropdown(existingSchemaTransfer);
             existingSchemaTransfer.value = String(0);
-            displayStudentDatabasesForCourse(i);
             return [2 /*return*/];
         });
     });
@@ -26661,7 +26674,6 @@ function displayStudentDatabasesForCourse(i) {
                     dbIDtoHTMLmap = new Map();
                     if (databases.length === 0) {
                         studentDatabasesNavHtml.innerHTML = "There are no databases for this course";
-                        courseDatabasesHtml.innerHTML = "No database selected";
                         return [2 /*return*/];
                     }
                     // const coursesAndDatabases = new Map<number, string>();
@@ -26692,7 +26704,6 @@ function displayStudentDatabasesForCourse(i) {
                         var fragment = document.createRange().createContextualFragment(templateString);
                         fragment.firstElementChild.addEventListener("click", function (event) {
                             courseDatabasesHtml.innerHTML = content;
-                            // TODO set link as active
                             var resetButton = document.getElementById("reset-button-" + db.dbid);
                             resetButton.addEventListener("click", function () {
                                 user_1.resetDatabase(db.dbid);
@@ -26713,101 +26724,188 @@ function displayStudentDatabasesForCourse(i) {
         });
     });
 }
+function makeUserTA(user, i) {
+    return __awaiter(this, void 0, void 0, function () {
+        var taObject, tempAlert, success, response, ta, error_5;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    taObject = {
+                        "courseid": courses[i].courseid,
+                        "studentid": user.id
+                    };
+                    tempAlert = alert_1.addTempAlert();
+                    success = false;
+                    navbar_1.changePageState(false, changeEditCoursesState);
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, 4, 5]);
+                    return [4 /*yield*/, axios_1.default.post("/rest/tas/", taObject)];
+                case 2:
+                    response = _a.sent();
+                    ta = response.data;
+                    // TODO change nav and div content on state change using TA object
+                    alert_1.addAlert("User was added as a TA", alert_1.AlertType.success, tempAlert);
+                    success = true;
+                    return [3 /*break*/, 5];
+                case 3:
+                    error_5 = _a.sent();
+                    alert_1.addErrorAlert(error_5, tempAlert);
+                    success = false;
+                    return [3 /*break*/, 5];
+                case 4:
+                    navbar_1.changePageState(true, changeEditCoursesState);
+                    return [7 /*endfinally*/];
+                case 5: return [2 /*return*/, success];
+            }
+        });
+    });
+}
+function removeTA(TaID) {
+    // TODO implement
+    return false;
+    // DELETE /tas/pk where pk is TA id?
+}
+function populateTAPane(i) {
+    taDiv.innerHTML = "No user selected";
+    if (users.length === 0) {
+        taNav.innerHTML = "There are no users in the database.";
+    }
+    else {
+        taNav.innerHTML = "";
+    }
+    users.forEach(function (user) {
+        var templateString = "<a class=\"nav-link\" data-toggle=\"pill\" href=\"#\">" + user.email + "</a>";
+        var fragment = document.createRange().createContextualFragment(templateString);
+        var userIsTaForCourse = false; // TODO un hardcode this
+        var TaID = 0; // Todo UNHARDCODE THIS
+        var userIsTaString = userIsTaForCourse ? "<span class=\"text-success h5\">User is a TA for this course</span>" :
+            "<span class=\"text-danger h5\">User is not a TA for this course</span>";
+        var userTaButton = "<button class=\"btn btn-info\" id=\"user-ta-button\">Change user TA status</button>";
+        var taDivHTML = (userIsTaString + "<br>\n                           " + userTaButton).trim();
+        fragment.firstElementChild.addEventListener("click", function (event) {
+            taDiv.innerHTML = taDivHTML;
+        });
+        if (userIsTaForCourse) {
+            fragment.firstElementChild.addEventListener("click", function (event) {
+                var userTAButton = document.getElementById("user-ta-button");
+                userTAButton.addEventListener("click", function () {
+                    removeTA(TaID);
+                });
+            });
+        }
+        else {
+            fragment.firstElementChild.addEventListener("click", function (event) {
+                var userTAButton = document.getElementById("user-ta-button");
+                userTAButton.addEventListener("click", function () {
+                    makeUserTA(user, i);
+                });
+            });
+        }
+        taNav.appendChild(fragment);
+    });
+}
 function tryDumpCourse(id) {
     window.location.href = "/rest/course_dump/" + id;
 }
 window.onload = function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, Promise.all([
-                    (function () { return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, navbar_1.getWhoamiPromise()];
-                                case 1:
-                                    who = _a.sent();
-                                    return [4 /*yield*/, courses_1.getCoursesPromise()];
-                                case 2:
-                                    courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
-                                    return [4 /*yield*/, student_view_1.displayCourses(courses, who, true)];
-                                case 3:
-                                    _a.sent();
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); })(),
-                    navbar_1.initNavbar(changeEditCoursesState),
-                    newCourseContent.addEventListener("submit", function (event) {
-                        event.preventDefault();
-                        tryAddCourse();
-                    }),
-                    newSchemaRadioNone.parentElement.addEventListener("click", function () {
-                        newSchemaTextareaDiv.classList.add("d-none");
-                        newSchemaTransferDiv.classList.add("d-none");
-                        newSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    newSchemaRadioTextarea.parentElement.addEventListener("click", function () {
-                        newSchemaTextareaDiv.classList.remove("d-none");
-                        newSchemaTransferDiv.classList.add("d-none");
-                        newSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    newSchemaRadioTransfer.parentElement.addEventListener("click", function () {
-                        newSchemaTextareaDiv.classList.add("d-none");
-                        newSchemaTransferDiv.classList.remove("d-none");
-                        newSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    newSchemaRadioUpload.parentElement.addEventListener("click", function () {
-                        newSchemaTextareaDiv.classList.add("d-none");
-                        newSchemaTransferDiv.classList.add("d-none");
-                        newSchemaUploadDiv.classList.remove("d-none");
-                    }),
-                    existingSchemaRadioNone.parentElement.addEventListener("click", function () {
-                        existingSchemaTextareaDiv.classList.add("d-none");
-                        existingSchemaTransferDiv.classList.add("d-none");
-                        existingSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    existingSchemaRadioTextarea.parentElement.addEventListener("click", function () { return __awaiter(void 0, void 0, void 0, function () {
-                        return __generator(this, function (_a) {
-                            // existingSchemaTextarea.value = (await axios.get(`/rest/courses/${existingCourseIDField.value}/schema/`) as AxiosResponse<string>).data;
-                            existingSchemaTextareaDiv.classList.remove("d-none");
+            case 0: return [4 /*yield*/, navbar_1.getWhoamiPromise()];
+            case 1:
+                who = _a.sent();
+                return [4 /*yield*/, Promise.all([
+                        (function () { return __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, courses_1.getCoursesPromise()];
+                                    case 1:
+                                        courses = (_a.sent()).sort(function (a, b) { return a.coursename.localeCompare(b.coursename); });
+                                        if (!(who.role === user_1.UserRole.teacher || who.role === user_1.UserRole.admin)) return [3 /*break*/, 3];
+                                        return [4 /*yield*/, axios_1.default.get("/rest/dbmusers/")];
+                                    case 2:
+                                        // TODO un hardcode this
+                                        users = (_a.sent()).data;
+                                        _a.label = 3;
+                                    case 3: return [4 /*yield*/, student_view_1.displayCourses(courses, who, true)];
+                                    case 4:
+                                        _a.sent();
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); })(),
+                        navbar_1.initNavbar(changeEditCoursesState),
+                        newCourseContent.addEventListener("submit", function (event) {
+                            event.preventDefault();
+                            tryAddCourse();
+                        }),
+                        newSchemaRadioNone.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.add("d-none");
+                            newSchemaTransferDiv.classList.add("d-none");
+                            newSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        newSchemaRadioTextarea.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.remove("d-none");
+                            newSchemaTransferDiv.classList.add("d-none");
+                            newSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        newSchemaRadioTransfer.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.add("d-none");
+                            newSchemaTransferDiv.classList.remove("d-none");
+                            newSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        newSchemaRadioUpload.parentElement.addEventListener("click", function () {
+                            newSchemaTextareaDiv.classList.add("d-none");
+                            newSchemaTransferDiv.classList.add("d-none");
+                            newSchemaUploadDiv.classList.remove("d-none");
+                        }),
+                        existingSchemaRadioNone.parentElement.addEventListener("click", function () {
+                            existingSchemaTextareaDiv.classList.add("d-none");
                             existingSchemaTransferDiv.classList.add("d-none");
                             existingSchemaUploadDiv.classList.add("d-none");
-                            return [2 /*return*/];
-                        });
-                    }); }),
-                    existingSchemaRadioTransfer.parentElement.addEventListener("click", function () {
-                        existingSchemaTextareaDiv.classList.add("d-none");
-                        existingSchemaTransferDiv.classList.remove("d-none");
-                        existingSchemaUploadDiv.classList.add("d-none");
-                    }),
-                    existingSchemaRadioUpload.parentElement.addEventListener("click", function () {
-                        existingSchemaTextareaDiv.classList.add("d-none");
-                        existingSchemaTransferDiv.classList.add("d-none");
-                        existingSchemaUploadDiv.classList.remove("d-none");
-                    }),
-                    (function () {
-                        if (addCourseLink) {
-                            addCourseLink.addEventListener("click", goToAddCoursePane);
-                        }
-                        if (deleteCourseButton) {
-                            deleteCourseButton.addEventListener("click", function () {
-                                tryDeleteCourse(Number(existingCourseIDField.value));
+                        }),
+                        existingSchemaRadioTextarea.parentElement.addEventListener("click", function () { return __awaiter(void 0, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                // existingSchemaTextarea.value = (await axios.get(`/rest/courses/${existingCourseIDField.value}/schema/`) as AxiosResponse<string>).data;
+                                existingSchemaTextareaDiv.classList.remove("d-none");
+                                existingSchemaTransferDiv.classList.add("d-none");
+                                existingSchemaUploadDiv.classList.add("d-none");
+                                return [2 /*return*/];
                             });
-                        }
-                        if (dumpCourseButton) {
-                            dumpCourseButton.addEventListener("click", function () {
-                                tryDumpCourse(Number(existingCourseIDField.value));
-                            });
-                        }
-                    })(),
-                    editCourseButton.addEventListener("click", function () {
-                        tryEditCourse();
-                    }),
-                    populateNewCoursePane(),
-                    navbar_1.navbarEditCourses.classList.add("active"),
-                    (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
-                ])];
-            case 1:
+                        }); }),
+                        existingSchemaRadioTransfer.parentElement.addEventListener("click", function () {
+                            existingSchemaTextareaDiv.classList.add("d-none");
+                            existingSchemaTransferDiv.classList.remove("d-none");
+                            existingSchemaUploadDiv.classList.add("d-none");
+                        }),
+                        existingSchemaRadioUpload.parentElement.addEventListener("click", function () {
+                            existingSchemaTextareaDiv.classList.add("d-none");
+                            existingSchemaTransferDiv.classList.add("d-none");
+                            existingSchemaUploadDiv.classList.remove("d-none");
+                        }),
+                        (function () {
+                            if (addCourseLink) {
+                                addCourseLink.addEventListener("click", goToAddCoursePane);
+                            }
+                            if (deleteCourseButton) {
+                                deleteCourseButton.addEventListener("click", function () {
+                                    tryDeleteCourse(Number(existingCourseIDField.value));
+                                });
+                            }
+                            if (dumpCourseButton) {
+                                dumpCourseButton.addEventListener("click", function () {
+                                    tryDumpCourse(Number(existingCourseIDField.value));
+                                });
+                            }
+                        })(),
+                        editCourseButton.addEventListener("click", function () {
+                            tryEditCourse();
+                        }),
+                        populateNewCoursePane(),
+                        navbar_1.navbarEditCourses.classList.add("active"),
+                        (navbar_1.navbarEditCourses.firstElementChild).classList.add("disabled"),
+                    ])];
+            case 2:
                 _a.sent();
                 return [2 /*return*/];
         }

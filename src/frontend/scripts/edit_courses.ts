@@ -5,7 +5,7 @@ import {setInvalid, setNeutral, setValid} from "./register";
 import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
 import Swal from "sweetalert2";
-import {deleteDatabase, resetDatabase} from "./user";
+import {deleteDatabase, resetDatabase, TA, User, UserRole} from "./user";
 
 let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -16,6 +16,9 @@ const newCoursePane = document.getElementById("new-course-pane") as HTMLDivEleme
 
 const studentDatabasesNavHtml: HTMLDivElement = document.getElementById("studentdatabases-nav") as HTMLDivElement;
 const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
+
+const taNav: HTMLDivElement = document.getElementById("TA-nav") as HTMLDivElement;
+const taDiv: HTMLDivElement = document.getElementById("TA-div") as HTMLDivElement;
 
 const newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement;
 const newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement;
@@ -68,6 +71,7 @@ let who: Who;
 let courses: Course[];
 // tslint:disable-next-line:prefer-const
 let currentCourse: Course;
+let users: User[] = [];
 
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
@@ -127,7 +131,11 @@ function populateNewCoursePane(): void {
 
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    fillStudentDatabasesDropdown(newSchemaTransfer);
+    if (who.role===UserRole.admin || who.role===UserRole.teacher) {
+        // TODO un hardcode this (maybe only leave for admin)
+        // TODO also hide html
+        fillStudentDatabasesDropdown(newSchemaTransfer);
+    }
     newSchemaTransfer.value = String(0);
 
 
@@ -149,6 +157,15 @@ function goToAddCoursePane(event: Event): void {
 }
 
 async function populateExistingCoursePane(i: number): Promise<void> {
+    studentDatabasesNavHtml.innerHTML = "";
+    courseDatabasesHtml.innerHTML = "No database selected";
+        if (who.role===UserRole.admin || who.role===UserRole.teacher) {
+            // TODO un hardcode this
+            fillStudentDatabasesDropdown(existingSchemaTransfer);
+            populateTAPane(i);
+
+        }
+    displayStudentDatabasesForCourse(i);
     [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach((el) => {
         setNeutral(el);
     });
@@ -167,9 +184,8 @@ async function populateExistingCoursePane(i: number): Promise<void> {
 
     existingSchemaTextarea.value = "";
     existingSchemaUpload.value = "";
-    fillStudentDatabasesDropdown(existingSchemaTransfer);
     existingSchemaTransfer.value = String(0);
-    displayStudentDatabasesForCourse(i)
+
 }
 
 export function goToExistingCoursePane(i: number): void {
@@ -458,7 +474,6 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
     const dbIDtoHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
         studentDatabasesNavHtml.innerHTML = "There are no databases for this course";
-        courseDatabasesHtml.innerHTML = "No database selected";
         return;
     }
 
@@ -541,7 +556,6 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
 
         fragment.firstElementChild!.addEventListener("click", (event) => {
             courseDatabasesHtml.innerHTML = content;
-            // TODO set link as active
 
             const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${db.dbid}`) as HTMLButtonElement;
             resetButton.addEventListener("click", () => {
@@ -557,9 +571,87 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
         studentDatabasesNavHtml.appendChild(fragment);
 
 
-
-
     }
+
+}
+
+async function makeUserTA(user: User, i: number): Promise<boolean> {
+    const taObject: { studentid: number; courseid: number } = {
+        "courseid": courses[i].courseid,
+        "studentid": user.id
+    }
+    // TODO add disabling things
+    const tempAlert = addTempAlert();
+    let success = false;
+    changePageState(false, changeEditCoursesState);
+    try {
+        const response = await axios.post(`/rest/tas/`, taObject) as AxiosResponse<TA>;
+        const ta = response.data;
+            // TODO change nav and div content on state change using TA object
+        addAlert("User was added as a TA", AlertType.success, tempAlert);
+        success = true;
+    } catch (error) {
+        addErrorAlert(error, tempAlert);
+        success = false;
+
+    } finally {
+        changePageState(true, changeEditCoursesState);
+    }
+    return success;
+
+}
+
+function removeTA(TaID: number): boolean {
+    // TODO implement
+    return false;
+    // DELETE /tas/pk where pk is TA id?
+}
+
+function populateTAPane(i: number): void {
+    taDiv.innerHTML = "No user selected";
+    if (users.length === 0) {
+        taNav.innerHTML = "There are no users in the database."
+    } else {
+        taNav.innerHTML = "";
+    }
+    users.forEach((user: User) => {
+        const templateString = `<a class="nav-link" data-toggle="pill" href="#">${user.email}</a>`;
+        const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
+
+        const userIsTaForCourse = false; // TODO un hardcode this
+        const TaID = 0; // Todo UNHARDCODE THIS
+
+        const userIsTaString = userIsTaForCourse ? `<span class="text-success h5">User is a TA for this course</span>` :
+            `<span class="text-danger h5">User is not a TA for this course</span>`
+        const userTaButton = `<button class="btn btn-info" id="user-ta-button">Change user TA status</button>`
+        const taDivHTML = `${userIsTaString}<br>
+                           ${userTaButton}`.trim()
+
+        fragment.firstElementChild!.addEventListener("click", (event) => {
+            taDiv.innerHTML = taDivHTML;
+        });
+
+        if (userIsTaForCourse) {
+
+            fragment.firstElementChild!.addEventListener("click", (event) => {
+                const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+                userTAButton.addEventListener("click", () => {
+                    removeTA(TaID);
+                });
+            });
+        } else {
+            fragment.firstElementChild!.addEventListener("click", (event) => {
+                const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
+                userTAButton.addEventListener("click", () => {
+                    makeUserTA(user, i);
+                });
+            });
+
+        }
+        taNav.appendChild(fragment);
+
+    });
+
 
 }
 
@@ -568,10 +660,17 @@ function tryDumpCourse(id: number): void {
 }
 
 window.onload = async () => {
+    who = await getWhoamiPromise();
+
     await Promise.all([
         (async () => {
-            who = await getWhoamiPromise();
             courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+            // TODO add error handlign here
+            if (who.role === UserRole.teacher || who.role === UserRole.admin) {
+                // TODO un hardcode this
+                users = (await axios.get(`/rest/dbmusers/`) as AxiosResponse<User[]>).data;
+
+            }
             await displayCourses(courses, who, true)
 
         })(),
