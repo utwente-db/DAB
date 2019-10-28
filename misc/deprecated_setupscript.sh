@@ -52,9 +52,9 @@ sudo apt --assume-yes install git-all
 
 sudo mkdir ~/design/
 cd ~/design/
-django-admin startproject designproject
-cd designproject
-python3 manage.py startapp designapp1
+django-admin startproject django_settings
+cd django_settings
+python3 manage.py startapp backend
 sudo rm *
 read -p "Which branch you want to use?" branch_name
 git clone --single-branch --branch $branch_name https://git.thebias.nl/floris/design.git

@@ -377,7 +377,7 @@ node_modules/**/*
 ./node_modules
 node_modules/**/*.*
 *.map
-src/designproject/secret.py
+src/django_settings/secret.py
 package-lock.json
 uwsgi.ini
 db_uwsgi.ini

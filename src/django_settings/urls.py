@@ -1,4 +1,4 @@
-"""designproject URL Configuration
+"""django_settings URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.11/topics/http/urls/
@@ -18,6 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^rest/', include('src.designapp1.rest_urls')),
-    url('', include('src.designapp1.urls'))
+    url(r'^rest/', include('src.backend.rest_urls')),
+    url('', include('src.backend.urls'))
 ]

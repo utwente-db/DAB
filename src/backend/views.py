@@ -18,7 +18,7 @@ from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
 from django.db.utils import OperationalError
 
-from src.designproject.settings import DATABASE_SERVER
+from src.django_settings.settings import DATABASE_SERVER
 from . import hash
 from .forms import *
 from .serializers import *

@@ -5,7 +5,7 @@ from django.db import connection
 from django.db import transaction
 from psycopg2.extensions import AsIs
 from . import models
-from src.designproject.settings import STUDENT_DB_PREFIX
+from src.django_settings.settings import STUDENT_DB_PREFIX
 
 from .schemas import write as writeSchema
 
