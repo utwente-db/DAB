@@ -13,7 +13,7 @@ class CoursesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Courses
-        fields = ('courseid', 'fid', 'coursename', 'info', 'schema','active','databases')
+        fields = ('courseid', 'fid', 'coursename', 'info', 'schema', 'active', 'databases')
 
 
 class StudentdatabasesDeleteSerializer(serializers.ModelSerializer):
@@ -47,4 +47,3 @@ class TasSerializer(serializers.ModelSerializer):
     class Meta:
         model = TAs
         fields = '__all__'
-

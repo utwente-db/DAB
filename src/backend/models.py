@@ -5,11 +5,13 @@
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
-from django.db import models
-from django.conf import settings
-from django.utils.html import escape as htmlspecialchars #I'm a PHP programmer after all
 import base64
 import re
+
+from django.conf import settings
+from django.db import models
+from django.utils.html import escape as htmlspecialchars  # I'm a PHP programmer after all
+
 
 class dbmusersQuerySet(models.query.QuerySet):
 
@@ -24,12 +26,14 @@ class dbmusersQuerySet(models.query.QuerySet):
             kwargs["email"] = kwargs["email"].lower()
         return super().filter(**kwargs)
 
+
 class dbmusersManager(models.Manager.from_queryset(dbmusersQuerySet)):
 
     def all(self, **kwargs):
         if "email" in kwargs:
             kwargs["email"] = kwargs["email"].lower()
         return super().all(**kwargs)
+
 
 class dbmusers(models.Model):
     id = models.AutoField(db_column='id', primary_key=True)
@@ -45,7 +49,9 @@ class dbmusers(models.Model):
         self.email = self.email.lower()
         if not re.match(r'.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl$', self.email):
             raise ValueError("user does not have a utwente email")
-        elif not re.match(r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])", self.email):
+        elif not re.match(
+                r"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])",
+                self.email):
             raise ValueError("user does not have a valid email")
         super(dbmusers, self).save()
 
@@ -55,6 +61,7 @@ class dbmusers(models.Model):
         managed = False
         db_table = 'dbmusers'
         verbose_name_plural = 'dbmusers'
+
 
 class Courses(models.Model):
     courseid = models.AutoField(db_column='courseid', primary_key=True)
@@ -86,15 +93,17 @@ class Courses(models.Model):
 
     class Meta(object):
         managed = False
-#        abstract = True
+        #        abstract = True
         db_table = 'courses'
         verbose_name_plural = 'Courses'
         unique_together = ('fid', 'coursename')
 
+
 def switchPassword(password):
     bits = base64.b64decode(password)
-    bits = bytes([x^y for (x,y) in zip(settings.BITMASK, bits)])
+    bits = bytes([x ^ y for (x, y) in zip(settings.BITMASK, bits)])
     return base64.b64encode(bits).decode()
+
 
 class StudentdatabasesQuerySet(models.query.QuerySet):
 
@@ -115,12 +124,14 @@ class StudentdatabasesQuerySet(models.query.QuerySet):
             db.password = switchPassword(db.password)
         return out
 
+
 class StudentdatabasesManager(models.Manager.from_queryset(StudentdatabasesQuerySet)):
     def all(self):
         out = super().all()
         for db in out:
             db.password = switchPassword(db.password)
         return out
+
 
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid', primary_key=True)

@@ -4,9 +4,9 @@ import psycopg2 as db
 from django.db import connection
 from django.db import transaction
 from psycopg2.extensions import AsIs
-from . import models
-from src.django_settings.settings import STUDENT_DB_PREFIX
 
+from src.django_settings.settings import STUDENT_DB_PREFIX
+from . import models
 from .schemas import write as writeSchema
 
 logging.basicConfig(
@@ -29,6 +29,7 @@ def connect(db_name):
 
     return conn
 
+
 # https://stackoverflow.com/questions/1598932/atomic-increment-of-a-counter-in-django
 @transaction.atomic
 def get_studentdatabase_name(courseid):
@@ -38,6 +39,7 @@ def get_studentdatabase_name(courseid):
     course.save()
 
     return username
+
 
 def reset_studentdatabase(db):
     with connection.cursor() as cursor:

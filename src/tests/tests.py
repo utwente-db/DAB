@@ -31,6 +31,7 @@ ta_id = 0
 teacher_id = 0
 student_id = 0
 
+
 class TestLogin(unittest.TestCase):
 
     def testAdmin(self):
@@ -124,7 +125,6 @@ class testCourse(unittest.TestCase):
                 relation_id = entry["taid"]
         self.assertNotEqual(0, relation_id)
 
-        
     def test1CreateDatabase(self):
         global test_db
         # create the database
@@ -186,10 +186,10 @@ class testCourse(unittest.TestCase):
             self.assertTrue(re.search(r'.*CREATE TABLE .*\.dump.*', r.text))
 
     def test2DatabaseVisibility(self):
-        #test if the ta and teacher can see the credentials of this database
+        # test if the ta and teacher can see the credentials of this database
         global test_db, test_course
 
-        r = teacher.get(BASE+"/rest/studentdatabases/course/"+str(test_course["courseid"]))
+        r = teacher.get(BASE + "/rest/studentdatabases/course/" + str(test_course["courseid"]))
         self.assertEqual(r.status_code, 200)
         body = r.json()
 
@@ -201,8 +201,8 @@ class testCourse(unittest.TestCase):
         self.assertEqual(found["username"], test_db["username"])
         self.assertEqual(found["password"], test_db["password"])
 
-        #and now again for the TA
-        r = ta.get(BASE+"/rest/studentdatabases/course/"+str(test_course["courseid"]))
+        # and now again for the TA
+        r = ta.get(BASE + "/rest/studentdatabases/course/" + str(test_course["courseid"]))
         self.assertEqual(r.status_code, 200)
         body = r.json()
 
@@ -225,12 +225,12 @@ class testCourse(unittest.TestCase):
             database=test_db["databasename"]
         )
         with conn.cursor() as cur:
-            #delete a table from the original schema
-            #bonus points: throws error if the schema was not correctly instantiated
+            # delete a table from the original schema
+            # bonus points: throws error if the schema was not correctly instantiated
             cur.execute("DROP TABLE test;")
         conn.close()
 
-        r = student.post(BASE+"/rest/reset/"+str(test_db["dbid"]))
+        r = student.post(BASE + "/rest/reset/" + str(test_db["dbid"]))
         self.assertEqual(r.status_code, 202)
 
         conn = psycopg2.connect(
@@ -241,10 +241,10 @@ class testCourse(unittest.TestCase):
             database=test_db["databasename"]
         )
         with conn.cursor() as cur:
-            #this is from the schema, and should exist
+            # this is from the schema, and should exist
             cur.execute("INSERT INTO test(name) VALUES('test');")
             try:
-                #this is not from the schema, and should not exist
+                # this is not from the schema, and should not exist
                 cur.execute("INSERT INTO dump(val) VALUES('test');")
                 self.assertTrue(False)
             except psycopg2.ProgrammingError:
@@ -298,17 +298,17 @@ class testCourse(unittest.TestCase):
                 relation_id = entry["taid"]
         self.assertNotEqual(0, relation_id)
 
-        #doesn't test correctness of update, but of verifier
+        # doesn't test correctness of update, but of verifier
         nonsense_schema = "CREATE TABEL test(id SERIAL PRIMARY KEY, val TEXT);"
-        r = ta.post(BASE+"/rest/courses/"+str(test_course["courseid"])+"/schema", data=nonsense_schema)
+        r = ta.post(BASE + "/rest/courses/" + str(test_course["courseid"]) + "/schema", data=nonsense_schema)
         self.assertEqual(r.status_code, 400)
 
         wrong_schema = "CREATE TABLE admin.test(id SERIAL PRIMARY KEY, val TEXT);"
-        r = teacher.post(BASE+"/rest/courses/"+str(test_course["courseid"])+"/schema", data=wrong_schema)
+        r = teacher.post(BASE + "/rest/courses/" + str(test_course["courseid"]) + "/schema", data=wrong_schema)
         self.assertEqual(r.status_code, 400)
 
         owned_schema = "CREATE TABLE test(id SERIAL PRIMARY KEY, val TEXT); ALTER TABLE test OWNER TO admin;"
-        r = ta.post(BASE+"/rest/courses/"+str(test_course["courseid"])+"/schema", data=owned_schema)
+        r = ta.post(BASE + "/rest/courses/" + str(test_course["courseid"]) + "/schema", data=owned_schema)
         self.assertEqual(r.status_code, 400)
 
     def test8DeleteTa(self):
@@ -325,8 +325,8 @@ class testCourse(unittest.TestCase):
 
     def test8remakeDB(self):
         global test_db
-        #before we delete the course, let's make a database in the course, to see if it gets removed
-        r = student.post(BASE+"/rest/studentdatabases/", json=test_db)
+        # before we delete the course, let's make a database in the course, to see if it gets removed
+        r = student.post(BASE + "/rest/studentdatabases/", json=test_db)
         self.assertEqual(r.status_code, 201)
         body = r.json()
         test_db["dbid"] = body["dbid"]

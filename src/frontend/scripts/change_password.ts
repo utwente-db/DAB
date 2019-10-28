@@ -1,7 +1,7 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosError} from "axios";
 import {passwordsEqual, validPassword} from "./register";
-import {changePageState, initNavbar, navbarEditCourses} from "./navbar";
+import {changePageState, initNavbar} from "./navbar";
 
 const newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement;
 
@@ -19,11 +19,11 @@ function checkFields(): boolean {
 
 function changeChangePasswordState(enable: boolean): void {
     if (enable) {
-            newPasswordField.disabled = false;
-            oldPasswordField.disabled = false;
-            confirmPasswordField.disabled = false;
-            newPasswordButton.disabled = false;
-                 (document.getElementById("navbar-change-password") as HTMLAnchorElement)!.classList.add("disabled")
+        newPasswordField.disabled = false;
+        oldPasswordField.disabled = false;
+        confirmPasswordField.disabled = false;
+        newPasswordButton.disabled = false;
+        (document.getElementById("navbar-change-password") as HTMLAnchorElement)!.classList.add("disabled")
 
     } else {
         newPasswordField.disabled = true;
@@ -55,7 +55,7 @@ async function tryResetPassword(): Promise<void> {
             }
         } finally {
 
-            changePageState(true,changeChangePasswordState);
+            changePageState(true, changeChangePasswordState);
         }
     }
 }

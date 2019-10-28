@@ -22683,7 +22683,9 @@ module.exports = g;
 Object.defineProperty(exports, "__esModule", { value: true });
 var navbar_1 = __webpack_require__(/*! ./navbar */ "./src/frontend/scripts/navbar.ts");
 window.onload = function () {
-    navbar_1.initNavbar(function () { return; });
+    navbar_1.initNavbar(function () {
+        return;
+    });
 };
 
 

@@ -20,8 +20,10 @@ urlpatterns = [
 
     url(r'^change_password/?$', views.change_password, name="change_password"),
 
-    url(r'^reset_password/(?P<pk>[0-9]+)/(?P<token>(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?)$', views.reset_password, name='reset_password'),
-    url(r'^request_reset_password/(?P<email>.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl)/?$', views.request_reset_password, name='request_reset_password'),
+    url(r'^reset_password/(?P<pk>[0-9]+)/(?P<token>(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?)$',
+        views.reset_password, name='reset_password'),
+    url(r'^request_reset_password/(?P<email>.*@([a-zA-Z0-9\/\+]*\.)?utwente\.nl)/?$', views.request_reset_password,
+        name='request_reset_password'),
     url(r'^resend_verification/?$', views.resend_verification, name='resend_verification'),
     url('', views.defaultresponse)
 ]

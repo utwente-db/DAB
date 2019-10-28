@@ -10,9 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
-import os
-from . import secret
 import base64
+import os
+
+from . import secret
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,9 +30,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-#student databases prefix
+# student databases prefix
 STUDENT_DB_PREFIX = 'dab_'
-
 
 # For display to users only; please edit in secret.py
 DATABASE_SERVER = secret.DATABASE_SERVER
@@ -72,8 +72,8 @@ ROOT_URLCONF = 'src.django_settings.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [    os.path.join(os.path.dirname(__file__), '../templates'),
-],
+        'DIRS': [os.path.join(os.path.dirname(__file__), '../templates'),
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,7 +85,6 @@ TEMPLATES = [
         },
     },
 ]
-
 
 WSGI_APPLICATION = 'src.django_settings.wsgi.application'
 
@@ -154,10 +153,9 @@ STATICFILES_DIRS = [
 STATIC_ROOT = "static"
 STATIC_URL = '/static/'
 
-
 DEBUG_PROPAGATE_EXCEPTIONS = True
 
-#LOGGING
+# LOGGING
 
 LOGGING = {
     'version': 1,
@@ -177,7 +175,7 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.FileHandler',
             'filename': LOGFILE,
-            'formatter':'verbose'
+            'formatter': 'verbose'
         },
     },
     'loggers': {

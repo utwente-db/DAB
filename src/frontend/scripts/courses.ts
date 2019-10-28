@@ -1,6 +1,5 @@
 import "../sass/main.sass"
 import axios, {AxiosResponse} from 'axios';
-import * as $ from "jquery";
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
