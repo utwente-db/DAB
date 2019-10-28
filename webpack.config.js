@@ -10,6 +10,9 @@ module.exports = (env, argv) => {
     const isDevelopment = argv.mode === 'development'; // Boolean for development / production
     const entries = glob.sync("./src/frontend/scripts/*.ts")
     let fileNames = [];
+    let splitChunksObject = isDevelopment? {} : {
+                chunks: 'all'
+            }
 
     for (let i = 0; i < entries.length; i++) {
         let splitstring = entries[i].split("/");
@@ -64,24 +67,14 @@ module.exports = (env, argv) => {
 
         optimization: {
             usedExports: true,
-            splitChunks: {
-                chunks: 'all'
-            }
+            splitChunks: splitChunksObject
         },
 
         module: {
             rules: [
                 { // Rule for how to process ts files
                     test: /\.ts$/,
-                    use: [
-                        {
-                            loader: require.resolve('awesome-typescript-loader'),
-                            options: {
-                                // compile with TypeScript, then transpile with Babel
-                                useBabel: true,
-                            },
-                        },
-                    ],
+                    use: 'ts-loader'
                 },
                 { // Rule for how to process sass/scss
                     test: /\.s[ac]ss$/,

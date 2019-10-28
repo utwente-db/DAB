@@ -384,3 +384,7 @@ db_uwsgi.ini
 static/admin
 static/admin/*
 static/admin/**/*
+static/**/*
+frontend/
+frontend/*
+frontend/**/*

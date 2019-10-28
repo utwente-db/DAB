@@ -11,7 +11,7 @@
     "pretty": true,
     "sourceMap": true,
     "strict": true,
-    "target": "esnext",
+    "target": "es5",
     "moduleResolution": "node",
     "outDir": "frontend/scripts",
     "importHelpers": true,
