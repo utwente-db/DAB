@@ -1,6 +1,7 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios from "axios";
 import {validEmail, validPassword} from "./register";
+import "bootstrap-cookie-alert/cookiealert.js"
 
 const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement;
 const emailInput = document.getElementById("email-input") as HTMLInputElement;

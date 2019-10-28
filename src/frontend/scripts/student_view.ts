@@ -173,7 +173,7 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
             } else if (!fromEditCourses) {
                 haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
             }
-            const fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i, i===activeI);
+            const fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i, i === activeI);
 
             coursesNavHtml.appendChild(fragment);
         }
