@@ -1,4 +1,3 @@
-import "../sass/main.sass"
 import axios, {AxiosResponse} from 'axios';
 import "popper.js"
 import "bootstrap"
