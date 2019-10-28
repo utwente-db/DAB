@@ -103,7 +103,7 @@ export function createNavLink(fromEditCourses: boolean, courseIsActive: boolean,
     inactiveCourseString = courseIsActive ? "" : "inactive-course";
 
 
-    const templateString = `<a id="${i}" class="nav-link ${credentialsClass} ${activeString} ${inactiveCourseString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
+    const templateString = `<a id="${i}" class="course-link nav-link ${credentialsClass} ${activeString} ${inactiveCourseString}" data-toggle="pill" href="#${hrefString}">${courses[i].coursename}</a>`;
     const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
     if (fromEditCourses) {
@@ -183,7 +183,7 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
 }
 
 async function changeView(hasCredentials: boolean): Promise<void> {
-    const activeLink: HTMLAnchorElement = document.getElementsByClassName("nav-link active")[0] as HTMLAnchorElement;
+    const activeLink: HTMLAnchorElement = document.getElementsByClassName("course-link nav-link active")[0] as HTMLAnchorElement;
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
     const newPane = hasCredentials ? haveCredsPane : noCredsPane;
     const i = Number(activeLink.id);

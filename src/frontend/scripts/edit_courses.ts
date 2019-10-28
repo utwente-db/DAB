@@ -394,7 +394,7 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
         // }
         // courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
 
-        document.getElementsByClassName("nav-link active")[0].remove();
+        document.getElementsByClassName("course-link nav-link active")[0].remove();
         Array.from(coursesContentHtml.children).forEach((child) => {
             child.classList.remove("active");
         });
@@ -452,7 +452,7 @@ async function tryEditCourse(): Promise<void> {
                 await axios.post(`/rest/schematransfer/${existingCourseIDField.value}/${dbid}`);
                 addAlert("Successfully added schema", AlertType.success);
             }
-            const navLink = document.getElementsByClassName("nav-link active")[0]! as HTMLAnchorElement;
+            const navLink = document.getElementsByClassName("course-link nav-link active")[0]! as HTMLAnchorElement;
             navLink.innerText = existingCoursenameField.value;
             courses[Number(navLink.id)] = inputCourse; // TODO maybe doesnt have amount of databases field
             goToExistingCoursePane(Number(navLink.id))
@@ -551,7 +551,7 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
         const content: string = entry[1];
 
 
-        const templateString = `<a class="nav-link" data-toggle="pill" href="#">${db.databasename}</a>`;
+        const templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}</a>`;
         const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
         fragment.firstElementChild!.addEventListener("click", (event) => {
@@ -644,7 +644,7 @@ async function populateTAPane(i: number): Promise<void> {
         }
 
         const greenClass = userIsTaForCourse ? "green-nav" : "not-green-nav";
-        const templateString = `<a class="nav-link ${greenClass}" data-toggle="pill" href="#">${user.email}</a>`;
+        const templateString = `<a class="ta-link nav-link ${greenClass}" data-toggle="pill" href="#">${user.email}</a>`;
         const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
         const userIsTaString = userIsTaForCourse ? `<span class="text-success h5">User is a TA for this course</span>` :

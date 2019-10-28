@@ -26584,7 +26584,7 @@ function tryDeleteCourse(courseID) {
                     //     }
                     // }
                     // courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-                    document.getElementsByClassName("nav-link active")[0].remove();
+                    document.getElementsByClassName("course-link nav-link active")[0].remove();
                     Array.from(coursesContentHtml.children).forEach(function (child) {
                         child.classList.remove("active");
                     });
@@ -26644,7 +26644,7 @@ function tryEditCourse() {
                     alert_1.addAlert("Successfully added schema", alert_1.AlertType.success);
                     _a.label = 7;
                 case 7:
-                    navLink = document.getElementsByClassName("nav-link active")[0];
+                    navLink = document.getElementsByClassName("course-link nav-link active")[0];
                     navLink.innerText = existingCoursenameField.value;
                     courses[Number(navLink.id)] = inputCourse; // TODO maybe doesnt have amount of databases field
                     goToExistingCoursePane(Number(navLink.id));
@@ -26700,7 +26700,7 @@ function displayStudentDatabasesForCourse(i) {
                     _loop_1 = function (entry) {
                         var db = entry[0];
                         var content = entry[1];
-                        var templateString = "<a class=\"nav-link\" data-toggle=\"pill\" href=\"#\">" + db.databasename + "</a>";
+                        var templateString = "<a class=\"studentdatabase-link nav-link\" data-toggle=\"pill\" href=\"#\">" + db.databasename + "</a>";
                         var fragment = document.createRange().createContextualFragment(templateString);
                         fragment.firstElementChild.addEventListener("click", function (event) {
                             courseDatabasesHtml.innerHTML = content;
@@ -26818,7 +26818,7 @@ function populateTAPane(i) {
                             taID = taList[taListByUserID.indexOf(user.id)].taid;
                         }
                         var greenClass = userIsTaForCourse ? "green-nav" : "not-green-nav";
-                        var templateString = "<a class=\"nav-link " + greenClass + "\" data-toggle=\"pill\" href=\"#\">" + user.email + "</a>";
+                        var templateString = "<a class=\"ta-link nav-link " + greenClass + "\" data-toggle=\"pill\" href=\"#\">" + user.email + "</a>";
                         var fragment = document.createRange().createContextualFragment(templateString);
                         var userIsTaString = userIsTaForCourse ? "<span class=\"text-success h5\">User is a TA for this course</span>" :
                             "<span class=\"text-danger h5\">User is not a TA for this course</span>";
@@ -27460,7 +27460,7 @@ function createNavLink(fromEditCourses, courseIsActive, makeGreen, i, active) {
     credentialsClass = makeGreen ? "green-nav" : "not-green-nav";
     activeString = active ? "active" : "";
     inactiveCourseString = courseIsActive ? "" : "inactive-course";
-    var templateString = "<a id=\"" + i + "\" class=\"nav-link " + credentialsClass + " " + activeString + " " + inactiveCourseString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
+    var templateString = "<a id=\"" + i + "\" class=\"course-link nav-link " + credentialsClass + " " + activeString + " " + inactiveCourseString + "\" data-toggle=\"pill\" href=\"#" + hrefString + "\">" + courses[i].coursename + "</a>";
     var fragment = document.createRange().createContextualFragment(templateString);
     if (fromEditCourses) {
         fragment.firstElementChild.addEventListener("click", function (event) {
@@ -27553,7 +27553,7 @@ function changeView(hasCredentials) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    activeLink = document.getElementsByClassName("nav-link active")[0];
+                    activeLink = document.getElementsByClassName("course-link nav-link active")[0];
                     oldPane = hasCredentials ? noCredsPane : haveCredsPane;
                     newPane = hasCredentials ? haveCredsPane : noCredsPane;
                     i = Number(activeLink.id);
