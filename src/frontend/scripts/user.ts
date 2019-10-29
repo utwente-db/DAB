@@ -5,7 +5,7 @@ import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2';
 
 import {initNavbar, navbarEditUsers} from "./navbar";
-import {Course, StudentDatabase} from "./courses";
+import {Course, getCoursesPromise, StudentDatabase} from "./courses";
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -23,12 +23,18 @@ const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as
 const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
 
 
-const usernameHtml: HTMLDivElement = document.getElementById("username") as HTMLDivElement;
-const roleHtml: HTMLDivElement = document.getElementById("role") as HTMLDivElement;
+const usernameHtml = document.getElementById("username") as HTMLInputElement;
+const selectedRole = document.getElementById("selected-role") as HTMLSelectElement;
 const verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement;
+const searchInput = document.getElementById("search") as HTMLInputElement;
+const usersTbody = document.getElementById("users") as HTMLTableSectionElement;
+const usersTabs = document.getElementById("users-tabs") as HTMLDivElement;
+const editUserPane = document.getElementById("edit-user-pane") as HTMLDivElement;
+const pleaseSelectAuser = document.getElementById("please-select-a-user") as HTMLDivElement;
 
-let deleteButton: HTMLButtonElement = document.getElementById("delete_button") as HTMLButtonElement;
-let changeRoleButton: HTMLButtonElement = document.getElementById("change_role") as HTMLButtonElement;
+let deleteButton: HTMLButtonElement = document.getElementById("delete-button") as HTMLButtonElement;
+let editButton: HTMLButtonElement = document.getElementById("edit-button") as HTMLButtonElement;
+let courses: Course[] = [];
 
 export interface User {
     id: number;
@@ -40,9 +46,9 @@ export interface User {
 }
 
 export enum UserRole {
-    admin = 0,
-    teacher = 1,
-    student = 2
+    Admin = 0,
+    Teacher = 1,
+    Student = 2
 }
 
 export interface TA {
@@ -52,27 +58,18 @@ export interface TA {
 }
 
 async function displayUsers(): Promise<void> {
-    users = await getUsersPromise();
+    users = (await getUsersPromise()).sort((a: User, b: User) => a.email.localeCompare(b.email));
+
     const result: string[] = [];
 
     for (let i = 0; i < users.length; i++) {
-        let role: string;
-        if (users[i].role === 0) {
-            role = "Admin";
-        } else if (users[i].role === 1) {
-            role = "Teacher";
-        } else if (users[i].role === 2) {
-            role = "Student";
-        } else {
-            role = "Unknown";
-        }
-
         const verified: boolean = users[i].verified;
         result.push(
-            `<tr><th scope="row">${users[i].id}</th>
-             <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${role}</td>
-             <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${users[i].email}</td>
-             <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${verified}</td></tr>`.trim()
+            `<tr class="user-row poin" id="user-row-${i}"></a>
+ <th scope="row">${users[i].id}</th>
+             <td>${UserRole[users[i].role]}</td>
+             <td>${users[i].email}</td>
+             <td>${verified}</td></tr>`.trim()
         );
 
     }
@@ -81,29 +78,38 @@ async function displayUsers(): Promise<void> {
     usersHtml.innerHTML = resultString;
 
     for (let i = 0; i < users.length; i++) {
-        const links = document.getElementsByClassName(`user-link-${i}`) as HTMLCollectionOf<HTMLAnchorElement>;
-        for (let j = 0; j < links.length; j++) {
-            links.item(j)!.addEventListener("click", () => {
+        document.getElementById(`user-row-${i}`)!.addEventListener("click", () => {
+            Array.from(usersTabs.children).forEach((tab: Element) => {
+                tab.classList.remove("active")
+            });
+            editUserPane.classList.add("active");
+            // set new course pane active
+            Array.from(document.getElementsByTagName('tr'))!.forEach((el: Element) => {
+                el.classList.remove("active")
+            });
+            document.getElementById(`user-row-${i}`)!.classList.add("active");
 
-                const changeRoleButtonClone = changeRoleButton!.cloneNode(true) as HTMLButtonElement;
-                changeRoleButton.parentNode!.replaceChild(changeRoleButtonClone, changeRoleButton);
-                changeRoleButton = changeRoleButtonClone;
 
-                const deleteButtonClone = deleteButton!.cloneNode(true) as HTMLButtonElement;
-                deleteButton.parentNode!.replaceChild(deleteButtonClone, deleteButton);
-                deleteButton = deleteButtonClone;
+            const deleteButtonClone = deleteButton!.cloneNode(true) as HTMLButtonElement;
+            deleteButton.parentNode!.replaceChild(deleteButtonClone, deleteButton);
+            deleteButton = deleteButtonClone;
 
-
-                changeRoleButton.addEventListener("click", () => {
-                    changeRole(users[i].id)
-                });
-                deleteButton.addEventListener("click", () => {
-                    deleteUser(users[i].id)
-                });
-                displayUserDetails(users[i].id);
-                displayCoursesAndDatabases(users[i].id);
-            })
-        }
+            const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+            editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
+            editButton = changeRoleButtonClone;
+            editButton.classList.remove("btn-info");
+            editButton.classList.add("btn-secondary");
+            editButton.innerHTML = "Edit Role";
+            selectedRole.setAttribute("disabled", "");
+            editButton.addEventListener("click", () => {
+                allowChangeRole(users[i])
+            });
+            deleteButton.addEventListener("click", () => {
+                deleteUser(users[i])
+            });
+            displayUserDetails(users[i]);
+            displayCoursesAndDatabases(users[i]);
+        })
 
     }
 }
@@ -123,17 +129,16 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
     return response.data;
 }
 
-async function getUserPromise(userid: number): Promise<User> {
-    const path = `/rest/dbmusers/${userid}/`;
-    const response: AxiosResponse = await axios.get(path);
-    return response.data;
-}
+// async function getUserPromise(userid: number): Promise<User> {
+//     const path = `/rest/dbmusers/${userid}/`;
+//     const response: AxiosResponse = await axios.get(path);
+//     return response.data;
+// }
 
-async function displayCoursesAndDatabases(userid: number): Promise<void> {
-    const dbIDs: number[] = [];
-    const databases: StudentDatabase[] = await getDatabasesPromise(userid);
+async function displayCoursesAndDatabases(user: User): Promise<void> {
+    const databases: StudentDatabase[] = await getDatabasesPromise(user.id);
 
-    const coursesAndDatabases: Map<number, string> = new Map<number, string>();
+    const dbToHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
         coursesNavHtml.innerHTML = "This user does not have any databases";
         courseDatabasesHtml.innerHTML = "No database selected";
@@ -142,83 +147,95 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
 
     // const coursesAndDatabases = new Map<number, string>();
 
-    for (let i = 0; i < databases.length; i++) {
-        coursesAndDatabases.set(databases[i].course, "");
-    }
 
     for (let i = 0; i < databases.length; i++) {
-        dbIDs.push(databases[i].dbid);
-        const html: string =
+        const course: Course = courses.find((course: Course) => course.courseid===databases[i].course)!;
+
+        const html =
             `<div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Database ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].dbid}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Database name:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].databasename}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Username:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].username}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Password:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].password}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Group ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].groupid}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
-                <label class="col-12 col-lg-4 col-form-label">FID:</label>
+            </div><div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Owner ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].fid}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Course ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].course}" readonly="">
                 </div>
-            </div>` +
-            `<button type="button" class="btn btn-danger" onclick="window.location.replace('/rest/dump/${databases[i].dbid}/')">
-                Download Dump
-            </button>` +
-            `<button id="reset-button-${databases[i].dbid}" type="button" class="btn btn-danger">
-                Reset
-            </button>` +
-            `<button id="delete-button-${databases[i].dbid}" type="button" class="btn btn-danger">
-                Delete
-            </button>`
+            </div>
+            <div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Course name:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${course.coursename}" readonly="">
+                </div>
+            </div>
+            
+            
+                                    
+                        
+                        
+            
+            <div class="align-items-center align-items-stretch row">
+            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+            <button type="button" class="btn btn-secondary " onclick="window.location.replace('/rest/dump/${databases[i].dbid}/')">
+                Download dump
+                
+            </button>
+            </div><div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+            <button id="reset-button-${databases[i].dbid}" type="button" class="btn btn-info ">
+                Reset database
+            </button>
+            </div><div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+            <button id="delete-button-${databases[i].dbid}" type="button" class="btn btn-danger">
+                Delete database
+            </button>
+            </div>
+            </div>`.trim();
 
-        ;
 
         // This will mess up if someone has multiple db's for a single course
-        coursesAndDatabases.set(databases[i].course, html);
+        dbToHTMLmap.set(databases[i], html);
+
     }
 
     const resultNav: string[] = [];
     const resultContent: string[] = [];
     let active = " active";
-    for (const entry of Array.from(coursesAndDatabases.entries())) {
-        const courseNumber: number = entry[0];
+    for (const entry of Array.from(dbToHTMLmap.entries())) {
+        const db: StudentDatabase = entry[0];
+
         const content: string = entry[1];
-        const course: Course = await getCourseByIDPromise(courseNumber);
+
         resultNav.push(
-            `<a class="studentdatabase-link nav-link${active}" data-toggle="pill" href="#course${course.courseid}">${course.coursename}</a>`
+            `<a class="studentdatabase-link nav-link${active}" data-toggle="pill" href="#db-${db.dbid}">${db.databasename}</a>`
         );
         resultContent.push(
-            `<div class="tab-pane${active}" id="course${course.courseid}">${content}</div>`
+            `<div class="tab-pane${active}" id="db-${db.dbid}">${content}</div>`
         );
         active = "";
     }
@@ -227,14 +244,14 @@ async function displayCoursesAndDatabases(userid: number): Promise<void> {
     coursesNavHtml.innerHTML = resultNavString;
     courseDatabasesHtml.innerHTML = resultContentString;
 
-    dbIDs.forEach((id: number) => {
-        const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
+    databases.forEach((db: StudentDatabase) => {
+        const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${db.dbid}`) as HTMLButtonElement;
         resetButton.addEventListener("click", () => {
-            resetDatabase(id);
+            resetDatabase(db.dbid);
         });
-        const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
+        const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-            deleteDatabase(id, courseDatabasesHtml);
+            deleteDatabase(db.dbid, courseDatabasesHtml);
         });
     });
 
@@ -293,28 +310,24 @@ export async function resetDatabase(dbID: number): Promise<boolean> {
     return success;
 }
 
-async function displayUserDetails(userid: number): Promise<void> {
-    const user: User = await getUserPromise(userid);
-    pageTitleHtml.innerHTML = `Admin - User ${user.id}`;
+async function displayUserDetails(user: User): Promise<void> {
+    // let role: string;
+    // if (user.role === UserRole.admin) {
+    //     role = "Admin";
+    // } else if (user.role === UserRole.teacher) {
+    //     role = "Teacher";
+    // } else if (user.role === UserRole.student) {
+    //     role = "Student";
+    // } else {
+    //     role = "unknown";
+    // }
 
-    let role: string;
-    if (user.role === UserRole.admin) {
-        role = "admin";
-    } else if (user.role === UserRole.teacher) {
-        role = "teacher";
-    } else if (user.role === UserRole.student) {
-        role = "student";
-    } else {
-        role = "unknown";
-    }
-
-    usernameHtml.innerHTML = `<input type=\"text\" class=\"form-control\" value=\"${user.email}\" readonly="">`;
-    roleHtml.innerHTML = `<input type="text" class="form-control" value="${role}" readonly="">`;
+    usernameHtml.value = user.email;
+    selectedRole.value = String(user.role);
     verifiedHtml.innerHTML = (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
 }
 
-async function deleteUser(userid: number): Promise<boolean> {
-    const user: User = await getUserPromise(userid);
+async function deleteUser(user: User): Promise<boolean> {
     const result = await Swal.fire({
         text: `Are you sure you want to delete ${user.email} from the system?`,
         type: 'warning',
@@ -330,8 +343,15 @@ async function deleteUser(userid: number): Promise<boolean> {
     let success;
 
     try {
-        await axios.delete(`/rest/dbmusers/${userid}/`);
-        alert("User succesfully deleted!");
+        await axios.delete(`/rest/dbmusers/${user.id}/`);
+        addAlert("User succesfully deleted!", AlertType.success);
+
+        Array.from(usersTabs.children).forEach((tab: Element) => {
+            tab.classList.remove("active")
+        });
+        pleaseSelectAuser.classList.add("active");
+        document.getElementsByClassName("user-row active")[0]!.remove();
+        // TODO remove table row
         // window.location.href = '../';
         success = true;
     } catch (error) {
@@ -341,12 +361,34 @@ async function deleteUser(userid: number): Promise<boolean> {
     return success;
 }
 
-async function changeRole(userid: number): Promise<boolean> {
-    const user: User = await getUserPromise(userid);
-    const selectedRole: HTMLSelectElement = document.getElementById("selected_role") as HTMLSelectElement;
-    const role: string = selectedRole.value;
+function allowChangeRole(user: User): void {
+    editButton.classList.remove("btn-secondary");
+    editButton.classList.add("btn-info");
+    editButton.innerHTML = "Save changes";
+    selectedRole.removeAttribute("disabled");
+    const editButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+    editButton.parentNode!.replaceChild(editButtonClone, editButton);
+    editButton = editButtonClone;
+    editButton.addEventListener("click", () => changeRole(user))
+}
+
+async function changeRole(user: User): Promise<boolean> {
+    const roleNumber: number = Number(selectedRole.value);
+    if (user.role === roleNumber) {
+        const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+        editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
+        editButton = changeRoleButtonClone;
+        editButton.classList.remove("btn-info");
+        editButton.classList.add("btn-secondary");
+        editButton.innerHTML = "Edit Role";
+        selectedRole.setAttribute("disabled", "");
+        editButton.addEventListener("click", () => {
+            allowChangeRole(user)
+        });
+        return true;
+    }
     const result = await Swal.fire({
-        text: `Are you sure you want change the role of ${user.email} to ${role}?`,
+        text: `Are you sure you want change the role of ${user.email} to ${UserRole[roleNumber]}?`,
         type: 'warning',
         showCancelButton: true,
         focusCancel: true,
@@ -362,19 +404,21 @@ async function changeRole(userid: number): Promise<boolean> {
     try {
         await axios.post(`/rest/set_role`, {
             user: user.id,
-            role: Number(role)
+            role: roleNumber
         });
-        // window.location.reload(true);
-        addAlert("Role changed!", AlertType.primary);
-        let newRole = "";
-        if (Number(role) === 0) {
-            newRole = "admin";
-        } else if (Number(role) === 1) {
-            newRole = "teacher";
-        } else if (Number(role) === 2) {
-            newRole = "student";
-        }
-        roleHtml.innerHTML = `<input type="text" class="form-control" value="${newRole}" readonly="">`;
+        addAlert(`Role of ${user.email} was changed to ${UserRole[roleNumber]}!`, AlertType.primary);
+        user.role = roleNumber;
+        (document.getElementsByClassName("user-row active")[0]!.children[1]! as HTMLAnchorElement).innerHTML = UserRole[roleNumber];
+        const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+        editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
+        editButton = changeRoleButtonClone;
+        editButton.classList.remove("btn-info");
+        editButton.classList.add("btn-secondary");
+        editButton.innerHTML = "Edit Role";
+        selectedRole.setAttribute("disabled", "");
+        editButton.addEventListener("click", () => {
+            allowChangeRole(user)
+        });
         success = true;
     } catch (error) {
         addErrorAlert(error);
@@ -387,12 +431,24 @@ function changeEditUserState(enable: boolean): void {
     return;
 }
 
+
 window.onload = async () => {
     await Promise.all([
+        courses = await getCoursesPromise(),
         initNavbar(changeEditUserState),
         displayUsers(),
         navbarEditUsers.classList.add("active"),
         (navbarEditUsers.firstElementChild)!.classList.add("disabled"),
 
     ]);
+
+    searchInput.addEventListener("keyup", () => {
+        const value = searchInput.value.toLowerCase();
+        Array.from(usersTbody.children).forEach((child: Element) => {
+            const childRow = child as HTMLTableRowElement;
+            childRow.hidden = !childRow.textContent!.toLowerCase().includes(value);
+        });
+    });
+
+
 }

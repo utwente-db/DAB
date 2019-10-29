@@ -142,6 +142,15 @@ class Studentdatabases(models.Model):
     password = models.CharField(max_length=265)
     groupid = models.IntegerField(default=0, db_column="groupid")
 
+    @property
+    def email(self):
+        return self.fid.email
+
+
+    @property
+    def role(self):
+        return self.fid.role
+
     objects = StudentdatabasesManager()
 
     def save(self, *args, **kwargs):

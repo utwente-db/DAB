@@ -4,7 +4,6 @@ const ts_loader = require('ts-loader');
 var glob = require("glob");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-// TODO maybe export some sort of variable when in production to use everywhere
 
 module.exports = (env, argv) => {
     const isDevelopment = argv.mode === 'development'; // Boolean for development / production
@@ -61,9 +60,6 @@ module.exports = (env, argv) => {
             // Add '.ts' etc. as a resolvable extension.
             extensions: ['.ts', '.tsx', '.js'],
         },
-
-        // Uncomment this to split up imports into seperate js file
-        // TODO Freek fix that split chunks are not imported
 
         optimization: {
             usedExports: true,

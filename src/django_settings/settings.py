@@ -25,8 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'z)7pbw!fc(th%m)!(ytsprc3bick1ga-mavn4c8xvujwe(3x21'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# TODO move to secret.py for rolling release (if we want to work on this next module)
-DEBUG = False
+DEBUG = secret.DEBUG
 
 ALLOWED_HOSTS = ['*']
 
@@ -47,7 +46,7 @@ LOGFILE = secret.LOGFILE
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+#    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -150,7 +149,7 @@ USE_TZ = True
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '../frontend'),
 ]
-STATIC_ROOT = "static"
+STATIC_ROOT = os.path.join(BASE_DIR, '../static')
 STATIC_URL = '/static/'
 
 DEBUG_PROPAGATE_EXCEPTIONS = True

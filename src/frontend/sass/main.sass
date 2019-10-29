@@ -39,11 +39,11 @@ a
 #alert-div
   @extend .text-center
 
-.tableFixHead
-  & thead th
-    position: sticky
-    top: 0
-    cursor: pointer
+//.tableFixHead
+//  & thead th
+//    position: sticky
+//    top: 0
+//
 
 .table
   & th td
@@ -53,6 +53,21 @@ table
   border-collapse: collapse
   width: 100%
 
+
+tbody
+  & tr
+    cursor: pointer
+    color: $cyan
+
+tr.active, tr:active
+    background-color: $info !important
+    color: white !important
+    & td
+      & a
+        color: white !important
+
+.table-hover:hover, .table-hover.hover
+  color: $cyan
 
 /* --------------------------------------------------------
 /* "Bootstrap V4 Simple Checkbox Switch - No Js"

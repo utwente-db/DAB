@@ -24,7 +24,10 @@
 
                         <hr/>
                         <div class="overflow-auto" style="height: 300px;">
-                            <div class="nav flex-column nav-pills" id="courses-nav" role="tablist"></div>
+                            <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
+                                <div class="spinner-border text-info"></div>
+
+                            </div>
                         </div>
 
                     </div>
@@ -38,7 +41,7 @@
                             <div class="tab-pane active m-5" id="please-select-a-course"><h1>Please select a course</h1>
                             </div>
 
-                            <div class="tab-pane" id="new-course-pane">
+                            <div class="tab-pane" id="users-pane">
                                 <form class="form-horizontal" id="new-course-content"> {# actual content #}
                                     <p class="text-center h4 mb-4">Add course</p>
                                     <hr/>
@@ -319,7 +322,7 @@
                                         {% endif %}
                                         <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
                                             <button id="edit-course-button"
-                                                    class="btn btn-info reset-button btn-block">Edit course
+                                                    class="btn btn-info reset-button btn-block">Save changes
                                             </button>
                                         </div>
                                         {% if role < 2 %}

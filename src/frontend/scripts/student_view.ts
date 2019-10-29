@@ -46,7 +46,7 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
             const html = `<div class="mt-5 form-group row">
-                            <label class="col-12 col-md-4 col-form-label">Username:</label>
+                            <label class="col-12 col-md-4 col-form-label">Username and DB name:</label>
                             <div class="col-12 col-md-8">
                                 <input type="text" class="form-control" value="${db.username}" readonly="">
                             </div>
@@ -57,6 +57,13 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
                                 <input type="text" class="form-control" value="${db.password}" readonly="">
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-form-label">Example command for connecting:</label>
+                            <div class="col-12 col-md-8">
+                                <code>psql -h ${document.getElementById("django-template")!.classList[0]!} -U ${db.username} ${db.databasename}</code>
+                            </div>
+                        </div>
+                        
                         <div class="align-items-center align-items-stretch row">
                             <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
                                 <button id="delete-button-${db.dbid}" class="btn btn-danger delete-button btn-block">Delete database and release credentials</button>
@@ -147,7 +154,7 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
     }
 
     let taCourses: number[] = [];
-    if (who.role === UserRole.student) {
+    if (who.role === UserRole.Student) {
         const taResponse: AxiosResponse<TA[]> = await axios.get("/rest/tas/own/") as AxiosResponse<TA[]>;
         const taList: TA[] = taResponse.data;
         taCourses = taList.map((ta: TA) => ta.courseid);
@@ -160,18 +167,18 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
         let youHavePrivilege = false;
         const youAreTA = taCourses.includes(courses[i].courseid)
         if (fromEditCourses) {
-            youHavePrivilege = (who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id) || youAreTA);
+            youHavePrivilege = (who.role === UserRole.Admin || (who.role === UserRole.Teacher && courses[i].fid === who.id) || youAreTA);
 
         } else {
-            youHavePrivilege = (courses[i].active || who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id) || youAreTA);
+            youHavePrivilege = (courses[i].active || who.role === UserRole.Admin || (who.role === UserRole.Teacher && courses[i].fid === who.id) || youAreTA);
 
         }
         if (youHavePrivilege) {
             let haveCredentials = false;
-            if (who.role === UserRole.admin && fromEditCourses) {
+            if (who.role === UserRole.Admin && fromEditCourses) {
                 haveCredentials = courses[i].fid === who.id // The user owns this course
             } else if (!fromEditCourses) {
-                haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
+                haveCredentials = (ownCourses.includes(courses[i].courseid));
             }
             const fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i, i === activeI);
 
@@ -343,4 +350,6 @@ window.onload = async () => {
         })(),
         displayWhoami()
     ])
+    Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove())
+
 };
