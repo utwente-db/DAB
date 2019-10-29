@@ -74,7 +74,8 @@ async function displayUsers(): Promise<void> {
 
         const verified: boolean = users[i].verified;
         result.push(
-            `<tr><th scope="row">${users[i].id}</th>
+            `<tr class="course-link nav-link green-nav  " data-toggle="pill">
+ <th scope="row">${users[i].id}</th>
              <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${role}</td>
              <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${users[i].email}</td>
              <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${verified}</td></tr>`.trim()
@@ -89,7 +90,9 @@ async function displayUsers(): Promise<void> {
         const links = document.getElementsByClassName(`user-link-${i}`) as HTMLCollectionOf<HTMLAnchorElement>;
         for (let j = 0; j < links.length; j++) {
             links.item(j)!.addEventListener("click", () => {
-                Array.from(usersTabs.children).forEach((tab: Element) => {tab.classList.remove("active")});
+                Array.from(usersTabs.children).forEach((tab: Element) => {
+                    tab.classList.remove("active")
+                });
                 editUserPane.classList.add("active");
                 // set new course pane active
 
@@ -315,7 +318,7 @@ async function displayUserDetails(user: User): Promise<void> {
     //     role = "unknown";
     // }
 
-    usernameHtml.value=user.email;
+    usernameHtml.value = user.email;
     selectedRole.value = String(user.role);
     verifiedHtml.innerHTML = (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
 }
