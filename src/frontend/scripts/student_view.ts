@@ -171,7 +171,7 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
             if (who.role === UserRole.admin && fromEditCourses) {
                 haveCredentials = courses[i].fid === who.id // The user owns this course
             } else if (!fromEditCourses) {
-                haveCredentials = (ownCourses.includes(courses[i].courseid)); // TODO change this later when max databases > 1
+                haveCredentials = (ownCourses.includes(courses[i].courseid));
             }
             const fragment = createNavLink(fromEditCourses, courses[i].active, haveCredentials, i, i === activeI);
 

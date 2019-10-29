@@ -132,8 +132,6 @@ function populateNewCoursePane(): void {
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
     if (who.role === UserRole.admin) {
-        // TODO fix teacher permissions here
-        // TODO also hide html
         fillStudentDatabasesDropdown(newSchemaTransfer);
     }
     newSchemaTransfer.value = String(0);
@@ -160,7 +158,6 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     studentDatabasesNavHtml.innerHTML = "";
     courseDatabasesHtml.innerHTML = "No database selected";
     if (who.role === UserRole.admin) {
-        // TODO fix permissions for teacher
         fillStudentDatabasesDropdown(existingSchemaTransfer);
 
     }
@@ -271,10 +268,7 @@ function checkFields(newCourseInfoField: HTMLInputElement, newCoursenameField: H
 }
 
 function changeEditCoursesState(enable: boolean): void {
-    // TODO update with new elements
-    // TODO disable all nav elements like in sutdent view
-    // TODO addCoursesLink
-    // todo call this everywhere with navbar page thing
+
 
     if (enable) {
         newCourseInfoField.disabled = false;
@@ -337,8 +331,7 @@ async function tryAddCourse(): Promise<void> {
 
             if (schema !== "") {
 
-                const response = await axios.post(`/rest/courses/${courseID}/schema`, schema);
-                // TODO do something with response
+                await axios.post(`/rest/courses/${courseID}/schema`, schema);
                 addAlert("successfully added schema", AlertType.success);
 
 
@@ -413,9 +406,6 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
 }
 
 async function tryEditCourse(): Promise<void> {
-    // TODO give a Swal
-    // TODO maybe repopulate on cancel changes?
-    // TODO if you made it inactive/active change style of navlink
 
 
     if (checkFields(existingCourseInfoField, existingCoursenameField, existingCourseFIDField,
@@ -437,14 +427,13 @@ async function tryEditCourse(): Promise<void> {
 
         try {
             const response = await axios.put(`/rest/courses/${existingCourseIDField.value}`, inputCourse) as AxiosResponse;
-            // TODO Do something with the response
             addAlert("Successfully edited course (without schema)", AlertType.success, tempAlert);
             const schema: string = await getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload,
                 existingSchemaUpload);
 
             if (schema !== "") {
 
-                const response = await axios.post(`/rest/courses/${existingCourseIDField.value}/schema`, schema);
+                await axios.post(`/rest/courses/${existingCourseIDField.value}/schema`, schema);
                 addAlert("Successfully added schema", AlertType.success);
 
 
@@ -455,7 +444,7 @@ async function tryEditCourse(): Promise<void> {
             }
             const navLink = document.getElementsByClassName("course-link nav-link active")[0]! as HTMLAnchorElement;
             navLink.innerText = existingCoursenameField.value;
-            courses[Number(navLink.id)] = inputCourse; // TODO maybe doesnt have amount of databases field
+            courses[Number(navLink.id)] = inputCourse;
             goToExistingCoursePane(Number(navLink.id))
         } catch (error) {
             addErrorAlert(error, tempAlert)
@@ -469,7 +458,6 @@ async function tryEditCourse(): Promise<void> {
 
 async function displayStudentDatabasesForCourse(i: number): Promise<void> {
     const dbIDs: number[] = [];
-    // TODO use try except and disabling things here
     const databases: StudentDatabase[] = (await axios.get(`/rest/studentdatabases/course/${courses[i].courseid}`) as AxiosResponse<StudentDatabase[]>).data;
 
     const dbIDtoHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
@@ -581,14 +569,12 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
         "courseid": courses[i].courseid,
         "studentid": user.id
     }
-    // TODO add disabling things
     const tempAlert = addTempAlert();
     let success = false;
     changePageState(false, changeEditCoursesState);
     try {
         const response = await axios.post(`/rest/tas/`, taObject) as AxiosResponse<TA>;
         const ta = response.data;
-        // TODO change nav and div content on state change using TA object
         addAlert(`${user.email} was added as a TA`, AlertType.success, tempAlert);
 
         const templateString = `<a class="ta-link nav-link green-nav active" data-toggle="pill" href="#">${user.email}</a>`;
@@ -630,13 +616,11 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
 }
 
 async function removeTA(user: User, taID: number, i: number): Promise<boolean> {
-    // TODO add disabling things
     const tempAlert = addTempAlert();
     let success = false;
     changePageState(false, changeEditCoursesState);
     try {
         const response = await axios.delete(`/rest/tas/${taID}/`) as AxiosResponse;
-        // TODO change nav and div content on state change using TA object
         addAlert(`${user.email} is no longer a TA`, AlertType.success, tempAlert);
 
         const templateString = `<a class="ta-link nav-link not-green-nav active" data-toggle="pill" href="#">${user.email}</a>`;
@@ -694,7 +678,6 @@ async function populateTAPane(i: number): Promise<void> {
         taNav.innerHTML = "";
     }
 
-    // TODO add error handling, disabling here
 
     const response = await axios.get(`/rest/tas/course/${courses[i].courseid}`) as AxiosResponse<TA[]>;
     const taList = response.data;
@@ -754,9 +737,7 @@ window.onload = async () => {
     await Promise.all([
         (async () => {
             courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-            // TODO add error handlign here
             if (who.role === UserRole.teacher || who.role === UserRole.admin) {
-                // TODO un hardcode this
                 users = (await axios.get(`/rest/dbmusers/`) as AxiosResponse<User[]>).data;
 
             }
