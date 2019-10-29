@@ -103,13 +103,13 @@ async function displayUsers(): Promise<void> {
 
 
                 changeRoleButton.addEventListener("click", () => {
-                    changeRole(users[i].id)
+                    changeRole(users[i])
                 });
                 deleteButton.addEventListener("click", () => {
-                    deleteUser(users[i].id)
+                    deleteUser(users[i])
                 });
-                displayUserDetails(users[i].id);
-                displayCoursesAndDatabases(users[i].id);
+                displayUserDetails(users[i]);
+                displayCoursesAndDatabases(users[i]);
             })
         }
 
@@ -131,15 +131,15 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
     return response.data;
 }
 
-async function getUserPromise(userid: number): Promise<User> {
-    const path = `/rest/dbmusers/${userid}/`;
-    const response: AxiosResponse = await axios.get(path);
-    return response.data;
-}
+// async function getUserPromise(userid: number): Promise<User> {
+//     const path = `/rest/dbmusers/${userid}/`;
+//     const response: AxiosResponse = await axios.get(path);
+//     return response.data;
+// }
 
-async function displayCoursesAndDatabases(userid: number): Promise<void> {
+async function displayCoursesAndDatabases(user: User): Promise<void> {
     const dbIDs: number[] = [];
-    const databases: StudentDatabase[] = await getDatabasesPromise(userid);
+    const databases: StudentDatabase[] = await getDatabasesPromise(user.id);
 
     const coursesAndDatabases: Map<number, string> = new Map<number, string>();
     if (databases.length === 0) {
@@ -301,8 +301,7 @@ export async function resetDatabase(dbID: number): Promise<boolean> {
     return success;
 }
 
-async function displayUserDetails(userid: number): Promise<void> {
-    const user: User = await getUserPromise(userid);
+async function displayUserDetails(user: User): Promise<void> {
     pageTitleHtml.innerHTML = `Admin - User ${user.id}`;
 
     let role: string;
@@ -321,8 +320,7 @@ async function displayUserDetails(userid: number): Promise<void> {
     verifiedHtml.innerHTML = (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
 }
 
-async function deleteUser(userid: number): Promise<boolean> {
-    const user: User = await getUserPromise(userid);
+async function deleteUser(user: User): Promise<boolean> {
     const result = await Swal.fire({
         text: `Are you sure you want to delete ${user.email} from the system?`,
         type: 'warning',
@@ -338,7 +336,7 @@ async function deleteUser(userid: number): Promise<boolean> {
     let success;
 
     try {
-        await axios.delete(`/rest/dbmusers/${userid}/`);
+        await axios.delete(`/rest/dbmusers/${user.id}/`);
         alert("User succesfully deleted!");
         // window.location.href = '../';
         success = true;
@@ -349,8 +347,7 @@ async function deleteUser(userid: number): Promise<boolean> {
     return success;
 }
 
-async function changeRole(userid: number): Promise<boolean> {
-    const user: User = await getUserPromise(userid);
+async function changeRole(user: User): Promise<boolean> {
     const selectedRole: HTMLSelectElement = document.getElementById("selected_role") as HTMLSelectElement;
     const role: string = selectedRole.value;
     const result = await Swal.fire({
