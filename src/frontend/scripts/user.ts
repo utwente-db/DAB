@@ -5,7 +5,7 @@ import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2';
 
 import {initNavbar, navbarEditUsers} from "./navbar";
-import {Course, StudentDatabase} from "./courses";
+import {Course, getCoursesPromise, StudentDatabase} from "./courses";
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -57,7 +57,8 @@ export interface TA {
 }
 
 async function displayUsers(): Promise<void> {
-    users = await getUsersPromise();
+    users = (await getUsersPromise()).sort((a: User, b: User) => a.email.localeCompare(b.email));
+
     const result: string[] = [];
 
     for (let i = 0; i < users.length; i++) {
@@ -74,7 +75,7 @@ async function displayUsers(): Promise<void> {
 
         const verified: boolean = users[i].verified;
         result.push(
-            `<tr class="course-link nav-link green-nav  " data-toggle="pill">
+            `<tr id="user-row-${i}">
  <th scope="row">${users[i].id}</th>
              <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${role}</td>
              <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${users[i].email}</td>
@@ -95,6 +96,10 @@ async function displayUsers(): Promise<void> {
                 });
                 editUserPane.classList.add("active");
                 // set new course pane active
+                Array.from(document.getElementsByTagName('tr'))!.forEach((el: Element) => {
+                    el.classList.remove("active")
+                })
+                document.getElementById(`user-row-${i}`)!.classList.add("active");
 
                 const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
                 editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
