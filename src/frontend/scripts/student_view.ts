@@ -46,7 +46,7 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
             const html = `<div class="mt-5 form-group row">
-                            <label class="col-12 col-md-4 col-form-label">Username (and database name):</label>
+                            <label class="col-12 col-md-4 col-form-label">Username and DB name:</label>
                             <div class="col-12 col-md-8">
                                 <input type="text" class="form-control" value="${db.username}" readonly="">
                             </div>
