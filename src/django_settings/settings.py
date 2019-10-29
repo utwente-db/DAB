@@ -26,7 +26,7 @@ SECRET_KEY = 'z)7pbw!fc(th%m)!(ytsprc3bick1ga-mavn4c8xvujwe(3x21'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # TODO move to secret.py for rolling release (if we want to work on this next module)
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 

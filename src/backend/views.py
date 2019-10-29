@@ -293,13 +293,15 @@ def post_base_dbmusers_response(request):
     except ParseError:
         return HttpResponse("Your JSON is incorrectly formatted", status=HTTP_400_BAD_REQUEST)
 
+    admin_create = check_role(request, admin) and "admin" in databases and databases["admin"]
+
     try:
 
         unhashed_password = databases['password']
         databases['password'] = hash.make(unhashed_password)
         databases["token"] = hash.token()
         databases["tokenExpire"] = timezone.now() + timezone.timedelta(hours=24)
-        if check_role(request, admin):
+        if admin_create:
             pass
             # databases['role'] = databases['role']
             # databases['verfied'] = database['verified']
@@ -314,7 +316,13 @@ def post_base_dbmusers_response(request):
         if serializer_class.is_valid():
             serializer_class.save()
             # send confirmation mail
-            mail.send_verification(databases)
+            if admin_create:
+                if "verified":
+                    mail.send_creation_notice(databases)
+                else:
+                    mail.send_verification(database, false)
+            else:
+                mail.send_verification(databases)
             # We don't want to return hashed password and verification tokens
             serializer_class = dbmusersSerializer(serializer_class.data)
             return JsonResponse(serializer_class.data, status=status.HTTP_201_CREATED)
