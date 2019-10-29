@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import *
+from .settings import *
 
 
 class CoursesSerializer(serializers.ModelSerializer):
@@ -23,6 +24,23 @@ class StudentdatabasesDeleteSerializer(serializers.ModelSerializer):
 
 
 class StudentdatabasesSerializer(serializers.ModelSerializer):
+
+    email = serializers.SerializerMethodField('get_email')
+    role  = serializers.SerializerMethodField('get_role')
+
+    def get_email(self,StudentdatabasesSerializer):
+        return StudentdatabasesSerializer.email
+
+    def get_role(self,StudentdatabasesSerializer):
+        role = StudentdatabasesSerializer.role
+
+        if role == admin:
+            return "admin"
+        elif role == teacher:
+            return "teacher"
+        elif role == student:
+            return "student"
+
     class Meta:
         model = Studentdatabases
         fields = '__all__'
