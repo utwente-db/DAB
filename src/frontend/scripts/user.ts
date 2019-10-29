@@ -78,35 +78,38 @@ async function displayUsers(): Promise<void> {
     usersHtml.innerHTML = resultString;
 
     for (let i = 0; i < users.length; i++) {
-            document.getElementById(`user-row-${i}`)!.addEventListener("click", () => {
-                Array.from(usersTabs.children).forEach((tab: Element) => {
-                    tab.classList.remove("active")
-                });
-                editUserPane.classList.add("active");
-                // set new course pane active
-                Array.from(document.getElementsByTagName('tr'))!.forEach((el: Element) => {
-                    el.classList.remove("active")
-                });
-                document.getElementById(`user-row-${i}`)!.classList.add("active");
-
-                const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
-                editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
-                editButton = changeRoleButtonClone;
-
-                const deleteButtonClone = deleteButton!.cloneNode(true) as HTMLButtonElement;
-                deleteButton.parentNode!.replaceChild(deleteButtonClone, deleteButton);
-                deleteButton = deleteButtonClone;
+        document.getElementById(`user-row-${i}`)!.addEventListener("click", () => {
+            Array.from(usersTabs.children).forEach((tab: Element) => {
+                tab.classList.remove("active")
+            });
+            editUserPane.classList.add("active");
+            // set new course pane active
+            Array.from(document.getElementsByTagName('tr'))!.forEach((el: Element) => {
+                el.classList.remove("active")
+            });
+            document.getElementById(`user-row-${i}`)!.classList.add("active");
 
 
-                editButton.addEventListener("click", () => {
-                    changeRole(users[i])
-                });
-                deleteButton.addEventListener("click", () => {
-                    deleteUser(users[i])
-                });
-                displayUserDetails(users[i]);
-                displayCoursesAndDatabases(users[i]);
-            })
+            const deleteButtonClone = deleteButton!.cloneNode(true) as HTMLButtonElement;
+            deleteButton.parentNode!.replaceChild(deleteButtonClone, deleteButton);
+            deleteButton = deleteButtonClone;
+
+            const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+            editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
+            editButton = changeRoleButtonClone;
+            editButton.classList.remove("btn-info");
+            editButton.classList.add("btn-secondary");
+            editButton.innerHTML = "Edit Role";
+            selectedRole.setAttribute("disabled", "");
+            editButton.addEventListener("click", () => {
+                allowChangeRole(users[i])
+            });
+            deleteButton.addEventListener("click", () => {
+                deleteUser(users[i])
+            });
+            displayUserDetails(users[i]);
+            displayCoursesAndDatabases(users[i]);
+        })
 
     }
 }
@@ -349,9 +352,32 @@ async function deleteUser(user: User): Promise<boolean> {
     return success;
 }
 
+function allowChangeRole(user: User): void {
+    editButton.classList.remove("btn-secondary");
+    editButton.classList.add("btn-info");
+    editButton.innerHTML = "Save changes";
+    selectedRole.removeAttribute("disabled");
+    const editButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+    editButton.parentNode!.replaceChild(editButtonClone, editButton);
+    editButton = editButtonClone;
+    editButton.addEventListener("click", () => changeRole(user))
+}
+
 async function changeRole(user: User): Promise<boolean> {
     const roleNumber: number = Number(selectedRole.value);
-
+    if (user.role === roleNumber) {
+        const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+        editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
+        editButton = changeRoleButtonClone;
+        editButton.classList.remove("btn-info");
+        editButton.classList.add("btn-secondary");
+        editButton.innerHTML = "Edit Role";
+        selectedRole.setAttribute("disabled", "");
+        editButton.addEventListener("click", () => {
+            allowChangeRole(user)
+        });
+        return true;
+    }
     const result = await Swal.fire({
         text: `Are you sure you want change the role of ${user.email} to ${UserRole[roleNumber]}?`,
         type: 'warning',
@@ -373,7 +399,17 @@ async function changeRole(user: User): Promise<boolean> {
         });
         addAlert(`Role of ${user.email} was changed to ${UserRole[roleNumber]}!`, AlertType.primary);
         user.role = roleNumber;
-        (document.getElementsByClassName("user-row active")[0]!.children[1]! as HTMLAnchorElement).innerHTML=UserRole[roleNumber];
+        (document.getElementsByClassName("user-row active")[0]!.children[1]! as HTMLAnchorElement).innerHTML = UserRole[roleNumber];
+        const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+        editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
+        editButton = changeRoleButtonClone;
+        editButton.classList.remove("btn-info");
+        editButton.classList.add("btn-secondary");
+        editButton.innerHTML = "Edit Role";
+        selectedRole.setAttribute("disabled", "");
+        editButton.addEventListener("click", () => {
+            allowChangeRole(user)
+        });
         success = true;
     } catch (error) {
         addErrorAlert(error);
