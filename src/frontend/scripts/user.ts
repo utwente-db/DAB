@@ -5,7 +5,7 @@ import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2';
 
 import {initNavbar, navbarEditUsers} from "./navbar";
-import {Course, StudentDatabase} from "./courses";
+import {Course, getCoursesPromise, StudentDatabase} from "./courses";
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -34,7 +34,7 @@ const pleaseSelectAuser = document.getElementById("please-select-a-user") as HTM
 
 let deleteButton: HTMLButtonElement = document.getElementById("delete-button") as HTMLButtonElement;
 let editButton: HTMLButtonElement = document.getElementById("edit-button") as HTMLButtonElement;
-
+let courses: Course[] = [];
 
 export interface User {
     id: number;
@@ -136,10 +136,9 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
 // }
 
 async function displayCoursesAndDatabases(user: User): Promise<void> {
-    const dbIDs: number[] = [];
     const databases: StudentDatabase[] = await getDatabasesPromise(user.id);
 
-    const coursesAndDatabases: Map<number, string> = new Map<number, string>();
+    const DBtoHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
         coursesNavHtml.innerHTML = "This user does not have any databases";
         courseDatabasesHtml.innerHTML = "No database selected";
@@ -148,83 +147,95 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
 
     // const coursesAndDatabases = new Map<number, string>();
 
-    for (let i = 0; i < databases.length; i++) {
-        coursesAndDatabases.set(databases[i].course, "");
-    }
 
     for (let i = 0; i < databases.length; i++) {
-        dbIDs.push(databases[i].dbid);
-        const html: string =
+        const course: Course = courses.find((course: Course) => course.courseid===databases[i].course)!;
+
+        const html =
             `<div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Database ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].dbid}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Database name:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].databasename}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Username:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].username}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Password:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].password}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Group ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].groupid}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
-                <label class="col-12 col-lg-4 col-form-label">FID:</label>
+            </div><div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Owner ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].fid}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Course ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[i].course}" readonly="">
                 </div>
-            </div>` +
-            `<button type="button" class="btn btn-danger" onclick="window.location.replace('/rest/dump/${databases[i].dbid}/')">
-                Download Dump
-            </button>` +
-            `<button id="reset-button-${databases[i].dbid}" type="button" class="btn btn-danger">
-                Reset
-            </button>` +
-            `<button id="delete-button-${databases[i].dbid}" type="button" class="btn btn-danger">
-                Delete
-            </button>`
+            </div>
+            <div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Course name:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${course.coursename}" readonly="">
+                </div>
+            </div>
+            
+            
+                                    
+                        
+                        
+            
+            <div class="align-items-center align-items-stretch row">
+            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+            <button type="button" class="btn btn-secondary " onclick="window.location.replace('/rest/dump/${databases[i].dbid}/')">
+                Download dump
+                
+            </button>
+            </div><div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+            <button id="reset-button-${databases[i].dbid}" type="button" class="btn btn-info ">
+                Reset database
+            </button>
+            </div><div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+            <button id="delete-button-${databases[i].dbid}" type="button" class="btn btn-danger">
+                Delete database
+            </button>
+            </div>
+            </div>`.trim();
 
-        ;
 
         // This will mess up if someone has multiple db's for a single course
-        coursesAndDatabases.set(databases[i].course, html);
+        DBtoHTMLmap.set(databases[i], html);
+
     }
 
     const resultNav: string[] = [];
     const resultContent: string[] = [];
     let active = " active";
-    for (const entry of Array.from(coursesAndDatabases.entries())) {
-        const courseNumber: number = entry[0];
+    for (const entry of Array.from(DBtoHTMLmap.entries())) {
+        const db: StudentDatabase = entry[0];
+
         const content: string = entry[1];
-        const course: Course = await getCourseByIDPromise(courseNumber);
+
         resultNav.push(
-            `<a class="studentdatabase-link nav-link${active}" data-toggle="pill" href="#course${course.courseid}">${course.coursename}</a>`
+            `<a class="studentdatabase-link nav-link${active}" data-toggle="pill" href="#db-${db.dbid}">${db.databasename}</a>`
         );
         resultContent.push(
-            `<div class="tab-pane${active}" id="course${course.courseid}">${content}</div>`
+            `<div class="tab-pane${active}" id="db-${db.dbid}">${content}</div>`
         );
         active = "";
     }
@@ -233,14 +244,14 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
     coursesNavHtml.innerHTML = resultNavString;
     courseDatabasesHtml.innerHTML = resultContentString;
 
-    dbIDs.forEach((id: number) => {
-        const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${id}`) as HTMLButtonElement;
+    databases.forEach((db: StudentDatabase) => {
+        const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${db.dbid}`) as HTMLButtonElement;
         resetButton.addEventListener("click", () => {
-            resetDatabase(id);
+            resetDatabase(db.dbid);
         });
-        const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${id}`) as HTMLButtonElement;
+        const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-            deleteDatabase(id, courseDatabasesHtml);
+            deleteDatabase(db.dbid, courseDatabasesHtml);
         });
     });
 
@@ -300,8 +311,6 @@ export async function resetDatabase(dbID: number): Promise<boolean> {
 }
 
 async function displayUserDetails(user: User): Promise<void> {
-    pageTitleHtml.innerHTML = `Admin - User ${user.id}`;
-
     // let role: string;
     // if (user.role === UserRole.admin) {
     //     role = "Admin";
@@ -425,6 +434,7 @@ function changeEditUserState(enable: boolean): void {
 
 window.onload = async () => {
     await Promise.all([
+        courses = await getCoursesPromise(),
         initNavbar(changeEditUserState),
         displayUsers(),
         navbarEditUsers.classList.add("active"),

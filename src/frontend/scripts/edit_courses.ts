@@ -457,10 +457,9 @@ async function tryEditCourse(): Promise<void> {
 }
 
 async function displayStudentDatabasesForCourse(i: number): Promise<void> {
-    const dbIDs: number[] = [];
     const databases: StudentDatabase[] = (await axios.get(`/rest/studentdatabases/course/${courses[i].courseid}`) as AxiosResponse<StudentDatabase[]>).data;
 
-    const dbIDtoHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
+    const dbToHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
         studentDatabasesNavHtml.innerHTML = "There are no databases for this course";
         return;
@@ -469,11 +468,10 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
     // const coursesAndDatabases = new Map<number, string>();
 
     for (let j = 0; j < databases.length; j++) {
-        dbIDtoHTMLmap.set(databases[j], "");
+        dbToHTMLmap.set(databases[j], "");
     }
 
     for (let j = 0; j < databases.length; j++) {
-        dbIDs.push(databases[j].dbid);
         const html: string =
             `<div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Database ID:</label>
@@ -530,12 +528,10 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
         ;
 
         // This will mess up if someone has multiple db's for a single course
-        dbIDtoHTMLmap.set(databases[j], html);
+        dbToHTMLmap.set(databases[j], html);
     }
 
-    const resultNav: string[] = [];
-    const resultContent: string[] = [];
-    for (const entry of Array.from(dbIDtoHTMLmap.entries())) {
+    for (const entry of Array.from(dbToHTMLmap.entries())) {
         const db: StudentDatabase = entry[0];
         const content: string = entry[1];
 
