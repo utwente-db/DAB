@@ -143,7 +143,7 @@ Please ensure that Apache2 has read access to the files in `[DOCUMENT ROOT]/stat
 If this is not the case, CSS, Javascript, and media files can't be loaded.
 
 Congratulations! If you run apache, you should now have the basic web page set up. You can test this by trying to access the page, at whatever port Apache runs on.
-There are now three things left to do:
+There are now two things left to do:
 
 This project MUST run over https. 
 It is the responsibility of the system administrator to ensure there are proper SSL certificates present. 
@@ -152,13 +152,12 @@ Failure to comply with these instructions will cause passwords to be transmitted
 
 The second thing is email, described in the section below.
 
-Finally, the project is rather useless without an administrator.
-To bootstrap one from a project with an empty database, we recommend the following procedure:
+The default administrator credentials are as follows:
 
-1. Register a student user via the regular register page
-2. Run the file `[DOCUMENT ROOT]/promote.sh`, which will promote the user to admin given the email
+- username: `info@utwente.nl`
+- password: `Aoeuaoeu1`
 
-The user should now be an administrator, who can create other administrators and teachers.
+Please change the password after you have logged in
 
 ## Email
 
