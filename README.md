@@ -10,7 +10,7 @@ As such, this software will allow students to request databases with pre-loaded 
 
 To download the archive that contains the DAB, and extract into a folder called design_project, use:
 
-```wget -qO- https://floris.thebias.nl/dab.tar.gz | tar --transform 's/^dbt2-0.37.50.3/dbt2/' -xvz```
+```git clone https://github.com/notinecrafter/design-project; cd design-project; git checkout bronto```
 
 Firstly, the software requires full administrative access to a PostgreSQL server.
 This server does not have to be hosted on the same machine.
