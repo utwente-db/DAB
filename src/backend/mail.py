@@ -63,7 +63,7 @@ def send_creation_notice(user):
                 <p>Database Administration Bundle</p>
             </body>
         </html>
-        """.formad(cid=cid[1:-1]), subtype='html')
+        """.format(cid=cid[1:-1]), subtype='html')
 
     if not settings.DEBUG:
         mailer = smtplib.SMTP(settings.EMAIL_SERVER)
