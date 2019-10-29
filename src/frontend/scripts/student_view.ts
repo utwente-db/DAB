@@ -343,4 +343,6 @@ window.onload = async () => {
         })(),
         displayWhoami()
     ])
+    Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove())
+
 };

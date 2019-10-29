@@ -138,7 +138,7 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
 async function displayCoursesAndDatabases(user: User): Promise<void> {
     const databases: StudentDatabase[] = await getDatabasesPromise(user.id);
 
-    const DBtoHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
+    const dbToHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
         coursesNavHtml.innerHTML = "This user does not have any databases";
         courseDatabasesHtml.innerHTML = "No database selected";
@@ -219,14 +219,14 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
 
 
         // This will mess up if someone has multiple db's for a single course
-        DBtoHTMLmap.set(databases[i], html);
+        dbToHTMLmap.set(databases[i], html);
 
     }
 
     const resultNav: string[] = [];
     const resultContent: string[] = [];
     let active = " active";
-    for (const entry of Array.from(DBtoHTMLmap.entries())) {
+    for (const entry of Array.from(dbToHTMLmap.entries())) {
         const db: StudentDatabase = entry[0];
 
         const content: string = entry[1];

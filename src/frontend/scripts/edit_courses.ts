@@ -830,7 +830,8 @@ window.onload = async () => {
         navbarEditCourses.classList.add("active"),
         (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
 
-    ])
+    ]);
+    Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove())
 
 
 };
