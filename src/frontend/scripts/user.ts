@@ -26,9 +26,12 @@ const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db"
 const usernameHtml: HTMLDivElement = document.getElementById("username") as HTMLDivElement;
 const roleHtml: HTMLDivElement = document.getElementById("role") as HTMLDivElement;
 const verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement;
+const searchInput = document.getElementById("search") as HTMLInputElement;
+const usersTbody = document.getElementById("users") as HTMLTableSectionElement;
 
 let deleteButton: HTMLButtonElement = document.getElementById("delete_button") as HTMLButtonElement;
 let changeRoleButton: HTMLButtonElement = document.getElementById("change_role") as HTMLButtonElement;
+
 
 export interface User {
     id: number;
@@ -387,6 +390,7 @@ function changeEditUserState(enable: boolean): void {
     return;
 }
 
+
 window.onload = async () => {
     await Promise.all([
         initNavbar(changeEditUserState),
@@ -395,4 +399,14 @@ window.onload = async () => {
         (navbarEditUsers.firstElementChild)!.classList.add("disabled"),
 
     ]);
+
+    searchInput.addEventListener("keyup", () => {
+        const value = searchInput.value.toLowerCase();
+        Array.from(usersTbody.children).forEach((child: Element) => {
+            const childRow = child as HTMLTableRowElement;
+            childRow.hidden = !childRow.textContent!.toLowerCase().includes(value);
+        });
+    });
+
+
 }
