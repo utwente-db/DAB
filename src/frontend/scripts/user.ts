@@ -369,8 +369,8 @@ async function changeRole(user: User): Promise<boolean> {
             user: user.id,
             role: roleNumber
         });
-        addAlert("Role changed!", AlertType.primary);
-
+        addAlert(`Role of ${user.email} was changed to ${UserRole[roleNumber]}!`, AlertType.primary);
+        user.role = roleNumber;
         success = true;
     } catch (error) {
         addErrorAlert(error);
