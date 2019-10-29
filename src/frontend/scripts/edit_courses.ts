@@ -3,9 +3,10 @@ import axios, {AxiosResponse} from "axios";
 import Swal from "sweetalert2";
 import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses";
 import {setInvalid, setNeutral, setValid} from "./register";
-import {changePageState, getWhoamiPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
+import {changePageState, getWhoamiPromise, getWhoPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
 import {deleteDatabase, resetDatabase, TA, User, UserRole} from "./user";
+import autosize from "autosize"
 
 let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -728,15 +729,16 @@ function tryDumpCourse(id: number): void {
 }
 
 window.onload = async () => {
-    who = await getWhoamiPromise();
+    who = await getWhoPromise();
 
     await Promise.all([
         (async () => {
-            courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-            if (who.role === UserRole.Teacher || who.role === UserRole.Admin) {
-                users = (await axios.get(`/rest/dbmusers/`) as AxiosResponse<User[]>).data;
+            await Promise.all([courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename)),
+            users = (who.role === UserRole.Teacher || who.role === UserRole.Admin) ? (await axios.get(`/rest/dbmusers/`) as AxiosResponse<User[]>).data : []
 
-            }
+            ]);
+
+
             await displayCourses(courses, who, true)
 
         })(),
@@ -831,7 +833,9 @@ window.onload = async () => {
         (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
 
     ]);
+
     Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove())
+    autosize(document.querySelectorAll('textarea'));
 
 
 };

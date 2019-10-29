@@ -9,6 +9,8 @@
 {% endblock %}
 
 {% block content %}
+        <template class="{{ server_address }}" id="django-template"></template>
+
     <div class="vh-100 d-flex flex-column">
         {% include 'navbar.html' %}
         <div class="container-fluid d-flex py-3 py-md-5 flex-grow-1">

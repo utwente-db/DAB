@@ -46,7 +46,7 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
             const html = `<div class="mt-5 form-group row">
-                            <label class="col-12 col-md-4 col-form-label">Username:</label>
+                            <label class="col-12 col-md-4 col-form-label">Username (and database name):</label>
                             <div class="col-12 col-md-8">
                                 <input type="text" class="form-control" value="${db.username}" readonly="">
                             </div>
@@ -57,6 +57,13 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
                                 <input type="text" class="form-control" value="${db.password}" readonly="">
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label class="col-12 col-md-4 col-form-label">Example command for connecting:</label>
+                            <div class="col-12 col-md-8">
+                                <code>psql -h ${document.getElementById("django-template")!.classList[0]!} -U ${db.username} ${db.databasename}</code>
+                            </div>
+                        </div>
+                        
                         <div class="align-items-center align-items-stretch row">
                             <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
                                 <button id="delete-button-${db.dbid}" class="btn btn-danger delete-button btn-block">Delete database and release credentials</button>

@@ -4,10 +4,12 @@
   "description": "The Database Administration Bundle (DAB) is a tool used to facilitate database education at the University of Twente.",
   "main": "index.js",
   "dependencies": {
+    "@types/autosize": "^3.0.6",
     "@types/bootstrap": "^4.3.1",
     "@types/bootstrap-select": "^1.11.1",
     "@types/jquery": "^3.3.31",
     "@types/node": "^10.0.3",
+    "autosize": "^4.0.2",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "bootstrap-cookie-alert": "^1.1.1",
@@ -57,8 +59,6 @@
     "url": "https://git.thebias.nl/floris/design.git"
   },
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@types/lodash": "^4.14.144"
-  }
+  "license": "ISC"
+
 }

@@ -16,6 +16,7 @@
     "outDir": "frontend/scripts",
     "importHelpers": true,
     "removeComments": false,
+    "esModuleInterop": true,
     "jsx": "preserve",
     "lib": [
       "dom",
