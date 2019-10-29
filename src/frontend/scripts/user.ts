@@ -23,11 +23,13 @@ const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as
 const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
 
 
-const usernameHtml: HTMLDivElement = document.getElementById("username") as HTMLDivElement;
-const roleHtml: HTMLDivElement = document.getElementById("role") as HTMLDivElement;
+const usernameHtml = document.getElementById("username") as HTMLInputElement;
+const roleHtml = document.getElementById("role") as HTMLInputElement;
 const verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement;
 const searchInput = document.getElementById("search") as HTMLInputElement;
 const usersTbody = document.getElementById("users") as HTMLTableSectionElement;
+const usersTabs = document.getElementById("users-tabs") as HTMLDivElement;
+const editUserPane = document.getElementById("edit-user-pane") as HTMLDivElement;
 
 let deleteButton: HTMLButtonElement = document.getElementById("delete_button") as HTMLButtonElement;
 let changeRoleButton: HTMLButtonElement = document.getElementById("change_role") as HTMLButtonElement;
@@ -87,6 +89,9 @@ async function displayUsers(): Promise<void> {
         const links = document.getElementsByClassName(`user-link-${i}`) as HTMLCollectionOf<HTMLAnchorElement>;
         for (let j = 0; j < links.length; j++) {
             links.item(j)!.addEventListener("click", () => {
+                Array.from(usersTabs.children).forEach((tab: Element) => {tab.classList.remove("active")});
+                editUserPane.classList.add("active");
+                // set new course pane active
 
                 const changeRoleButtonClone = changeRoleButton!.cloneNode(true) as HTMLButtonElement;
                 changeRoleButton.parentNode!.replaceChild(changeRoleButtonClone, changeRoleButton);
@@ -311,8 +316,8 @@ async function displayUserDetails(userid: number): Promise<void> {
         role = "unknown";
     }
 
-    usernameHtml.innerHTML = `<input type=\"text\" class=\"form-control\" value=\"${user.email}\" readonly="">`;
-    roleHtml.innerHTML = `<input type="text" class="form-control" value="${role}" readonly="">`;
+    usernameHtml.value=user.email;
+    roleHtml.value = role;
     verifiedHtml.innerHTML = (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
 }
 
