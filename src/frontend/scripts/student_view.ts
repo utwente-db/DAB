@@ -147,7 +147,7 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
     }
 
     let taCourses: number[] = [];
-    if (who.role === UserRole.student) {
+    if (who.role === UserRole.Student) {
         const taResponse: AxiosResponse<TA[]> = await axios.get("/rest/tas/own/") as AxiosResponse<TA[]>;
         const taList: TA[] = taResponse.data;
         taCourses = taList.map((ta: TA) => ta.courseid);
@@ -160,15 +160,15 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
         let youHavePrivilege = false;
         const youAreTA = taCourses.includes(courses[i].courseid)
         if (fromEditCourses) {
-            youHavePrivilege = (who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id) || youAreTA);
+            youHavePrivilege = (who.role === UserRole.Admin || (who.role === UserRole.Teacher && courses[i].fid === who.id) || youAreTA);
 
         } else {
-            youHavePrivilege = (courses[i].active || who.role === UserRole.admin || (who.role === UserRole.teacher && courses[i].fid === who.id) || youAreTA);
+            youHavePrivilege = (courses[i].active || who.role === UserRole.Admin || (who.role === UserRole.Teacher && courses[i].fid === who.id) || youAreTA);
 
         }
         if (youHavePrivilege) {
             let haveCredentials = false;
-            if (who.role === UserRole.admin && fromEditCourses) {
+            if (who.role === UserRole.Admin && fromEditCourses) {
                 haveCredentials = courses[i].fid === who.id // The user owns this course
             } else if (!fromEditCourses) {
                 haveCredentials = (ownCourses.includes(courses[i].courseid));

@@ -61,6 +61,7 @@ interface ErrorBody {
 }
 
 export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null): void {
+    console.error(error);
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
     }

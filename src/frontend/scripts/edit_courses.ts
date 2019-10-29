@@ -131,7 +131,7 @@ function populateNewCoursePane(): void {
 
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    if (who.role === UserRole.admin) {
+    if (who.role === UserRole.Admin) {
         fillStudentDatabasesDropdown(newSchemaTransfer);
     }
     newSchemaTransfer.value = String(0);
@@ -157,7 +157,7 @@ function goToAddCoursePane(event: Event): void {
 async function populateExistingCoursePane(i: number): Promise<void> {
     studentDatabasesNavHtml.innerHTML = "";
     courseDatabasesHtml.innerHTML = "No database selected";
-    if (who.role === UserRole.admin) {
+    if (who.role === UserRole.Admin) {
         fillStudentDatabasesDropdown(existingSchemaTransfer);
 
     }
@@ -737,7 +737,7 @@ window.onload = async () => {
     await Promise.all([
         (async () => {
             courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-            if (who.role === UserRole.teacher || who.role === UserRole.admin) {
+            if (who.role === UserRole.Teacher || who.role === UserRole.Admin) {
                 users = (await axios.get(`/rest/dbmusers/`) as AxiosResponse<User[]>).data;
 
             }

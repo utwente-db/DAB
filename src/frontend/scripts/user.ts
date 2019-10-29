@@ -24,15 +24,15 @@ const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db"
 
 
 const usernameHtml = document.getElementById("username") as HTMLInputElement;
-const roleHtml = document.getElementById("role") as HTMLInputElement;
+const selectedRole = document.getElementById("selected-role") as HTMLSelectElement;
 const verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement;
 const searchInput = document.getElementById("search") as HTMLInputElement;
 const usersTbody = document.getElementById("users") as HTMLTableSectionElement;
 const usersTabs = document.getElementById("users-tabs") as HTMLDivElement;
 const editUserPane = document.getElementById("edit-user-pane") as HTMLDivElement;
 
-let deleteButton: HTMLButtonElement = document.getElementById("delete_button") as HTMLButtonElement;
-let changeRoleButton: HTMLButtonElement = document.getElementById("change_role") as HTMLButtonElement;
+let deleteButton: HTMLButtonElement = document.getElementById("delete-button") as HTMLButtonElement;
+let editButton: HTMLButtonElement = document.getElementById("edit-button") as HTMLButtonElement;
 
 
 export interface User {
@@ -45,9 +45,9 @@ export interface User {
 }
 
 export enum UserRole {
-    admin = 0,
-    teacher = 1,
-    student = 2
+    Admin = 0,
+    Teacher = 1,
+    Student = 2
 }
 
 export interface TA {
@@ -93,16 +93,16 @@ async function displayUsers(): Promise<void> {
                 editUserPane.classList.add("active");
                 // set new course pane active
 
-                const changeRoleButtonClone = changeRoleButton!.cloneNode(true) as HTMLButtonElement;
-                changeRoleButton.parentNode!.replaceChild(changeRoleButtonClone, changeRoleButton);
-                changeRoleButton = changeRoleButtonClone;
+                const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+                editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
+                editButton = changeRoleButtonClone;
 
                 const deleteButtonClone = deleteButton!.cloneNode(true) as HTMLButtonElement;
                 deleteButton.parentNode!.replaceChild(deleteButtonClone, deleteButton);
                 deleteButton = deleteButtonClone;
 
 
-                changeRoleButton.addEventListener("click", () => {
+                editButton.addEventListener("click", () => {
                     changeRole(users[i])
                 });
                 deleteButton.addEventListener("click", () => {
@@ -304,19 +304,19 @@ export async function resetDatabase(dbID: number): Promise<boolean> {
 async function displayUserDetails(user: User): Promise<void> {
     pageTitleHtml.innerHTML = `Admin - User ${user.id}`;
 
-    let role: string;
-    if (user.role === UserRole.admin) {
-        role = "admin";
-    } else if (user.role === UserRole.teacher) {
-        role = "teacher";
-    } else if (user.role === UserRole.student) {
-        role = "student";
-    } else {
-        role = "unknown";
-    }
+    // let role: string;
+    // if (user.role === UserRole.admin) {
+    //     role = "Admin";
+    // } else if (user.role === UserRole.teacher) {
+    //     role = "Teacher";
+    // } else if (user.role === UserRole.student) {
+    //     role = "Student";
+    // } else {
+    //     role = "unknown";
+    // }
 
     usernameHtml.value=user.email;
-    roleHtml.value = role;
+    selectedRole.value = String(user.role);
     verifiedHtml.innerHTML = (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
 }
 
@@ -337,7 +337,7 @@ async function deleteUser(user: User): Promise<boolean> {
 
     try {
         await axios.delete(`/rest/dbmusers/${user.id}/`);
-        alert("User succesfully deleted!");
+        addAlert("User succesfully deleted!", AlertType.success);
         // window.location.href = '../';
         success = true;
     } catch (error) {
@@ -348,10 +348,10 @@ async function deleteUser(user: User): Promise<boolean> {
 }
 
 async function changeRole(user: User): Promise<boolean> {
-    const selectedRole: HTMLSelectElement = document.getElementById("selected_role") as HTMLSelectElement;
-    const role: string = selectedRole.value;
+    const roleNumber: number = Number(selectedRole.value);
+
     const result = await Swal.fire({
-        text: `Are you sure you want change the role of ${user.email} to ${role}?`,
+        text: `Are you sure you want change the role of ${user.email} to ${UserRole[roleNumber]}?`,
         type: 'warning',
         showCancelButton: true,
         focusCancel: true,
@@ -367,19 +367,10 @@ async function changeRole(user: User): Promise<boolean> {
     try {
         await axios.post(`/rest/set_role`, {
             user: user.id,
-            role: Number(role)
+            role: roleNumber
         });
-        // window.location.reload(true);
         addAlert("Role changed!", AlertType.primary);
-        let newRole = "";
-        if (Number(role) === 0) {
-            newRole = "admin";
-        } else if (Number(role) === 1) {
-            newRole = "teacher";
-        } else if (Number(role) === 2) {
-            newRole = "student";
-        }
-        roleHtml.innerHTML = `<input type="text" class="form-control" value="${newRole}" readonly="">`;
+
         success = true;
     } catch (error) {
         addErrorAlert(error);
