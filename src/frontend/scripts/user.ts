@@ -5,7 +5,7 @@ import {addAlert, addErrorAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2';
 
 import {initNavbar, navbarEditUsers} from "./navbar";
-import {Course, getCoursesPromise, StudentDatabase} from "./courses";
+import {Course, StudentDatabase} from "./courses";
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -30,6 +30,7 @@ const searchInput = document.getElementById("search") as HTMLInputElement;
 const usersTbody = document.getElementById("users") as HTMLTableSectionElement;
 const usersTabs = document.getElementById("users-tabs") as HTMLDivElement;
 const editUserPane = document.getElementById("edit-user-pane") as HTMLDivElement;
+const pleaseSelectAuser = document.getElementById("please-select-a-user") as HTMLDivElement;
 
 let deleteButton: HTMLButtonElement = document.getElementById("delete-button") as HTMLButtonElement;
 let editButton: HTMLButtonElement = document.getElementById("edit-button") as HTMLButtonElement;
@@ -62,24 +63,13 @@ async function displayUsers(): Promise<void> {
     const result: string[] = [];
 
     for (let i = 0; i < users.length; i++) {
-        let role: string;
-        if (users[i].role === 0) {
-            role = "Admin";
-        } else if (users[i].role === 1) {
-            role = "Teacher";
-        } else if (users[i].role === 2) {
-            role = "Student";
-        } else {
-            role = "Unknown";
-        }
-
         const verified: boolean = users[i].verified;
         result.push(
-            `<tr id="user-row-${i}">
+            `<tr class="user-row poin" id="user-row-${i}"></a>
  <th scope="row">${users[i].id}</th>
-             <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${role}</td>
-             <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${users[i].email}</td>
-             <td><a class="user-link-${i}" style="display:block; height:100%; width:100%" href='#'>${verified}</td></tr>`.trim()
+             <td>${UserRole[users[i].role]}</td>
+             <td>${users[i].email}</td>
+             <td>${verified}</td></tr>`.trim()
         );
 
     }
@@ -88,9 +78,7 @@ async function displayUsers(): Promise<void> {
     usersHtml.innerHTML = resultString;
 
     for (let i = 0; i < users.length; i++) {
-        const links = document.getElementsByClassName(`user-link-${i}`) as HTMLCollectionOf<HTMLAnchorElement>;
-        for (let j = 0; j < links.length; j++) {
-            links.item(j)!.addEventListener("click", () => {
+            document.getElementById(`user-row-${i}`)!.addEventListener("click", () => {
                 Array.from(usersTabs.children).forEach((tab: Element) => {
                     tab.classList.remove("active")
                 });
@@ -98,7 +86,7 @@ async function displayUsers(): Promise<void> {
                 // set new course pane active
                 Array.from(document.getElementsByTagName('tr'))!.forEach((el: Element) => {
                     el.classList.remove("active")
-                })
+                });
                 document.getElementById(`user-row-${i}`)!.classList.add("active");
 
                 const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
@@ -119,7 +107,6 @@ async function displayUsers(): Promise<void> {
                 displayUserDetails(users[i]);
                 displayCoursesAndDatabases(users[i]);
             })
-        }
 
     }
 }
@@ -346,6 +333,13 @@ async function deleteUser(user: User): Promise<boolean> {
     try {
         await axios.delete(`/rest/dbmusers/${user.id}/`);
         addAlert("User succesfully deleted!", AlertType.success);
+
+        Array.from(usersTabs.children).forEach((tab: Element) => {
+            tab.classList.remove("active")
+        });
+        pleaseSelectAuser.classList.add("active");
+        document.getElementsByClassName("user-row active")[0]!.remove();
+        // TODO remove table row
         // window.location.href = '../';
         success = true;
     } catch (error) {
@@ -379,6 +373,7 @@ async function changeRole(user: User): Promise<boolean> {
         });
         addAlert(`Role of ${user.email} was changed to ${UserRole[roleNumber]}!`, AlertType.primary);
         user.role = roleNumber;
+        (document.getElementsByClassName("user-row active")[0]!.children[1]! as HTMLAnchorElement).innerHTML=UserRole[roleNumber];
         success = true;
     } catch (error) {
         addErrorAlert(error);
