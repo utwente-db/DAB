@@ -44,11 +44,16 @@ def write(database, schema):
 
 def dump(database):
     os.environ["PGPASSWORD"] = database['password']
+    name = re.escape(database["username"])
     process = subprocess.run(
         ["pg_dump", "-h", db_host, "-U", database['username'], "-p", db_port, "-O", database["databasename"]],
         encoding='utf-8', stdout=subprocess.PIPE)
-
-    return process.stdout
+    schema = process.stdout
+    schema = re.sub(r'CREATE SCHEMA "?' + name + r'"?;', "", schema)
+    schema = re.sub(r'"?' + name + r'"?\.', "", schema)
+    schema = re.sub(r'COMMENT ON EXTENSION .*$', "", schema)
+ 
+    return schema
 
 
 def dump_course(course):
