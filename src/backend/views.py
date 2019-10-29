@@ -843,8 +843,6 @@ def transferSchema(request, course, database):
     # make sure the default schema is not included as such
     name = re.escape(db.username)
     # We want a default schema to be used
-    schema = re.sub(r'CREATE SCHEMA "?' + name + r'"?;', "", schema)
-    schema = re.sub(r'"?' + name + r'"?\.', "", schema)
     search_path_setter = re.escape("SELECT pg_catalog.set_config('search_path', '', false);")
     schema = re.sub(search_path_setter, "", schema)
     # verify just in case
