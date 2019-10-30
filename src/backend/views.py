@@ -879,7 +879,8 @@ def generate_migration(request):
     # if not check_role(request, admin):
     # return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-    script_file = "/tmp/dab_backup.sh"
+    import os
+    script_file = os.getcwd()+"/dab_backup.sh"
 
     from django.db import connection
     host = connection.settings_dict["HOST"]
@@ -923,6 +924,7 @@ def generate_migration(request):
     f = open(filename, "w+")
     f.write(output)
     f.close()
+    os.chmod(filename, 0o750)
 
     return HttpResponse("Migration generated at " + script_file)
 

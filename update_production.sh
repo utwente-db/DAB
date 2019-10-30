@@ -7,6 +7,7 @@ git pull
 
 source ./venv/bin/activate
 pip install -r requirements.txt
+export HOME=$(pwd)
 npm install
 npm run production
 find . -name "*.map" -type f | xargs rm -f

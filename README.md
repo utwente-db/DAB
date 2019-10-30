@@ -122,17 +122,19 @@ Please make sure all the files are owned by `www-data`, by running `sudo chown w
 4. Run [DOCUMENT ROOT]/install.sh. This will create a virtual environment, install the dependencies for the project in it, and also migrate the database.
 5. Copy/rename [DOCUMENT ROOT]/uwsgi.ini.example to [DOCUMENT ROOT]/uwsgi.ini. Edit the values in [DOCUMENT ROOT]/uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; the "good practice" is to put it in /var/run, but as this requires permissions, the current default file puts it in /data/dab/ instead. If you get errors related to socket.c, that probably means that you do not have file permissions on the socket file. 
 6. To test if you have correctly configured uwsgi, run `sudo -u www-data [DOCUMENT ROOT]/uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini --http :8000`, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.
-7. Now that we know uwsgi works, we can configure it as a service. Make the service `dab` by running (as root) `cp [DOCUMENT ROOT]/dab.service /etc/systemd/system ; systemctl start dab.service`.
+7. Now that we know uwsgi works, we can configure it as a service. While in the Document Root, run `UWSGI=$(which uwsgi) ; sed "s%uwsgi %$UWSGI %; " dab.service > dab.service; $CURRENT=$(pwd); sed "s%\[DOCUMENT ROOT\]%$CURRENT%" dab.service >dab.service`; Make the service `dab` by running (as root) `cp dab.service /etc/systemd/system ; systemctl enable dab.service`. The service can then be started via `service dab start`
 8. If the previous step succeeded, we can start configuring apache. We require the modules `proxy` and `proxy_uwsgi` to be enabled and available to the rest of the configuration settings. The easiest way to do this in modern GNU/Linux package of Apache is to run `a2enmod proxy_uwsgi`. We assume you want to run the program under `/dab`. Unfortunately, you will also have to reserve `/static`. 
 
 To install, simply add the following to your Apache2 config file (either `apache.conf` or `sites-enabled/000-default.conf`, whichever works).
 
-    Alias /static/ "[DOCUMENT ROOT]/static"
+    Alias /static/ "[DOCUMENT ROOT]/static/"
 
-    <Directory "[DOCUMENT ROOT]/static">
+    <Directory "[DOCUMENT ROOT]/static/">
         Require all granted
     </Directory>
-    <Location /dab>
+
+    Redirect permanent /dab /dab/
+    <Location /dab/>
         ProxyPass unix:/data/dab/dab.sock|uwsgi://uwsgi-uds-design/
         ProxyPassReverse unix:/data/dab/dab.sock|uwsgi://uwsgi-uds-design/
     </Location>
@@ -152,12 +154,20 @@ Failure to comply with these instructions will cause passwords to be transmitted
 
 The second thing is email, described in the section below.
 
+### Default credentials
+
 The default administrator credentials are as follows:
 
 - username: `info@utwente.nl`
 - password: `Aoeuaoeu1`
 
 Please change the password after you have logged in
+
+### Starting and stopping the service
+
+If the installation instructions above have been followed, DAB can be started via `service dab start`, and similarly stopped via `service dab stop`.
+
+Furthermore, upon a new release it can be updated via `sudo -u www-data ./update-production.sh`
 
 ## Email
 

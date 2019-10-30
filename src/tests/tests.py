@@ -183,7 +183,7 @@ class testCourse(unittest.TestCase):
 
             r = student.get(BASE + "/rest/dump/" + str(test_db["dbid"]))
             self.assertEqual(r.status_code, 200)
-            self.assertTrue(re.search(r'.*CREATE TABLE .*\.dump.*', r.text))
+            self.assertTrue(re.search(r'.*CREATE TABLE dump.*', r.text))
 
     def test2DatabaseVisibility(self):
         # test if the ta and teacher can see the credentials of this database
