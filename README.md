@@ -132,7 +132,9 @@ To install, simply add the following to your Apache2 config file (either `apache
     <Directory "[DOCUMENT ROOT]/static/">
         Require all granted
     </Directory>
-    <Location /dab>
+
+    Redirect permanent /dab /dab/
+    <Location /dab/>
         ProxyPass unix:/data/dab/dab.sock|uwsgi://uwsgi-uds-design/
         ProxyPassReverse unix:/data/dab/dab.sock|uwsgi://uwsgi-uds-design/
     </Location>
