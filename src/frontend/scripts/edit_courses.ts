@@ -1,5 +1,5 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosResponse} from "./main";
 import Swal from "sweetalert2";
 import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses";
 import {setInvalid, setNeutral, setValid} from "./register";
@@ -7,6 +7,7 @@ import {changePageState, getWhoamiPromise, getWhoPromise, initNavbar, navbarEdit
 import {displayCourses} from "./student_view";
 import {deleteDatabase, resetDatabase, TA, User, UserRole} from "./user";
 import autosize from "autosize"
+
 
 let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
@@ -660,8 +661,8 @@ async function removeTA(user: User, taID: number, i: number): Promise<boolean> {
 
 function generateTaDivHTML(user: User, userIsTaForCourse: boolean): string {
     const userIsTaString = userIsTaForCourse ? `<span class="text-success h5">${user.email} is a TA for this course</span>` :
-        `<span class="text-danger h5">${user.email} is not a TA for this course</span>`
-    const userTaButton = `<button class="btn btn-info" id="user-ta-button">Change user TA status</button>`
+        `<span class="text-danger h5">${user.email} is not a ${user.role < UserRole.Student ? "co-teacher" : "TA"} for this course</span>`
+    const userTaButton = `<button class="btn btn-info" id="user-ta-button">Change user ${user.role < UserRole.Student ? "co-teacher" : "TA"} status</button>`
     const taDivHTML = `${userIsTaString}<br>
                            ${userTaButton}`.trim();
     return taDivHTML;

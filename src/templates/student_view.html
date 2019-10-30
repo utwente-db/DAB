@@ -9,18 +9,18 @@
 {% endblock %}
 
 {% block content %}
-        <template class="{{ server_address }}" id="django-template"></template>
+        <template class="{{ server_address}}" id="django-template"></template>
 
     <div class="vh-100 d-flex flex-column">
         {% include 'navbar.html' %}
         <div class="container-fluid d-flex py-3 py-md-5 flex-grow-1">
             <div class="row px-0 px-md-5 center-block flex-row flex-grow-1">
                 <div class="col-12 col-md-4 d-flex">
-                    <div class=" center-block container border border-dark rounded-lg shadow-lg bg-white p-3 p-xl-5 text-center">
+                    <div class=" center-block container border border-dark rounded-lg shadow-lg bg-white p-3 py-lg-5  text-center">
                         <!-- Website title -->
                         <h2>Course list</h2>
                         <hr/>
-                        <div class="overflow-auto" style="height: 300px;">
+                        <div class="overflow-auto" style="height: 55vh;">
                             <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
                                                                 <div class="spinner-border text-info"></div>
 
@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-8 mt-3 mt-md-0 d-flex">
-                    <div class="center-block container border border-dark rounded-lg shadow-lg bg-white p-3  p-xl-5 text-center">
+                    <div class="center-block container border border-dark rounded-lg shadow-lg bg-white p-3  p-lg-5 text-center">
 
                         <div class="tab-content" id="courses-content">
 

@@ -1,5 +1,5 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios from "axios";
+import axios from "./main";
 import {validEmail, validPassword} from "./register";
 import "bootstrap-cookie-alert/cookiealert.js"
 

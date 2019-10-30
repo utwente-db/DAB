@@ -1,6 +1,6 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
 import {changePageState, displayWhoami, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
-import axios, {AxiosResponse} from 'axios';
+import axios, {AxiosResponse} from "./main";
 import "popper.js"
 import "bootstrap"
 import {addAlert, addErrorAlert, AlertType} from "./alert";

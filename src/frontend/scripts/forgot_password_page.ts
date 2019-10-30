@@ -1,5 +1,5 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios, {AxiosError, AxiosResponse} from "axios";
+import axios, {AxiosError, AxiosResponse} from "./main";
 import {validEmail} from "./register";
 
 const passwordButton = document.getElementById("password-button") as HTMLButtonElement;
