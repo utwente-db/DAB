@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from 'axios';
+import axios, {AxiosResponse} from "./main";
 import "popper.js"
 import "bootstrap"
 import {UserRole} from "./user";

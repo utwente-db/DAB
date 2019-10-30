@@ -15,6 +15,7 @@ from rest_framework import status
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
 
+from src.django_settings.secret import URL_PREFIX
 from src.django_settings.settings import DATABASE_SERVER
 from . import hash
 from . import mail
@@ -36,7 +37,14 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s',
 )
 
+class PrefixHttpResponseRedirect(HttpResponseRedirect):
+    def __init__(self,input):
+        super().__init__("/" + URL_PREFIX + input)
 
+def render_with_prefix(request, template_name, context=None, content_type=None, status=None, using=None):
+    if (context):
+        context['url_prefix'] = URL_PREFIX
+    return render(request, template_name, context, content_type, status, using)
 # AUTHENTICATION CHECKERS
 
 def authenticated(func):
@@ -53,7 +61,7 @@ def auth_redirect(func):
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
         if not check_role(request, student):
-            return HttpResponseRedirect("/login")
+            return PrefixHttpResponseRedirect("")
         return func(request, *args, **kwargs)
 
     return wrapper
@@ -79,7 +87,7 @@ def require_role_redirect(role):
         @functools.wraps(func)
         def wrapper(request, *args, **kwargs):
             if not check_role(request, student):
-                return HttpResponseRedirect("/login")
+                return PrefixHttpResponseRedirect("")
             elif not check_role(request, role):
                 return HttpResponse("You are not authorised", status=status.HTTP_403_FORBIDDEN)
             return func(request, *args, **kwargs)
@@ -1003,13 +1011,13 @@ not_found.status_code = 404
 
 @require_role_redirect(admin)
 def edit_users(request):
-    return render(request, 'edit_users.html', {'role': request.session['role']})
+    return render_with_prefix(request, 'edit_users.html', {'role': request.session['role']})
 
 
 @require_GET
 @require_role_redirect(teacher)
 def admin_view(request):
-    return render(request, 'admin.html', {'role': request.session['role']})
+    return render_with_prefix(request, 'admin.html', {'role': request.session['role']})
 
 
 def test(request):
@@ -1025,11 +1033,11 @@ def register(request):
     #         password = hash.make(data["password"])
     #         role = dbmusers(role=3, email=data["mail"], password=password, maxdatabases=0)
     #         role.save()
-    #         return render(request, 'login.html',
+    #         return render_with_prefix(request, 'login.html',
     #                       {'form': LoginForm(), 'message': "Registration succesful; try to login"})
 
     form = RegisterForm()
-    return render(request, 'register.html', {'form': form})
+    return render_with_prefix(request, 'register.html', {'form': form})
 
 
 @require_POST
@@ -1041,7 +1049,7 @@ def login(request):
         try:
             user = dbmusers.objects.get(email=data["mail"])
             if not user.verified:
-                return render(request, 'login.html',
+                return render_with_prefix(request, 'login.html',
                               {'form': LoginForm, 'template_class': 'resend-verification ' + user.email})
 
             if hash.verify(user.password, data["password"]):
@@ -1052,23 +1060,23 @@ def login(request):
                 user.lastlogin = timezone.now()  # update last login
                 user.save()
 
-                return HttpResponseRedirect("/")
+                return PrefixHttpResponseRedirect("")
 
 
             else:
-                return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
+                return render_with_prefix(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
         except dbmusers.DoesNotExist:
-            return render(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
+            return render_with_prefix(request, 'login.html', {'form': form, 'template_class': 'incorrect-message'})
     else:
         form = LoginForm()
-        return render(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
+        return render_with_prefix(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
 
 
 @require_POST
 @authenticated
 def logout(request):
     request.session.flush()
-    return render(request, 'login.html', {'form': LoginForm(), 'template_class': "you-have-been-logged-out"})
+    return render_with_prefix(request, 'login.html', {'form': LoginForm(), 'template_class': "you-have-been-logged-out"})
 
 
 # Function for debug purposes only; just returns a small web page with the a button to log out.
@@ -1087,7 +1095,7 @@ def courses(request):
     context = {
     }
 
-    return render(request, template, context)
+    return render_with_prefix(request, template, context)
 
 
 # Function to change the role of users
@@ -1169,7 +1177,7 @@ def verify(request, token):
         user.verified = True
         user.token = None
         user.save()
-        return render(request, 'login.html',
+        return render_with_prefix(request, 'login.html',
                       {"form": LoginForm(), 'template_class': 'account-verified'})
     except dbmusers.DoesNotExist as e:
         return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
@@ -1184,7 +1192,7 @@ def change_password(request):
             'role': request.session['role'],
             'TA_count': TA_count
         }
-        return render(request, 'change_password.html', context)
+        return render_with_prefix(request, 'change_password.html', context)
     else:
         body = None
         new = None
@@ -1283,7 +1291,7 @@ def reset_password(request, pk, token):
         return HttpResponse("token expired", status=status.HTTP_403_FORBIDDEN)
 
     if request.method == "GET":
-        return render(request, "reset_password.html", {'pk': pk, 'token': token})
+        return render_with_prefix(request, "reset_password.html", {'pk': pk, 'token': token})
 
     else:
         body = None
@@ -1303,13 +1311,13 @@ def reset_password(request, pk, token):
 
 @require_GET
 def password_has_been_reset(request):
-    return render(request, 'login.html', {'form': LoginForm(), 'template_class': "new-password"})
+    return render_with_prefix(request, 'login.html', {'form': LoginForm(), 'template_class': "new-password"})
 
 
 @require_GET
 def student_view(request):
     TA_count = TAs.objects.filter(studentid=request.session['user']).count();
-    return render(request, 'student_view.html',
+    return render_with_prefix(request, 'student_view.html',
                   {'server_address': DATABASE_SERVER, 'role': request.session['role'], 'TA_count': TA_count})
 
 
@@ -1323,7 +1331,7 @@ def redirect(request):
             return admin_view(request)
     else:
         form = LoginForm()
-        return render(request, 'login.html', {'form': form})
+        return render_with_prefix(request, 'login.html', {'form': form})
 
 
 @require_GET
@@ -1331,7 +1339,7 @@ def forgot_password_page(request):
     if ('user' in request.session):
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
     else:
-        return render(request, 'forgot_password_page.html')
+        return render_with_prefix(request, 'forgot_password_page.html')
 
 
 @require_GET
@@ -1344,6 +1352,6 @@ def edit_courses(request):
             'role': request.session['role'],
             'TA_count': TA_count
         }
-        return render(request, 'edit_courses.html', context)
+        return render_with_prefix(request, 'edit_courses.html', context)
     else:
         return HttpResponse("You are not authorized", status=status.HTTP_403_FORBIDDEN)

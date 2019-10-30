@@ -14,10 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
-from django.contrib import admin
+from django.http import HttpResponseRedirect
 
-urlpatterns = [
-#    url(r'^admin/', admin.site.urls),
-    url(r'^rest/', include('src.backend.rest_urls')),
-    url('', include('src.backend.urls'))
-]
+from src.django_settings.secret import DEBUG, URL_PREFIX
+
+if DEBUG:
+    def return_to_dab(request):
+        return HttpResponseRedirect(URL_PREFIX)
+
+    urlpatterns = [
+        url(r'^'+ URL_PREFIX + 'rest/', include('src.backend.rest_urls')),
+        url(r'^'+ URL_PREFIX, include('src.backend.urls')),
+        url(r'^/?$', return_to_dab)
+    ]
+else:
+    urlpatterns = [
+        url(r'^rest/', include('src.backend.rest_urls')),
+        url('', include('src.backend.urls'))
+    ]

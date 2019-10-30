@@ -1,5 +1,5 @@
 import {addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios from "axios";
+import axios from "./main";
 import {passwordsEqual, validPassword} from "./register";
 
 const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement;

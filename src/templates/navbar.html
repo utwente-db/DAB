@@ -15,17 +15,17 @@
         <ul class="navbar-nav mr-auto">
             {% if role < 2 or TA_count > 0 %}
                 <li class="nav-item" id="navbar-edit-courses">
-                    <a class="nav-link" href="/edit_courses">Edit courses</a>
+                    <a class="nav-link" href="edit_courses">Edit courses</a>
                 </li>
             {% endif %}
             {% if role == 0 %}
                 <li class="nav-item" id="navbar-edit-users">
-                    <a class="nav-link" href="/edit_users">Edit users</a>
+                    <a class="nav-link" href="edit_users">Edit users</a>
                 </li>
             {% endif %}
 
             <li class="nav-item" id="navbar-student-view">
-                <a class="nav-link" href="/student_view">Student view</a>
+                <a class="nav-link" href="student_view">Student view</a>
             </li>
 
             {#            <button class="btn btn-secondary mr-3" onclick="location.href='/edit_course'">Edit courses</button>#}
@@ -47,8 +47,8 @@
                         <div class="dropdown-divider" id="navbar-options-dropdown-divider"></div>
                     {% endif %}
 
-                    <a class="dropdown-item" href="/change_password" id="navbar-change-password">Change password</a>
-                    <form id="logout-form" action="/logout" method="POST">
+                    <a class="dropdown-item" href="change_password" id="navbar-change-password">Change password</a>
+                    <form id="logout-form" action="logout" method="POST">
                         <a class="dropdown-item" href="#" id="navbar-logout"
                            onclick="document.getElementById('logout-form').submit();">Log
                             out</a>

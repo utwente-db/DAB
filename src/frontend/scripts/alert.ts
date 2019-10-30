@@ -1,4 +1,4 @@
-import {AxiosError, AxiosResponse} from "axios";
+import {AxiosError, AxiosResponse} from "./main";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 

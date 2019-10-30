@@ -2,7 +2,7 @@ import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios, {AxiosResponse} from "axios";
+import axios, {AxiosResponse} from "./main";
 
 const registerButton: HTMLButtonElement = document.getElementById("register-button") as HTMLButtonElement;
 const registerEmailField: HTMLInputElement = document.getElementById("register-email-field") as HTMLInputElement;

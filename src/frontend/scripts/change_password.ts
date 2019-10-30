@@ -1,5 +1,5 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios, {AxiosError} from "axios";
+import axios, {AxiosError} from "./main";
 import {passwordsEqual, validPassword} from "./register";
 import {changePageState, initNavbar} from "./navbar";
 
