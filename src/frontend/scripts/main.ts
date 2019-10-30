@@ -5,7 +5,7 @@ import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
 
-axios.defaults.baseURL="/dab/";
+axios.defaults.baseURL=document.getElementById("url-prefix")!.classList[0]!;
 // tslint:disable-next-line:no-default-export
 export default axios;
 export { AxiosResponse };
