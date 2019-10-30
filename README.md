@@ -127,9 +127,9 @@ Please make sure all the files are owned by `www-data`, by running `sudo chown w
 
 To install, simply add the following to your Apache2 config file (either `apache.conf` or `sites-enabled/000-default.conf`, whichever works).
 
-    Alias /static/ "[DOCUMENT ROOT]/static"
+    Alias /static/ "[DOCUMENT ROOT]/static/"
 
-    <Directory "[DOCUMENT ROOT]/static">
+    <Directory "[DOCUMENT ROOT]/static/">
         Require all granted
     </Directory>
     <Location /dab>
