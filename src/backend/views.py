@@ -689,32 +689,37 @@ def get_db_parameters(dbname):
     return db_parameters
 
 
-@authenticated
+@require_GET
+@require_role(teacher)
 def teacher_own_tas(request, dbname):
     current_id = request.session['user']
     db_parameters = get_db_parameters(dbname)
 
-    if check_role(request, teacher):
-        try:
-            courses_results = Courses.objects.filter(fid=current_id)
+    try:
+        courses_results = Courses.objects.filter(fid=current_id)
 
-            results = []
-            for single_course in courses_results:
-                results.extend(TAs.objects.filter(
-                    courseid=single_course.courseid))  # get all students in the course of this teacher
+        results = []
+        for single_course in courses_results:
+            results.extend(TAs.objects.filter(
+                courseid=single_course.courseid))  # get all students in the course of this teacher
 
-            serializer = db_parameters["serializer"](results, many=True)
+        serializer = db_parameters["serializer"](results, many=True)
 
-        except Exception as e:
-            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-        else:
-            log_message_with_db(request.session['user'], 'tas and courses', log_teacher_own_tas,
-                                'This teacher requested its own tas')  # LOG THIS ACTION
-            return JsonResponse(serializer.data, safe=False)
-
+    except Exception as e:
+        return HttpResponse(status=status.HTTP_404_NOT_FOUND)
     else:
-        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+        log_message_with_db(request.session['user'], 'tas and courses', log_teacher_own_tas,
+                            'This teacher requested its own tas')  # LOG THIS ACTION
+        return JsonResponse(serializer.data, safe=False)
 
+@require_GET
+@require_role(teacher)
+def teacher_own_studentdatabases(request):
+    results = Studentdatabases.objects.raw("SELECT s.* FROM studentdatabases s, courses c WHERE c.fid=%s AND s.course = c.courseid", [request.session["user"]])
+
+    serializer = StudentdatabasesSerializer(results, many=True)
+
+    return JsonResponse(serializer.data, safe=False)
 
 def singleview(request, pk, dbname):
     db_parameters = get_db_parameters(dbname)
