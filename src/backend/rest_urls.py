@@ -29,7 +29,7 @@ urlpatterns = [
     url(r'^courses/name/(?P<search_value>[a-zA-Z0-9_]+)/?$', views.search_on_name, {"dbname": "courses"}),
     # TAs
     url(r'^tas/own/?$', views.get_own_response, {"dbname": "tas"}),
-    url(r'^tas/teacher/own/?$', views.teacher_own_tas, {"dbname": "tas"}),
+    url(r'^tas/teacher/own/?$', views.teacher_own_tas),
     url(r'^tas/course/(?P<pk>[0-9]+)/?$', views.get_course_ta),
     url(r'^tas/(?P<pk>[a-z0-9]+)/?$', views.singleview, {"dbname": "tas"}),
     url(r'^tas/$', views.baseview, {"dbname": "tas"}),
