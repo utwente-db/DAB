@@ -228,7 +228,7 @@ async function prepareToGetCredentials(): Promise<void> {
 function disableElementsOnPage(): void {
     credentialsButton.disabled = true;
     groupInput.disabled = true;
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.add("disabled"));
+    Array.from(coursesNavHtml.children).forEach((el: Element) => el.classList.add("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
             deleteButton.disabled = true
@@ -246,7 +246,7 @@ function disableElementsOnPage(): void {
 function enableElementsOnPage(): void {
     credentialsButton.disabled = false;
     groupInput.disabled = false;
-    coursesNavHtml.childNodes.forEach((node: ChildNode) => (node as HTMLAnchorElement).classList.remove("disabled"));
+    Array.from(coursesNavHtml.children).forEach((el: Element) => el.classList.remove("disabled"));
     Array.from(document.getElementsByClassName("delete-button") as HTMLCollectionOf<HTMLButtonElement>)
         .forEach((deleteButton: HTMLButtonElement) => {
             deleteButton.disabled = false
