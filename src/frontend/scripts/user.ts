@@ -9,7 +9,6 @@ import {Course, getCoursesPromise, StudentDatabase} from "./courses";
 
 const urlParams = new URLSearchParams(window.location.search);
 
-let users: User[];
 // let user: User;
 // let databases: Database[];
 
@@ -35,6 +34,8 @@ const pleaseSelectAuser = document.getElementById("please-select-a-user") as HTM
 let deleteButton: HTMLButtonElement = document.getElementById("delete-button") as HTMLButtonElement;
 let editButton: HTMLButtonElement = document.getElementById("edit-button") as HTMLButtonElement;
 let courses: Course[] = [];
+let users: User[];
+let studentDatabases: StudentDatabase[] = [];
 
 export interface User {
     id: number;
@@ -65,7 +66,7 @@ async function displayUsers(): Promise<void> {
     for (let i = 0; i < users.length; i++) {
         const verified: boolean = users[i].verified;
         result.push(
-            `<tr class="user-row" id="user-row-${i}"></a>
+            `<tr class="user-row not-disabled" id="user-row-${i}"></a>
  <th scope="row">${users[i].id}</th>
              <td>${UserRole[users[i].role]}</td>
              <td>${users[i].email}</td>
@@ -119,11 +120,6 @@ export async function getUsersPromise(): Promise<User[]> {
     return response.data;
 }
 
-async function getDatabasesPromise(userid: number): Promise<StudentDatabase[]> {
-    const response: AxiosResponse = await axios.get(`/rest/studentdatabases/owner/${userid}/`);
-    return response.data;
-}
-
 async function getCourseByIDPromise(id: number): Promise<Course> {
     const response: AxiosResponse = await axios.get(`/rest/courses/${id}/`);
     return response.data;
@@ -136,8 +132,7 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
 // }
 
 async function displayCoursesAndDatabases(user: User): Promise<void> {
-    const databases: StudentDatabase[] = await getDatabasesPromise(user.id);
-    // TODO can be done without promises
+    const databases: StudentDatabase[] = studentDatabases.filter(db => db.fid === user.id);
 
     const dbToHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
@@ -463,6 +458,7 @@ function changeEditUserState(enable: boolean): void {
 
 
 window.onload = async () => {
+    studentDatabases = (await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>).data;
     await Promise.all([
         courses = await getCoursesPromise(),
         initNavbar(changeEditUserState),
