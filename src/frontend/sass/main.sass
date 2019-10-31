@@ -54,20 +54,18 @@ table
   width: 100%
 
 
-tbody
-  & tr
+.user-row
     cursor: pointer
     color: $cyan
 
-tr.active, tr:active
+.user-row.active, .user-row:active
     background-color: $info !important
     color: white !important
     & td
       & a
         color: white !important
 
-.table-hover:hover, .table-hover.hover
-  color: $cyan
+
 
 /* --------------------------------------------------------
 /* "Bootstrap V4 Simple Checkbox Switch - No Js"

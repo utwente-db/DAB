@@ -65,7 +65,7 @@ async function displayUsers(): Promise<void> {
     for (let i = 0; i < users.length; i++) {
         const verified: boolean = users[i].verified;
         result.push(
-            `<tr class="user-row poin" id="user-row-${i}"></a>
+            `<tr class="user-row" id="user-row-${i}"></a>
  <th scope="row">${users[i].id}</th>
              <td>${UserRole[users[i].role]}</td>
              <td>${users[i].email}</td>
@@ -149,7 +149,7 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
 
 
     for (let i = 0; i < databases.length; i++) {
-        const course: Course = courses.find((course: Course) => course.courseid===databases[i].course)!;
+        const course: Course = courses.find((course: Course) => course.courseid === databases[i].course)!;
 
         const html =
             `<div class="form-group row">
@@ -428,7 +428,24 @@ async function changeRole(user: User): Promise<boolean> {
 }
 
 function changeEditUserState(enable: boolean): void {
-    return;
+    // TODO enable/disable table rows
+    const buttons: HTMLCollectionOf<HTMLButtonElement> = document.getElementsByTagName("button");
+    const inputs: HTMLCollectionOf<HTMLInputElement> = document.getElementsByTagName("input");
+    const navLinks = document.getElementsByClassName("nav-link") as HTMLCollectionOf<HTMLAnchorElement>;
+    Array.from(buttons).forEach(button => button.disabled = !enable);
+    Array.from(inputs).forEach(input => input.disabled = !enable);
+
+    if (enable) {
+        if (editButton.classList.contains("btn-secondary")) {
+            selectedRole.disabled = true
+        }
+        Array.from(navLinks).forEach(navLink => navLink.classList.add("disabled"))
+    } else {
+        Array.from(navLinks).forEach(navLink => navLink.classList.remove("disabled"))
+
+    }
+
+
 }
 
 

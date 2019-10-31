@@ -18,7 +18,7 @@ from rest_framework import status
 from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
 
-from src.django_settings.secret import URL_PREFIX
+from src.django_settings.secret import URL_PREFIX, DEBUG
 from src.django_settings.settings import DATABASE_SERVER, BASE_DIR
 from . import hash
 from . import mail
@@ -41,20 +41,25 @@ logging.basicConfig(
 
 # --- BEGIN FREEK CHUNK FIX ---
 
-cssfilestring_list = (glob.glob(os.path.join(BASE_DIR, "../frontend/css/[0-9]*.css")))
-jsfilestring_list = (glob.glob(os.path.join(BASE_DIR, "../frontend/scripts/[0-9]*.chunk.js")))
+
 
 cssnumbers = []
 jsnumbers = []
 
-for cssfilestring in cssfilestring_list:
-    cssnumbers.append(cssfilestring.split("/")[-1].split(".")[0])
+if not DEBUG:
+    cssfilestring_list = (glob.glob(os.path.join(BASE_DIR, "../frontend/css/[0-9]*.css")))
+    jsfilestring_list = (glob.glob(os.path.join(BASE_DIR, "../frontend/scripts/[0-9]*.chunk.js")))
 
-for jsfilestring in jsfilestring_list:
-    jsnumbers.append(jsfilestring.split("/")[-1].split(".")[0])
+    for cssfilestring in cssfilestring_list:
+        cssnumbers.append(cssfilestring.split("/")[-1].split(".")[0])
 
-jsnumbers.sort()
-cssnumbers.sort()
+    for jsfilestring in jsfilestring_list:
+        jsnumbers.append(jsfilestring.split("/")[-1].split(".")[0])
+
+    jsnumbers.sort()
+    cssnumbers.sort()
+else:
+    cssnumbers.append("main")
 
 # --- END FREEK CHUNK FIX ---
 
