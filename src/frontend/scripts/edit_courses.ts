@@ -34,7 +34,9 @@ const newSchemaRadioTransfer = document.getElementById("new-schema-radio-transfe
 
 const newSchemaTextarea = document.getElementById("new-schema-textarea") as HTMLTextAreaElement;
 const newSchemaUpload = document.getElementById("new-schema-upload") as HTMLInputElement;
-const newSchemaTransfer = document.getElementById("new-schema-transfer") as HTMLSelectElement;
+const newSchemaTransferCourseList = document.getElementById("new-schema-transfer-course-list") as HTMLSelectElement;
+const newSchemaTransferDatabaseList = document.getElementById("new-schema-transfer-database-list") as HTMLSelectElement;
+const newSchemaTransferRow = document.getElementById("new-schema-transfer-row") as HTMLSelectElement;
 
 const newSchemaTextareaDiv = document.getElementById("new-schema-textarea-div") as HTMLDivElement;
 const newSchemaUploadDiv = document.getElementById("new-schema-upload-div") as HTMLDivElement;
@@ -56,7 +58,11 @@ const existingSchemaRadioTransfer = document.getElementById("existing-schema-rad
 
 const existingSchemaTextarea = document.getElementById("existing-schema-textarea") as HTMLTextAreaElement;
 const existingSchemaUpload = document.getElementById("existing-schema-upload") as HTMLInputElement;
-const existingSchemaTransfer = document.getElementById("existing-schema-transfer") as HTMLSelectElement;
+
+const existingSchemaTransferCourseList = document.getElementById("existing-schema-transfer-course-list") as HTMLSelectElement;
+const existingSchemaTransferDatabaseList = document.getElementById("existing-schema-transfer-database-list") as HTMLSelectElement
+const existingSchemaTransferRow = document.getElementById("existing-schema-transfer-row") as HTMLSelectElement
+
 
 const existingSchemaTextareaDiv = document.getElementById("existing-schema-textarea-div") as HTMLDivElement;
 const existingSchemaUploadDiv = document.getElementById("existing-schema-upload-div") as HTMLDivElement;
@@ -68,7 +74,6 @@ const deleteCourseButton = document.getElementById("delete-course-button") as HT
 const dumpCourseButton = document.getElementById("dump-course-button") as HTMLButtonElement;
 
 
-let databases: StudentDatabase[];
 let who: Who;
 let courses: Course[];
 // tslint:disable-next-line:prefer-const
@@ -88,28 +93,58 @@ function validCoursename(field: HTMLInputElement): boolean {
     }
 }
 
-async function fillStudentDatabasesDropdown(dropdown: HTMLSelectElement): Promise<void> {
+async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, databaseDropdown: HTMLSelectElement): Promise<void> {
     try {
-        const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
-        databases = (response.data).sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
+        // const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
 
-        while (dropdown.lastElementChild !== dropdown.firstElementChild) {
-            const child: Element = dropdown.lastElementChild!;
-            dropdown.removeChild(child!);
-        }
-        for (let i = 0; i < databases.length; i++) {
-            const optionNode = document.createElement("option");
-            optionNode.setAttribute("value", String(databases[i].dbid));
-            optionNode.appendChild(document.createTextNode(databases[i].databasename));
 
-            dropdown.appendChild(optionNode)
-            // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+
+        let displayDatabases: StudentDatabase[];
+        let displayCourses: Course[]
+        if (who.role === UserRole.Admin) {
+            displayDatabases = (await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>).data;
+            displayCourses = courses;
+        } else {
+            const ownedCourses: Course[] = courses.filter((course: Course) => course.fid === who.id);
+            const ownDatabases: StudentDatabase[] = (await axios.get("/rest/studentdatabases/own/") as AxiosResponse<StudentDatabase[]>).data;
+            const ownDatabasesCourses: Course[] = ownDatabases.map((database: StudentDatabase) => courses[database.course]);
+            displayCourses = ownedCourses.concat(ownDatabasesCourses);
+            const ownedCoursesDatabases: StudentDatabase[] = []; // TODO API calll naar /studentdatabases/teacher/own
+            displayDatabases = ownDatabases.concat(ownedCoursesDatabases);
+            displayCourses = displayCourses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
         }
+
+        displayDatabases = displayDatabases.sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
+
+        while (courseDropdown.lastElementChild !== courseDropdown.firstElementChild) {
+            const child: Element = courseDropdown.lastElementChild!;
+            courseDropdown.removeChild(child!);
+        }
+
+        while (databaseDropdown.lastElementChild !== databaseDropdown.firstElementChild) {
+            const child: Element = databaseDropdown.lastElementChild!;
+            databaseDropdown.removeChild(child!);
+        }
+
+        // TODO disable database dropdown if no course is selected
+        // TODO populate database dropdown depending on course selected ( event listeners)
+
+
+        // for (let i = 0; i < databases.length; i++) {
+        //     const optionNode = document.createElement("option");
+        //     optionNode.setAttribute("value", String(databases[i].dbid));
+        //     optionNode.appendChild(document.createTextNode(databases[i].databasename));
+        //
+        //     dropdown.appendChild(optionNode)
+        //     result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
+
         // const resultString: string = result.join("\n");
         // coursesDropdown.innerHTML += resultString;
     } catch (error) {
         addErrorAlert(error)
     }
+
+
 }
 
 function populateNewCoursePane(): void {
@@ -117,7 +152,7 @@ function populateNewCoursePane(): void {
         child.classList.remove("active");
     });
 
-    [newCourseFIDField, newCourseInfoField, newCoursenameField, newSchemaTextarea, newSchemaUpload, newSchemaTransfer].forEach((el) => {
+    [newCourseFIDField, newCourseInfoField, newCoursenameField, newSchemaTextarea, newSchemaUpload, newSchemaTransferRow].forEach((el) => {
         setNeutral(el);
     });
 
@@ -133,10 +168,11 @@ function populateNewCoursePane(): void {
 
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    if (who.role === UserRole.Admin) {
-        fillStudentDatabasesDropdown(newSchemaTransfer);
+    if (who.role < UserRole.Student) {
+        fillStudentDatabasesDropdown(newSchemaTransferDatabaseList, newSchemaTransferCourseList);
     }
-    newSchemaTransfer.value = String(0);
+    newSchemaTransferCourseList.value = String(0);
+    newSchemaTransferDatabaseList.value = String(0);
 
 
 }
@@ -159,14 +195,14 @@ function goToAddCoursePane(event: Event): void {
 async function populateExistingCoursePane(i: number): Promise<void> {
     studentDatabasesNavHtml.innerHTML = "";
     courseDatabasesHtml.innerHTML = "No database selected";
-    if (who.role === UserRole.Admin) {
-        fillStudentDatabasesDropdown(existingSchemaTransfer);
+    if (who.role < UserRole.Student) {
+        fillStudentDatabasesDropdown(existingSchemaTransferCourseList, existingSchemaTransferDatabaseList);
 
     }
     populateTAPane(i);
 
     displayStudentDatabasesForCourse(i);
-    [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransfer].forEach((el) => {
+    [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransferRow].forEach((el) => {
         setNeutral(el);
     });
 
@@ -184,7 +220,8 @@ async function populateExistingCoursePane(i: number): Promise<void> {
 
     existingSchemaTextarea.value = "";
     existingSchemaUpload.value = "";
-    existingSchemaTransfer.value = String(0);
+    existingSchemaTransferCourseList.value = String(0);
+    existingSchemaTransferDatabaseList.value = String(0);
 
 }
 
@@ -252,21 +289,21 @@ function validUpload(uploadElement: HTMLInputElement): boolean {
 function checkFields(newCourseInfoField: HTMLInputElement, newCoursenameField: HTMLInputElement, newCourseFIDField: HTMLInputElement,
                      newSchemaRadioNone: HTMLInputElement, newSchemaRadioTextarea: HTMLInputElement, newSchemaTextarea: HTMLTextAreaElement,
                      newSchemaRadioUpload: HTMLInputElement, newSchemaUpload: HTMLInputElement, newSchemaRadioTransfer: HTMLInputElement,
-                     newSchemaTransfer: HTMLSelectElement): boolean {
+                     schemaTransfer1: HTMLSelectElement, schemaTransfer2: HTMLSelectElement): boolean {
     setValid(newCourseInfoField);
     const a = validCoursename(newCoursenameField);
     const b = validFID(newCourseFIDField);
-    let c = false;
-    if (newSchemaRadioNone.checked) {
-        c = true;
-    } else if (newSchemaRadioTextarea.checked) {
+    let c = true;
+    let d = true;
+    if (newSchemaRadioTextarea.checked) {
         c = nonEmptyTextarea(newSchemaTextarea)
     } else if (newSchemaRadioUpload.checked) {
         c = validUpload(newSchemaUpload)
     } else if (newSchemaRadioTransfer.checked) {
-        c = validSelect(newSchemaTransfer)
+        c = validSelect(schemaTransfer1);
+        d = validSelect(schemaTransfer2);
     }
-    return a && b && c
+    return a && b && c && d
 }
 
 function changeEditCoursesState(enable: boolean): void {
@@ -308,7 +345,7 @@ async function tryAddCourse(): Promise<void> {
     if (checkFields(newCourseInfoField, newCoursenameField, newCourseFIDField,
         newSchemaRadioNone, newSchemaRadioTextarea, newSchemaTextarea,
         newSchemaRadioUpload, newSchemaUpload, newSchemaRadioTransfer,
-        newSchemaTransfer)) {
+        newSchemaTransferDatabaseList, newSchemaTransferCourseList)) {
         changePageState(false, changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
 
@@ -338,7 +375,7 @@ async function tryAddCourse(): Promise<void> {
 
 
             } else if (newSchemaRadioTransfer.checked) {
-                const dbid = Number(newSchemaTransfer.value);
+                const dbid = Number(newSchemaTransferDatabaseList.value);
                 await axios.post(`/rest/schematransfer/${courseID}/${dbid}`);
                 addAlert("Successfully added schema", AlertType.success);
             }
@@ -362,6 +399,7 @@ async function tryAddCourse(): Promise<void> {
 }
 
 async function tryDeleteCourse(courseID: number): Promise<boolean> {
+    // noinspection TypeScriptUnresolvedFunction
     const result = await Swal.fire({
         title: 'Are you sure you want to delete this course?',
         text: 'You will not be able to recover your data!',
@@ -372,6 +410,7 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
         cancelButtonText: 'Cancel'
     });
 
+    // noinspection TypeScriptUnresolvedVariable
     if (result.dismiss === Swal.DismissReason.cancel) {
         return false;
     }
@@ -413,7 +452,7 @@ async function tryEditCourse(): Promise<void> {
     if (checkFields(existingCourseInfoField, existingCoursenameField, existingCourseFIDField,
         existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea,
         existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer,
-        existingSchemaTransfer)) {
+        existingSchemaTransferCourseList, existingSchemaTransferCourseList)) {
         changePageState(false, changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
 
@@ -440,7 +479,7 @@ async function tryEditCourse(): Promise<void> {
 
 
             } else if (existingSchemaRadioTransfer.checked) {
-                const dbid = Number(existingSchemaTransfer.value);
+                const dbid = Number(existingSchemaTransferDatabaseList.value);
                 await axios.post(`/rest/schematransfer/${existingCourseIDField.value}/${dbid}`);
                 addAlert("Successfully added schema", AlertType.success);
             }
