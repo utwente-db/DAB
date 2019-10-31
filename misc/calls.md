@@ -150,6 +150,12 @@ GET -> gives back all teh studentdatabases belonging to the course.
 
 Only accessible to admins and the owners of said course
 
+### /studentdatabases/teacher/own
+
+GET -> gives back all the studentdatabases owned by the teacher
+
+Only accessible to teachers and above
+
 ## TABLE: Courses
 
 ### /courses/

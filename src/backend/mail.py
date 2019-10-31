@@ -24,8 +24,9 @@ def send_verification(user, created=False):
     msg.add_alternative("""\
 		<html>
 			<body>
-				<p>Hello """ + user["email"] + """,</p>"""+
-				"""<p>You have requested an account for the Database Administration Bundle.</p>""" if not created else """<p>An account hase been requested for you at the Database Administration Bundle</p>"""
+				<p>Hello """ + user["email"] + """,</p>
+                """+
+				("""<p>You have requested an account for the Database Administration Bundle.</p>""" if not created else """<p>An account hase been requested for you at the Database Administration Bundle</p>""")
 				+"""<p>Please verify your email by using <a href='https://""" + settings.HOST_SERVER + """/verify/""" +
                         user["token"] + """'>this link</a>.
 				<p>Kind Regards,</p>
