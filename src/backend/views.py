@@ -722,14 +722,14 @@ def get_db_parameters(dbname):
 
 
 @require_GET
-@require_role(teacher)
+@authenticated
 def teacher_own_tas(request):
     results = TAs.objects.raw("SELECT t.* FROM tas t, courses c WHERE c.fid=%s AND t.courseid=c.courseid;", [request.session["user"]])
     serializer = TasSerializer(results, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 @require_GET
-@require_role(teacher)
+@authenticated
 def teacher_own_studentdatabases(request):
     results = Studentdatabases.objects.raw("SELECT s.* FROM studentdatabases s, courses c WHERE c.fid=%s AND s.course = c.courseid;", [request.session["user"]])
     serializer = StudentdatabasesSerializer(results, many=True)

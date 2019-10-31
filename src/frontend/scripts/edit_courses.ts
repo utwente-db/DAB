@@ -103,11 +103,18 @@ async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, d
     } else {
         const ownedCourses: Course[] = courses.filter((course: Course) => course.fid === who.id);
         const ownDatabases: StudentDatabase[] = (await axios.get("/rest/studentdatabases/own/") as AxiosResponse<StudentDatabase[]>).data;
-        const ownDatabasesCourses: Course[] = ownDatabases.map((database: StudentDatabase) => courses[database.course]);
+        const ownDatabasesCourses: Course[] = ownDatabases.map((database: StudentDatabase) => courses.find(course => course.courseid === database.course)!);
         displayCourses = ownedCourses.concat(ownDatabasesCourses);
-        const ownedCoursesDatabases: StudentDatabase[] = (await
-            axios.get("/rest/studentdatabases/teacher/own/") as AxiosResponse<StudentDatabase[]>).data;
-        displayDatabases = ownDatabases.concat(ownedCoursesDatabases);
+
+        if (who.role === UserRole.Teacher) {
+            const ownedCoursesDatabases: StudentDatabase[] = (await
+                axios.get("/rest/studentdatabases/teacher/own/") as AxiosResponse<StudentDatabase[]>).data;
+            displayDatabases = ownDatabases.concat(ownedCoursesDatabases);
+        } {
+           const currentCourseDatabases = (await axios.get(`/rest/studentdatabases/course/${existingCourseIDField.value}`) as AxiosResponse<StudentDatabase[]>).data;
+           displayDatabases = ownDatabases.concat(currentCourseDatabases);
+            displayCourses.push(courses.find((course: Course) => course.courseid === Number(existingCourseIDField.value))!);
+        }
         displayCourses = displayCourses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
     }
     displayCourses = displayCourses.filter(course => displayDatabases.filter(db => db.course === course.courseid).length > 0);
@@ -179,9 +186,7 @@ function populateNewCoursePane(): void {
     newSchemaUploadDiv.classList.add("d-none");
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
-    if (who.role < UserRole.Student) {
-        fillStudentDatabasesDropdown(newSchemaTransferCourseList, newSchemaTransferDatabaseList);
-    }
+    fillStudentDatabasesDropdown(newSchemaTransferCourseList, newSchemaTransferDatabaseList);
     newSchemaTransferCourseList.value = String(0);
     newSchemaTransferDatabaseList.value = String(0);
 
@@ -205,10 +210,8 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     studentDatabasesNavHtml.innerHTML = "";
     courseDatabasesHtml.innerHTML = "No database selected";
     if (who.role < UserRole.Student) {
-        fillStudentDatabasesDropdown(existingSchemaTransferCourseList, existingSchemaTransferDatabaseList);
-
+        populateTAPane(i);
     }
-    populateTAPane(i);
 
     displayStudentDatabasesForCourse(i);
     [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransferDatabaseList, existingSchemaTransferCourseList].forEach((el) => {
@@ -238,6 +241,7 @@ async function populateExistingCoursePane(i: number): Promise<void> {
 
     existingSchemaTextarea.value = "";
     existingSchemaUpload.value = "";
+    fillStudentDatabasesDropdown(existingSchemaTransferCourseList, existingSchemaTransferDatabaseList);
     existingSchemaTransferCourseList.value = String(0);
     existingSchemaTransferDatabaseList.value = String(0);
 
