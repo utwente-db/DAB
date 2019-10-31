@@ -1,5 +1,5 @@
 import {addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios from "./main";
+import axios, {urlPrefix} from "./main";
 import {passwordsEqual, validPassword} from "./register";
 
 const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement;
@@ -34,7 +34,7 @@ async function tryResetPassword(): Promise<void> {
             }
             addTempAlert("Your password has been changed. You will be redirected to the login page.", AlertType.success, false, 0)
             await new Promise(resolve => setTimeout(resolve, 3000));
-            window.location.href = "/";
+            window.location.href = urlPrefix;
         } catch (error) {
             addErrorAlert(error, tempAlert)
         } finally {

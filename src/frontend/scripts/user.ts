@@ -1,4 +1,4 @@
-import axios, {AxiosResponse} from "./main";
+import axios, {AxiosResponse, urlPrefix} from "./main";
 import "popper.js";
 import "bootstrap";
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
@@ -200,7 +200,7 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
             
             <div class="align-items-center align-items-stretch row">
             <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
-            <button type="button" class="btn btn-secondary btn-block" onclick="window.location.replace('/rest/dump/${databases[i].dbid}/')">
+            <button type="button" class="btn btn-secondary btn-block" onclick="window.location.replace('${urlPrefix}rest/dump/${databases[i].dbid}/')">
                 Download dump
                 
             </button>

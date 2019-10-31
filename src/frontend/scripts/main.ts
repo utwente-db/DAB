@@ -5,7 +5,9 @@ import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
 
-axios.defaults.baseURL=document.getElementById("url-prefix")!.classList[0]!;
+export const urlPrefix: string = document.getElementById("url-prefix")!.classList[0]!;
+
+axios.defaults.baseURL=urlPrefix;
 // tslint:disable-next-line:no-default-export
 export default axios;
 export { AxiosResponse };

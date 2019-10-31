@@ -1,5 +1,5 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios, {AxiosResponse} from "./main";
+import axios, {AxiosResponse, urlPrefix} from "./main";
 import Swal from "sweetalert2";
 import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses";
 import {setInvalid, setNeutral, setValid} from "./register";
@@ -94,55 +94,59 @@ function validCoursename(field: HTMLInputElement): boolean {
 }
 
 async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, databaseDropdown: HTMLSelectElement): Promise<void> {
-    try {
-        // const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
+    databaseDropdown.disabled = true;
+    let displayDatabases: StudentDatabase[];
+    let displayCourses: Course[];
+    if (who.role === UserRole.Admin) {
+        displayDatabases = (await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>).data;
+        displayCourses = courses;
+    } else {
+        const ownedCourses: Course[] = courses.filter((course: Course) => course.fid === who.id);
+        const ownDatabases: StudentDatabase[] = (await axios.get("/rest/studentdatabases/own/") as AxiosResponse<StudentDatabase[]>).data;
+        const ownDatabasesCourses: Course[] = ownDatabases.map((database: StudentDatabase) => courses[database.course]);
+        displayCourses = ownedCourses.concat(ownDatabasesCourses);
+        const ownedCoursesDatabases: StudentDatabase[] = (await
+            axios.get("/rest/studentdatabases/teacher/own/") as AxiosResponse<StudentDatabase[]>).data;
+        displayDatabases = ownDatabases.concat(ownedCoursesDatabases);
+        displayCourses = displayCourses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
+    }
+    displayCourses = displayCourses.filter(course => displayDatabases.filter(db => db.course === course.courseid).length > 0);
+    displayDatabases = displayDatabases.sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
+
+    while (courseDropdown.lastElementChild !== courseDropdown.firstElementChild) {
+        const child: Element = courseDropdown.lastElementChild!;
+        courseDropdown.removeChild(child!);
+    }
+
+    while (databaseDropdown.lastElementChild !== databaseDropdown.firstElementChild) {
+        const child: Element = databaseDropdown.lastElementChild!;
+        databaseDropdown.removeChild(child!);
+    }
+
+    displayCourses.forEach(course => {
+        const optionNode = document.createElement("option");
+        optionNode.setAttribute("value", String(course.courseid));
+        optionNode.appendChild(document.createTextNode(course.coursename));
+        courseDropdown.appendChild(optionNode);
+    });
 
 
-        let displayDatabases: StudentDatabase[];
-        let displayCourses: Course[]
-        if (who.role === UserRole.Admin) {
-            displayDatabases = (await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>).data;
-            displayCourses = courses;
-        } else {
-            const ownedCourses: Course[] = courses.filter((course: Course) => course.fid === who.id);
-            const ownDatabases: StudentDatabase[] = (await axios.get("/rest/studentdatabases/own/") as AxiosResponse<StudentDatabase[]>).data;
-            const ownDatabasesCourses: Course[] = ownDatabases.map((database: StudentDatabase) => courses[database.course]);
-            displayCourses = ownedCourses.concat(ownDatabasesCourses);
-            const ownedCoursesDatabases: StudentDatabase[] = []; // TODO API calll naar /studentdatabases/teacher/own
-            displayDatabases = ownDatabases.concat(ownedCoursesDatabases);
-            displayCourses = displayCourses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
-        }
-
-        displayDatabases = displayDatabases.sort((a: StudentDatabase, b: StudentDatabase) => a.databasename.localeCompare(b.databasename));
-
-        while (courseDropdown.lastElementChild !== courseDropdown.firstElementChild) {
-            const child: Element = courseDropdown.lastElementChild!;
-            courseDropdown.removeChild(child!);
-        }
-
+    courseDropdown.addEventListener("change", () => {
         while (databaseDropdown.lastElementChild !== databaseDropdown.firstElementChild) {
             const child: Element = databaseDropdown.lastElementChild!;
             databaseDropdown.removeChild(child!);
         }
+        databaseDropdown.disabled = false;
+        databaseDropdown.value = String(0);
 
-        // TODO disable database dropdown if no course is selected
-        // TODO populate database dropdown depending on course selected ( event listeners)
-
-
-        // for (let i = 0; i < databases.length; i++) {
-        //     const optionNode = document.createElement("option");
-        //     optionNode.setAttribute("value", String(databases[i].dbid));
-        //     optionNode.appendChild(document.createTextNode(databases[i].databasename));
-        //
-        //     dropdown.appendChild(optionNode)
-        //     result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
-
-        // const resultString: string = result.join("\n");
-        // coursesDropdown.innerHTML += resultString;
-    } catch (error) {
-        addErrorAlert(error)
-    }
-
+        const filteredDisplayDatabases = displayDatabases.filter(db => db.course === Number(courseDropdown.value))
+        filteredDisplayDatabases.forEach(db => {
+            const optionNode = document.createElement("option");
+            optionNode.setAttribute("value", String(db.dbid));
+            optionNode.appendChild(document.createTextNode(db.databasename));
+            databaseDropdown.appendChild(optionNode);
+        })
+    })
 
 }
 
@@ -151,7 +155,7 @@ function populateNewCoursePane(): void {
         child.classList.remove("active");
     });
 
-    [newCourseFIDField, newCourseInfoField, newCoursenameField, newSchemaTextarea, newSchemaUpload, newSchemaTransferRow].forEach((el) => {
+    [newCourseFIDField, newCourseInfoField, newCoursenameField, newSchemaTextarea, newSchemaUpload, newSchemaTransferDatabaseList, newSchemaTransferCourseList].forEach((el) => {
         setNeutral(el);
     });
 
@@ -165,10 +169,18 @@ function populateNewCoursePane(): void {
     newSchemaRadioTextarea.checked = false;
     newSchemaRadioNone.checked = true;
 
+    newSchemaRadioUpload.parentElement!.classList.remove("active");
+    newSchemaRadioTransfer.parentElement!.classList.remove("active");
+    newSchemaRadioTextarea.parentElement!.classList.remove("active");
+    newSchemaRadioNone.parentElement!.classList.add("active");
+
+    newSchemaTextareaDiv.classList.add("d-none");
+    newSchemaTransferDiv.classList.add("d-none");
+    newSchemaUploadDiv.classList.add("d-none");
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
     if (who.role < UserRole.Student) {
-        fillStudentDatabasesDropdown(newSchemaTransferDatabaseList, newSchemaTransferCourseList);
+        fillStudentDatabasesDropdown(newSchemaTransferCourseList, newSchemaTransferDatabaseList);
     }
     newSchemaTransferCourseList.value = String(0);
     newSchemaTransferDatabaseList.value = String(0);
@@ -199,7 +211,7 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     populateTAPane(i);
 
     displayStudentDatabasesForCourse(i);
-    [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransferRow].forEach((el) => {
+    [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransferDatabaseList, existingSchemaTransferCourseList].forEach((el) => {
         setNeutral(el);
     });
 
@@ -214,6 +226,15 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     existingSchemaRadioTransfer.checked = false;
     existingSchemaRadioTextarea.checked = false;
     existingSchemaRadioNone.checked = true;
+
+    existingSchemaRadioUpload.parentElement!.classList.remove("active");
+    existingSchemaRadioTransfer.parentElement!.classList.remove("active");
+    existingSchemaRadioTextarea.parentElement!.classList.remove("active");
+    existingSchemaRadioNone.parentElement!.classList.add("active");
+
+    existingSchemaTextareaDiv.classList.add("d-none");
+    existingSchemaTransferDiv.classList.add("d-none");
+    existingSchemaUploadDiv.classList.add("d-none");
 
     existingSchemaTextarea.value = "";
     existingSchemaUpload.value = "";
@@ -575,7 +596,7 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
                     <input type="text" class="form-control" value="${databases[j].course}" readonly="">
                 </div>
             </div>` +
-            `<button type="button" class="btn btn-danger" onclick="window.location.replace('/rest/dump/${databases[j].dbid}/')">
+            `<button type="button" class="btn btn-danger" onclick="window.location.replace('${urlPrefix}rest/dump/${databases[j].dbid}/')">
                 Download Dump
             </button>` +
             `<button id="reset-button-${databases[j].dbid}" type="button" class="btn btn-danger">
@@ -784,7 +805,7 @@ async function populateTAPane(i: number): Promise<void> {
 }
 
 function tryDumpCourse(id: number): void {
-    window.location.href = `/rest/course_dump/${id}`;
+    window.location.href = urlPrefix + `rest/course_dump/${id}`;
 }
 
 window.onload = async () => {
@@ -885,7 +906,7 @@ window.onload = async () => {
         }),
 
 
-        populateNewCoursePane(),
+        // populateNewCoursePane(),
 
 
         navbarEditCourses.classList.add("active"),

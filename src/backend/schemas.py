@@ -51,7 +51,7 @@ def dump(database):
     schema = process.stdout
     schema = re.sub(r'CREATE SCHEMA "?' + name + r'"?;', "", schema)
     schema = re.sub(r'"?' + name + r'"?\.', "", schema)
-    schema = re.sub(r'COMMENT ON EXTENSION .*$', "", schema)
+    schema = re.sub(r'COMMENT ON EXTENSION .*$', "", schema, flags=re.MULTILINE)
  
     return schema
 

@@ -1,6 +1,6 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
 import {changePageState, displayWhoami, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
-import axios, {AxiosResponse} from "./main";
+import axios, {AxiosResponse, urlPrefix} from "./main";
 import "popper.js"
 import "bootstrap"
 import {addAlert, addErrorAlert, AlertType} from "./alert";
@@ -72,7 +72,7 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
                                 <button id="reset-button-${db.dbid}" class="btn btn-info reset-button btn-block">Reset database</button>
                             </div>
                             <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
-                                <button onclick="window.location.replace('/rest/dump/${db.dbid}/')" id="dump-button-${db.dbid}" class="btn btn-secondary dump-button btn-block">Get dump of database</button>
+                                <button onclick="window.location.replace('${urlPrefix}rest/dump/${db.dbid}/')" id="dump-button-${db.dbid}" class="btn btn-secondary dump-button btn-block">Get dump of database</button>
                             </div>
                         </div>
                         <hr>`;

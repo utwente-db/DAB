@@ -1,5 +1,5 @@
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-import axios, {AxiosError} from "./main";
+import axios, {AxiosError, urlPrefix} from "./main";
 import {passwordsEqual, validPassword} from "./register";
 import {changePageState, initNavbar} from "./navbar";
 
@@ -44,7 +44,7 @@ async function tryResetPassword(): Promise<void> {
             }
             addTempAlert("Your password has been changed. You will soon be redirected to the homepage.", AlertType.success, false, 0)
             await new Promise(resolve => setTimeout(resolve, 3000));
-            window.location.href = "/";
+            window.location.href = urlPrefix;;
 
         } catch (error) {
             const ae = error as AxiosError
