@@ -4,6 +4,9 @@ from __future__ import unicode_literals
 import functools
 import json
 
+import glob
+import os
+
 from django.db.utils import OperationalError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http.response import JsonResponse
@@ -16,7 +19,7 @@ from rest_framework.exceptions import ParseError
 from rest_framework.parsers import JSONParser
 
 from src.django_settings.secret import URL_PREFIX
-from src.django_settings.settings import DATABASE_SERVER
+from src.django_settings.settings import DATABASE_SERVER, BASE_DIR
 from . import hash
 from . import mail
 from . import schemaCheck
@@ -31,19 +34,43 @@ from .studentdb_functions import *
 # import pwd
 
 # DESIGN PROJECT
-
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s %(levelname)s %(message)s',
 )
 
+# --- BEGIN FREEK CHUNK FIX ---
+
+cssfilestring_list = (glob.glob(os.path.join(BASE_DIR, "../frontend/css/[0-9]*.css")))
+jsfilestring_list = (glob.glob(os.path.join(BASE_DIR, "../frontend/scripts/[0-9]*.chunk.js")))
+
+cssnumbers = []
+jsnumbers = []
+
+for cssfilestring in cssfilestring_list:
+    cssnumbers.append(cssfilestring.split("/")[-1].split(".")[0])
+
+for jsfilestring in jsfilestring_list:
+    jsnumbers.append(jsfilestring.split("/")[-1].split(".")[0])
+
+jsnumbers.sort()
+cssnumbers.sort()
+
+# --- END FREEK CHUNK FIX ---
+
 class PrefixHttpResponseRedirect(HttpResponseRedirect):
     def __init__(self,input):
         super().__init__("/" + URL_PREFIX + input)
 
+
+
 def render_with_prefix(request, template_name, context=None, content_type=None, status=None, using=None):
-    if (context):
-        context['url_prefix'] = URL_PREFIX
+    if context is None:
+        context = {}
+    context['url_prefix'] = URL_PREFIX
+    context['jsnumbers'] = jsnumbers
+    context['cssnumbers'] = cssnumbers
+
     return render(request, template_name, context, content_type, status, using)
 # AUTHENTICATION CHECKERS
 
