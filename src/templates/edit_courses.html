@@ -104,22 +104,22 @@
                                         <label for="new-schema-radio" class="col-12 col-md-4 col-form-label">Add
                                             schema?</label>
                                         <div class="col-12 col-md-8 btn-group btn-group-toggle" data-toggle="buttons">
-                                            <label class="btn btn-secondary active">
+                                            <label class="btn btn-secondary active cursor-pointer">
                                                 <input type="radio" name="options" id="new-schema-radio-none"
                                                        autocomplete="off"
                                                        checked> No
                                             </label>
-                                            <label class="btn btn-secondary">
+                                            <label class="btn btn-secondary cursor-pointer">
                                                 <input type="radio" name="options" id="new-schema-radio-textarea"
                                                        autocomplete="off">
                                                 Via text field
                                             </label>
-                                            <label class="btn btn-secondary">
+                                            <label class="btn btn-secondary cursor-pointer">
                                                 <input type="radio" name="options" id="new-schema-radio-upload"
                                                        autocomplete="off">
                                                 Via file upload
                                             </label>
-                                            <label class="btn btn-secondary">
+                                            <label class="btn btn-secondary cursor-pointer">
                                                 <input type="radio" name="options" id="new-schema-radio-transfer"
                                                        autocomplete="off">
                                                 Via schema transfer
@@ -202,8 +202,7 @@
                                             ID</label>
                                         <div class="col-12 col-md-8 align-middle">
                                             <input type="number" class="form-control"
-                                                   id="existing-course-id-field" disabled
-                                            >
+                                                   id="existing-course-id-field" readonly>
                                             <div class="invalid-feedback"></div>
                                         </div>
 
@@ -236,7 +235,7 @@
                                         <div class="col-12 col-md-8">
                                             <input type="number" name="course-fid-field" class="form-control"
                                                    id="existing-course-fid-field"
-                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'');" disabled>
+                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'');" readonly>
 
                                             <div class="invalid-feedback"></div>
                                         </div>
@@ -259,22 +258,22 @@
                                         <label for="existing-schema-radio" class="col-12 col-md-4 col-form-label">Edit
                                             schema?</label>
                                         <div class="col-12 col-md-8 btn-group btn-group-toggle" data-toggle="buttons">
-                                            <label class="btn btn-secondary active">
+                                            <label class="btn btn-secondary active cursor-pointer">
                                                 <input type="radio" name="options" id="existing-schema-radio-none"
                                                        autocomplete="off"
                                                        checked> No
                                             </label>
-                                            <label class="btn btn-secondary">
+                                            <label class="btn btn-secondary cursor-pointer">
                                                 <input type="radio" name="options" id="existing-schema-radio-textarea"
                                                        autocomplete="off">
                                                 Via text field
                                             </label>
-                                            <label class="btn btn-secondary">
+                                            <label class="btn btn-secondary cursor-pointer">
                                                 <input type="radio" name="options" id="existing-schema-radio-upload"
                                                        autocomplete="off">
                                                 Via file upload
                                             </label>
-                                            <label class="btn btn-secondary">
+                                            <label class="btn btn-secondary cursor-pointer">
                                                 <input type="radio" name="options" id="existing-schema-radio-transfer"
                                                        autocomplete="off">
                                                 Via schema transfer

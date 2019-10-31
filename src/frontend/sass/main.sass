@@ -19,12 +19,15 @@ a
 
     &.active
       background-color: #4ecf86 !important
+      pointer-events: none
 
     &.inactive-course
       background-color: #a9cfbf !important
 
       &.active
         background-color: #3b955f !important
+        pointer-events: none
+
 
 .nav-link
   &.inactive-course
@@ -32,6 +35,8 @@ a
 
     &.active
       background-color: lightgray !important
+      pointer-events: none
+
 
 .invalid-feedback
   display: block !important
@@ -62,11 +67,13 @@ table
 tr.active, tr:active
     background-color: $info !important
     color: white !important
+
     & td
       & a
         color: white !important
 
-
+.cursor-pointer:not(:disabled)
+  cursor: pointer
 
 
 /* --------------------------------------------------------
@@ -90,7 +97,6 @@ tr.active, tr:active
 /* The slider */
 .slider
   position: absolute
-  cursor: pointer
   top: 0
   left: 0
   right: 0
@@ -99,6 +105,8 @@ tr.active, tr:active
   -webkit-transition: .4s
   transition: .4s
 
+.slider:not(:disabled)
+  cursor: pointer
 
 .slider:before
   position: absolute
@@ -112,22 +120,22 @@ tr.active, tr:active
   transition: .4s
 
 
-input.default:checked + .slider
+input.default:checked:not(:disabled) + .slider
   background-color: #444
 
-input.primary:checked + .slider
+input.primary:checked:not(:disabled) + .slider
   background-color: $primary
 
-input.success:checked + .slider
+input.success:checked:not(:disabled) + .slider
   background-color: $success
 
-input.info:checked + .slider
+input.info:checked:not(:disabled) + .slider
   background-color: $info
 
-input.warning:checked + .slider
+input.warning:checked:not(:disabled) + .slider
   background-color: $warning
 
-input.danger:checked + .slider
+input.danger:checked:not(:disabled) + .slider
   background-color: $danger
 
 

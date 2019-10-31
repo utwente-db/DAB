@@ -95,14 +95,14 @@
                                         </div>
 
                                         <div class="col-12 col-lg-4">
-                                            <button id="edit-button" type="button" class="btn btn-secondary"
+                                            <button id="edit-button" type="button" class="btn btn-secondary btn-block"
                                                     data-toggle="modal"
                                                     data-target="#editUserRoleModal">
                                                 Edit Role
                                             </button>
                                         </div>
                                         <div class="col-12 col-lg-4">
-                                            <button id="delete-button" type="button" class="mt-3 mt-lg-0 btn btn-danger">
+                                            <button id="delete-button" type="button" class="mt-3 mt-lg-0 btn btn-danger btn-block">
                                                 Delete User
                                             </button>
                                         </div>
@@ -147,15 +147,16 @@
                                 </div>
 
                                 <hr/>
+                                <h5>Databases for this user</h5>
                                 <div class="row">
-                                    <div class="col-6">
-                                        <div class="overflow-auto border rounded" style="height: 57vh;">
+                                    <div class="col-12 col-md-5 col-lg-12 col-xl-5">
+                                        <div class="overflow-auto border rounded" style="height: 30vh;">
                                             <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
                                                 {#                                    <div class="spinner-border text-info"></div>#}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-6 px-0">
+                                    <div class="col-12 col-md-7 col-lg-12 col-xl-7 mt-0 mt-xl-3">
                                         <div class="tab-content mx-1" id="courses-db">
                                             No database selected
                                             {#                                <div class="spinner-border text-info"></div>#}

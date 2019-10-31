@@ -87,8 +87,10 @@ async function displayUsers(): Promise<void> {
             // set new course pane active
             Array.from(document.getElementsByTagName('tr'))!.forEach((el: Element) => {
                 el.classList.remove("active")
+                el.removeAttribute("style")
             });
             document.getElementById(`user-row-${i}`)!.classList.add("active");
+            document.getElementById(`user-row-${i}`)!.setAttribute("style", "pointer-events: none;");
 
 
             const deleteButtonClone = deleteButton!.cloneNode(true) as HTMLButtonElement;
@@ -198,16 +200,16 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
             
             <div class="align-items-center align-items-stretch row">
             <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
-            <button type="button" class="btn btn-secondary " onclick="window.location.replace('/rest/dump/${databases[i].dbid}/')">
+            <button type="button" class="btn btn-secondary btn-block" onclick="window.location.replace('/rest/dump/${databases[i].dbid}/')">
                 Download dump
                 
             </button>
-            </div><div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
-            <button id="reset-button-${databases[i].dbid}" type="button" class="btn btn-info ">
+            </div><div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex ">
+            <button id="reset-button-${databases[i].dbid}" type="button" class="btn btn-info btn-block">
                 Reset database
             </button>
             </div><div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
-            <button id="delete-button-${databases[i].dbid}" type="button" class="btn btn-danger">
+            <button id="delete-button-${databases[i].dbid}" type="button" class="btn btn-danger btn-block">
                 Delete database
             </button>
             </div>
@@ -268,19 +270,19 @@ export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement): Promi
     }
     let success;
     const tempAlert = addTempAlert();
-    changePageState(false,changeEditUserState);
+    changePageState(false, changeEditUserState);
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
-        addAlert("Database has been deleted", AlertType.primary,tempAlert);
+        addAlert("Database has been deleted", AlertType.primary, tempAlert);
         document.getElementsByClassName("studentdatabase-link nav-link active")[0].remove();
         dbDiv.innerHTML = "No database selected";
         success = true;
         // window.location.reload(true);
     } catch (error) {
-        addErrorAlert(error,tempAlert);
+        addErrorAlert(error, tempAlert);
         success = false;
     } finally {
-        changePageState(true,changeEditUserState);
+        changePageState(true, changeEditUserState);
     }
     return success;
 }
@@ -300,16 +302,16 @@ export async function resetDatabase(dbID: number): Promise<boolean> {
     }
     let success;
     const tempAlert = addTempAlert();
-    changePageState(false,changeEditUserState);
+    changePageState(false, changeEditUserState);
     try {
         await axios.post(`/rest/reset/${dbID}/`);
-        addAlert("Database has been reset", AlertType.primary,tempAlert);
+        addAlert("Database has been reset", AlertType.primary, tempAlert);
         success = true;
     } catch (error) {
         addErrorAlert(error, tempAlert);
         success = false;
     } finally {
-        changePageState(true,changeEditUserState)
+        changePageState(true, changeEditUserState)
     }
     return success;
 }
@@ -335,7 +337,7 @@ async function deleteUser(user: User): Promise<boolean> {
     }
     let success;
     const tempAlert = addTempAlert();
-    changePageState(false,changeEditUserState);
+    changePageState(false, changeEditUserState);
     try {
         await axios.delete(`/rest/dbmusers/${user.id}/`);
         addAlert("User succesfully deleted!", AlertType.success, tempAlert);
@@ -350,7 +352,7 @@ async function deleteUser(user: User): Promise<boolean> {
         addErrorAlert(error, tempAlert);
         success = false;
     } finally {
-        changePageState(false,changeEditUserState);
+        changePageState(false, changeEditUserState);
     }
     return success;
 }
@@ -395,7 +397,7 @@ async function changeRole(user: User): Promise<boolean> {
     }
     let success;
     const tempAlert = addTempAlert();
-    changePageState(false,changeEditUserState);
+    changePageState(false, changeEditUserState);
     try {
         await axios.post(`/rest/set_role`, {
             user: user.id,
@@ -420,7 +422,7 @@ async function changeRole(user: User): Promise<boolean> {
         addErrorAlert(error, tempAlert);
         success = false;
     } finally {
-        changePageState(true,changeEditUserState)
+        changePageState(true, changeEditUserState)
     }
     return success;
 }
@@ -442,14 +444,16 @@ function changeEditUserState(enable: boolean): void {
         Array.from(navLinks).forEach(navLink => navLink.classList.remove("disabled"));
         Array.from(tableRows).forEach(tableRow => {
             tableRow.classList.add("not-disabled");
-            tableRow.removeAttribute("style");
+            if (!tableRow.classList.contains("active")) {
+                tableRow.removeAttribute("style");
+            }
         })
 
     } else {
         Array.from(navLinks).forEach(navLink => navLink.classList.add("disabled"));
         Array.from(tableRows).forEach(tableRow => {
             tableRow.classList.remove("not-disabled");
-            tableRow.setAttribute("style","pointer-events: none;");
+            tableRow.setAttribute("style", "pointer-events: none;");
         })
     }
 

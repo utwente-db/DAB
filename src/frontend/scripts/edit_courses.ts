@@ -3,13 +3,13 @@ import axios, {AxiosResponse} from "./main";
 import Swal from "sweetalert2";
 import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses";
 import {setInvalid, setNeutral, setValid} from "./register";
-import {changePageState, getWhoamiPromise, getWhoPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
+import {changePageState, getWhoPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
 import {displayCourses} from "./student_view";
 import {deleteDatabase, resetDatabase, TA, User, UserRole} from "./user";
 import autosize from "autosize"
 
 
-let addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
+const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
 const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
 const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
 
@@ -98,7 +98,6 @@ async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, d
         // const response = await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>;
 
 
-
         let displayDatabases: StudentDatabase[];
         let displayCourses: Course[]
         if (who.role === UserRole.Admin) {
@@ -181,10 +180,8 @@ function goToAddCoursePane(event: Event): void {
     event.preventDefault();
     populateNewCoursePane();
     if (addCourseLink) {
-        const addcourseLinkClone = addCourseLink!.cloneNode(true) as HTMLAnchorElement;
-        addCourseLink.parentNode!.replaceChild(addcourseLinkClone, addCourseLink);
-        addCourseLink = addcourseLinkClone;
-        addCourseLink.toggleAttribute("href");
+        addCourseLink.setAttribute("style", "pointer-events: none;");
+        addCourseLink.toggleAttribute("href", false);
     }
     Array.from(coursesContentHtml.children).forEach((child) => {
         child.classList.remove("active");
@@ -207,8 +204,8 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     });
 
     currentCourse = courses[i];
-    existingCourseIDField.value = String(courses[i].courseid);
-    existingCourseFIDField.value = String(courses[i].fid);
+    existingCourseIDField.setAttribute("value", String(courses[i].courseid));
+    existingCourseFIDField.setAttribute("value", String(courses[i].fid));
     existingCourseInfoField.value = courses[i].info;
     existingCoursenameField.value = courses[i].coursename;
     existingActiveField.checked = courses[i].active;
@@ -227,8 +224,8 @@ async function populateExistingCoursePane(i: number): Promise<void> {
 
 export function goToExistingCoursePane(i: number): void {
     if (addCourseLink) {
-        addCourseLink.addEventListener("click", goToAddCoursePane);
-        addCourseLink.toggleAttribute("href");
+        addCourseLink.removeAttribute("style");
+        addCourseLink.toggleAttribute("href", true);
     }
 
     populateExistingCoursePane(i);
@@ -307,24 +304,45 @@ function checkFields(newCourseInfoField: HTMLInputElement, newCoursenameField: H
 }
 
 function changeEditCoursesState(enable: boolean): void {
+    const buttons: HTMLCollectionOf<HTMLButtonElement> = document.getElementsByTagName("button");
+    const inputs: HTMLCollectionOf<HTMLInputElement> = document.getElementsByTagName("input");
+    const selects: HTMLCollectionOf<HTMLSelectElement> = document.getElementsByTagName("select");
+    const textAreas: HTMLCollectionOf<HTMLTextAreaElement> = document.getElementsByTagName("textarea");
+
+    // const tableRows: HTMLCollectionOf<HTMLTableRowElement> = document.getElementsByTagName("tr");
+    const navLinks = document.getElementsByClassName("nav-link") as HTMLCollectionOf<HTMLAnchorElement>;
+
+
+    Array.from(buttons).forEach(button => button.disabled = !enable);
+    Array.from(inputs).forEach(input => input.disabled = !enable);
+    Array.from(selects).forEach(select => select.disabled = !enable);
+    Array.from(textAreas).forEach(textArea => textArea.disabled = !enable);
 
 
     if (enable) {
-        newCourseInfoField.disabled = false;
-        newCoursenameField.disabled = false;
-        newCourseFIDField.disabled = false;
-        newSchemaTextarea.disabled = false;
-        newActiveField.disabled = false;
-        addCourseButton.disabled = false;
-        (navbarEditCourses.firstElementChild)!.classList.add("disabled");
+        Array.from(navLinks).forEach(navLink => navLink.classList.remove("disabled"));
+        if (addCourseLink && !newCoursePane.classList.contains("active")) {
+            addCourseLink.removeAttribute("style");
+            addCourseLink.toggleAttribute("href", true);
+        }
+        // Array.from(tableRows).forEach(tableRow => {
+        //     tableRow.classList.add("not-disabled");
+        //     tableRow.removeAttribute("style");
+        // })
+
     } else {
-        newCourseInfoField.disabled = true;
-        newCoursenameField.disabled = true;
-        newCourseFIDField.disabled = true;
-        newSchemaTextarea.disabled = true;
-        newActiveField.disabled = true;
-        addCourseButton.disabled = true;
+        Array.from(navLinks).forEach(navLink => navLink.classList.add("disabled"));
+        if (addCourseLink) {
+            addCourseLink.setAttribute("style", "pointer-events: none;");
+            addCourseLink.toggleAttribute("href", false);
+        }
+        // Array.from(tableRows).forEach(tableRow => {
+        //     tableRow.classList.remove("not-disabled");
+        //     tableRow.setAttribute("style","pointer-events: none;");
+        // })
     }
+
+
 }
 
 async function getSchema(newSchemaRadioTextarea: HTMLInputElement, newSchemaTextarea: HTMLTextAreaElement, newSchemaRadioUpload: HTMLInputElement,
@@ -416,7 +434,7 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
     }
     let success: boolean;
     const tempAlert: ChildNode | null = addTempAlert();
-    // changePageState(false, changeStudentViewState);
+    changePageState(false, changeEditCoursesState);
     try {
         await axios.delete(`/rest/courses/${courseID}/`);
         // await changeViewToHaveCredentials()
@@ -441,7 +459,7 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
         addErrorAlert(error, tempAlert);
         success = false;
     } finally {
-        // changePageState(true, changeStudentViewState);
+        changePageState(true, changeEditCoursesState);
     }
     return success;
 }
@@ -453,6 +471,7 @@ async function tryEditCourse(): Promise<void> {
         existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea,
         existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer,
         existingSchemaTransferCourseList, existingSchemaTransferCourseList)) {
+
         changePageState(false, changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
 
@@ -774,7 +793,7 @@ window.onload = async () => {
     await Promise.all([
         (async () => {
             await Promise.all([courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename)),
-            users = (who.role === UserRole.Teacher || who.role === UserRole.Admin) ? (await axios.get(`/rest/dbmusers/`) as AxiosResponse<User[]>).data : []
+                users = (who.role === UserRole.Teacher || who.role === UserRole.Admin) ? (await axios.get(`/rest/dbmusers/`) as AxiosResponse<User[]>).data : []
 
             ]);
 
