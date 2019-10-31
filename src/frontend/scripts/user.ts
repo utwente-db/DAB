@@ -428,9 +428,11 @@ async function changeRole(user: User): Promise<boolean> {
 }
 
 function changeEditUserState(enable: boolean): void {
-    // TODO enable/disable table rows
     const buttons: HTMLCollectionOf<HTMLButtonElement> = document.getElementsByTagName("button");
     const inputs: HTMLCollectionOf<HTMLInputElement> = document.getElementsByTagName("input");
+    const tableRows: HTMLCollectionOf<HTMLTableRowElement> = document.getElementsByTagName("tr");
+
+
     const navLinks = document.getElementsByClassName("nav-link") as HTMLCollectionOf<HTMLAnchorElement>;
     Array.from(buttons).forEach(button => button.disabled = !enable);
     Array.from(inputs).forEach(input => input.disabled = !enable);
@@ -439,10 +441,18 @@ function changeEditUserState(enable: boolean): void {
         if (editButton.classList.contains("btn-secondary")) {
             selectedRole.disabled = true
         }
-        Array.from(navLinks).forEach(navLink => navLink.classList.add("disabled"))
-    } else {
-        Array.from(navLinks).forEach(navLink => navLink.classList.remove("disabled"))
+        Array.from(navLinks).forEach(navLink => navLink.classList.remove("disabled"));
+        Array.from(tableRows).forEach(tableRow => {
+            tableRow.classList.add("user-row");
+            tableRow.removeAttribute("style");
+        })
 
+    } else {
+        Array.from(navLinks).forEach(navLink => navLink.classList.add("disabled"));
+        Array.from(tableRows).forEach(tableRow => {
+            tableRow.classList.remove("user-row");
+            tableRow.setAttribute("style","pointer-events: none;");
+        })
     }
 
 
