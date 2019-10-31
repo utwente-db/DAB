@@ -735,6 +735,13 @@ def teacher_own_studentdatabases(request):
     serializer = StudentdatabasesSerializer(results, many=True)
     return JsonResponse(serializer.data, safe=False)
 
+@require_GET
+@authenticated
+def ta_own_studentdatabases(request):
+    results = Studentdatabases.objects.raw("SELECT s.* FROM studentdatabases s, tas t WHERE t.studentid=%s AND s.course = t.courseid;", [request.session["user"]])
+    serializer = StudentdatabasesSerializer(results, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
 def singleview(request, pk, dbname):
     db_parameters = get_db_parameters(dbname)
 

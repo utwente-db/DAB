@@ -79,6 +79,8 @@ let courses: Course[];
 // tslint:disable-next-line:prefer-const
 let currentCourse: Course;
 let users: User[] = [];
+let studentDatabases: StudentDatabase[] = [];
+
 
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
@@ -814,10 +816,19 @@ function tryDumpCourse(id: number): void {
 
 window.onload = async () => {
     who = await getWhoPromise();
+    if (who.role === UserRole.Admin) {
+        studentDatabases = (await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>).data;
+    } else if (who.role === UserRole.Teacher) {
+        studentDatabases = (await axios.get("/rest/studentdatabases/teacher/own") as AxiosResponse<StudentDatabase[]>).data;
+    } else {
+        studentDatabases = (await axios.get("/rest/studentdatabases/tas/own") as AxiosResponse<StudentDatabase[]>).data;
+    }
 
     await Promise.all([
         (async () => {
-            await Promise.all([courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename)),
+            await Promise.all([
+                courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename)),
+
                 users = (who.role === UserRole.Teacher || who.role === UserRole.Admin) ? (await axios.get(`/rest/dbmusers/`) as AxiosResponse<User[]>).data : []
 
             ]);
@@ -918,7 +929,7 @@ window.onload = async () => {
 
     ]);
 
-    Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove())
+    Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove());
     autosize(document.querySelectorAll('textarea'));
 
 

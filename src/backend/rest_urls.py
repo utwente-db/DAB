@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^studentdatabases/owner/(?P<search_value>[0-9]+)/?$', views.search_on_owner, {"dbname": "studentdatabases"}),
     url(r'^studentdatabases/course/(?P<search_value>[0-9]+)/?$', views.search_db_on_course),
     url(r'^studentdatabases/teacher/own/?$', views.teacher_own_studentdatabases),
+    url(r'^studentdatabases/tas/own/?$', views.ta_own_studentdatabases),
     # Courses
     url(r'^courses/own/?$', views.get_own_response, {"dbname": "courses"}),
     url(r'^courses/(?P<pk>[0-9]+)/schema/?', views.schema),
