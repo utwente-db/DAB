@@ -1,10 +1,10 @@
 import axios, {AxiosResponse} from "./main";
 import "popper.js";
 import "bootstrap";
-import {addAlert, addErrorAlert, AlertType} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2';
 
-import {initNavbar, navbarEditUsers} from "./navbar";
+import {changePageState, initNavbar, navbarEditUsers} from "./navbar";
 import {Course, getCoursesPromise, StudentDatabase} from "./courses";
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -137,6 +137,7 @@ async function getCourseByIDPromise(id: number): Promise<Course> {
 
 async function displayCoursesAndDatabases(user: User): Promise<void> {
     const databases: StudentDatabase[] = await getDatabasesPromise(user.id);
+    // TODO can be done without promises
 
     const dbToHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
@@ -271,16 +272,20 @@ export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement): Promi
         return false;
     }
     let success;
+    const tempAlert = addTempAlert();
+    changePageState(false,changeEditUserState);
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
-        addAlert("Deleted database", AlertType.primary);
+        addAlert("Database has been deleted", AlertType.primary,tempAlert);
         document.getElementsByClassName("studentdatabase-link nav-link active")[0].remove();
         dbDiv.innerHTML = "No database selected";
         success = true;
         // window.location.reload(true);
     } catch (error) {
-        addErrorAlert(error);
+        addErrorAlert(error,tempAlert);
         success = false;
+    } finally {
+        changePageState(true,changeEditUserState);
     }
     return success;
 }
@@ -299,29 +304,22 @@ export async function resetDatabase(dbID: number): Promise<boolean> {
         return false;
     }
     let success;
+    const tempAlert = addTempAlert();
+    changePageState(false,changeEditUserState);
     try {
         await axios.post(`/rest/reset/${dbID}/`);
-        addAlert("Reset database", AlertType.primary);
+        addAlert("Database has been reset", AlertType.primary,tempAlert);
         success = true;
     } catch (error) {
-        addErrorAlert(error);
+        addErrorAlert(error, tempAlert);
         success = false;
+    } finally {
+        changePageState(true,changeEditUserState)
     }
     return success;
 }
 
 async function displayUserDetails(user: User): Promise<void> {
-    // let role: string;
-    // if (user.role === UserRole.admin) {
-    //     role = "Admin";
-    // } else if (user.role === UserRole.teacher) {
-    //     role = "Teacher";
-    // } else if (user.role === UserRole.student) {
-    //     role = "Student";
-    // } else {
-    //     role = "unknown";
-    // }
-
     usernameHtml.value = user.email;
     selectedRole.value = String(user.role);
     verifiedHtml.innerHTML = (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
@@ -341,22 +339,23 @@ async function deleteUser(user: User): Promise<boolean> {
         return false;
     }
     let success;
-
+    const tempAlert = addTempAlert();
+    changePageState(false,changeEditUserState);
     try {
         await axios.delete(`/rest/dbmusers/${user.id}/`);
-        addAlert("User succesfully deleted!", AlertType.success);
+        addAlert("User succesfully deleted!", AlertType.success, tempAlert);
 
         Array.from(usersTabs.children).forEach((tab: Element) => {
             tab.classList.remove("active")
         });
         pleaseSelectAuser.classList.add("active");
         document.getElementsByClassName("user-row active")[0]!.remove();
-        // TODO remove table row
-        // window.location.href = '../';
         success = true;
     } catch (error) {
-        addErrorAlert(error);
+        addErrorAlert(error, tempAlert);
         success = false;
+    } finally {
+        changePageState(false,changeEditUserState);
     }
     return success;
 }
@@ -400,13 +399,13 @@ async function changeRole(user: User): Promise<boolean> {
         return false;
     }
     let success;
-
+    const tempAlert = addTempAlert();
+    changePageState(false,changeEditUserState);
     try {
         await axios.post(`/rest/set_role`, {
             user: user.id,
             role: roleNumber
         });
-        addAlert(`Role of ${user.email} was changed to ${UserRole[roleNumber]}!`, AlertType.primary);
         user.role = roleNumber;
         (document.getElementsByClassName("user-row active")[0]!.children[1]! as HTMLAnchorElement).innerHTML = UserRole[roleNumber];
         const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
@@ -419,10 +418,14 @@ async function changeRole(user: User): Promise<boolean> {
         editButton.addEventListener("click", () => {
             allowChangeRole(user)
         });
+        addAlert(`Role of ${user.email} was changed to ${UserRole[roleNumber]}!`, AlertType.primary, tempAlert);
+
         success = true;
     } catch (error) {
-        addErrorAlert(error);
+        addErrorAlert(error, tempAlert);
         success = false;
+    } finally {
+        changePageState(true,changeEditUserState)
     }
     return success;
 }
@@ -443,14 +446,14 @@ function changeEditUserState(enable: boolean): void {
         }
         Array.from(navLinks).forEach(navLink => navLink.classList.remove("disabled"));
         Array.from(tableRows).forEach(tableRow => {
-            tableRow.classList.add("user-row");
+            tableRow.classList.add("not-disabled");
             tableRow.removeAttribute("style");
         })
 
     } else {
         Array.from(navLinks).forEach(navLink => navLink.classList.add("disabled"));
         Array.from(tableRows).forEach(tableRow => {
-            tableRow.classList.remove("user-row");
+            tableRow.classList.remove("not-disabled");
             tableRow.setAttribute("style","pointer-events: none;");
         })
     }
