@@ -132,6 +132,13 @@ class StudentdatabasesManager(models.Manager.from_queryset(StudentdatabasesQuery
             db.password = switchPassword(db.password)
         return out
 
+    def raw(self, *args, **kwargs):
+        out = super().raw(*args, **kwargs)
+        for db in out:
+            db.password = switchPassword(db.password)
+        return out
+
+
 
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid', primary_key=True)
