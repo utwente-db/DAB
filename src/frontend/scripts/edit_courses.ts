@@ -633,8 +633,8 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
                 resetDatabase(db.dbid);
             });
             const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
-            deleteButton.addEventListener("click", () => {
-                deleteDatabase(db.dbid, courseDatabasesHtml);
+            deleteButton.addEventListener("click", async () => {
+                studentDatabases = await deleteDatabase(db.dbid, courseDatabasesHtml,studentDatabases,changeEditCoursesState);
             });
         });
 

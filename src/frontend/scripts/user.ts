@@ -249,13 +249,13 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
         });
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
-            deleteDatabase(db.dbid, courseDatabasesHtml);
+            deleteDatabase(db.dbid, courseDatabasesHtml, studentDatabases, changeEditUserState);
         });
     });
 
 }
 
-export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement): Promise<boolean> {
+export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement, studentDatabases: StudentDatabase[], disablePageFunction: Function): Promise<StudentDatabase[]> {
     const result = await Swal.fire({
         title: 'Are you sure you want to delete this database?',
         text: 'You will not be able to recover your data!',
@@ -266,25 +266,23 @@ export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement): Promi
     });
 
     if (result.dismiss === Swal.DismissReason.cancel) {
-        return false;
+        return studentDatabases;
     }
-    let success;
     const tempAlert = addTempAlert();
-    changePageState(false, changeEditUserState);
+    changePageState(false, disablePageFunction);
     try {
         await axios.delete(`/rest/studentdatabases/${dbID}/`);
+        studentDatabases = studentDatabases.filter(db => db.dbid !== dbID);
         addAlert("Database has been deleted", AlertType.primary, tempAlert);
         document.getElementsByClassName("studentdatabase-link nav-link active")[0].remove();
         dbDiv.innerHTML = "No database selected";
-        success = true;
         // window.location.reload(true);
     } catch (error) {
         addErrorAlert(error, tempAlert);
-        success = false;
     } finally {
-        changePageState(true, changeEditUserState);
+        changePageState(true, disablePageFunction);
     }
-    return success;
+    return studentDatabases;
 }
 
 // Internal server error 500?
