@@ -559,7 +559,7 @@ def filter_dict_on_keys(incoming, dbname):
 
 @authenticated
 def update_single_response(request, requested_pk, db_parameters):
-    # UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES AND STUDENTDATABASES
+    # UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES, STUDENTDATABASES, AND DBMUSERS
     # are we allowed to do this?
 
     authorised = False
@@ -574,11 +574,21 @@ def update_single_response(request, requested_pk, db_parameters):
         if check_role(request, teacher) or am_i_the_ta or do_i_own_this_item(request.session["user"], requested_pk,
                                                                              db_parameters):
             authorised = True
+    if db_parameters["dbname"] == "dbmusers":
+        if request.session["role"] == admin:
+            authorised = True
+    else:
+        return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
 
     if authorised:
         try:
 
             data = JSONParser().parse(request)
+            if db_parameters["dbname"] == "dbmusers":
+                forbidden_params = ["password", "token", "lastlogin", "tokenExpire", "id"]
+                for p in forbidden_params:
+                    if p in data:
+                        return HttpResponse(p+" may not be changed", status=status.HTTP_403_FORBIDDEN)
 
             filtered_data = filter_dict_on_keys(data, db_parameters["dbname"])
 
