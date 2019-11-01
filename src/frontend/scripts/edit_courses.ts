@@ -412,17 +412,20 @@ async function tryAddCourse(): Promise<void> {
             const schema: string = await getSchema(newSchemaRadioTextarea, newSchemaTextarea, newSchemaRadioUpload,
                 newSchemaUpload);
 
-            if (schema !== "") {
-
-                await axios.post(`/rest/courses/${courseID}/schema`, schema);
-                addAlert("successfully added schema", AlertType.success);
-
-
-            } else if (newSchemaRadioTransfer.checked) {
-                const dbid = Number(newSchemaTransferDatabaseList.value);
-                await axios.post(`/rest/schematransfer/${courseID}/${dbid}`);
-                addAlert("Successfully added schema", AlertType.success);
+            try {
+                if (schema !== "") {
+                    await axios.post(`/rest/courses/${courseID}/schema`, schema);
+                    addAlert("successfully added schema", AlertType.success);
+                } else if (newSchemaRadioTransfer.checked) {
+                    const dbid = Number(newSchemaTransferDatabaseList.value);
+                    await axios.post(`/rest/schematransfer/${courseID}/${dbid}`);
+                    addAlert("Successfully added schema", AlertType.success);
+                }
+            } catch (error) {
+                addErrorAlert((error))
             }
+
+
             populateNewCoursePane();
             courses.push(response.data);
 
@@ -517,16 +520,21 @@ async function tryEditCourse(): Promise<void> {
             const schema: string = await getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload,
                 existingSchemaUpload);
 
-            if (schema !== "") {
 
-                await axios.post(`/rest/courses/${existingCourseIDField.value}/schema`, schema);
-                addAlert("Successfully added schema", AlertType.success);
+            try {
+                if (schema !== "") {
+
+                    await axios.post(`/rest/courses/${existingCourseIDField.value}/schema`, schema);
+                    addAlert("Successfully added schema", AlertType.success);
 
 
-            } else if (existingSchemaRadioTransfer.checked) {
-                const dbid = Number(existingSchemaTransferDatabaseList.value);
-                await axios.post(`/rest/schematransfer/${existingCourseIDField.value}/${dbid}`);
-                addAlert("Successfully added schema", AlertType.success);
+                } else if (existingSchemaRadioTransfer.checked) {
+                    const dbid = Number(existingSchemaTransferDatabaseList.value);
+                    await axios.post(`/rest/schematransfer/${existingCourseIDField.value}/${dbid}`);
+                    addAlert("Successfully added schema", AlertType.success);
+                }
+            } catch (error) {
+                addErrorAlert(error);
             }
             const navLink = document.getElementsByClassName("course-link nav-link active")[0]! as HTMLAnchorElement;
             navLink.innerText = existingCoursenameField.value;
