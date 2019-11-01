@@ -80,7 +80,8 @@ let courses: Course[];
 let currentCourse: Course;
 let users: User[] = [];
 let studentDatabases: StudentDatabase[] = [];
-
+let tas: TA[] = [];
+let ownDatabases: StudentDatabase[] = [];
 
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
@@ -100,20 +101,18 @@ async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, d
     let displayDatabases: StudentDatabase[];
     let displayCourses: Course[];
     if (who.role === UserRole.Admin) {
-        displayDatabases = (await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>).data;
+        displayDatabases = studentDatabases;
         displayCourses = courses;
     } else {
         const ownedCourses: Course[] = courses.filter((course: Course) => course.fid === who.id);
-        const ownDatabases: StudentDatabase[] = (await axios.get("/rest/studentdatabases/own/") as AxiosResponse<StudentDatabase[]>).data;
         const ownDatabasesCourses: Course[] = ownDatabases.map((database: StudentDatabase) => courses.find(course => course.courseid === database.course)!);
         displayCourses = ownedCourses.concat(ownDatabasesCourses);
 
         if (who.role === UserRole.Teacher) {
-            const ownedCoursesDatabases: StudentDatabase[] = (await
-                axios.get("/rest/studentdatabases/teacher/own/") as AxiosResponse<StudentDatabase[]>).data;
+            const ownedCoursesDatabases: StudentDatabase[] = studentDatabases;
             displayDatabases = ownDatabases.concat(ownedCoursesDatabases);
-        } {
-           const currentCourseDatabases = (await axios.get(`/rest/studentdatabases/course/${existingCourseIDField.value}`) as AxiosResponse<StudentDatabase[]>).data;
+        } else {
+           const currentCourseDatabases = studentDatabases.filter(db => db.course === Number(existingCourseIDField.value));
            displayDatabases = ownDatabases.concat(currentCourseDatabases);
             displayCourses.push(courses.find((course: Course) => course.courseid === Number(existingCourseIDField.value))!);
         }
@@ -544,7 +543,7 @@ async function tryEditCourse(): Promise<void> {
 }
 
 async function displayStudentDatabasesForCourse(i: number): Promise<void> {
-    const databases: StudentDatabase[] = (await axios.get(`/rest/studentdatabases/course/${courses[i].courseid}`) as AxiosResponse<StudentDatabase[]>).data;
+    const databases: StudentDatabase[] = studentDatabases.filter(db => db.course === courses[i].courseid)
 
     const dbToHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
@@ -658,6 +657,7 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
     try {
         const response = await axios.post(`/rest/tas/`, taObject) as AxiosResponse<TA>;
         const ta = response.data;
+        tas.push(ta);
         addAlert(`${user.email} was added as a TA`, AlertType.success, tempAlert);
 
         const templateString = `<a class="ta-link nav-link green-nav active" data-toggle="pill" href="#">${user.email}</a>`;
@@ -704,6 +704,7 @@ async function removeTA(user: User, taID: number, i: number): Promise<boolean> {
     changePageState(false, changeEditCoursesState);
     try {
         const response = await axios.delete(`/rest/tas/${taID}/`) as AxiosResponse;
+        tas = tas.filter(ta => ta.taid !== taID);
         addAlert(`${user.email} is no longer a TA`, AlertType.success, tempAlert);
 
         const templateString = `<a class="ta-link nav-link not-green-nav active" data-toggle="pill" href="#">${user.email}</a>`;
@@ -761,9 +762,9 @@ async function populateTAPane(i: number): Promise<void> {
         taNav.innerHTML = "";
     }
 
-
-    const response = await axios.get(`/rest/tas/course/${courses[i].courseid}`) as AxiosResponse<TA[]>;
-    const taList = response.data;
+    const taList = tas.filter(ta => ta.courseid === courses[i].courseid);
+    // const response = await axios.get(`/rest/tas/course/${courses[i].courseid}`) as AxiosResponse<TA[]>;
+    // const taList = response.data;
     const taListByUserID = taList.map((ta: TA) => ta.studentid);
 
     users.forEach((user: User) => {
@@ -773,6 +774,7 @@ async function populateTAPane(i: number): Promise<void> {
         if (userIsTaForCourse) {
             taID = taList[taListByUserID.indexOf(user.id)].taid
         }
+
 
         const greenClass = userIsTaForCourse ? "green-nav" : "not-green-nav";
         const templateString = `<a class="ta-link nav-link ${greenClass}" data-toggle="pill" href="#">${user.email}</a>`;
@@ -823,6 +825,13 @@ window.onload = async () => {
     } else {
         studentDatabases = (await axios.get("/rest/studentdatabases/tas/own") as AxiosResponse<StudentDatabase[]>).data;
     }
+
+    if (who.role < UserRole.Student) {
+        tas = (await axios.get("/rest/tas/") as AxiosResponse<TA[]>).data;
+    }
+
+    ownDatabases = (await axios.get("/rest/studentdatabases/own/") as AxiosResponse<StudentDatabase[]>).data;
+
 
     await Promise.all([
         (async () => {
