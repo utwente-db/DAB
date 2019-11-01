@@ -777,7 +777,7 @@ def dump(request, pk):
     except Studentdatabases.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-    if not check_role(request, teacher) and request.session["user"] != db.owner().id:
+    if not check_role(request, teacher) and request.session["user"] != db.owner().id and not am_i_ta_of_this_db(request.session["user"], db.dbid):
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
     schema = schemaWriter.dump(db.__dict__)
@@ -878,8 +878,7 @@ def transferSchema(request, course, database):
     except Studentdatabases.DoesNotExist as e:
         return HttpResponse("No such database", status=status.HTTP_404_NOT_FOUND)
 
-    if db.course.courseid != course.courseid and db.owner != request.session["user"] and not am_i_ta_of_this_course(
-            request.session["user"], course.courseid) and request.session["role"] < admin:
+    if db.course.courseid != course.courseid and db.owner() != request.session["user"] and not am_i_ta_of_this_db(request.session["user"], db.dbid) and request.session["role"] < admin:
         return HttpResponse("You don't own this database", status=status.HTTP_403_FORBIDDEN)
 
     # we are now authorised, and the objects exist
