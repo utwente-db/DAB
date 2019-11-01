@@ -2,6 +2,12 @@ import {AxiosError, AxiosResponse} from "./main";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
+/**
+ * This function generates the HTML for an alert
+ * @param errorMessage The message's content
+ * @param alertType The alert color. See [[AlertType]].
+ * @param dismissable Whether the alert can be dismissed or not (adds an X that is clickable).
+ */
 export function generateAlertHTML(errorMessage: string, alertType: AlertType, dismissable = true): string {
     const dismissableString = dismissable ? "alert-dismissible" : "temp-alert";
     const buttonString = dismissable ? ` <button type="button" class="close error-dismiss-button" data-dismiss="alert"
@@ -14,6 +20,12 @@ export function generateAlertHTML(errorMessage: string, alertType: AlertType, di
             </div>`
 }
 
+/**
+ * Removes any temporary alerts passed to it, and generates the
+ * @param errorMessage The message's content
+ * @param alertType The alert color. See [[AlertType]].
+ * @param tempAlert The temporary alert node that must be removed
+ */
 export function addAlert(errorMessage: string, alertType: AlertType, tempAlert: ChildNode | null = null): ChildNode | null {
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
@@ -21,34 +33,37 @@ export function addAlert(errorMessage: string, alertType: AlertType, tempAlert: 
     const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType);
     const alert: ChildNode | null = alertDiv.lastChild;
-    // noinspection JSIgnoredPromiseFromCall
     removeAlertOnTimeout(alert, 10000, false);
     return alert;
 }
 
-function removeTempAlerts(): void {
-    const tempAlerts: HTMLCollectionOf<Element> = document.getElementsByClassName("temp-alert");
-    for (let i = 0; i < tempAlerts.length; i++) {
-        const alert: Element = tempAlerts[i];
-        alert.remove();
-    }
-}
-
-async function removeAlertOnTimeout(tempAlert: ChildNode | null, ms: number, timeOutError: boolean): Promise<void> {
+/**
+ * Removes an alert after "ms" milliseconds have passed
+ * @param alert The alert to be removed
+ * @param ms Amount of milliseconds to wait
+ * @param timeOutError Whether to give an error if the alert was removed (which means there was a timeout)
+ */
+async function removeAlertOnTimeout(alert: ChildNode | null, ms: number, timeOutError: boolean): Promise<void> {
     await delay(ms);
-    if (tempAlert && document.body.contains(tempAlert)) {
-        tempAlert.remove();
+    if (alert && document.body.contains(alert)) {
+        alert.remove();
         if (timeOutError) {
             addAlert("Request timed out", AlertType.danger)
         }
     }
 }
 
+/**
+ * Adds a temporary alert. By default, adds a "Please wait..."  which is removed after 10 seconds.
+ * @param errorMessage The error message
+ * @param alertType The alert color, see [[AlertType]]
+ * @param timeOutError Whether to give an error after "ms" milliseconds have passed
+ * @param ms Amount of milliseconds to wait
+ */
 export function addTempAlert(errorMessage = "Please wait...", alertType = AlertType.secondary, timeOutError = true, ms = 10000): ChildNode | null {
     const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     const tempAlert: ChildNode | null = alertDiv.lastChild;
-    // noinspection JSIgnoredPromiseFromCall
     if (ms > 0) {
         removeAlertOnTimeout(tempAlert, ms, timeOutError);
     }
@@ -56,10 +71,22 @@ export function addTempAlert(errorMessage = "Please wait...", alertType = AlertT
 
 }
 
+/**
+ * The body of an error returned by the Django serializer is a JSON, with a key (a string) which maps to a list of strings
+ */
 interface ErrorBody {
     [key: string]: string[]
 }
 
+/**
+ * Accepts a javascript error and tries to insert an appropriate alert into the alert-div.
+ * If the error is known, it will give the user a nice alert string which is probably more descriptive than the string in the error object.
+ * If the error body is a string, it puts the string in the alert.
+ * If it is a django error (see [[ErrorBody]] , it will output that error).
+ * Otherwise it outputs the HTTP status code error, or the javascript error that was encountered.
+ * @param error The error object
+ * @param tempAlert The temporary alert to remove on adding the new alert.
+ */
 export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null): void {
     console.error(error);
     if (tempAlert && document.body.contains(tempAlert)) {
@@ -114,6 +141,13 @@ export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null):
     }
 }
 
+/**
+ * This specifies the color that the alert will have.
+ * Primary is blue.
+ * Secondary is grey.
+ * Danger is red.
+ * Success is green.
+ */
 export enum AlertType {
     primary = "alert-primary",
     secondary = "alert-secondary",
