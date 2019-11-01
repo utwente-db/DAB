@@ -14,6 +14,7 @@ export const navbarEditUsers = document.getElementById("navbar-edit-users") as H
 export const navbarChangePasswordLink = document.getElementById("navbar-change-password") as HTMLAnchorElement;
 export const navbarLogoutLink = document.getElementById("navbar-logout") as HTMLAnchorElement;
 export const navbarDumpAllDatabasesLink = document.getElementById("navbar-dump-all-databases") as HTMLAnchorElement;
+export const navbarMissingDatabasesLink = document.getElementById("navbar-missing-databases") as HTMLAnchorElement;
 
 export interface Whoami {
     id: number;
@@ -114,11 +115,24 @@ async function dumpAlldatabases(disableCallback: Function): Promise<boolean> {
 
 }
 
+function showMissingDatabasesModal(): void {
+ // data-toggle="modal"
+    //                                                     data-target="#editUserRoleModal"
+    return;
+}
+
 export function initNavbar(disableCallback: Function): void {
     if (navbarDumpAllDatabasesLink) {
         navbarDumpAllDatabasesLink.addEventListener("click", (event) => {
             event.preventDefault();
             dumpAlldatabases(disableCallback);
+        })
+    }
+
+    if (navbarMissingDatabasesLink) {
+        navbarMissingDatabasesLink.addEventListener("click", (event) => {
+            event.preventDefault();
+            showMissingDatabasesModal();
         })
     }
 
