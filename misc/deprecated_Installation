@@ -1,9 +1,0 @@
-1. Install virtualbox
-2. Add appliance
-	2 networkcards:
-		Host-only adapter (benader django vanuit de host)
-		NAT (zodat de VPN ook werkt)
-3. Use ubuntu 18.04.x LTS (heb deze gebruikt, dus moet werken): https://ubuntu.com/download/desktop/thank-you?country=NL&version=18.04.3&architecture=amd64
-4. Download file: https://git.thebias.nl/floris/design/raw/branch/base-backend/setupscript
-5. Run command:  sudo bash setupscript
-6. Done!

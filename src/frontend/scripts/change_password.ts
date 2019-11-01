@@ -13,6 +13,7 @@ const content = document.getElementById('content') as HTMLFormElement;
  * Checks the fields on the change password page.
  * Defines all the constants separately to avoid lazy evaluation of non-pure functions.
  * [[validPassword]] and [[passwordsEqual]] add feedback for the user to the form, so we must avoid lazy evaluation
+ * @returns Whether all the fields are correct, or not
  */
 function checkChangePasswordFields(): boolean {
     const a = validPassword(oldPasswordField); // Can't use a one-line function here due to lazy evaluation

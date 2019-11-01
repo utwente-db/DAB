@@ -43,7 +43,8 @@ export interface StudentDatabase {
 }
 
 /**
- * Returns list of all courses
+ * Gets list of all courses
+ * @returns the list of all courses
  */
 export async function getCoursesPromise(): Promise<Course[]> {
     const response: AxiosResponse = await axios.get("/rest/courses/");
@@ -56,6 +57,7 @@ export async function getCoursesPromise(): Promise<Course[]> {
  * @param courseID The course ID
  * @param groupNumber The group number
  * @param alert Whether to add an alert or not
+ * @returns whether the the credentials were successfully received
  */
 export async function tryGetCredentials(courseID: number, groupNumber: number, alert = true): Promise<boolean> {
 

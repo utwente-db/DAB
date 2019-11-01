@@ -7,6 +7,7 @@ const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
  * @param errorMessage The message's content
  * @param alertType The alert color. See [[AlertType]].
  * @param dismissable Whether the alert can be dismissed or not (adds an X that is clickable).
+ * @returns the HTML string for the alert
  */
 export function generateAlertHTML(errorMessage: string, alertType: AlertType, dismissable = true): string {
     const dismissableString = dismissable ? "alert-dismissible" : "temp-alert";
@@ -25,6 +26,7 @@ export function generateAlertHTML(errorMessage: string, alertType: AlertType, di
  * @param errorMessage The message's content
  * @param alertType The alert color. See [[AlertType]].
  * @param tempAlert The temporary alert node that must be removed
+ * @returns the alert, as ChildNode (or possibly null if it has already been removed in some edge case)
  */
 export function addAlert(errorMessage: string, alertType: AlertType, tempAlert: ChildNode | null = null): ChildNode | null {
     if (tempAlert && document.body.contains(tempAlert)) {
@@ -59,6 +61,7 @@ async function removeAlertOnTimeout(alert: ChildNode | null, ms: number, timeOut
  * @param alertType The alert color, see [[AlertType]]
  * @param timeOutError Whether to give an error after "ms" milliseconds have passed
  * @param ms Amount of milliseconds to wait
+ * @returns the alert as Node or null if it has already been deleted in some edge case
  */
 export function addTempAlert(errorMessage = "Please wait...", alertType = AlertType.secondary, timeOutError = true, ms = 10000): ChildNode | null {
     const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
@@ -86,6 +89,7 @@ interface ErrorBody {
  * Otherwise it outputs the HTTP status code error, or the javascript error that was encountered.
  * @param error The error object
  * @param tempAlert The temporary alert to remove on adding the new alert.
+ * @returns the alert as Node or null if it has already been deleted in some edge case
  */
 export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null): void {
     console.error(error);
