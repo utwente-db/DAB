@@ -4,6 +4,7 @@ import "bootstrap"
 import {UserRole} from "./user";
 import Swal from "sweetalert2";
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import {validSelect} from "./edit_courses";
 
 const whoamiWelcomeHtml: HTMLDivElement = document.getElementById("whoamiWelcome") as HTMLDivElement;
 const whoamiButtonHtml: HTMLDivElement = document.getElementById("whoamiButton") as HTMLDivElement;
@@ -19,6 +20,8 @@ export const missingDatabasesSelect = document.getElementById("selected-missing-
 export const deleteMissingDatabaseButton = document.getElementById("delete-missing-database-button") as HTMLButtonElement;
 export const deleteAllMissingDatabasesButton = document.getElementById("delete-all-missing-databases-button") as HTMLButtonElement;
 export const selectedMissingDatabaseDefault = document.getElementById("selected-missing-database-default") as HTMLOptionElement;
+
+let databaseStrings: string[] = [];
 
 export interface Whoami {
     id: number;
@@ -126,7 +129,7 @@ async function populateMissingDatabasesModal(): Promise<void> {
         missingDatabasesSelect.removeChild(child!);
     }
 
-    const databaseStrings: string[] = (await axios.get("/rest/missing_databases/") as AxiosResponse<string[]>).data;
+    databaseStrings = (await axios.get("/rest/missing_databases/") as AxiosResponse<string[]>).data;
     if (databaseStrings.length === 0) {
         deleteAllMissingDatabasesButton.disabled = true;
         deleteMissingDatabaseButton.disabled = true;
@@ -139,13 +142,6 @@ async function populateMissingDatabasesModal(): Promise<void> {
             optionNode.appendChild(document.createTextNode(databaseStrings[i-1]));
             missingDatabasesSelect.appendChild(optionNode);
         }
-
-        // TODO populate dropdown
-        // TODO add event listener to delete
-        // TODO add event listener to delete all (axios.delete naar missing_databases)
-        // TODO form validation with validSelect
-
-
         missingDatabasesSelect.disabled = false;
         deleteAllMissingDatabasesButton.disabled = false;
         deleteMissingDatabaseButton.disabled = false;
@@ -155,6 +151,74 @@ async function populateMissingDatabasesModal(): Promise<void> {
 
 
     return;
+}
+
+async function deleteAllMissingDatabases(disableCallback: Function): Promise<boolean> {
+    const result = await Swal.fire({
+        title: 'Are you sure you want to delete all these databases?',
+        text: 'You will not be able to recover your data!',
+        type: 'warning',
+        showCancelButton: true,
+        focusCancel: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success: boolean;
+    const tempAlert: ChildNode | null = addTempAlert();
+    changePageState(false, disableCallback);
+    try {
+        const deleteConfig = {'data': databaseStrings };
+        await axios.delete(`/rest/missing_databases/`, deleteConfig); // TODO fix this call (body?)
+        success = true;
+    } catch (error) {
+        addErrorAlert(error, tempAlert)
+        success = false;
+    } finally {
+        changePageState(true, disableCallback);
+        populateMissingDatabasesModal();
+
+    }
+    return success;
+}
+
+async function deleteMissingDatabase(disableCallback: Function): Promise<boolean> {
+    if (!validSelect(missingDatabasesSelect)) {
+        return false;
+    }
+
+    const result = await Swal.fire({
+        title: 'Are you sure you want to delete this database?',
+        text: 'You will not be able to recover your data!',
+        type: 'warning',
+        showCancelButton: true,
+        focusCancel: true,
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel'
+    });
+
+    if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+    }
+    let success: boolean;
+    const tempAlert: ChildNode | null = addTempAlert();
+    changePageState(false, disableCallback);
+    try {
+        const deleteConfig = {'data': [ databaseStrings[Number(missingDatabasesSelect.value)-1] ] };
+        await axios.delete(`/rest/missing_databases/`, deleteConfig); // TODO fix this call (body?)
+        success = true;
+    } catch (error) {
+        addErrorAlert(error, tempAlert)
+        success = false;
+    } finally {
+        changePageState(true, disableCallback);
+        populateMissingDatabasesModal();
+
+    }
+    return success;
 }
 
 export function initNavbar(disableCallback: Function): void {
@@ -171,6 +235,18 @@ export function initNavbar(disableCallback: Function): void {
             populateMissingDatabasesModal();
         })
     }
+        if (deleteAllMissingDatabasesButton) {
+            deleteAllMissingDatabasesButton.addEventListener("click",() => {
+                deleteAllMissingDatabases(disableCallback);
+            });
+
+        }
+
+        if (deleteMissingDatabaseButton) {
+            deleteMissingDatabaseButton.addEventListener("click", () => {
+                deleteMissingDatabase(disableCallback);
+            })
+        }
 
 
 }

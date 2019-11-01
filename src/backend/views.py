@@ -51,10 +51,11 @@ if not DEBUG:
     jsfilestring_list = (glob.glob(os.path.join(BASE_DIR, "../frontend/scripts/[0-9]*.chunk.js")))
 
     for cssfilestring in cssfilestring_list:
-        cssnumbers.append(cssfilestring.split("/")[-1].split(".")[0])
+        cssnumbers.append(int(cssfilestring.split("/")[-1].split(".")[0]))
 
     for jsfilestring in jsfilestring_list:
-        jsnumbers.append(jsfilestring.split("/")[-1].split(".")[0])
+        jsnumbers.append(int(jsfilestring.split("/")[-1].split(".")[0]))
+
 
     jsnumbers.sort()
     cssnumbers.sort()
