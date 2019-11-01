@@ -344,9 +344,10 @@ def post_base_dbmusers_response(request):
         databases["token"] = hash.token()
         databases["tokenExpire"] = timezone.now() + timezone.timedelta(hours=24)
         if admin_create:
-            pass
-            # databases['role'] = databases['role']
-            # databases['verfied'] = database['verified']
+            if "role" not in databases:
+                databases["role"] = student
+            if "verified" not in databases:
+                database["verified"] = True
         else:
             databases['role'] = student
             databases['verified'] = False
@@ -359,10 +360,10 @@ def post_base_dbmusers_response(request):
             serializer_class.save()
             # send confirmation mail
             if admin_create:
-                if "verified":
+                if databases["verified"]:
                     mail.send_creation_notice(databases)
                 else:
-                    mail.send_verification(database, false)
+                    mail.send_verification(databases, True)
             else:
                 mail.send_verification(databases)
             # We don't want to return hashed password and verification tokens
@@ -505,7 +506,7 @@ def delete_single_response(request, requested_pk, db_parameters):
     if (check_role(request, admin)
         or (check_role(request, teacher) and db_parameters["dbname"] == "courses")
         or do_i_own_this_item(current_id, requested_pk, db_parameters) 
-        or (db_parameters["dbname"] == studentdatabases and am_i_ta_of_this_db(request.session["user"], requested_pk))):
+        or (db_parameters["dbname"] == "studentdatabases" and am_i_ta_of_this_db(request.session["user"], requested_pk))):
 
         try:
             db = db_parameters['db']
@@ -568,13 +569,13 @@ def update_single_response(request, requested_pk, db_parameters):
         am_i_the_ta = am_i_ta_of_this_course(request.session["user"], requested_pk)
         if check_role(request, teacher) or am_i_the_ta:
             authorised = True
-    if db_parameters["dbname"] == "studentdatabases":
+    elif db_parameters["dbname"] == "studentdatabases":
         am_i_the_ta = am_i_ta_of_this_db(request.session["user"], requested_pk)
         logging.debug(am_i_the_ta)
         if check_role(request, teacher) or am_i_the_ta or do_i_own_this_item(request.session["user"], requested_pk,
                                                                              db_parameters):
             authorised = True
-    if db_parameters["dbname"] == "dbmusers":
+    elif db_parameters["dbname"] == "dbmusers":
         if request.session["role"] == admin:
             authorised = True
     else:
