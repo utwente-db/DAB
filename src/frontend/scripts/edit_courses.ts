@@ -834,8 +834,10 @@ window.onload = async () => {
         studentDatabases = (await axios.get("/rest/studentdatabases/tas/own") as AxiosResponse<StudentDatabase[]>).data;
     }
 
-    if (who.role < UserRole.Student) {
+    if (who.role === UserRole.Admin) {
         tas = (await axios.get("/rest/tas/") as AxiosResponse<TA[]>).data;
+    } else if (who.role === UserRole.Teacher) {
+        tas = (await axios.get("/rest/tas/teacher/own/") as AxiosResponse<TA[]>).data;
     }
 
     ownDatabases = (await axios.get("/rest/studentdatabases/own/") as AxiosResponse<StudentDatabase[]>).data;
