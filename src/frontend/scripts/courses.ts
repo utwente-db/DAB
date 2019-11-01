@@ -3,14 +3,11 @@ import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
-// import {displayWhoami} from "./navbar";
-//
-//
-// const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
-// const coursesDropdown: HTMLSelectElement = document.getElementById("courses-dropdown") as HTMLSelectElement;
-// const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
-// const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
 
+/**
+ * Object representation of the JSON of a course
+ * Databases field is often left empty
+ */
 export interface Course {
     courseid: number;
     fid: number;
@@ -20,6 +17,9 @@ export interface Course {
     databases?: number,
 }
 
+/**
+ * Object representation of a course when it is created (does not have an ID yet)
+ */
 export interface InputCourse {
     coursename: string,
     info: string,
@@ -28,6 +28,9 @@ export interface InputCourse {
     active?: boolean
 }
 
+/**
+ * Object representation of a database
+ */
 export interface StudentDatabase {
     "dbid": number,
     "groupid": number,
@@ -39,26 +42,21 @@ export interface StudentDatabase {
     "password": string
 }
 
+/**
+ * Returns list of all courses
+ */
 export async function getCoursesPromise(): Promise<Course[]> {
     const response: AxiosResponse = await axios.get("/rest/courses/");
     return response.data;
 
 }
 
-// async function displayCourses(): Promise<void> {
-//     const courses: Course[] = await getCoursesPromise();
-//     const result: string[] = [];
-//     for (let i = 0; i < courses.length; i++) {
-//         const optionNode = document.createElement("option");
-//         optionNode.setAttribute("value", String(courses[i].courseid));
-//         optionNode.appendChild(document.createTextNode(courses[i].coursename));
-//         coursesDropdown.appendChild(optionNode)
-//         // result.push("<option value='" + courses[i].courseid + "'>" + courses[i].coursename + "</option>")
-//     }
-//     // const resultString: string = result.join("\n");
-//     // coursesDropdown.innerHTML += resultString;
-// }
-
+/**
+ * Try to request course credentials for this course and group
+ * @param courseID The course ID
+ * @param groupNumber The group number
+ * @param alert Whether to add an alert or not
+ */
 export async function tryGetCredentials(courseID: number, groupNumber: number, alert = true): Promise<boolean> {
 
     if (courseID !== 0) {
@@ -91,15 +89,3 @@ export async function tryGetCredentials(courseID: number, groupNumber: number, a
     }
     return false;
 }
-
-// deprecated page onload
-// window.onload = async () => {
-//     await Promise.all([displayWhoami(),
-//         await displayCourses(),
-//         $('select').selectpicker(), // Style all selects
-//         credentialsButton.addEventListener("click", () => {
-//             tryGetCredentials(Number(coursesDropdown.value), Number(groupInput.value))
-//         }),
-//     ]);
-// };
-
