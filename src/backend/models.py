@@ -66,7 +66,7 @@ class dbmusers(models.Model):
 class Courses(models.Model):
     courseid = models.AutoField(db_column='courseid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
-    coursename = models.CharField(max_length=256)
+    coursename = models.CharField(max_length=256, unique=True)
     info = models.TextField()
     active = models.BooleanField(null=False)
     assistants = models.ManyToManyField(
@@ -96,7 +96,6 @@ class Courses(models.Model):
         #        abstract = True
         db_table = 'courses'
         verbose_name_plural = 'Courses'
-        unique_together = ('fid', 'coursename')
 
 
 def switchPassword(password):
@@ -187,3 +186,4 @@ class TAs(models.Model):
         managed = False
         db_table = 'tas'
         verbose_name_plural = 'TAs'
+       verbose_name_plural = 'TAs'
