@@ -139,13 +139,6 @@ async function populateMissingDatabasesModal(): Promise<void> {
             optionNode.appendChild(document.createTextNode(databaseStrings[i-1]));
             missingDatabasesSelect.appendChild(optionNode);
         }
-
-        // TODO populate dropdown
-        // TODO add event listener to delete
-        // TODO add event listener to delete all (axios.delete naar missing_databases)
-        // TODO form validation with validSelect
-
-
         missingDatabasesSelect.disabled = false;
         deleteAllMissingDatabasesButton.disabled = false;
         deleteMissingDatabaseButton.disabled = false;
@@ -154,6 +147,20 @@ async function populateMissingDatabasesModal(): Promise<void> {
     }
 
 
+    return;
+}
+
+function deleteAllMissingDatabases(disableCallback: Function): void {
+    // TODO swal
+    // TODO form validation select
+    // TODO call
+    return;
+}
+
+function deleteMissingDatabase(disableCallback: Function): void {
+    // Todo swal
+    // TODO form validation select
+    // TODO call
     return;
 }
 
@@ -171,6 +178,18 @@ export function initNavbar(disableCallback: Function): void {
             populateMissingDatabasesModal();
         })
     }
+        if (deleteAllMissingDatabasesButton) {
+            deleteAllMissingDatabasesButton.addEventListener("click",() => {
+                deleteAllMissingDatabases(disableCallback);
+            });
+
+        }
+
+        if (deleteMissingDatabaseButton) {
+            deleteMissingDatabaseButton.addEventListener("click", () => {
+                deleteMissingDatabase(disableCallback);
+            })
+        }
 
 
 }
