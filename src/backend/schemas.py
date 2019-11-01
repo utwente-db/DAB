@@ -10,7 +10,13 @@ from .models import switchPassword
 db_host = connection.settings_dict["HOST"]
 db_port = connection.settings_dict["PORT"]
 
+"""Checks if there is any ERROR output in the standard error. For internal use only.
 
+:param stderr: the standard error of a psql call
+:type stderr: string
+:returns: The errors in the stderr
+:rtype: string or None
+"""
 def stderr(stderr):
     for line in stderr.splitlines():
         if re.match(r'ERROR:\s(.*)$', line):
@@ -26,7 +32,15 @@ def stderr(stderr):
             return error
     return None
 
+"""Write a schema to a database
 
+:param database: the database to write to
+:type database: dict
+:param schema: the schema to write
+:type schema: string
+:returns: whether it worked and the reason why
+:rtype: tuple of boolean and string
+"""
 def write(database, schema):
     if (schema == ""):
         return
@@ -41,7 +55,13 @@ def write(database, schema):
         return (False, err)
     return (True, "")
 
+"""Get the contents of database in SQL
 
+:param database: the database to get the contents from
+:type database: dict
+:returns: a SQLdump of the database
+:rtype: string
+"""
 def dump(database):
     os.environ["PGPASSWORD"] = database['password']
     name = re.escape(database["username"])
@@ -55,7 +75,13 @@ def dump(database):
  
     return schema
 
+"""Get an archive with dumps for all databases in a course
 
+:param course: the course to get a dump from
+:type course: .models.Courses
+:returns: a zipfile with a dump of all databases in the course, where the filename of a dump is the user's email
+:rtype: file
+"""
 def dump_course(course):
     databases = course.studentdatabases_set
     if databases.count() == 0:

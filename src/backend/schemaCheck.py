@@ -11,7 +11,13 @@ from .studentdb_functions import create_studentdatabase, delete_studentdatabase
 db_host = connection.settings_dict["HOST"]
 db_port = connection.settings_dict["PORT"]
 
+"""Checks if there is any ERROR output in the standard error. For internal use only.
 
+:param stderr: the standard error of a psql call
+:type stderr: string
+:returns: The errors in the stderr
+:rtype: string or None
+"""
 def stderr(stderr):
     for line in stderr.splitlines():
         if re.match(r'ERROR:\s(.*)$', line):
@@ -29,9 +35,10 @@ def stderr(stderr):
 
 
 """Checks if the schema contains anything you might not want in a schema.
-Returns a tuple of whether it passed or not, and the reason why as a string"""
 
-
+:returns: a whether it passed or not, and the reason why 
+:rtype: a tuple of a boolean and a string
+"""
 def check(schema):
     # create new random database with student privileges
     username, password = hash.randomNames()
