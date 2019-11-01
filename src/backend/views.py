@@ -75,6 +75,7 @@ def render_with_prefix(request, template_name, context=None, content_type=None, 
     context['url_prefix'] = URL_PREFIX
     context['jsnumbers'] = jsnumbers
     context['cssnumbers'] = cssnumbers
+    context['db_prefix'] = STUDENT_DB_PREFIX
 
     return render(request, template_name, context, content_type, status, using)
 # AUTHENTICATION CHECKERS

@@ -15,6 +15,10 @@ export const navbarChangePasswordLink = document.getElementById("navbar-change-p
 export const navbarLogoutLink = document.getElementById("navbar-logout") as HTMLAnchorElement;
 export const navbarDumpAllDatabasesLink = document.getElementById("navbar-dump-all-databases") as HTMLAnchorElement;
 export const navbarMissingDatabasesLink = document.getElementById("navbar-missing-databases") as HTMLAnchorElement;
+export const missingDatabasesSelect = document.getElementById("selected-missing-database") as HTMLSelectElement;
+export const deleteMissingDatabaseButton = document.getElementById("delete-missing-database-button") as HTMLButtonElement;
+export const deleteAllMissingDatabasesButton = document.getElementById("delete-all-missing-databases-button") as HTMLButtonElement;
+export const selectedMissingDatabaseDefault = document.getElementById("selected-missing-database-default") as HTMLOptionElement;
 
 export interface Whoami {
     id: number;
@@ -115,9 +119,31 @@ async function dumpAlldatabases(disableCallback: Function): Promise<boolean> {
 
 }
 
-function showMissingDatabasesModal(): void {
- // data-toggle="modal"
-    //                                                     data-target="#editUserRoleModal"
+async function populateMissingDatabasesModal(): Promise<void> {
+    missingDatabasesSelect.disabled = true;
+
+    const databaseStrings: string[] = (await axios.get("/rest/missing_databases/") as AxiosResponse<string[]>).data;
+    if (databaseStrings.length === 0) {
+        deleteAllMissingDatabasesButton.disabled = true;
+        deleteMissingDatabaseButton.disabled = true;
+        selectedMissingDatabaseDefault.innerText = "There are no ghost databases!";
+        // TODO change "selected-missing-database-default" to "There are no missing databases" if none
+    } else {
+        // TODO populate dropdown
+        // TODO add event listener to delete
+        // TODO add event listener to delete all (axios.delete naar missing_databases)
+        // TODO form validation with validSelect
+
+
+
+        missingDatabasesSelect.disabled = false;
+        deleteAllMissingDatabasesButton.disabled = false;
+        deleteMissingDatabaseButton.disabled = false;
+        selectedMissingDatabaseDefault.innerText = "Please select a database";
+
+    }
+
+
     return;
 }
 
@@ -132,7 +158,7 @@ export function initNavbar(disableCallback: Function): void {
     if (navbarMissingDatabasesLink) {
         navbarMissingDatabasesLink.addEventListener("click", (event) => {
             event.preventDefault();
-            showMissingDatabasesModal();
+            populateMissingDatabasesModal();
         })
     }
 

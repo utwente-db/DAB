@@ -43,9 +43,8 @@
                     {% if role == 0 %}
                         <a class="dropdown-item text-danger" id="navbar-dump-all-databases" href="#">Generate
                             migrations</a>
-                        <a class="dropdown-item text-danger" id="navbar-missing-databases" href="#">View missing
-                            databases</a>
-
+                        <a class="dropdown-item text-danger" id="navbar-missing-databases" data-toggle="modal"
+                           data-target="#missing-databases-modal" href="#">View/edit ghost databases</a>
                         <div class="dropdown-divider" id="navbar-options-dropdown-divider"></div>
                     {% endif %}
 
@@ -70,26 +69,31 @@
 </nav>
 {% if role == 0 %}
     <!-- Edit User Role Modal -->
-    <div class="modal fade" id="editUserRoleModal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="missing-databases-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Role</h5>
+                    <h5 class="modal-title">View/edit ghost databases</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span>&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    Change user role to:
-                    <select id="selected_role" class=custom-select">
-                        <option value="0" selected>Admin</option>
-                        <option value="1">Teacher</option>
-                        <option value="2">Student</option>
+                    <p class="text-justify">The databases seen below are databases with the prefix {{ db_prefix }} that are not actually used by the system.
+                    In other words, they are "ghost" databases that were not properly deleted. This can happen from time to time.
+                    The system has no information on these databases. You would have to look at their contents yourself to find out more.<p>
+                    <br>
+                    Select a ghost database to delete:
+                    <select id="selected-missing-database" class="form-control">
+                                                        <option id="selected-missing-database-default" disabled selected value="0">Please wait...
+                                                        </option>
                     </select>
+                    <div class="invalid-feedback"></div>
+
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Decline</button>
-                    <button id="change_role" type="button" class="btn btn-primary">Confirm</button>
+                    <button id="delete-missing-database-button" type="button" class="btn btn-info">Delete the selected database</button>
+                    <button id="delete-all-missing-databases-button" type="button" class="btn btn-danger">Delete all ghost databases</button>
                 </div>
             </div>
         </div>
