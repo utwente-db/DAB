@@ -186,4 +186,3 @@ class TAs(models.Model):
         managed = False
         db_table = 'tas'
         verbose_name_plural = 'TAs'
-       verbose_name_plural = 'TAs'

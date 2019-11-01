@@ -9,7 +9,7 @@ import requests
 """Testing goes via the requests module; this means that we test the actual
 web responses of the system as unit tests'"""
 
-BASE = "http://localhost:8000"
+BASE = "http://localhost:8000/dab"
 db_server = "thebias.nl"
 db_port = 5432
 
