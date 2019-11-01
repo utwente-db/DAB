@@ -4,6 +4,7 @@ import "bootstrap"
 import {UserRole} from "./user";
 import Swal from "sweetalert2";
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import {validSelect} from "./edit_courses";
 
 const whoamiWelcomeHtml: HTMLDivElement = document.getElementById("whoamiWelcome") as HTMLDivElement;
 const whoamiButtonHtml: HTMLDivElement = document.getElementById("whoamiButton") as HTMLDivElement;
@@ -152,15 +153,20 @@ async function populateMissingDatabasesModal(): Promise<void> {
 
 function deleteAllMissingDatabases(disableCallback: Function): void {
     // TODO swal
-    // TODO form validation select
+        // TODO Page state
+
     // TODO call
+
     return;
 }
 
 function deleteMissingDatabase(disableCallback: Function): void {
-    // Todo swal
-    // TODO form validation select
+    if (validSelect(missingDatabasesSelect)) {
+            // TODO swal
+                // TODO Page state
+
     // TODO call
+    }
     return;
 }
 

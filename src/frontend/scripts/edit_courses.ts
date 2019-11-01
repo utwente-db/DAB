@@ -289,7 +289,7 @@ function nonEmptyTextarea(newSchemaTextarea: HTMLTextAreaElement): boolean {
     }
 }
 
-function validSelect(select: HTMLSelectElement): boolean {
+export function validSelect(select: HTMLSelectElement): boolean {
     if (Number(select.value) > 0) {
         setValid(select);
         return true;
