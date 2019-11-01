@@ -501,10 +501,10 @@ def post_base_response(request, db_parameters):
 def delete_single_response(request, requested_pk, db_parameters):
     current_id = request.session['user']
 
-    if check_role(request, admin) or (
-            check_role(request, teacher) and db_parameters["dbname"] == "courses") or do_i_own_this_item(current_id,
-                                                                                                         requested_pk,
-                                                                                                         db_parameters):
+    if (check_role(request, admin)
+        or (check_role(request, teacher) and db_parameters["dbname"] == "courses")
+        or do_i_own_this_item(current_id, requested_pk, db_parameters) 
+        or (db_parameters["dbname"] == studentdatabases and am_i_ta_of_this_db(request.session["user"], requested_pk))):
 
         try:
             db = db_parameters['db']
