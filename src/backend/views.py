@@ -333,7 +333,7 @@ def post_base_dbmusers_response(request):
     try:
         databases = JSONParser().parse(request)
     except ParseError:
-        return HttpResponse("Your JSON is incorrectly formatted", status=HTTP_400_BAD_REQUEST)
+        return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
 
     admin_create = check_role(request, admin) and "admin" in databases and databases["admin"]
 
