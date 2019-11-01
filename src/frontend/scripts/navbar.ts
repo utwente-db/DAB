@@ -121,19 +121,29 @@ async function dumpAlldatabases(disableCallback: Function): Promise<boolean> {
 
 async function populateMissingDatabasesModal(): Promise<void> {
     missingDatabasesSelect.disabled = true;
+    while (missingDatabasesSelect.lastElementChild !== missingDatabasesSelect.firstElementChild) {
+        const child: Element = missingDatabasesSelect.lastElementChild!;
+        missingDatabasesSelect.removeChild(child!);
+    }
 
     const databaseStrings: string[] = (await axios.get("/rest/missing_databases/") as AxiosResponse<string[]>).data;
     if (databaseStrings.length === 0) {
         deleteAllMissingDatabasesButton.disabled = true;
         deleteMissingDatabaseButton.disabled = true;
         selectedMissingDatabaseDefault.innerText = "There are no ghost databases!";
-        // TODO change "selected-missing-database-default" to "There are no missing databases" if none
     } else {
+
+        for (let i = 1; i < databaseStrings.length + 1; i++) {
+            const optionNode = document.createElement("option");
+            optionNode.setAttribute("value", String(i));
+            optionNode.appendChild(document.createTextNode(databaseStrings[i-1]));
+            missingDatabasesSelect.appendChild(optionNode);
+        }
+
         // TODO populate dropdown
         // TODO add event listener to delete
         // TODO add event listener to delete all (axios.delete naar missing_databases)
         // TODO form validation with validSelect
-
 
 
         missingDatabasesSelect.disabled = false;
