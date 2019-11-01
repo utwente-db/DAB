@@ -49,7 +49,7 @@
                     {% endif %}
 
                     <a class="dropdown-item" href="change_password" id="navbar-change-password">Change password</a>
-                    <form id="logout-form" action="{{ url_prefix }}logout" method="POST">
+                    <form id="logout-form" action="/{{ url_prefix }}logout" method="POST">
                         <a class="dropdown-item" href="#" id="navbar-logout"
                            onclick="document.getElementById('logout-form').submit();">Log
                             out</a>
