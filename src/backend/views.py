@@ -956,7 +956,7 @@ def generate_migration(request):
     return HttpResponse("Migration generated at " + script_file)
 
 
-@require_http_methods(["GET"], ["DELETE"])
+@require_http_methods(["GET", "DELETE"])
 @require_role(admin)
 def missing_databases(request, all=False):
     if request.method=="DELETE":
