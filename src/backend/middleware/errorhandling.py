@@ -28,6 +28,6 @@ class customerrorhandling(object):
             return HttpResponse('Your search field is empty', status=status.HTTP_400_BAD_REQUEST)
 
         if type(exception) == OperationalError:
-            return HttpResponse('Connection to the database is lost', status=status.HTTP_424_FAILED_DEPENDENCY)
+            return HttpResponse('Connection to the database is lost, please try again in a few minutes', status=status.HTTP_424_FAILED_DEPENDENCY)
         else:
             return None

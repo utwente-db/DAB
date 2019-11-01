@@ -333,7 +333,7 @@ def post_base_dbmusers_response(request):
     try:
         databases = JSONParser().parse(request)
     except ParseError:
-        return HttpResponse("Your JSON is incorrectly formatted", status=HTTP_400_BAD_REQUEST)
+        return HttpResponse("Your JSON is incorrectly formatted", status=status.HTTP_400_BAD_REQUEST)
 
     admin_create = check_role(request, admin) and "admin" in databases and databases["admin"]
 
@@ -502,10 +502,10 @@ def post_base_response(request, db_parameters):
 def delete_single_response(request, requested_pk, db_parameters):
     current_id = request.session['user']
 
-    if check_role(request, admin) or (
-            check_role(request, teacher) and db_parameters["dbname"] == "courses") or do_i_own_this_item(current_id,
-                                                                                                         requested_pk,
-                                                                                                         db_parameters):
+    if (check_role(request, admin)
+        or (check_role(request, teacher) and db_parameters["dbname"] == "courses")
+        or do_i_own_this_item(current_id, requested_pk, db_parameters) 
+        or (db_parameters["dbname"] == studentdatabases and am_i_ta_of_this_db(request.session["user"], requested_pk))):
 
         try:
             db = db_parameters['db']
@@ -559,7 +559,7 @@ def filter_dict_on_keys(incoming, dbname):
 
 @authenticated
 def update_single_response(request, requested_pk, db_parameters):
-    # UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES AND STUDENTDATABASES
+    # UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES, STUDENTDATABASES, AND DBMUSERS
     # are we allowed to do this?
 
     authorised = False
@@ -574,11 +574,21 @@ def update_single_response(request, requested_pk, db_parameters):
         if check_role(request, teacher) or am_i_the_ta or do_i_own_this_item(request.session["user"], requested_pk,
                                                                              db_parameters):
             authorised = True
+    if db_parameters["dbname"] == "dbmusers":
+        if request.session["role"] == admin:
+            authorised = True
+    else:
+        return HttpResponse(status=status.HTTP_501_NOT_IMPLEMENTED)
 
     if authorised:
         try:
 
             data = JSONParser().parse(request)
+            if db_parameters["dbname"] == "dbmusers":
+                forbidden_params = ["password", "token", "lastlogin", "tokenExpire", "id"]
+                for p in forbidden_params:
+                    if p in data:
+                        return HttpResponse(p+" may not be changed", status=status.HTTP_403_FORBIDDEN)
 
             filtered_data = filter_dict_on_keys(data, db_parameters["dbname"])
 
@@ -956,9 +966,21 @@ def generate_migration(request):
     return HttpResponse("Migration generated at " + script_file)
 
 
-@require_GET
+@require_http_methods(["GET", "DELETE"])
 @require_role(admin)
 def missing_databases(request, all=False):
+    if request.method=="DELETE":
+        try:
+            data = JSONParser().parse(request)
+            for db in dbs:
+                rm = remove_missing_database(db)
+                if rm:
+                    return rm
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        except ParseError:
+            return HttpResponse("Could not Parse JSON", status=status.HTTP_400_BAD_REQUEST)
+
+
     from django.db import connection
     from psycopg2.extensions import AsIs
 
@@ -985,17 +1007,8 @@ def missing_databases(request, all=False):
     return JsonResponse(output, safe=False)
 
 
-@require_POST
-@require_role(admin)
-def remove_missing_database(request):
-    try:
-        body = JSONParser().parse(request)
-        name = body["databasename"]
-    except ParseError as e:
-        return HttpResponse("Could not Parse JSON", status=status.HTTP_400_BAD_REQUEST)
-    except KeyError as e:
-        return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
-
+def remove_missing_database(db_name):
+    from django.db import connection
     # We DON'T want to use this to remove a database that we do know about!
     try:
         db = Studentdatabases.objects.get(databasename=name)
@@ -1006,7 +1019,6 @@ def remove_missing_database(request):
     if name == connection.settings_dict["NAME"]:
         return HttpResponse("This is the master database", status=status.HTTP_400_BAD_REQUEST)
 
-    from django.db import connection
     from psycopg2.extensions import AsIs
 
     with connection.cursor() as cur:
@@ -1018,7 +1030,7 @@ def remove_missing_database(request):
                     [AsIs(name)])
         cur.execute("DROP DATABASE \"%s\";", [AsIs(name)])
 
-    return HttpResponse()
+    return False
 
 
 # -----------------------------------------LOGIN-------------------------------------------------
