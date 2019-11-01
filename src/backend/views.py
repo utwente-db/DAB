@@ -955,9 +955,21 @@ def generate_migration(request):
     return HttpResponse("Migration generated at " + script_file)
 
 
-@require_GET
+@require_http_methods(["GET"], ["DELETE"])
 @require_role(admin)
 def missing_databases(request, all=False):
+    if request.method=="DELETE":
+        try:
+            data = JSONParser().parse(request)
+            for db in dbs:
+                rm = remove_missing_database(db)
+                if rm:
+                    return rm
+            return HttpResponse(status=status.HTTP_202_ACCEPTED)
+        except ParseError:
+            return HttpResponse("Could not Parse JSON", status=status.HTTP_400_BAD_REQUEST)
+
+
     from django.db import connection
     from psycopg2.extensions import AsIs
 
@@ -984,17 +996,8 @@ def missing_databases(request, all=False):
     return JsonResponse(output, safe=False)
 
 
-@require_POST
-@require_role(admin)
-def remove_missing_database(request):
-    try:
-        body = JSONParser().parse(request)
-        name = body["databasename"]
-    except ParseError as e:
-        return HttpResponse("Could not Parse JSON", status=status.HTTP_400_BAD_REQUEST)
-    except KeyError as e:
-        return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
-
+def remove_missing_database(db_name):
+    from django.db import connection
     # We DON'T want to use this to remove a database that we do know about!
     try:
         db = Studentdatabases.objects.get(databasename=name)
@@ -1005,7 +1008,6 @@ def remove_missing_database(request):
     if name == connection.settings_dict["NAME"]:
         return HttpResponse("This is the master database", status=status.HTTP_400_BAD_REQUEST)
 
-    from django.db import connection
     from psycopg2.extensions import AsIs
 
     with connection.cursor() as cur:
@@ -1017,7 +1019,7 @@ def remove_missing_database(request):
                     [AsIs(name)])
         cur.execute("DROP DATABASE \"%s\";", [AsIs(name)])
 
-    return HttpResponse()
+    return False
 
 
 # -----------------------------------------LOGIN-------------------------------------------------

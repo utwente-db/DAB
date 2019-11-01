@@ -87,15 +87,7 @@ GET -> A JSON array of ALL databases not managed by DAB
 
 Only accessible to admins
 
-## /remove_missing_database
-
-POST -> Drop the database, IF it is not managed by DAB.
-
-    {
-    databasename: "test200"
-    }
-
-will return 400 if the database in managed by DAB
+DELETE -> gets in a JSON array of database names as strings, and drops all databases in the array, provided they are not managed
 
 ## TABLE: studentdatabases
 
