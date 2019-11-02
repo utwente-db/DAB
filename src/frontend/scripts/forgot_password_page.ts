@@ -6,7 +6,9 @@ const passwordButton = document.getElementById("password-button") as HTMLButtonE
 const registerEmailField: HTMLInputElement = document.getElementById("register-email-field") as HTMLInputElement;
 const content = document.getElementById('content') as HTMLFormElement;
 
-
+/**
+ * if [[validEmail]] returns true, tries to request a new password email for the user
+ */
 async function tryRequestPassword(): Promise<void> {
     if (validEmail(registerEmailField)) {
         passwordButton.disabled = true;
@@ -31,6 +33,9 @@ async function tryRequestPassword(): Promise<void> {
     }
 }
 
+/**
+ * Adds event listener to the form, makes it call [[tryRequestPassword]]
+ */
 window.onload = () => {
     content.addEventListener("submit", (event) => {
         event.preventDefault();
