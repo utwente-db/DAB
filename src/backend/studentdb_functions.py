@@ -14,7 +14,13 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s',
 )
 
+"""Connect to a database
 
+:param db_name: the database to connect to
+:type db_name: string
+:returns: the database connection
+:type: psycopg2.connection
+"""
 def connect(db_name):
     db_host = connection.settings_dict["HOST"]
     db_user = connection.settings_dict["USER"]
@@ -31,6 +37,13 @@ def connect(db_name):
 
 
 # https://stackoverflow.com/questions/1598932/atomic-increment-of-a-counter-in-django
+"""Get the name of a database in a course, which is the course name followed by an integer
+
+:param courseid: The ID of the course to put the database in
+:type courseid: int
+:returns: the database name
+:rtype: string
+"""
 @transaction.atomic
 def get_studentdatabase_name(courseid):
     course = models.Courses.objects.select_for_update().get(courseid=courseid)
@@ -41,6 +54,12 @@ def get_studentdatabase_name(courseid):
     return username
 
 
+"""Reset a database to the schema of it's course
+
+:param db: The database to reset
+:type db: .models.Studentdatabases
+:returns: None
+"""
 def reset_studentdatabase(db):
     with connection.cursor() as cursor:
         connection.autocommit = False
@@ -68,7 +87,14 @@ def reset_studentdatabase(db):
         schema = db.course.schema
         writeSchema(db.__dict__, schema)
 
+"""Delete a student database
 
+:param databasename: the name of the database to delete
+:type databasename: string
+:param username: the postgres user corresponding to the database
+:type username: string
+:returns: None
+"""
 def delete_studentdatabase(databasename, username):
     with connection.cursor() as cursor:
         connection.autocommit = False  # want to make sure we can't be outrun
@@ -88,7 +114,16 @@ def delete_studentdatabase(databasename, username):
         connection.commit()
         connection.autocommit = True
 
+"""Make a student database. Does not alter the master database, just creates the database in postgres.
 
+:param db_name: the name of the database to create
+:type db_name: string
+:param username: the name of the user to be used for the database
+:type username: string
+:param password: the password for the database user
+:type password: string
+:returns: None
+"""
 def create_studentdatabase(db_name, username, password):
     with connection.cursor() as cursor:
         cursor.execute("CREATE USER \"%s\" WITH ENCRYPTED PASSWORD '%s';", [AsIs(username), AsIs(password)])
@@ -104,7 +139,13 @@ def create_studentdatabase(db_name, username, password):
             cur.execute("ALTER SCHEMA \"%s\" OWNER TO \"%s\";", [AsIs(username), AsIs(username)])
         conn.commit()
 
+"""Perform the first-time setup actions for a student database to be created
 
+:param databases: the database to be set up
+:type databases: dict
+:serializer_class: the serializer of the database
+:type serializer_class: .serializers.StudentdatabasesSerializer
+"""
 def setup_student_db(databases, serializer_class):
     course = serializer_class.validated_data["course"]
     writeSchema(databases, course.schema)
