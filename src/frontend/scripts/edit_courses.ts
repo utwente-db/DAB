@@ -752,6 +752,7 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
  * Makes a user into a TA for a course
  * @param user User to be made TA
  * @param i Index of course in "courses" array
+ * @returns whether the operation succeeded
  */
 async function makeUserTA(user: User, i: number): Promise<boolean> {
     const taObject: { studentid: number; courseid: number } = {
@@ -807,6 +808,7 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
 /**
  * Removes a user as TA
  * @param ta TA object to be removed
+ * @returns whether the operation succeeded
  */
 async function removeTA(ta: TA): Promise<boolean> {
     const tempAlert = addTempAlert();
@@ -855,6 +857,12 @@ async function removeTA(ta: TA): Promise<boolean> {
     return success;
 }
 
+/**
+ * Generates the inner HTML for the TA div
+ * @param user The selected user
+ * @param userIsTaForCourse If the user is a TA or not
+ * @returns the HTML as string
+ */
 function generateTaDivHTML(user: User, userIsTaForCourse: boolean): string {
     const userIsTaString = userIsTaForCourse ? `<span class="text-success h5">${user.email} is a TA for this course</span>` :
         `<span class="text-danger h5">${user.email} is not a ${user.role < UserRole.Student ? "co-teacher" : "TA"} for this course</span>`
@@ -864,6 +872,10 @@ function generateTaDivHTML(user: User, userIsTaForCourse: boolean): string {
     return taDivHTML;
 }
 
+/**
+ * Populates the TA pane
+ * @param i The index of the relevant course in the "courses' array
+ */
 async function populateTAPane(i: number): Promise<void> {
     taDiv.innerHTML = "No user selected";
     if (users.length === 0) {
@@ -922,10 +934,24 @@ async function populateTAPane(i: number): Promise<void> {
 
 }
 
+/**
+ * Gets dump of course via href
+ * @param id Course ID
+ */
 function tryDumpCourse(id: number): void {
     window.location.href = urlPrefix + `rest/course_dump/${id}`;
 }
 
+/**
+ * Sets multiple global variables such as:
+ * "who" see [[Who]]
+ * studentDatabases (see [[StudentDatabase]] ) (all of them if admin, your courses' if you are teacher, your TA courses if you are student)
+ * ownDatabases ( see [[StudentDatabase]] ), the databases you own for courses (as a "student")
+ * users (see [[User]] ), the list of users (only if you are Admin/Teacher)
+ * Then, populates the page
+ * Afterwards, adds lots of event listeners
+ * Finally, removes all spinners and makes textareas expand
+ */
 window.onload = async () => {
     who = await getWhoPromise();
     if (who.role === UserRole.Admin) {
