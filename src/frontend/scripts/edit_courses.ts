@@ -262,13 +262,18 @@ async function populateExistingCoursePane(i: number): Promise<void> {
     }
 
     displayStudentDatabasesForCourse(i);
-    [existingCourseFIDField, existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransferDatabaseList, existingSchemaTransferCourseList].forEach((el) => {
+    [existingCourseInfoField, existingCoursenameField, existingSchemaTextarea, existingSchemaUpload, existingSchemaTransferDatabaseList, existingSchemaTransferCourseList].forEach((el) => {
         setNeutral(el);
     });
 
+    if (existingCourseFIDField) {
+        setNeutral(existingCourseFIDField)
+        existingCourseFIDField.setAttribute("value", String(users.find(user => user.id === courses[i].fid)!.email));
+
+    }
+
     currentCourse = courses[i];
     existingCourseIDField.setAttribute("value", String(courses[i].courseid));
-    existingCourseFIDField.setAttribute("value", String(users.find(user => user.id === courses[i].fid)!.email));
     existingCourseInfoField.value = courses[i].info;
     existingCoursenameField.value = courses[i].coursename;
     existingActiveField.checked = courses[i].active;
@@ -612,7 +617,7 @@ async function tryEditCourse(): Promise<void> {
 
         // noinspection TypeScriptUnresolvedVariable
         if (result.dismiss === Swal.DismissReason.cancel) {
-            return false;
+            return;
         }
 
         changePageState(false, changeEditCoursesState);
@@ -683,7 +688,24 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
         dbToHTMLmap.set(databases[j], "");
     }
 
+
     for (let j = 0; j < databases.length; j++) {
+        let fidString = "";
+        if (who.role < UserRole.Student) {
+            fidString = `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Owner:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${users.find(user => user.id === databases[j].fid)!.email}" readonly="">
+                </div>
+            </div>`;
+        } else {
+            fidString = `<div class="form-group row">
+                <label class="col-12 col-lg-4 col-form-label">Owner:</label>
+                <div class="col-12 col-lg-8">
+                    <input type="text" class="form-control" value="${databases[j].email}" readonly="">
+                </div>
+            </div>`;
+        }
         const html: string =
             `<div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Database ID:</label>
@@ -714,14 +736,9 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[j].groupid}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
-                <label class="col-12 col-lg-4 col-form-label">Owner:</label>
-                <div class="col-12 col-lg-8">
-                    <input type="text" class="form-control" value="${users.find(user => user.id === databases[j].fid)!.email}" readonly="">
-                </div>
-            </div>` +
-            `<div class="form-group row">
+            </div>
+            ${fidString}
+            <div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Course ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[j].course}" readonly="">
@@ -747,8 +764,13 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
         const db: StudentDatabase = entry[0];
         const content: string = entry[1];
 
+        let templateString = ""
+        if (who.role < UserRole.Student) {
+            templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}<br>${users.find(user => user.id === db.fid)!.email}</a>`;
+        } else {
+            templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}<br>${db.email}</a>`;
 
-        const templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}<br>${users.find(user => user.id === db.fid)!.email}</a>`;
+        }
         const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
         fragment.firstElementChild!.addEventListener("click", (event) => {

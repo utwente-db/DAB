@@ -31,6 +31,7 @@ export interface InputCourse {
  * Interface that represents the StudentDatabase model in Django/the database, and in the body of relevant calls
  */
 export interface StudentDatabase {
+    email?: string;
     "dbid": number,
     "groupid": number,
     "fid": number,
