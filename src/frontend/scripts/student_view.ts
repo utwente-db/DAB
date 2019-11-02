@@ -1,5 +1,5 @@
 import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {changePageState, displayWhoami, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
+import {changePageState, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
 import axios, {AxiosResponse, urlPrefix} from "./main";
 import "popper.js"
 import "bootstrap"
@@ -347,8 +347,7 @@ window.onload = async () => {
 
             courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
             await displayCourses();
-        })(),
-        displayWhoami()
+        })()
     ])
     Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove())
 

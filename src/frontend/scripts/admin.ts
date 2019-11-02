@@ -1,5 +1,15 @@
-import {initNavbar} from "./navbar";
+import {getWhoamiPromise, initNavbar, Whoami} from "./navbar";
+import {UserRole} from "./user";
 
+/**
+ * Displays content of admin/teacher homepage
+ */
+export async function displayWhoami(): Promise<void> {
+    const whoami: Whoami = await getWhoamiPromise();
+    document.getElementById("content")!.innerHTML = `                <p class="text-center h1">Welcome, ${whoami.email}. (${UserRole[whoami.role]})</p>
+                <p class="text-center h3">Please select an option from the links above</p>
+                <div class="align-items-center center-block " id="alert-div"></div>`.trim()
+}
 
 /**
  * See [[initNavbar]]
@@ -7,5 +17,6 @@ import {initNavbar} from "./navbar";
 window.onload = () => {
     initNavbar(() => {
         return;
-    })
+    });
+    displayWhoami();
 };
