@@ -28,7 +28,10 @@ const usersHtml = document.getElementById("users") as HTMLTableSectionElement,
     usersTbody = document.getElementById("users") as HTMLTableSectionElement,
     usersTabs = document.getElementById("users-tabs") as HTMLDivElement,
     editUserPane = document.getElementById("edit-user-pane") as HTMLDivElement,
-    pleaseSelectAuser = document.getElementById("please-select-a-user") as HTMLDivElement;
+    pleaseSelectAuser = document.getElementById("please-select-a-user") as HTMLDivElement,
+    addUserLink = document.getElementById("add-user-link") as HTMLAnchorElement,
+    addUserPane = document.getElementById("add-user-pane") as HTMLDivElement;
+
 
 /**
  * Global variables that will be changed later on (arrays of courses, databases, users, and two buttons that we replace)
@@ -93,6 +96,9 @@ async function displayUsers(): Promise<void> {
             deleteButton.addEventListener("click", () => {
                 deleteUser(users[i])
             });
+
+            addUserLink.removeAttribute("style");
+            addUserLink.toggleAttribute("href", true);
             displayUserDetails(users[i]);
             displayCoursesAndDatabases(users[i]);
         })
@@ -444,11 +450,13 @@ function changeEditUserState(enable: boolean): void {
     const buttons: HTMLCollectionOf<HTMLButtonElement> = document.getElementsByTagName("button");
     const inputs: HTMLCollectionOf<HTMLInputElement> = document.getElementsByTagName("input");
     const tableRows: HTMLCollectionOf<HTMLTableRowElement> = document.getElementsByTagName("tr");
+    const selects: HTMLCollectionOf<HTMLSelectElement> = document.getElementsByTagName("select");
 
 
     const navLinks = document.getElementsByClassName("nav-link") as HTMLCollectionOf<HTMLAnchorElement>;
     Array.from(buttons).forEach(button => button.disabled = !enable);
     Array.from(inputs).forEach(input => input.disabled = !enable);
+    Array.from(selects).forEach(select => select.disabled = !enable);
 
     if (enable) {
         if (editButton.classList.contains("btn-secondary")) {
@@ -462,15 +470,43 @@ function changeEditUserState(enable: boolean): void {
             }
         })
 
+        if (!addUserPane.classList.contains("active")) {
+            addUserLink.removeAttribute("style");
+            addUserLink.toggleAttribute("href", true);
+        }
+
     } else {
         Array.from(navLinks).forEach(navLink => navLink.classList.add("disabled"));
         Array.from(tableRows).forEach(tableRow => {
             tableRow.classList.remove("not-disabled");
             tableRow.setAttribute("style", "pointer-events: none;");
-        })
+        });
+
+        addUserLink.setAttribute("style", "pointer-events: none;");
+        addUserLink.toggleAttribute("href", false);
     }
 
 
+}
+
+function populateAddUserPane(): void {
+    // TODO set neutral
+    // TODO empty
+    return;
+}
+
+function goToAddUserPane(event: Event): void {
+    event.preventDefault();
+    populateAddUserPane();
+    addUserLink.setAttribute("style", "pointer-events: none;");
+    addUserLink.toggleAttribute("href", false);
+    Array.from(usersTabs.children).forEach((child) => {
+        child.classList.remove("active");
+    });
+    Array.from(usersTbody.children).forEach((child) => {
+        child.classList.remove("active");
+    });
+    addUserPane.classList.add("active");
 }
 
 /**
@@ -494,6 +530,8 @@ window.onload = async () => {
             childRow.hidden = !childRow.textContent!.toLowerCase().includes(value);
         });
     });
+
+    addUserLink.addEventListener("click", goToAddUserPane)
 
 
 };
