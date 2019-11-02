@@ -225,7 +225,7 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
     databases.forEach((db: StudentDatabase) => {
         const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${db.dbid}`) as HTMLButtonElement;
         resetButton.addEventListener("click", () => {
-            resetDatabase(db.dbid);
+            resetDatabase(db.dbid, changeEditUserState);
         });
         const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
         deleteButton.addEventListener("click", () => {
@@ -276,9 +276,10 @@ export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement, studen
 /**
  * Resets database, if the user agrees
  * @param dbID ID of database to reset
+ * @param disableCallback Function to disale all elements on page (called on API call)
  * @returns whether the operation succeeded
  */
-export async function resetDatabase(dbID: number): Promise<boolean> {
+export async function resetDatabase(dbID: number, disableCallback: Function): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to reset this database?',
         text: 'You will not be able to recover your data!',
@@ -292,7 +293,7 @@ export async function resetDatabase(dbID: number): Promise<boolean> {
     }
     let success;
     const tempAlert = addTempAlert();
-    changePageState(false, changeEditUserState);
+    changePageState(false, disableCallback);
     try {
         await axios.post(`/rest/reset/${dbID}/`);
         addAlert("Database has been reset", AlertType.primary, tempAlert);
@@ -301,7 +302,7 @@ export async function resetDatabase(dbID: number): Promise<boolean> {
         addErrorAlert(error, tempAlert);
         success = false;
     } finally {
-        changePageState(true, changeEditUserState)
+        changePageState(true, disableCallback)
     }
     return success;
 }

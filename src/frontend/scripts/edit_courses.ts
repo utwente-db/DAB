@@ -428,6 +428,7 @@ function changeEditCoursesState(enable: boolean): void {
     const inputs: HTMLCollectionOf<HTMLInputElement> = document.getElementsByTagName("input");
     const selects: HTMLCollectionOf<HTMLSelectElement> = document.getElementsByTagName("select");
     const textAreas: HTMLCollectionOf<HTMLTextAreaElement> = document.getElementsByTagName("textarea");
+    const labels: HTMLCollectionOf<HTMLLabelElement> = document.getElementsByTagName("label");
 
     // const tableRows: HTMLCollectionOf<HTMLTableRowElement> = document.getElementsByTagName("tr");
     const navLinks = document.getElementsByClassName("nav-link") as HTMLCollectionOf<HTMLAnchorElement>;
@@ -441,6 +442,12 @@ function changeEditCoursesState(enable: boolean): void {
 
     if (enable) {
         Array.from(navLinks).forEach(navLink => navLink.classList.remove("disabled"));
+        Array.from(labels).forEach(label => {
+            label.classList.remove("disabled");
+            label.removeAttribute("style");
+        });
+
+
         if (addCourseLink && !newCoursePane.classList.contains("active")) {
             addCourseLink.removeAttribute("style");
             addCourseLink.toggleAttribute("href", true);
@@ -452,6 +459,11 @@ function changeEditCoursesState(enable: boolean): void {
 
     } else {
         Array.from(navLinks).forEach(navLink => navLink.classList.add("disabled"));
+        Array.from(labels).forEach(label => {
+            label.classList.add("disabled");
+            label.setAttribute("style", "pointer-events: none;");
+        });
+
         if (addCourseLink) {
             addCourseLink.setAttribute("style", "pointer-events: none;");
             addCourseLink.toggleAttribute("href", false);
@@ -640,8 +652,6 @@ async function tryEditCourse(): Promise<void> {
         const tempAlert: ChildNode | null = addTempAlert();
 
 
-
-
         try {
             const response = await axios.put(`/rest/courses/${existingCourseIDField.value}`, inputCourse) as AxiosResponse;
             addAlert("Successfully edited course (without schema)", AlertType.success, tempAlert);
@@ -792,7 +802,7 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
 
             const resetButton: HTMLButtonElement = document.getElementById(`reset-button-${db.dbid}`) as HTMLButtonElement;
             resetButton.addEventListener("click", () => {
-                resetDatabase(db.dbid);
+                resetDatabase(db.dbid, changeEditCoursesState);
             });
             const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
             deleteButton.addEventListener("click", async () => {

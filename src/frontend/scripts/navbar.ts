@@ -58,30 +58,35 @@ export async function getWhoPromise(): Promise<Who> {
  */
 function changeNavbarState(enable: boolean): void {
     [navbarStudentView, navbarEditCourses, navbarEditUsers].forEach((element: HTMLLIElement) => {
-        try {
-            if (enable) {
-                (element.firstElementChild as HTMLAnchorElement)!.classList.remove("disabled")
-            } else {
-                (element.firstElementChild as HTMLAnchorElement)!.classList.add("disabled")
+        if (element) {
 
+            try {
+                if (enable) {
+                    (element.firstElementChild as HTMLAnchorElement)!.classList.remove("disabled")
+                } else {
+                    (element.firstElementChild as HTMLAnchorElement)!.classList.add("disabled")
+
+                }
+            } catch (error) {
+                console.log(error)
             }
-        } catch (error) {
-            console.log(error)
         }
-
     });
 
-    [navbarChangePasswordLink, navbarLogoutLink, navbarDumpAllDatabasesLink].forEach((element: Element) => {
-        try {
-            if (enable) {
-                element.classList.remove("disabled")
-            } else {
-                element.classList.add("disabled")
+    [navbarChangePasswordLink, navbarLogoutLink, navbarDumpAllDatabasesLink, navbarGhostDatabasesLink].forEach((element: Element) => {
+        if (element) {
+            try {
+                if (enable) {
+                    element.classList.remove("disabled")
+                } else {
+                    element.classList.add("disabled")
 
+                }
+            } catch (error) {
+                console.log(error)
             }
-        } catch (error) {
-            console.log(error)
         }
+
     });
 }
 
@@ -195,7 +200,7 @@ async function deleteAllGhostDatabases(disableCallback: Function): Promise<boole
     try {
         const deleteConfig = {'data': databaseStrings};
         await axios.delete(`/rest/missing_databases/`, deleteConfig); // TODO fix this call (body?)
-        addAlert("Successfully deleted ghost databases",AlertType.success,tempAlert);
+        addAlert("Successfully deleted ghost databases", AlertType.success, tempAlert);
         success = true;
     } catch (error) {
         addErrorAlert(error, tempAlert);
@@ -237,7 +242,7 @@ async function deleteGhostDatabase(disableCallback: Function): Promise<boolean> 
     try {
         const deleteConfig = {'data': [databaseStrings[Number(ghostDatabasesSelect.value) - 1]]};
         await axios.delete(`/rest/missing_databases/`, deleteConfig); // TODO fix this call (body?)
-        addAlert("Successfully deleted ghost database",AlertType.success);
+        addAlert("Successfully deleted ghost database", AlertType.success);
         success = true;
     } catch (error) {
         addErrorAlert(error, tempAlert);
