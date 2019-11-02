@@ -185,7 +185,7 @@ function fillNewCourseFIDdropDown(): void {
         newCourseFIDSelect.removeChild(child!);
     }
 
-   users.forEach(user => {
+    users.forEach(user => {
         const optionNode = document.createElement("option");
         optionNode.setAttribute("value", String(user.id));
         optionNode.appendChild(document.createTextNode(user.email));
@@ -599,6 +599,21 @@ async function tryEditCourse(): Promise<void> {
         existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea,
         existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer,
         existingSchemaTransferCourseList, existingSchemaTransferCourseList)) {
+
+        const result = await Swal.fire({
+            title: 'Are you sure you want to save your changes?',
+            text: 'This cannot be undone!',
+            type: 'warning',
+            showCancelButton: true,
+            focusCancel: true,
+            confirmButtonText: 'Save',
+            cancelButtonText: 'Cancel'
+        });
+
+        // noinspection TypeScriptUnresolvedVariable
+        if (result.dismiss === Swal.DismissReason.cancel) {
+            return false;
+        }
 
         changePageState(false, changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
