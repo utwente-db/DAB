@@ -387,7 +387,7 @@ function checkFields(courseInfoField: HTMLInputElement, coursenameField: HTMLInp
     setValid(courseInfoField);
     const a = validCoursename(coursenameField);
     const b = validFID(courseFIDField);
-    const c = validCoursename(courseInfoField);
+    const c = validCourseinfo(courseInfoField);
     let d = true;
     let e = true;
     if (schemaRadioTextarea.checked) {

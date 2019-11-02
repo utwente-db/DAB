@@ -138,7 +138,7 @@ export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null, 
                 addAlert("You already have database credentials for this course", AlertType.danger)
             } else if (errorKeys[0] === "email" && errorMessages[0][0] === "dbmusers with this email already exists.") {
                 addAlert("Another user is already registered using this e-mail", AlertType.danger)
-            } else if (errorKeys[0] === "non_field_errors" && errorMessages[0][0] === "The fields fid, coursename must make a unique set.") {
+            } else if (errorKeys[0] === "coursename" && errorMessages[0][0] === "courses with this coursename already exists.") {
                 addAlert("The course name is not unique", AlertType.danger)
 
             } else { // No longer checking for specific errors
