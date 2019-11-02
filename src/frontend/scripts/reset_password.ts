@@ -1,15 +1,26 @@
+/**
+ * reset_password.ts:
+ * Contains code for the reset password page
+ */
+
+/**
+ * Imports from other files
+ */
 import {addErrorAlert, addTempAlert} from "./alert";
 import axios, {urlPrefix} from "./main";
 import {passwordsEqual, validPassword} from "./register";
 import {AlertType} from "./interfaces";
 
+/**
+ * Constant variable declarations (mostly HTML elements)
+ */
 const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement,
     newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement,
     newPasswordField = document.getElementById("new-password-field") as HTMLInputElement,
     confirmPasswordField = document.getElementById("confirm-password-field") as HTMLInputElement,
-    content = document.getElementById('content') as HTMLFormElement, pk = Number(djangoTemplate.classList[0]),
+    content = document.getElementById('content') as HTMLFormElement,
+    pk = Number(djangoTemplate.classList[0]),
     token = djangoTemplate.classList[1];
-
 
 /**
  * Checks if password is valid and the same across fields

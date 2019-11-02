@@ -1,3 +1,11 @@
+/**
+ * navbar.ts:
+ * Contains code for the navbar
+ */
+
+/**
+ * Imports from other files
+ */
 import axios, {AxiosResponse} from "./main";
 import "popper.js"
 import "bootstrap"
@@ -6,6 +14,9 @@ import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import {validSelect} from "./edit_courses";
 import {AlertType, Who, Whoami} from "./interfaces";
 
+/**
+ * Constant variable declarations (mostly HTML elements)
+ */
 export const navbarStudentView = document.getElementById("navbar-student-view") as HTMLLIElement,
     navbarEditCourses = document.getElementById("navbar-edit-courses") as HTMLLIElement,
     navbarEditUsers = document.getElementById("navbar-edit-users") as HTMLLIElement,
@@ -18,6 +29,9 @@ export const navbarStudentView = document.getElementById("navbar-student-view") 
     deleteAllGhostDatabasesButton = document.getElementById("delete-all-missing-databases-button") as HTMLButtonElement,
     selectedGhostDatabaseDefault = document.getElementById("selected-missing-database-default") as HTMLOptionElement;
 
+/**
+ * Global variables that will be changed later on (arrays and such)
+ */
 let databaseStrings: string[] = [];
 
 /**

@@ -1,9 +1,20 @@
+/**
+ * register.ts:
+ * Contains code for the register page
+ */
+
+/**
+ * Imports from other files
+ */
 import "popper.js"
 import "bootstrap"
 import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios, {AxiosResponse} from "./main";
 import {AlertType, Credentials} from "./interfaces";
 
+/**
+ * Constant variable declarations (HTML elements, mostly)
+ */
 const registerButton = document.getElementById("register-button") as HTMLButtonElement,
     registerEmailField = document.getElementById("register-email-field") as HTMLInputElement,
     registerPasswordField = document.getElementById('register-password-field') as HTMLInputElement,
