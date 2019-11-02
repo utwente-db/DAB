@@ -44,7 +44,7 @@
     "watchscss": "node-sass --watch src/frontend/sass -o frontend/css",
     "build": "webpack --mode=development",
     "watch": "webpack --watch --mode=development",
-    "production": "webpack --mode=production",
+    "production": "webpack --mode=production && typedoc --out docs/frontend src/frontend",
     "check": "gts check",
     "clean": "gts clean",
     "compile": "tsc -p .",

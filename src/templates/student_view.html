@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block content %}
-        <template class="{{ server_address}}" id="django-template"></template>
+    <template class="{{ server_address }}" id="django-template"></template>
 
     <div class="vh-100 d-flex flex-column">
         {% include 'navbar.html' %}
@@ -19,10 +19,16 @@
                     <div class=" center-block container border border-dark rounded-lg shadow-lg bg-white p-3 py-lg-5  text-center">
                         <!-- Website title -->
                         <h2>Course list</h2>
+                        <span class="badge">No credentials</span>
+                        <span class="badge badge-light you ">You have credentials</span>
+                        {% if role < 2 %}
+                            <span class="badge badge-light inactive">Inactive</span>
+                            <span class="badge badge-light inactive-you">Inactive & You have credentials</span>
+                        {% endif %}
                         <hr/>
                         <div class="overflow-auto" style="height: 55vh;">
                             <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
-                                                                <div class="spinner-border text-info"></div>
+                                <div class="spinner-border text-info"></div>
 
                             </div>
                         </div>

@@ -21,7 +21,13 @@
                         {% if role < 2 %}
                             <a data-toggle="pill" href="#" id="add-course-link">Add course</a>
                         {% endif %}
-
+                        <br>
+                        <span class="badge">Normal course</span>
+                        <span class="badge badge-light inactive">Inactive</span>
+                        {% if role < 1 %}
+                            <span class="badge badge-light you ">Owned by you</span>
+                            <span class="badge badge-light inactive-you">Inactive & Owned by you</span>
+                        {% endif %}
                         <hr/>
                         <div class="overflow-auto" style="height: 50vh;">
                             <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
@@ -79,7 +85,8 @@
                                             owner</label>
                                         <div class="col-12 col-md-8">
                                             <select class="form-control" id="new-course-fid-select">
-                                                <option disabled selected value="0">(if unchanged, you will be the owner)
+                                                <option disabled selected value="0">(if unchanged, you will be the
+                                                    owner)
                                                 </option>
                                             </select>
 
@@ -232,16 +239,17 @@
                                         </div>
                                     </div>
                                     {% if role < 2 %}
-                                    <div class="form-group row align-items-center mb-4">
-                                        <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course owner</label>
-                                        <div class="col-12 col-md-8">
-                                            <input type="text" name="course-fid-field" class="form-control"
-                                                   id="existing-course-fid-field"
-                                                   readonly>
+                                        <div class="form-group row align-items-center mb-4">
+                                            <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course
+                                                owner</label>
+                                            <div class="col-12 col-md-8">
+                                                <input type="text" name="course-fid-field" class="form-control"
+                                                       id="existing-course-fid-field"
+                                                       readonly>
 
-                                            <div class="invalid-feedback"></div>
+                                                <div class="invalid-feedback"></div>
+                                            </div>
                                         </div>
-                                    </div>
                                     {% endif %}
                                     <div class="form-group row align-items-center mb-4">
                                         <label for="active-field" class="col-12 col-md-4 col-form-label">Active?</label>
