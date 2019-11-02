@@ -1,3 +1,11 @@
+/**
+ * edit_users.ts:
+ * Contains code for the edit users page
+ */
+
+/**
+ * Imports from other files
+ */
 import axios, {AxiosResponse, urlPrefix} from "./main";
 import "popper.js";
 import "bootstrap";
@@ -7,19 +15,24 @@ import {changePageState, initNavbar, navbarEditUsers} from "./navbar";
 import {AlertType, Course, StudentDatabase, User, UserRole} from "./interfaces";
 import {getCoursesPromise} from "./edit_courses";
 
+/**
+ * Constant variable declarations (HTML elements)
+ */
 const usersHtml = document.getElementById("users") as HTMLTableSectionElement,
     coursesNavHtml = document.getElementById("courses-nav") as HTMLDivElement,
     courseDatabasesHtml = document.getElementById("courses-db") as HTMLDivElement,
     usernameHtml = document.getElementById("username") as HTMLInputElement,
     selectedRole = document.getElementById("selected-role") as HTMLSelectElement,
-    verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement,
+    verifiedHtml = document.getElementById("verified") as HTMLLabelElement,
     searchInput = document.getElementById("search") as HTMLInputElement,
     usersTbody = document.getElementById("users") as HTMLTableSectionElement,
     usersTabs = document.getElementById("users-tabs") as HTMLDivElement,
     editUserPane = document.getElementById("edit-user-pane") as HTMLDivElement,
     pleaseSelectAuser = document.getElementById("please-select-a-user") as HTMLDivElement;
 
-
+/**
+ * Global variables that will be changed later on (arrays of courses, databases, users, and two buttons that we replace)
+ */
 let deleteButton = document.getElementById("delete-button") as HTMLButtonElement,
     editButton = document.getElementById("edit-button") as HTMLButtonElement,
     courses: Course[] = [],
@@ -28,7 +41,6 @@ let deleteButton = document.getElementById("delete-button") as HTMLButtonElement
 
 async function displayUsers(): Promise<void> {
     users = (await getUsersPromise()).sort((a: User, b: User) => a.email.localeCompare(b.email));
-
     const result: string[] = [];
 
     for (let i = 0; i < users.length; i++) {
