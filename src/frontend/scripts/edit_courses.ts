@@ -605,6 +605,22 @@ async function tryEditCourse(): Promise<void> {
         existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer,
         existingSchemaTransferCourseList, existingSchemaTransferCourseList)) {
 
+        const inputCourse: Course = {
+            courseid: Number(existingCourseIDField.value),
+            coursename: existingCoursenameField.value,
+            info: existingCourseInfoField.value,
+            active: existingActiveField.checked,
+            fid: Number(courses.find(course => course.courseid === Number(existingCourseIDField.value))!.fid)
+
+        };
+
+        const course = courses.find(course => inputCourse.courseid === course.courseid)!;
+        if (course.coursename === inputCourse.coursename && course.info === inputCourse.info
+            && course.active === inputCourse.active && existingSchemaRadioNone.checked) {
+            addAlert("There are no changes to save!", AlertType.primary);
+            return;
+        }
+
         const result = await Swal.fire({
             title: 'Are you sure you want to save your changes?',
             text: 'This cannot be undone!',
@@ -623,14 +639,7 @@ async function tryEditCourse(): Promise<void> {
         changePageState(false, changeEditCoursesState);
         const tempAlert: ChildNode | null = addTempAlert();
 
-        const inputCourse: Course = {
-            courseid: Number(existingCourseIDField.value),
-            coursename: existingCoursenameField.value,
-            info: existingCourseInfoField.value,
-            active: existingActiveField.checked,
-            fid: Number(courses.find(course => course.courseid === Number(existingCourseIDField))!.fid)
 
-        };
 
 
         try {
