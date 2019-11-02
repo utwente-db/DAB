@@ -253,7 +253,7 @@ async function populateExistingCoursePane(i: number): Promise<void> {
 
     currentCourse = courses[i];
     existingCourseIDField.setAttribute("value", String(courses[i].courseid));
-    existingCourseFIDField.setAttribute("value", String(courses[i].fid));
+    existingCourseFIDField.setAttribute("value", String(users.find(user => user.id === courses[i].fid)!.email));
     existingCourseInfoField.value = courses[i].info;
     existingCoursenameField.value = courses[i].coursename;
     existingActiveField.checked = courses[i].active;
@@ -595,7 +595,7 @@ async function tryEditCourse(): Promise<void> {
             coursename: existingCoursenameField.value,
             info: existingCourseInfoField.value,
             active: existingActiveField.checked,
-            fid: Number(existingCourseFIDField.value)
+            fid: Number(courses.find(course => course.courseid === Number(existingCourseIDField))!.fid)
 
         };
 
@@ -688,9 +688,9 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
                 </div>
             </div>` +
             `<div class="form-group row">
-                <label class="col-12 col-lg-4 col-form-label">FID:</label>
+                <label class="col-12 col-lg-4 col-form-label">Owner:</label>
                 <div class="col-12 col-lg-8">
-                    <input type="text" class="form-control" value="${databases[j].fid}" readonly="">
+                    <input type="text" class="form-control" value="${users.find(user => user.id === databases[j].fid)!.email}" readonly="">
                 </div>
             </div>` +
             `<div class="form-group row">
