@@ -1,8 +1,19 @@
+/**
+ * forgot_password_page.ts:
+ * Contains code for the forgot password page
+ */
+
+/**
+ * Imports from other files
+ */
 import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios, {AxiosError, AxiosResponse} from "./main";
 import {validEmail} from "./register";
 import {AlertType} from "./interfaces";
 
+/**
+ * Constant variable declarations (mostly HTML elements)
+ */
 const passwordButton = document.getElementById("password-button") as HTMLButtonElement,
     registerEmailField = document.getElementById("register-email-field") as HTMLInputElement,
     content = document.getElementById('content') as HTMLFormElement;

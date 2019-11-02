@@ -1,9 +1,20 @@
+/**
+ * login.ts:
+ * Contains code for the login page
+ */
+
+/**
+ * Imports from other files
+ */
 import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios from "./main";
 import {validEmail, validPassword} from "./register";
 import "bootstrap-cookie-alert/cookiealert.js"
 import {AlertType} from "./interfaces";
 
+/**
+ * Constant variable declarations (mostly HTML elements)
+ */
 const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement,
     emailInput = document.getElementById("email-input") as HTMLInputElement,
     passwordInput = document.getElementById("password-input") as HTMLInputElement,

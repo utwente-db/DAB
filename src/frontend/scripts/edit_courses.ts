@@ -1,3 +1,11 @@
+/**
+ * edit_courses.ts:
+ * Contains code for the edit courses page
+ */
+
+/**
+ * Imports from other files
+ */
 import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios, {AxiosResponse, urlPrefix} from "./main";
 import Swal from "sweetalert2";
@@ -8,15 +16,18 @@ import {displayCourses} from "./student_view";
 import {deleteDatabase, resetDatabase} from "./user";
 import autosize from "autosize"
 
+/**
+ * Constant variable declarations (mostly html elements)
+ */
 const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement,
-    coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement,
-    coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement,
+    coursesNavHtml = document.getElementById("courses-nav") as HTMLDivElement,
+    coursesContentHtml = document.getElementById("courses-content") as HTMLDivElement,
     existingCoursePane = document.getElementById("existing-course-pane") as HTMLDivElement,
     newCoursePane = document.getElementById("new-course-pane") as HTMLDivElement,
-    studentDatabasesNavHtml: HTMLDivElement = document.getElementById("studentdatabases-nav") as HTMLDivElement,
-    courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement,
-    taNav: HTMLDivElement = document.getElementById("TA-nav") as HTMLDivElement,
-    taDiv: HTMLDivElement = document.getElementById("TA-div") as HTMLDivElement,
+    studentDatabasesNavHtml = document.getElementById("studentdatabases-nav") as HTMLDivElement,
+    courseDatabasesHtml = document.getElementById("courses-db") as HTMLDivElement,
+    taNav = document.getElementById("TA-nav") as HTMLDivElement,
+    taDiv = document.getElementById("TA-div") as HTMLDivElement,
     newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement,
     newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement,
     newCourseFIDField = document.getElementById("new-course-fid-field") as HTMLInputElement,
@@ -57,8 +68,9 @@ const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorEl
     deleteCourseButton = document.getElementById("delete-course-button") as HTMLButtonElement,
     dumpCourseButton = document.getElementById("dump-course-button") as HTMLButtonElement;
 
-
- // tslint:disable-next-line:prefer-const
+/**
+ * Global variables (mostly lists of objects which will be changed later on)
+ */
 let who: Who,
     courses: Course[] = [],
     currentCourse: Course,
@@ -66,8 +78,6 @@ let who: Who,
     studentDatabases: StudentDatabase[] = [],
     tas: TA[] = [],
     ownDatabases: StudentDatabase[] = [];
-
-// const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
 /**
  * Checks if a course name is valid according to a regex, and gives user feedback in the form

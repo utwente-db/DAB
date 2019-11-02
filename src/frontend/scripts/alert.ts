@@ -9,7 +9,14 @@
 import {AxiosError, AxiosResponse} from "./main";
 import {AlertType, ErrorBody} from "./interfaces";
 
-const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+/**
+ * Returns a promise which returns after "ms" milliseconds (useful when waiting for things)
+ * @param ms amount of milliseconds to wait
+ * @returns a promise which returns after X ms
+ */
+function delay(ms: number): Promise<unknown> {
+    return new Promise(res => setTimeout(res, ms));
+}
 
 /**
  * This function generates the HTML for an alert

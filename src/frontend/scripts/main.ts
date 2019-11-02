@@ -1,3 +1,11 @@
+/**
+ * main.ts:
+ * Contains some settings and global imports
+ */
+
+/**
+ * Imports from other files
+ */
 import "../sass/main.sass"
 import axios, {AxiosError, AxiosResponse} from "axios";
 import "popper.js"

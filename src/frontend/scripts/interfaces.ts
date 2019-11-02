@@ -1,9 +1,10 @@
-import "popper.js"
-import "bootstrap"
-import "bootstrap-select"
+/**
+ * interfaces.ts:
+ * Contains interfaces and enums
+ */
 
 /**
- * Object representation of the JSON of a course
+ * Interface that represents the Course model in Django/the database, and in the body of relevant calls
  * Databases field is often left empty
  */
 export interface Course {
@@ -27,7 +28,7 @@ export interface InputCourse {
 }
 
 /**
- * Object representation of a database
+ * Interface that represents the StudentDatabase model in Django/the database, and in the body of relevant calls
  */
 export interface StudentDatabase {
     "dbid": number,
@@ -40,6 +41,9 @@ export interface StudentDatabase {
     "password": string
 }
 
+/**
+ * Interface that represents the dbmuser model in Django/the database, and in the body of relevant calls
+ */
 export interface User {
     id: number;
     role: number;
@@ -49,12 +53,18 @@ export interface User {
     token: string;
 }
 
+/**
+ * Enum that represents the user role
+ */
 export enum UserRole {
     Admin = 0,
     Teacher = 1,
     Student = 2
 }
 
+/**
+ * Interface that represents the TA model in Django/the database, and in the body of relevant calls
+ */
 export interface TA {
     courseid: number,
     studentid: number,
@@ -94,7 +104,7 @@ export interface Credentials {
 }
 
 /**
- * This specifies the color that the alert will have.
+ * This specifies the color that alerts will have (see [[generateAlertHTML]].
  * Primary is blue.
  * Secondary is grey.
  * Danger is red.
