@@ -101,7 +101,9 @@ export interface ErrorBody {
  */
 export interface Credentials {
     "email": string
-    "password": string
+    "password": string,
+    admin? : boolean,
+    role? : number
 }
 
 /**

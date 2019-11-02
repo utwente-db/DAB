@@ -348,7 +348,7 @@ def post_base_dbmusers_response(request):
             if "role" not in databases:
                 databases["role"] = student
             if "verified" not in databases:
-                database["verified"] = True
+                databases["verified"] = True
         else:
             databases['role'] = student
             databases['verified'] = False
@@ -974,7 +974,7 @@ def missing_databases(request, all=False):
     if request.method=="DELETE":
         try:
             data = JSONParser().parse(request)
-            for db in dbs:
+            for db in data:
                 rm = remove_missing_database(db)
                 if rm:
                     return rm
@@ -1013,12 +1013,12 @@ def remove_missing_database(db_name):
     from django.db import connection
     # We DON'T want to use this to remove a database that we do know about!
     try:
-        db = Studentdatabases.objects.get(databasename=name)
+        db = Studentdatabases.objects.get(databasename=db_name)
         return HttpResponse("Database is managed", status=status.HTTP_400_BAD_REQUEST)
     except Studentdatabases.DoesNotExist:
         pass
 
-    if name == connection.settings_dict["NAME"]:
+    if db_name == connection.settings_dict["NAME"]:
         return HttpResponse("This is the master database", status=status.HTTP_400_BAD_REQUEST)
 
     from psycopg2.extensions import AsIs
@@ -1026,11 +1026,11 @@ def remove_missing_database(db_name):
     with connection.cursor() as cur:
         # make sure no one can connect to the database
         cur.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '%s'",
-                    [AsIs(name)])
+                    [AsIs(db_name)])
         # drop any existing connections
         cur.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'",
-                    [AsIs(name)])
-        cur.execute("DROP DATABASE \"%s\";", [AsIs(name)])
+                    [AsIs(db_name)])
+        cur.execute("DROP DATABASE \"%s\";", [AsIs(db_name)])
 
     return False
 
