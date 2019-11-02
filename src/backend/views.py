@@ -62,7 +62,6 @@ if not DEBUG:
     jsnumbers = list(map(lambda x: str(x) + ".chunk", jsnumbers))
 else:
     cssnumbers.append("main")
-    jsnumbers.append("main")
 
 # --- END FREEK CHUNK FIX ---
 

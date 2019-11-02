@@ -42,13 +42,14 @@ export function generateAlertHTML(errorMessage: string, alertType: AlertType, di
  * @param errorMessage The message's content
  * @param alertType The alert color. See [[AlertType]].
  * @param tempAlert The temporary alert node that must be removed
+ * @param divString div to add this alert to
  * @returns the alert, as ChildNode (or possibly null if it has already been removed in some edge case)
  */
-export function addAlert(errorMessage: string, alertType: AlertType, tempAlert: ChildNode | null = null): ChildNode | null {
+export function addAlert(errorMessage: string, alertType: AlertType, tempAlert: ChildNode | null = null, divString = "alert-div"): ChildNode | null {
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();
     }
-    const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
+    const alertDiv: HTMLDivElement = document.getElementById(divString) as HTMLDivElement;
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType);
     const alert: ChildNode | null = alertDiv.lastChild;
     removeAlertOnTimeout(alert, 10000, false);
@@ -79,8 +80,8 @@ async function removeAlertOnTimeout(alert: ChildNode | null, ms: number, timeOut
  * @param ms Amount of milliseconds to wait
  * @returns the alert as Node or null if it has already been deleted in some edge case
  */
-export function addTempAlert(errorMessage = "Please wait...", alertType = AlertType.secondary, timeOutError = true, ms = 10000): ChildNode | null {
-    const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
+export function addTempAlert(errorMessage = "Please wait...", alertType = AlertType.secondary, timeOutError = true, ms = 10000, divString = "alert-div"): ChildNode | null {
+    const alertDiv: HTMLDivElement = document.getElementById(divString) as HTMLDivElement;
     alertDiv.innerHTML += generateAlertHTML(errorMessage, alertType, false);
     const tempAlert: ChildNode | null = alertDiv.lastChild;
     if (ms > 0) {
@@ -98,9 +99,10 @@ export function addTempAlert(errorMessage = "Please wait...", alertType = AlertT
  * Otherwise it outputs the HTTP status code error, or the javascript error that was encountered.
  * @param error The error object
  * @param tempAlert The temporary alert to remove on adding the new alert.
+ * @param divString the div to add this to
  * @returns the alert as Node or null if it has already been deleted in some edge case
  */
-export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null): void {
+export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null, divString = "alert-div"): void {
     console.error(error);
     if (tempAlert && document.body.contains(tempAlert)) {
         tempAlert.remove();

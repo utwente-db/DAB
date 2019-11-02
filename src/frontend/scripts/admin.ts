@@ -8,6 +8,8 @@
  */
 import {getWhoamiPromise, initNavbar} from "./navbar";
 import {UserRole, Whoami} from "./interfaces";
+import "popper.js"
+import "bootstrap"
 
 /**
  * Displays content of admin/teacher homepage

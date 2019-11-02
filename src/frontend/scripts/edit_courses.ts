@@ -15,6 +15,8 @@ import {changePageState, getWhoPromise, initNavbar, navbarEditCourses} from "./n
 import {displayCourses} from "./student_view";
 import {deleteDatabase, resetDatabase} from "./edit_users";
 import autosize from "autosize"
+import "popper.js"
+import "bootstrap"
 
 /**
  * Constant variable declarations (mostly html elements)
