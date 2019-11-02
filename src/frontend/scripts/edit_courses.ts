@@ -1,11 +1,11 @@
-import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios, {AxiosResponse, urlPrefix} from "./main";
 import Swal from "sweetalert2";
-import {Course, getCoursesPromise, InputCourse, StudentDatabase} from "./courses";
+import {AlertType, Course, InputCourse, StudentDatabase, TA, User, UserRole, Who} from "./interfaces";
 import {setInvalid, setNeutral, setValid} from "./register";
-import {changePageState, getWhoPromise, initNavbar, navbarEditCourses, Who} from "./navbar";
+import {changePageState, getWhoPromise, initNavbar, navbarEditCourses} from "./navbar";
 import {displayCourses} from "./student_view";
-import {deleteDatabase, resetDatabase, TA, User, UserRole} from "./user";
+import {deleteDatabase, resetDatabase} from "./user";
 import autosize from "autosize"
 
 const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement,
@@ -924,6 +924,15 @@ async function populateTAPane(i: number): Promise<void> {
  */
 function tryDumpCourse(id: number): void {
     window.location.href = urlPrefix + `rest/course_dump/${id}`;
+}
+
+/**
+ * Gets list of all courses
+ * @returns the list of all courses
+ */
+export async function getCoursesPromise(): Promise<Course[]> {
+    const response: AxiosResponse = await axios.get("/rest/courses/");
+    return response.data;
 }
 
 /**

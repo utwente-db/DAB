@@ -1,8 +1,20 @@
-import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+/**
+ * change_password.ts:
+ * Contains code for the change password page
+ */
+
+/**
+ * Imports from other files
+ */
+import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios, {AxiosError, urlPrefix} from "./main";
 import {passwordsEqual, validPassword} from "./register";
 import {changePageState, initNavbar} from "./navbar";
+import {AlertType} from "./interfaces";
 
+/**
+ * Constant variable declarations (mostly html elements)
+ */
 const newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement,
     oldPasswordField = document.getElementById("old-password-field") as HTMLInputElement,
     newPasswordField = document.getElementById("new-password-field") as HTMLInputElement,

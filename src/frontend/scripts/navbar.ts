@@ -1,10 +1,10 @@
 import axios, {AxiosResponse} from "./main";
 import "popper.js"
 import "bootstrap"
-import {UserRole} from "./user";
 import Swal from "sweetalert2";
-import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import {validSelect} from "./edit_courses";
+import {AlertType, Who, Whoami} from "./interfaces";
 
 export const navbarStudentView = document.getElementById("navbar-student-view") as HTMLLIElement,
     navbarEditCourses = document.getElementById("navbar-edit-courses") as HTMLLIElement,
@@ -19,23 +19,6 @@ export const navbarStudentView = document.getElementById("navbar-student-view") 
     selectedGhostDatabaseDefault = document.getElementById("selected-missing-database-default") as HTMLOptionElement;
 
 let databaseStrings: string[] = [];
-
-/**
- * Interface that represents the body of the /rest/whoami/ response
- */
-export interface Whoami {
-    id: number;
-    email: string;
-    role: UserRole;
-}
-
-/**
- * Interface that represents the body of the /rest/who/ response (more lightweight version of whoami that doesn't require DB calls)
- */
-export interface Who {
-    id: number,
-    role: UserRole
-}
 
 /**
  * Calls /rest/whoami and unwraps the data

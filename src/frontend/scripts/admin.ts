@@ -1,5 +1,13 @@
-import {getWhoamiPromise, initNavbar, Whoami} from "./navbar";
-import {UserRole} from "./user";
+/**
+ * admin.ts:
+ * Contains code for the admin / teacher homepage
+ */
+
+/**
+ * Imports
+ */
+import {getWhoamiPromise, initNavbar} from "./navbar";
+import {UserRole, Whoami} from "./interfaces";
 
 /**
  * Displays content of admin/teacher homepage

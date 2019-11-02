@@ -1,4 +1,13 @@
+/**
+ * alert.ts:
+ * Contains code for alerts
+ */
+
+/**
+ * Imports
+ */
 import {AxiosError, AxiosResponse} from "./main";
+import {AlertType, ErrorBody} from "./interfaces";
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
@@ -75,13 +84,6 @@ export function addTempAlert(errorMessage = "Please wait...", alertType = AlertT
 }
 
 /**
- * The body of an error returned by the Django serializer is a JSON, with a key (a string) which maps to a list of strings
- */
-interface ErrorBody {
-    [key: string]: string[]
-}
-
-/**
  * Accepts a javascript error and tries to insert an appropriate alert into the alert-div.
  * If the error is known, it will give the user a nice alert string which is probably more descriptive than the string in the error object.
  * If the error body is a string, it puts the string in the alert.
@@ -143,19 +145,5 @@ export function addErrorAlert(error: Error, tempAlert: ChildNode | null = null):
         // This is a generic javascript error
         addAlert(error.message, AlertType.danger)
     }
-}
-
-/**
- * This specifies the color that the alert will have.
- * Primary is blue.
- * Secondary is grey.
- * Danger is red.
- * Success is green.
- */
-export enum AlertType {
-    primary = "alert-primary",
-    secondary = "alert-secondary",
-    danger = "alert-danger",
-    success = "alert-success"
 }
 

@@ -1,22 +1,15 @@
 import "popper.js"
 import "bootstrap"
 import "bootstrap-select"
-import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios, {AxiosResponse} from "./main";
+import {AlertType, Credentials} from "./interfaces";
 
 const registerButton = document.getElementById("register-button") as HTMLButtonElement,
     registerEmailField = document.getElementById("register-email-field") as HTMLInputElement,
     registerPasswordField = document.getElementById('register-password-field') as HTMLInputElement,
     registerPasswordConfirmField = document.getElementById('register-password-confirm-field') as HTMLInputElement,
     content = document.getElementById('content') as HTMLFormElement;
-
-/**
- * Interface which represents the body of the register (POST to /rest/dbmusers/) API call
- */
-interface Credentials {
-    "email": string
-    "password": string
-}
 
 /**
  * Sets a form input/textarea/select to be valid (gives it a green bootstrap outline) and removes any feedback under it

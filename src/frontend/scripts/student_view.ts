@@ -1,13 +1,23 @@
-import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {changePageState, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
+/**
+ * student_view.ts:
+ * Contains code for the student view page
+ */
+
+/**
+ * Imports from other files
+ */
+import {AlertType, Course, StudentDatabase, TA, UserRole, Who} from './interfaces'
+import {changePageState, getWhoPromise, initNavbar, navbarStudentView} from "./navbar";
 import axios, {AxiosResponse, urlPrefix} from "./main";
 import "popper.js"
 import "bootstrap"
-import {addAlert, addErrorAlert, AlertType} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import Swal from 'sweetalert2'
-import {TA, UserRole} from "./user";
-import {goToExistingCoursePane} from "./edit_courses";
+import {getCoursesPromise, goToExistingCoursePane} from "./edit_courses";
 
+/**
+ * Constant variable declarations (mostly html elements)
+ */
 const coursesNavHtml = document.getElementById("courses-nav") as HTMLDivElement,
     noCredsCoursename = document.getElementById("no-credentials-coursename") as HTMLDivElement,
     noCredsInfo = document.getElementById("no-credentials-courseinfo") as HTMLDivElement,
@@ -203,6 +213,46 @@ async function changeView(hasCredentials: boolean): Promise<void> {
     } else {
         await populateNoCredentialsPane(i);
     }
+}
+
+/**
+ * Try to request course credentials for this course and group
+ * @param courseID The course ID
+ * @param groupNumber The group number
+ * @param alert Whether to add an alert or not
+ * @returns whether the the credentials were successfully received
+ */
+export async function tryGetCredentials(courseID: number, groupNumber: number, alert = true): Promise<boolean> {
+
+    if (courseID !== 0) {
+        if (groupNumber > 0) {
+            const data = {"course": courseID, "groupid": groupNumber};
+            const tempAlert: ChildNode | null = addTempAlert();
+            try {
+                const response: AxiosResponse<StudentDatabase> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<StudentDatabase>;
+                const database: StudentDatabase = await response.data;
+                if (alert) {
+                    addAlert(`Database generated for course "${database.course}".<br>
+                                                                   Username: "${database.username}"<br>
+                                                                   Password: "${database.password}"`, AlertType.success, tempAlert);
+                } else {
+                    if (tempAlert) {
+                        tempAlert.remove();
+                    }
+                }
+
+                return true;
+            } catch (error) {
+                addErrorAlert(error, tempAlert)
+            }
+        } else {
+            addAlert("Please enter a valid group number", AlertType.danger)
+        }
+
+    } else {
+        addAlert("Please select a course", AlertType.danger)
+    }
+    return false;
 }
 
 async function prepareToGetCredentials(): Promise<void> {

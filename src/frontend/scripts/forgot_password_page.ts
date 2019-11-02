@@ -1,6 +1,7 @@
-import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios, {AxiosError, AxiosResponse} from "./main";
 import {validEmail} from "./register";
+import {AlertType} from "./interfaces";
 
 const passwordButton = document.getElementById("password-button") as HTMLButtonElement,
     registerEmailField = document.getElementById("register-email-field") as HTMLInputElement,

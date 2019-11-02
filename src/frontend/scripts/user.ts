@@ -1,10 +1,11 @@
 import axios, {AxiosResponse, urlPrefix} from "./main";
 import "popper.js";
 import "bootstrap";
-import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import Swal from 'sweetalert2';
 import {changePageState, initNavbar, navbarEditUsers} from "./navbar";
-import {Course, getCoursesPromise, StudentDatabase} from "./courses";
+import {AlertType, Course, StudentDatabase, User, UserRole} from "./interfaces";
+import {getCoursesPromise} from "./edit_courses";
 
 const usersHtml = document.getElementById("users") as HTMLTableSectionElement,
     coursesNavHtml = document.getElementById("courses-nav") as HTMLDivElement,
@@ -24,27 +25,6 @@ let deleteButton = document.getElementById("delete-button") as HTMLButtonElement
     courses: Course[] = [],
     users: User[] = [],
     studentDatabases: StudentDatabase[] = [];
-
-export interface User {
-    id: number;
-    role: number;
-    email: string;
-    password: string;
-    verified: boolean;
-    token: string;
-}
-
-export enum UserRole {
-    Admin = 0,
-    Teacher = 1,
-    Student = 2
-}
-
-export interface TA {
-    courseid: number,
-    studentid: number,
-    taid: number
-}
 
 async function displayUsers(): Promise<void> {
     users = (await getUsersPromise()).sort((a: User, b: User) => a.email.localeCompare(b.email));
@@ -109,17 +89,6 @@ export async function getUsersPromise(): Promise<User[]> {
     const response: AxiosResponse = await axios.get("/rest/dbmusers/");
     return response.data;
 }
-
-async function getCourseByIDPromise(id: number): Promise<Course> {
-    const response: AxiosResponse = await axios.get(`/rest/courses/${id}/`);
-    return response.data;
-}
-
-// async function getUserPromise(userid: number): Promise<User> {
-//     const path = `/rest/dbmusers/${userid}/`;
-//     const response: AxiosResponse = await axios.get(path);
-//     return response.data;
-// }
 
 async function displayCoursesAndDatabases(user: User): Promise<void> {
     const databases: StudentDatabase[] = studentDatabases.filter(db => db.fid === user.id);
@@ -273,7 +242,6 @@ export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement, studen
     return studentDatabases;
 }
 
-// Internal server error 500?
 export async function resetDatabase(dbID: number): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to reset this database?',

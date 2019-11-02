@@ -1,6 +1,7 @@
-import {addErrorAlert, addTempAlert, AlertType} from "./alert";
+import {addErrorAlert, addTempAlert} from "./alert";
 import axios, {urlPrefix} from "./main";
 import {passwordsEqual, validPassword} from "./register";
+import {AlertType} from "./interfaces";
 
 const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement,
     newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement,
