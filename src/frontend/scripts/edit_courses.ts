@@ -85,17 +85,42 @@ let ownDatabases: StudentDatabase[] = [];
 
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
+/**
+ * Checks if a course name is valid according to a regex, and gives user feedback in the form
+ * @param field The field to check the input of and give feedback for
+ * @returns boolean of whether or not the input is valid
+ */
 function validCoursename(field: HTMLInputElement): boolean {
     const coursenameRegex = /^[a-zA-Z0-9\.\-\+\/ ]+$/;
     if (coursenameRegex.test(field.value)) {
         setValid(field);
         return true
     } else {
-        setInvalid(field, "Coursename can only contain alphanumerical and these: .-+/ characters, as well as spaces");
+        setInvalid(field, "This field can only contain alphanumerical and these: .-+/ characters, as well as spaces");
         return false
     }
 }
 
+/**
+ * Checks whether course info field is non empty
+ * @param field The field to check the input of and give feedback for
+ * @returns boolean of whether or not the input is valid
+ */
+function validCourseinfo(field: HTMLInputElement): boolean {
+    if (field.value.length > 0) {
+        setValid(field);
+        return true;
+    } else {
+        setInvalid(field, "This field cannot be empty");
+        return false;
+    }
+}
+
+/**
+ * Empties and re-fills the dropdowns related to schema transfer, and adds event listeners
+ * @param courseDropdown The dropdown to fill with courses
+ * @param databaseDropdown The dropdown to fill with databases per course
+ */
 async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, databaseDropdown: HTMLSelectElement): Promise<void> {
     databaseDropdown.disabled = true;
     let displayDatabases: StudentDatabase[];
@@ -158,6 +183,9 @@ async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, d
 
 }
 
+/**
+ * (De)Populates the pane for adding a new course (resets all fields and calls [[fillStudentDatabasesDropdown]]
+ */
 function populateNewCoursePane(): void {
     Array.from(coursesNavHtml.children).forEach((child) => {
         child.classList.remove("active");
@@ -194,6 +222,10 @@ function populateNewCoursePane(): void {
 
 }
 
+/**
+ * Changes the active pane to the "Add course" pane and populates it
+ * @param event Form event that has to be prevented from running (so that we do not refresh the page)
+ */
 function goToAddCoursePane(event: Event): void {
     event.preventDefault();
     populateNewCoursePane();
@@ -207,6 +239,10 @@ function goToAddCoursePane(event: Event): void {
     newCoursePane.classList.add("active");
 }
 
+/**
+ * Populates the pane for an existing course by filling the form inputs with the correct values
+ * @param i The index of the course in the "courses" array
+ */
 async function populateExistingCoursePane(i: number): Promise<void> {
     studentDatabasesNavHtml.innerHTML = "";
     courseDatabasesHtml.innerHTML = "No database selected";
@@ -248,6 +284,10 @@ async function populateExistingCoursePane(i: number): Promise<void> {
 
 }
 
+/**
+ * Changes the active pane to the pane that displays an existing course, and populates it
+ * @param i The index of the course in the "courses" array
+ */
 export function goToExistingCoursePane(i: number): void {
     if (addCourseLink) {
         addCourseLink.removeAttribute("style");
@@ -262,6 +302,11 @@ export function goToExistingCoursePane(i: number): void {
     existingCoursePane.classList.add("active");
 }
 
+/**
+ * Checks the field's content for whether it is empty, or a number above 0 and gives the user feedvack
+ * @param field The field to check the input of and give feedback for
+ * @returns boolean of whether or not the input is valid
+ */
 function validFID(field: HTMLInputElement): boolean {
     try {
         if (field.value === "" || Number(field.value) > 0) {
@@ -279,16 +324,26 @@ function validFID(field: HTMLInputElement): boolean {
     }
 }
 
-function nonEmptyTextarea(newSchemaTextarea: HTMLTextAreaElement): boolean {
-    if (newSchemaTextarea.value === "") {
-        setInvalid(newSchemaTextarea, "Please enter a valid string or select not to add a schema");
+/**
+ * Checks if the textarea is not empty
+ * @param field The field to check the input of and give feedback for
+ * @returns boolean of whether or not the input is valid
+ */
+function nonEmptyTextarea(field: HTMLTextAreaElement): boolean {
+    if (field.value === "") {
+        setInvalid(field, "Please enter a valid string or select not to add a schema");
         return false;
     } else {
-        setValid(newSchemaTextarea);
+        setValid(field);
         return true;
     }
 }
 
+/**
+ * Checks if the select field has a non-default value selected
+ * @param select The field to check the input of and give feedback for
+ * @returns boolean of whether or not a non-default value is selected
+ */
 export function validSelect(select: HTMLSelectElement): boolean {
     if (Number(select.value) > 0) {
         setValid(select);
@@ -299,6 +354,11 @@ export function validSelect(select: HTMLSelectElement): boolean {
     }
 }
 
+/**
+ * Checks if a file has been selected for upload
+ * @param uploadElement The field to check the input of and give feedback for
+ * @returns boolean of whether or not a file is selected
+ */
 function validUpload(uploadElement: HTMLInputElement): boolean {
     if (uploadElement.files === null || uploadElement.files.length === 0) {
         setInvalid(uploadElement, "Please select a file");
@@ -309,6 +369,21 @@ function validUpload(uploadElement: HTMLInputElement): boolean {
     }
 }
 
+/**
+ * Checks if all the fields on the edit course page are correct
+ * @param newCourseInfoField The course info field (should be non-empty)
+ * @param newCoursenameField The course name field (should be non-empty)
+ * @param newCourseFIDField The course FID field (should be non-empty or an integer > 0)
+ * @param newSchemaRadioNone The input radio for not changing/uploading a schema. If selected, we will not check any other fields
+ * @param newSchemaRadioTextarea The input radio for changing/uploading a schema via textarea. If selected, we will check the textarea
+ * @param newSchemaTextarea The text area field which will be checked if newSchemaRadioTextarea is selected
+ * @param newSchemaRadioUpload The input radio for changing/uploading a schema via upload. If selected, we will check the upload field
+ * @param newSchemaUpload The upload field which will be checked if newSchemaRadioUpload is selected
+ * @param newSchemaRadioTransfer The input radio for changing/uploading a schema via schema transfer. If selected, we will check the schema transfer selects
+ * @param schemaTransfer1 The first schema transfer select. Will be checked if newSchemaRadioTransfer is selected
+ * @param schemaTransfer2 The second schema transfer select. Will be checked if newSchemaRadioTransfer is selected
+ * @returns whether all fields to be checked are correct or not
+ */
 function checkFields(newCourseInfoField: HTMLInputElement, newCoursenameField: HTMLInputElement, newCourseFIDField: HTMLInputElement,
                      newSchemaRadioNone: HTMLInputElement, newSchemaRadioTextarea: HTMLInputElement, newSchemaTextarea: HTMLTextAreaElement,
                      newSchemaRadioUpload: HTMLInputElement, newSchemaUpload: HTMLInputElement, newSchemaRadioTransfer: HTMLInputElement,
@@ -316,19 +391,24 @@ function checkFields(newCourseInfoField: HTMLInputElement, newCoursenameField: H
     setValid(newCourseInfoField);
     const a = validCoursename(newCoursenameField);
     const b = validFID(newCourseFIDField);
-    let c = true;
+    const c = validCoursename(newCourseInfoField);
     let d = true;
+    let e = true;
     if (newSchemaRadioTextarea.checked) {
-        c = nonEmptyTextarea(newSchemaTextarea)
+        d = nonEmptyTextarea(newSchemaTextarea)
     } else if (newSchemaRadioUpload.checked) {
-        c = validUpload(newSchemaUpload)
+        d = validUpload(newSchemaUpload)
     } else if (newSchemaRadioTransfer.checked) {
-        c = validSelect(schemaTransfer1);
-        d = validSelect(schemaTransfer2);
+        d = validSelect(schemaTransfer1);
+        e = validSelect(schemaTransfer2);
     }
-    return a && b && c && d
+    return a && b && c && d && e
 }
 
+/**
+ * Disables / enables all page elements depending on page input
+ * @param enable Whether to enable elements or not
+ */
 function changeEditCoursesState(enable: boolean): void {
     const buttons: HTMLCollectionOf<HTMLButtonElement> = document.getElementsByTagName("button");
     const inputs: HTMLCollectionOf<HTMLInputElement> = document.getElementsByTagName("input");
