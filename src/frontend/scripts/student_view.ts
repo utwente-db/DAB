@@ -30,12 +30,18 @@ const coursesNavHtml = document.getElementById("courses-nav") as HTMLDivElement,
     credentialsButton = document.getElementById("credentials-button") as HTMLButtonElement,
     groupInput = document.getElementById("group-input") as HTMLInputElement;
 
-
+/**
+ * Global variales that will be changed later on (arrays and such)
+ */
 let ownDatabases: StudentDatabase[] = [],
     courses: Course[] = [],
     currentCourse = 0,
     who: Who;
 
+/**
+ * Populates the pane that shows if the user has no credentials for a course (empties inputs, sets strings and such)
+ * @param i Index of the course in the "courses" list
+ */
 function populateNoCredentialsPane(i: number): void {
     noCredsCoursename.innerText = courses[i].coursename;
     const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>";
@@ -43,7 +49,10 @@ function populateNoCredentialsPane(i: number): void {
     groupInput.value = "";
 }
 
-
+/**
+ * Populates the pane that shows if the user has credentials
+ * @param i Index of the course in the "courses" list
+ */
 async function populateHaveCredentialsPane(i: number): Promise<void> {
     let credentials = "";
     const dbIDs: number[] = [];
@@ -52,6 +61,7 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
     haveCredsInfo.innerHTML = courses[i].info + courseInactiveString; // We set innerHTML for this field because we know it is sanitized using html special chars
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
+            // While pasting a large bit of HTML into the page here is ugly, it allows us to support having more than one DB per course if that is ever needed
             const html = `<div class="mt-5 form-group row">
                             <label class="col-12 col-md-4 col-form-label">Username and DB name:</label>
                             <div class="col-12 col-md-8">
@@ -102,6 +112,15 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
 
 }
 
+/**
+ * Generates an HTML fragment for a nav link
+ * @param fromEditCourses If true, this is not being called from the student view so different settings are used
+ * @param courseIsActive If false, course is not active, making the link gray
+ * @param makeGreen If true, makes the link green (for example, if you have a database for the course)
+ * @param i Index of the relevant course in the list of courses
+ * @param active If true, the nav-link will have the class "active", making it blue
+ * @returns an HTML fragment that can be appended as a child somewhere
+ */
 export function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGreen: boolean, i: number, active = false): DocumentFragment {
     let credentialsClass: string;
     let hrefString: string;
@@ -144,6 +163,13 @@ export function createNavLink(fromEditCourses: boolean, courseIsActive: boolean,
     return fragment;
 }
 
+/**
+ * Displays all the courses in the list on the page
+ * @param optionalCourses Allows an optional list of courses to be passed. If not used, we use the gloal variable courses
+ * @param optionalWho Allows an optional Who to be passed. If not used, we use the gloal variable who
+ * @param fromEditCourses If this is not being called from student view, use slightly different settings
+ * @param activeI The index of the course that is currently selected in the list "courses"
+ */
 export async function displayCourses(optionalCourses?: Course[], optionalWho?: Who, fromEditCourses = false, activeI = -1): Promise<void> {
 
     if (optionalCourses) {
@@ -196,6 +222,10 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
     }
 }
 
+/**
+ * Change the current active pane
+ * @param hasCredentials If true, switches to the pane which shows credentials. If false, switches to the request credentials pane
+ */
 async function changeView(hasCredentials: boolean): Promise<void> {
     const activeLink: HTMLAnchorElement = document.getElementsByClassName("course-link nav-link active")[0] as HTMLAnchorElement;
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
@@ -255,6 +285,9 @@ export async function tryGetCredentials(courseID: number, groupNumber: number, a
     return false;
 }
 
+/**
+ * Gets credentials for selected course
+ */
 async function prepareToGetCredentials(): Promise<void> {
     disableElementsOnPage();
     try {
@@ -271,7 +304,9 @@ async function prepareToGetCredentials(): Promise<void> {
     }
 }
 
-
+/**
+ * Disables elements on the page
+ */
 function disableElementsOnPage(): void {
     credentialsButton.disabled = true;
     groupInput.disabled = true;
@@ -290,6 +325,9 @@ function disableElementsOnPage(): void {
         });
 }
 
+/**
+ * Enables elements on the page
+ */
 function enableElementsOnPage(): void {
     credentialsButton.disabled = false;
     groupInput.disabled = false;
@@ -310,6 +348,11 @@ function enableElementsOnPage(): void {
 
 }
 
+/**
+ * Deletes studentdatabase, if the user agrees
+ * @param dbID ID of the database to delete
+ * @returns whether the operation succeeded
+ */
 async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to delete this database?',
@@ -342,6 +385,10 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
 
 }
 
+/**
+ * Disable / enable elements on the page
+ * @param enable Whether to enable or disable elements
+ */
 function changeStudentViewState(enable: boolean): void {
     if (enable) {
         enableElementsOnPage();
@@ -350,6 +397,10 @@ function changeStudentViewState(enable: boolean): void {
     }
 }
 
+/**
+ * Tries to reset the studentDatabase, if the user agrees
+ * @param dbID The ID of the studentdatabase to delete
+ */
 async function resetDatabase(dbID: number): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to reset this database?',
@@ -379,6 +430,10 @@ async function resetDatabase(dbID: number): Promise<boolean> {
     return success;
 }
 
+/**
+ * On page load, inits navbar, adds event listeners, populates global variables (see [[Who]] and [[Course]] ),
+ * afterwards displays courses. Finally, remoevs spinners.
+ */
 window.onload = async () => {
 
     await Promise.all([
