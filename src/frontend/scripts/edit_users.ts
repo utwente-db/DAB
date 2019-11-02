@@ -39,6 +39,9 @@ let deleteButton = document.getElementById("delete-button") as HTMLButtonElement
     users: User[] = [],
     studentDatabases: StudentDatabase[] = [];
 
+/**
+ * Displays list of users inside the table
+ */
 async function displayUsers(): Promise<void> {
     users = (await getUsersPromise()).sort((a: User, b: User) => a.email.localeCompare(b.email));
     const result: string[] = [];
@@ -97,11 +100,19 @@ async function displayUsers(): Promise<void> {
     }
 }
 
+/**
+ * sends GET to /rest/dbmusers
+ * @returns promise of array of users
+ */
 export async function getUsersPromise(): Promise<User[]> {
     const response: AxiosResponse = await axios.get("/rest/dbmusers/");
     return response.data;
 }
 
+/**
+ * Displays courses and databases for a user
+ * @param user The user to display these for
+ */
 async function displayCoursesAndDatabases(user: User): Promise<void> {
     const databases: StudentDatabase[] = studentDatabases.filter(db => db.fid === user.id);
 
@@ -224,6 +235,14 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
 
 }
 
+/**
+ * Attempts to delete a database, if the user agrees
+ * @param dbID ID of DB to delete
+ * @param dbDiv Div that contains database information
+ * @param studentDatabases List of databases to remove the database from
+ * @param disablePageFunction Callback function that disables elements on page
+ * @returns new list of databases with the deleted one possibly filtered out
+ */
 export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement, studentDatabases: StudentDatabase[], disablePageFunction: Function): Promise<StudentDatabase[]> {
     const result = await Swal.fire({
         title: 'Are you sure you want to delete this database?',
@@ -254,6 +273,11 @@ export async function deleteDatabase(dbID: number, dbDiv: HTMLDivElement, studen
     return studentDatabases;
 }
 
+/**
+ * Resets database, if the user agrees
+ * @param dbID ID of database to reset
+ * @returns whether the operation succeeded
+ */
 export async function resetDatabase(dbID: number): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to reset this database?',
@@ -282,12 +306,21 @@ export async function resetDatabase(dbID: number): Promise<boolean> {
     return success;
 }
 
+/**
+ * Displays user details in the page
+ * @param user
+ */
 async function displayUserDetails(user: User): Promise<void> {
     usernameHtml.value = user.email;
     selectedRole.value = String(user.role);
     verifiedHtml.innerHTML = (user.verified ? "<span>&#x2714</span>" : "<span>&#x2718</span>");
 }
 
+/**
+ * Deletes a user (if the admin agrees)
+ * @param user The user that was deleted
+ * @returns whether the operation succeeded
+ */
 async function deleteUser(user: User): Promise<boolean> {
     const result = await Swal.fire({
         text: `Are you sure you want to delete ${user.email} from the system?`,
@@ -323,6 +356,10 @@ async function deleteUser(user: User): Promise<boolean> {
     return success;
 }
 
+/**
+ * Enables the "change role" select, and changes the edit role button styling / functionality
+ * @param user User to change the role for
+ */
 function allowChangeRole(user: User): void {
     editButton.classList.remove("btn-secondary");
     editButton.classList.add("btn-info");
@@ -334,6 +371,11 @@ function allowChangeRole(user: User): void {
     editButton.addEventListener("click", () => changeRole(user))
 }
 
+/**
+ * Change role of user to the currently selected role (or, if current role is the same as selected role: don't do anything)
+ * @param user User to change the role for
+ * @returns Whether the operation succeeded
+ */
 async function changeRole(user: User): Promise<boolean> {
     const roleNumber: number = Number(selectedRole.value);
     if (user.role === roleNumber) {
@@ -393,6 +435,10 @@ async function changeRole(user: User): Promise<boolean> {
     return success;
 }
 
+/**
+ * Disables / enables all elements on the page
+ * @param enable Whether to enable, or disable elements
+ */
 function changeEditUserState(enable: boolean): void {
     const buttons: HTMLCollectionOf<HTMLButtonElement> = document.getElementsByTagName("button");
     const inputs: HTMLCollectionOf<HTMLInputElement> = document.getElementsByTagName("input");
@@ -426,7 +472,9 @@ function changeEditUserState(enable: boolean): void {
 
 }
 
-
+/**
+ * Get list of courses, init navbar, and add event listeners
+ */
 window.onload = async () => {
     studentDatabases = (await axios.get("/rest/studentdatabases/") as AxiosResponse<StudentDatabase[]>).data;
     await Promise.all([
