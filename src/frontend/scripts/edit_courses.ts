@@ -13,7 +13,7 @@ import {AlertType, Course, InputCourse, StudentDatabase, TA, User, UserRole, Who
 import {setInvalid, setNeutral, setValid} from "./register";
 import {changePageState, getWhoPromise, initNavbar, navbarEditCourses} from "./navbar";
 import {displayCourses} from "./student_view";
-import {deleteDatabase, resetDatabase} from "./user";
+import {deleteDatabase, resetDatabase} from "./edit_users";
 import autosize from "autosize"
 
 /**
