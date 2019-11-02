@@ -68,7 +68,10 @@ const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorEl
     existingCourseContent = document.getElementById('existing-course-content') as HTMLFormElement,
     editCourseButton = document.getElementById("edit-course-button") as HTMLButtonElement,
     deleteCourseButton = document.getElementById("delete-course-button") as HTMLButtonElement,
-    dumpCourseButton = document.getElementById("dump-course-button") as HTMLButtonElement;
+    dumpCourseButton = document.getElementById("dump-course-button") as HTMLButtonElement,
+    databaseSearch = document.getElementById("database-search") as HTMLInputElement,
+    taSearch = document.getElementById("ta-search") as HTMLInputElement;
+
 
 /**
  * Global variables (mostly lists of objects which will be changed later on)
@@ -736,47 +739,47 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[j].dbid}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Database name:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[j].databasename}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Username:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[j].username}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Password:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[j].password}" readonly="">
                 </div>
-            </div>` +
-            `<div class="form-group row">
+            </div><div class="form-group row">
                 <label class="col-12 col-lg-4 col-form-label">Group ID:</label>
                 <div class="col-12 col-lg-8">
                     <input type="text" class="form-control" value="${databases[j].groupid}" readonly="">
                 </div>
             </div>
             ${fidString}
-            <div class="form-group row">
-                <label class="col-12 col-lg-4 col-form-label">Course ID:</label>
-                <div class="col-12 col-lg-8">
-                    <input type="text" class="form-control" value="${databases[j].course}" readonly="">
-                </div>
-            </div>` +
-            `<button type="button" class="btn btn-danger" onclick="window.location.replace('${urlPrefix}rest/dump/${databases[j].dbid}/')">
-                Download Dump
-            </button>` +
-            `<button id="reset-button-${databases[j].dbid}" type="button" class="btn btn-danger">
-                Reset
-            </button>` +
-            `<button id="delete-button-${databases[j].dbid}" type="button" class="btn btn-danger">
-                Delete
-            </button>`
+          
+            
+            
+            <div class="align-items-center align-items-stretch row">
+            <div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+            <button type="button" class="btn btn-secondary btn-block" onclick="window.location.replace('${urlPrefix}rest/dump/${databases[j].dbid}/')">
+                Download dump
+                
+            </button>
+            </div><div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex ">
+            <button id="reset-button-${databases[j].dbid}" type="button" class="btn btn-info btn-block">
+                Reset database
+            </button>
+            </div><div class="center-block col-12 col-md-4 my-2 my-md-4 d-flex">
+            <button id="delete-button-${databases[j].dbid}" type="button" class="btn btn-danger btn-block">
+                Delete database
+            </button>
+            </div>
+            </div>`.trim()
 
         ;
 
@@ -1146,6 +1149,22 @@ window.onload = async () => {
             tryEditCourse();
         }),
 
+        databaseSearch.addEventListener("keyup", () => {
+            const value = databaseSearch.value.toLowerCase();
+            Array.from(studentDatabasesNavHtml.children).forEach((child: Element) => {
+                const childRow = child as HTMLAnchorElement;
+                childRow.hidden = !childRow.textContent!.toLowerCase().includes(value);
+            });
+        }),
+        taSearch.addEventListener("keyup", () => {
+            const value = taSearch.value.toLowerCase();
+            Array.from(taNav.children).forEach((child: Element) => {
+                const childRow = child as HTMLAnchorElement;
+                childRow.hidden = (!(childRow.textContent!.toLowerCase().includes(value)) && !(value==="!ta" && childRow.classList.contains("green-nav")));
+            });
+        }),
+        // TODO repeat for ta search
+
 
         // populateNewCoursePane(),
 
@@ -1153,7 +1172,8 @@ window.onload = async () => {
         navbarEditCourses.classList.add("active"),
         (navbarEditCourses.firstElementChild)!.classList.add("disabled"),
 
-    ]);
+    ])
+    ;
 
     Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove());
     autosize(document.querySelectorAll('textarea'));

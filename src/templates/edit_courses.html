@@ -29,7 +29,7 @@
                             <span class="badge badge-light inactive-you">Inactive & Owned by you</span>
                         {% endif %}
                         <hr/>
-                        <div class="overflow-auto" style="height: 50vh;">
+                        <div class="overflow-auto" style="height: 45vh;">
                             <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
                                 <div class="spinner-border text-info"></div>
 
@@ -379,6 +379,9 @@
                                     <h4>Databases for this course</h4>
                                     <div class="row">
                                         <div class="col-6 col-lg-5">
+                                            <input class="form-control mb-3" type="text" id="database-search"
+                                                   placeholder="Search...">
+
                                             <div class="overflow-auto border rounded" style="height: 57vh;">
                                                 <div class="nav flex-column nav-pills" id="studentdatabases-nav"
                                                      role="tablist">
@@ -398,6 +401,13 @@
                                         <h4>Edit TAs / Co-Teachers</h4>
                                         <div class="row">
                                             <div class="col-6 col-lg-5">
+
+                                                <input class="form-control mb-3" type="text" id="ta-search"
+                                                       placeholder="Search...">
+                                                <small class="my-0">(type !TA to filter on TAs)</small><br>
+
+                                                <span class="badge">Normal user</span>
+                                                <span class="badge badge-light you ">TA / co-teacher</span>
                                                 <div class="overflow-auto border rounded" style="height: 57vh;">
                                                     <div class="nav flex-column nav-pills" id="TA-nav"
                                                          role="tablist">
