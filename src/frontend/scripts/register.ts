@@ -1,6 +1,5 @@
 import "popper.js"
 import "bootstrap"
-import "bootstrap-select"
 import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios, {AxiosResponse} from "./main";
 import {AlertType, Credentials} from "./interfaces";
