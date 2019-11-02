@@ -32,7 +32,7 @@ const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorEl
     taDiv = document.getElementById("TA-div") as HTMLDivElement,
     newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement,
     newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement,
-    newCourseFIDField = document.getElementById("new-course-fid-field") as HTMLInputElement,
+    newCourseFIDSelect = document.getElementById("new-course-fid-select") as HTMLSelectElement,
     newActiveField = document.getElementById("new-active-field") as HTMLInputElement,
     newSchemaRadioNone = document.getElementById("new-schema-radio-none") as HTMLInputElement,
     newSchemaRadioTextarea = document.getElementById("new-schema-radio-textarea") as HTMLInputElement,
@@ -179,6 +179,20 @@ async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, d
 
 }
 
+function fillNewCourseFIDdropDown(): void {
+    while (newCourseFIDSelect.lastElementChild !== newCourseFIDSelect.firstElementChild) {
+        const child: Element = newCourseFIDSelect.lastElementChild!;
+        newCourseFIDSelect.removeChild(child!);
+    }
+
+   users.forEach(user => {
+        const optionNode = document.createElement("option");
+        optionNode.setAttribute("value", String(user.id));
+        optionNode.appendChild(document.createTextNode(user.email));
+        newCourseFIDSelect.appendChild(optionNode);
+    });
+}
+
 /**
  * (De)Populates the pane for adding a new course (resets all fields and calls [[fillStudentDatabasesDropdown]]
  */
@@ -187,11 +201,11 @@ function populateNewCoursePane(): void {
         child.classList.remove("active");
     });
 
-    [newCourseFIDField, newCourseInfoField, newCoursenameField, newSchemaTextarea, newSchemaUpload, newSchemaTransferDatabaseList, newSchemaTransferCourseList].forEach((el) => {
+    [newCourseFIDSelect, newCourseInfoField, newCoursenameField, newSchemaTextarea, newSchemaUpload, newSchemaTransferDatabaseList, newSchemaTransferCourseList].forEach((el) => {
         setNeutral(el);
     });
 
-    newCourseFIDField.value = "";
+    newCourseFIDSelect.value = "0";
     newCourseInfoField.value = "";
     newCoursenameField.value = "";
     newActiveField.checked = true;
@@ -212,6 +226,7 @@ function populateNewCoursePane(): void {
     newSchemaTextarea.value = "";
     newSchemaUpload.value = "";
     fillStudentDatabasesDropdown(newSchemaTransferCourseList, newSchemaTransferDatabaseList);
+    fillNewCourseFIDdropDown();
     newSchemaTransferCourseList.value = String(0);
     newSchemaTransferDatabaseList.value = String(0);
 
@@ -369,7 +384,6 @@ function validUpload(uploadElement: HTMLInputElement): boolean {
  * Checks if all the fields on the edit course page are correct
  * @param courseInfoField The course info field (should be non-empty)
  * @param coursenameField The course name field (should be non-empty)
- * @param courseFIDField The course FID field (should be non-empty or an integer > 0)
  * @param schemaRadioNone The input radio for not changing/uploading a schema. If selected, we will not check any other fields
  * @param schemaRadioTextarea The input radio for changing/uploading a schema via textarea. If selected, we will check the textarea
  * @param schemaTextarea The text area field which will be checked if schemaRadioTextarea is selected
@@ -380,25 +394,24 @@ function validUpload(uploadElement: HTMLInputElement): boolean {
  * @param schemaTransfer2 The second schema transfer select. Will be checked if schemaRadioTransfer is selected
  * @returns whether all fields to be checked are correct or not
  */
-function checkFields(courseInfoField: HTMLInputElement, coursenameField: HTMLInputElement, courseFIDField: HTMLInputElement,
+function checkFields(courseInfoField: HTMLInputElement, coursenameField: HTMLInputElement,
                      schemaRadioNone: HTMLInputElement, schemaRadioTextarea: HTMLInputElement, schemaTextarea: HTMLTextAreaElement,
                      schemaRadioUpload: HTMLInputElement, schemaUpload: HTMLInputElement, schemaRadioTransfer: HTMLInputElement,
                      schemaTransfer1: HTMLSelectElement, schemaTransfer2: HTMLSelectElement): boolean {
     setValid(courseInfoField);
     const a = validCoursename(coursenameField);
-    const b = validFID(courseFIDField);
-    const c = validCourseinfo(courseInfoField);
+    const b = validCourseinfo(courseInfoField);
+    let c = true;
     let d = true;
-    let e = true;
     if (schemaRadioTextarea.checked) {
-        d = nonEmptyTextarea(schemaTextarea)
+        c = nonEmptyTextarea(schemaTextarea)
     } else if (schemaRadioUpload.checked) {
-        d = validUpload(schemaUpload)
+        c = validUpload(schemaUpload)
     } else if (schemaRadioTransfer.checked) {
-        d = validSelect(schemaTransfer1);
-        e = validSelect(schemaTransfer2);
+        c = validSelect(schemaTransfer1);
+        d = validSelect(schemaTransfer2);
     }
-    return a && b && c && d && e
+    return a && b && c && d
 }
 
 /**
@@ -473,7 +486,7 @@ async function getSchema(schemaRadioTextarea: HTMLInputElement, schemaTextarea: 
  * Tries to add a course if [[checkFields]] succeeds and gets the schema from [[getSchema]] or does a schema transfer
  */
 async function tryAddCourse(): Promise<void> {
-    if (checkFields(newCourseInfoField, newCoursenameField, newCourseFIDField,
+    if (checkFields(newCourseInfoField, newCoursenameField,
         newSchemaRadioNone, newSchemaRadioTextarea, newSchemaTextarea,
         newSchemaRadioUpload, newSchemaUpload, newSchemaRadioTransfer,
         newSchemaTransferDatabaseList, newSchemaTransferCourseList)) {
@@ -486,8 +499,8 @@ async function tryAddCourse(): Promise<void> {
             active: newActiveField.checked
         };
 
-        if (newCourseFIDField.value !== "") {
-            inputCourse.fid = Number(newCourseFIDField.value)
+        if (newCourseFIDSelect.value !== "0") {
+            inputCourse.fid = Number(newCourseFIDSelect.value)
         }
 
         try {
@@ -582,7 +595,7 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
  * Tries to edit a course if [[checkFields]] succeeds
  */
 async function tryEditCourse(): Promise<void> {
-    if (checkFields(existingCourseInfoField, existingCoursenameField, existingCourseFIDField,
+    if (checkFields(existingCourseInfoField, existingCoursenameField,
         existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea,
         existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer,
         existingSchemaTransferCourseList, existingSchemaTransferCourseList)) {

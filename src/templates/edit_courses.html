@@ -76,12 +76,12 @@
                                         {% endif %}
                                         ">
                                         <label for="course-fid-field" class="col-12 col-md-4 col-form-label">Course
-                                            owner ID
-                                            (optional)</label>
+                                            owner</label>
                                         <div class="col-12 col-md-8">
-                                            <input type="number" name="course-fid-field" class="form-control"
-                                                   id="new-course-fid-field"
-                                                   oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+                                            <select class="form-control" id="new-course-fid-select">
+                                                <option disabled selected value="0">(if unchanged, you will be the owner)
+                                                </option>
+                                            </select>
 
                                             <div class="invalid-feedback"></div>
                                         </div>
