@@ -4,11 +4,11 @@ import "bootstrap-select"
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import axios, {AxiosResponse} from "./main";
 
-const registerButton: HTMLButtonElement = document.getElementById("register-button") as HTMLButtonElement;
-const registerEmailField: HTMLInputElement = document.getElementById("register-email-field") as HTMLInputElement;
-const registerPasswordField: HTMLInputElement = document.getElementById('register-password-field') as HTMLInputElement;
-const registerPasswordConfirmField: HTMLInputElement = document.getElementById('register-password-confirm-field') as HTMLInputElement;
-const content = document.getElementById('content') as HTMLFormElement;
+const registerButton = document.getElementById("register-button") as HTMLButtonElement,
+    registerEmailField = document.getElementById("register-email-field") as HTMLInputElement,
+    registerPasswordField = document.getElementById('register-password-field') as HTMLInputElement,
+    registerPasswordConfirmField = document.getElementById('register-password-confirm-field') as HTMLInputElement,
+    content = document.getElementById('content') as HTMLFormElement;
 
 /**
  * Interface which represents the body of the register (POST to /rest/dbmusers/) API call

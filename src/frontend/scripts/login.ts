@@ -3,13 +3,13 @@ import axios from "./main";
 import {validEmail, validPassword} from "./register";
 import "bootstrap-cookie-alert/cookiealert.js"
 
-const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement;
-const emailInput = document.getElementById("email-input") as HTMLInputElement;
-const passwordInput = document.getElementById("password-input") as HTMLInputElement;
-const loginButton = document.getElementById("login-button") as HTMLButtonElement;
-const registerLink = document.getElementById("register-link") as HTMLAnchorElement;
-const forgotPasswordLink = document.getElementById("forgot-password-link") as HTMLAnchorElement;
-const loginForm = document.getElementById("login-form") as HTMLFormElement;
+const djangoTemplate = document.getElementById("django-template") as HTMLTemplateElement,
+    emailInput = document.getElementById("email-input") as HTMLInputElement,
+    passwordInput = document.getElementById("password-input") as HTMLInputElement,
+    loginButton = document.getElementById("login-button") as HTMLButtonElement,
+    registerLink = document.getElementById("register-link") as HTMLAnchorElement,
+    forgotPasswordLink = document.getElementById("forgot-password-link") as HTMLAnchorElement,
+    loginForm = document.getElementById("login-form") as HTMLFormElement;
 
 /**
  * Disables all inputs on login page
@@ -81,7 +81,7 @@ function tryLogin(): void {
  */
 window.onload = () => {
     if (djangoTemplate.classList.contains("resend-verification")) {
-        const tempAlert: ChildNode | null = addTempAlert("Please verify your email first. <a href='javascript: void(0)' id='verification-link'>Click here to resend verification email.</a>", AlertType.danger, false, 0)
+        const tempAlert: ChildNode | null = addTempAlert("Please verify your email first. <a href='javascript: void(0)' id='verification-link'>Click here to resend verification email.</a>", AlertType.danger, false, 0);
         const verificationLink = document.getElementById("verification-link") as HTMLAnchorElement;
         verificationLink.addEventListener("click", (event) => {
             event.preventDefault();
@@ -106,4 +106,4 @@ window.onload = () => {
             tryLogin();
         });
     }
-}
+};

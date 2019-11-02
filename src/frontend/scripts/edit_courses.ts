@@ -8,80 +8,64 @@ import {displayCourses} from "./student_view";
 import {deleteDatabase, resetDatabase, TA, User, UserRole} from "./user";
 import autosize from "autosize"
 
-
-const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement;
-const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
-const coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement;
-
-const existingCoursePane = document.getElementById("existing-course-pane") as HTMLDivElement;
-const newCoursePane = document.getElementById("new-course-pane") as HTMLDivElement;
-
-const studentDatabasesNavHtml: HTMLDivElement = document.getElementById("studentdatabases-nav") as HTMLDivElement;
-const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
-
-const taNav: HTMLDivElement = document.getElementById("TA-nav") as HTMLDivElement;
-const taDiv: HTMLDivElement = document.getElementById("TA-div") as HTMLDivElement;
-
-const newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement;
-const newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement;
-const newCourseFIDField = document.getElementById("new-course-fid-field") as HTMLInputElement;
-const newActiveField = document.getElementById("new-active-field") as HTMLInputElement;
-
-const newSchemaRadioNone = document.getElementById("new-schema-radio-none") as HTMLInputElement;
-const newSchemaRadioTextarea = document.getElementById("new-schema-radio-textarea") as HTMLInputElement;
-const newSchemaRadioUpload = document.getElementById("new-schema-radio-upload") as HTMLInputElement;
-const newSchemaRadioTransfer = document.getElementById("new-schema-radio-transfer") as HTMLInputElement;
-
-const newSchemaTextarea = document.getElementById("new-schema-textarea") as HTMLTextAreaElement;
-const newSchemaUpload = document.getElementById("new-schema-upload") as HTMLInputElement;
-const newSchemaTransferCourseList = document.getElementById("new-schema-transfer-course-list") as HTMLSelectElement;
-const newSchemaTransferDatabaseList = document.getElementById("new-schema-transfer-database-list") as HTMLSelectElement;
-const newSchemaTransferRow = document.getElementById("new-schema-transfer-row") as HTMLSelectElement;
-
-const newSchemaTextareaDiv = document.getElementById("new-schema-textarea-div") as HTMLDivElement;
-const newSchemaUploadDiv = document.getElementById("new-schema-upload-div") as HTMLDivElement;
-const newSchemaTransferDiv = document.getElementById("new-schema-transfer-div") as HTMLDivElement;
-const newCourseContent = document.getElementById('new-course-content') as HTMLFormElement;
-
-const addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement;
-
-const existingCourseIDField = document.getElementById("existing-course-id-field") as HTMLInputElement;
-const existingCoursenameField = document.getElementById("existing-course-name-field") as HTMLInputElement;
-const existingCourseInfoField = document.getElementById("existing-course-info-field") as HTMLInputElement;
-const existingCourseFIDField = document.getElementById("existing-course-fid-field") as HTMLInputElement;
-const existingActiveField = document.getElementById("existing-active-field") as HTMLInputElement;
-
-const existingSchemaRadioNone = document.getElementById("existing-schema-radio-none") as HTMLInputElement;
-const existingSchemaRadioTextarea = document.getElementById("existing-schema-radio-textarea") as HTMLInputElement;
-const existingSchemaRadioUpload = document.getElementById("existing-schema-radio-upload") as HTMLInputElement;
-const existingSchemaRadioTransfer = document.getElementById("existing-schema-radio-transfer") as HTMLInputElement;
-
-const existingSchemaTextarea = document.getElementById("existing-schema-textarea") as HTMLTextAreaElement;
-const existingSchemaUpload = document.getElementById("existing-schema-upload") as HTMLInputElement;
-
-const existingSchemaTransferCourseList = document.getElementById("existing-schema-transfer-course-list") as HTMLSelectElement;
-const existingSchemaTransferDatabaseList = document.getElementById("existing-schema-transfer-database-list") as HTMLSelectElement
-const existingSchemaTransferRow = document.getElementById("existing-schema-transfer-row") as HTMLSelectElement
+const addCourseLink = document.getElementById("add-course-link") as HTMLAnchorElement,
+    coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement,
+    coursesContentHtml: HTMLDivElement = document.getElementById("courses-content") as HTMLDivElement,
+    existingCoursePane = document.getElementById("existing-course-pane") as HTMLDivElement,
+    newCoursePane = document.getElementById("new-course-pane") as HTMLDivElement,
+    studentDatabasesNavHtml: HTMLDivElement = document.getElementById("studentdatabases-nav") as HTMLDivElement,
+    courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement,
+    taNav: HTMLDivElement = document.getElementById("TA-nav") as HTMLDivElement,
+    taDiv: HTMLDivElement = document.getElementById("TA-div") as HTMLDivElement,
+    newCoursenameField = document.getElementById("new-course-name-field") as HTMLInputElement,
+    newCourseInfoField = document.getElementById("new-course-info-field") as HTMLInputElement,
+    newCourseFIDField = document.getElementById("new-course-fid-field") as HTMLInputElement,
+    newActiveField = document.getElementById("new-active-field") as HTMLInputElement,
+    newSchemaRadioNone = document.getElementById("new-schema-radio-none") as HTMLInputElement,
+    newSchemaRadioTextarea = document.getElementById("new-schema-radio-textarea") as HTMLInputElement,
+    newSchemaRadioUpload = document.getElementById("new-schema-radio-upload") as HTMLInputElement,
+    newSchemaRadioTransfer = document.getElementById("new-schema-radio-transfer") as HTMLInputElement,
+    newSchemaTextarea = document.getElementById("new-schema-textarea") as HTMLTextAreaElement,
+    newSchemaUpload = document.getElementById("new-schema-upload") as HTMLInputElement,
+    newSchemaTransferCourseList = document.getElementById("new-schema-transfer-course-list") as HTMLSelectElement,
+    newSchemaTransferDatabaseList = document.getElementById("new-schema-transfer-database-list") as HTMLSelectElement,
+    newSchemaTransferRow = document.getElementById("new-schema-transfer-row") as HTMLSelectElement,
+    newSchemaTextareaDiv = document.getElementById("new-schema-textarea-div") as HTMLDivElement,
+    newSchemaUploadDiv = document.getElementById("new-schema-upload-div") as HTMLDivElement,
+    newSchemaTransferDiv = document.getElementById("new-schema-transfer-div") as HTMLDivElement,
+    newCourseContent = document.getElementById('new-course-content') as HTMLFormElement,
+    addCourseButton = document.getElementById("add-course-button") as HTMLButtonElement,
+    existingCourseIDField = document.getElementById("existing-course-id-field") as HTMLInputElement,
+    existingCoursenameField = document.getElementById("existing-course-name-field") as HTMLInputElement,
+    existingCourseInfoField = document.getElementById("existing-course-info-field") as HTMLInputElement,
+    existingCourseFIDField = document.getElementById("existing-course-fid-field") as HTMLInputElement,
+    existingActiveField = document.getElementById("existing-active-field") as HTMLInputElement,
+    existingSchemaRadioNone = document.getElementById("existing-schema-radio-none") as HTMLInputElement,
+    existingSchemaRadioTextarea = document.getElementById("existing-schema-radio-textarea") as HTMLInputElement,
+    existingSchemaRadioUpload = document.getElementById("existing-schema-radio-upload") as HTMLInputElement,
+    existingSchemaRadioTransfer = document.getElementById("existing-schema-radio-transfer") as HTMLInputElement,
+    existingSchemaTextarea = document.getElementById("existing-schema-textarea") as HTMLTextAreaElement,
+    existingSchemaUpload = document.getElementById("existing-schema-upload") as HTMLInputElement,
+    existingSchemaTransferCourseList = document.getElementById("existing-schema-transfer-course-list") as HTMLSelectElement,
+    existingSchemaTransferDatabaseList = document.getElementById("existing-schema-transfer-database-list") as HTMLSelectElement,
+    existingSchemaTransferRow = document.getElementById("existing-schema-transfer-row") as HTMLSelectElement,
+    existingSchemaTextareaDiv = document.getElementById("existing-schema-textarea-div") as HTMLDivElement,
+    existingSchemaUploadDiv = document.getElementById("existing-schema-upload-div") as HTMLDivElement,
+    existingSchemaTransferDiv = document.getElementById("existing-schema-transfer-div") as HTMLDivElement,
+    existingCourseContent = document.getElementById('existing-course-content') as HTMLFormElement,
+    editCourseButton = document.getElementById("edit-course-button") as HTMLButtonElement,
+    deleteCourseButton = document.getElementById("delete-course-button") as HTMLButtonElement,
+    dumpCourseButton = document.getElementById("dump-course-button") as HTMLButtonElement;
 
 
-const existingSchemaTextareaDiv = document.getElementById("existing-schema-textarea-div") as HTMLDivElement;
-const existingSchemaUploadDiv = document.getElementById("existing-schema-upload-div") as HTMLDivElement;
-const existingSchemaTransferDiv = document.getElementById("existing-schema-transfer-div") as HTMLDivElement;
-const existingCourseContent = document.getElementById('existing-course-content') as HTMLFormElement;
-
-const editCourseButton = document.getElementById("edit-course-button") as HTMLButtonElement;
-const deleteCourseButton = document.getElementById("delete-course-button") as HTMLButtonElement;
-const dumpCourseButton = document.getElementById("dump-course-button") as HTMLButtonElement;
-
-
-let who: Who;
-let courses: Course[];
-// tslint:disable-next-line:prefer-const
-let currentCourse: Course;
-let users: User[] = [];
-let studentDatabases: StudentDatabase[] = [];
-let tas: TA[] = [];
-let ownDatabases: StudentDatabase[] = [];
+ // tslint:disable-next-line:prefer-const
+let who: Who,
+    courses: Course[] = [],
+    currentCourse: Course,
+    users: User[] = [],
+    studentDatabases: StudentDatabase[] = [],
+    tas: TA[] = [],
+    ownDatabases: StudentDatabase[] = [];
 
 // const homepageRef = document.getElementById("homepage-ref") as HTMLAnchorElement;
 
@@ -172,7 +156,7 @@ async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, d
         databaseDropdown.disabled = false;
         databaseDropdown.value = String(0);
 
-        const filteredDisplayDatabases = displayDatabases.filter(db => db.course === Number(courseDropdown.value))
+        const filteredDisplayDatabases = displayDatabases.filter(db => db.course === Number(courseDropdown.value));
         filteredDisplayDatabases.forEach(db => {
             const optionNode = document.createElement("option");
             optionNode.setAttribute("value", String(db.dbid));
@@ -645,7 +629,7 @@ async function tryEditCourse(): Promise<void> {
  * @param i The index of the course in the "courses' array
  */
 async function displayStudentDatabasesForCourse(i: number): Promise<void> {
-    const databases: StudentDatabase[] = studentDatabases.filter(db => db.course === courses[i].courseid)
+    const databases: StudentDatabase[] = studentDatabases.filter(db => db.course === courses[i].courseid);
 
     const dbToHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
@@ -865,8 +849,8 @@ async function removeTA(ta: TA): Promise<boolean> {
  */
 function generateTaDivHTML(user: User, userIsTaForCourse: boolean): string {
     const userIsTaString = userIsTaForCourse ? `<span class="text-success h5">${user.email} is a TA for this course</span>` :
-        `<span class="text-danger h5">${user.email} is not a ${user.role < UserRole.Student ? "co-teacher" : "TA"} for this course</span>`
-    const userTaButton = `<button class="btn btn-info" id="user-ta-button">Change user ${user.role < UserRole.Student ? "co-teacher" : "TA"} status</button>`
+        `<span class="text-danger h5">${user.email} is not a ${user.role < UserRole.Student ? "co-teacher" : "TA"} for this course</span>`;
+    const userTaButton = `<button class="btn btn-info" id="user-ta-button">Change user ${user.role < UserRole.Student ? "co-teacher" : "TA"} status</button>`;
     const taDivHTML = `${userIsTaString}<br>
                            ${userTaButton}`.trim();
     return taDivHTML;

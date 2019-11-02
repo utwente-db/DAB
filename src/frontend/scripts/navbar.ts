@@ -6,20 +6,17 @@ import Swal from "sweetalert2";
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import {validSelect} from "./edit_courses";
 
-const whoamiWelcomeHtml: HTMLDivElement = document.getElementById("whoamiWelcome") as HTMLDivElement;
-const whoamiButtonHtml: HTMLDivElement = document.getElementById("whoamiButton") as HTMLDivElement;
-
-export const navbarStudentView = document.getElementById("navbar-student-view") as HTMLLIElement;
-export const navbarEditCourses = document.getElementById("navbar-edit-courses") as HTMLLIElement;
-export const navbarEditUsers = document.getElementById("navbar-edit-users") as HTMLLIElement;
-export const navbarChangePasswordLink = document.getElementById("navbar-change-password") as HTMLAnchorElement;
-export const navbarLogoutLink = document.getElementById("navbar-logout") as HTMLAnchorElement;
-export const navbarDumpAllDatabasesLink = document.getElementById("navbar-dump-all-databases") as HTMLAnchorElement;
-export const navbarGhostDatabasesLink = document.getElementById("navbar-missing-databases") as HTMLAnchorElement;
-export const ghostDatabasesSelect = document.getElementById("selected-missing-database") as HTMLSelectElement;
-export const deleteGhostDatabaseButton = document.getElementById("delete-missing-database-button") as HTMLButtonElement;
-export const deleteAllGhostDatabasesButton = document.getElementById("delete-all-missing-databases-button") as HTMLButtonElement;
-export const selectedGhostDatabaseDefault = document.getElementById("selected-missing-database-default") as HTMLOptionElement;
+export const navbarStudentView = document.getElementById("navbar-student-view") as HTMLLIElement,
+    navbarEditCourses = document.getElementById("navbar-edit-courses") as HTMLLIElement,
+    navbarEditUsers = document.getElementById("navbar-edit-users") as HTMLLIElement,
+    navbarChangePasswordLink = document.getElementById("navbar-change-password") as HTMLAnchorElement,
+    navbarLogoutLink = document.getElementById("navbar-logout") as HTMLAnchorElement,
+    navbarDumpAllDatabasesLink = document.getElementById("navbar-dump-all-databases") as HTMLAnchorElement,
+    navbarGhostDatabasesLink = document.getElementById("navbar-missing-databases") as HTMLAnchorElement,
+    ghostDatabasesSelect = document.getElementById("selected-missing-database") as HTMLSelectElement,
+    deleteGhostDatabaseButton = document.getElementById("delete-missing-database-button") as HTMLButtonElement,
+    deleteAllGhostDatabasesButton = document.getElementById("delete-all-missing-databases-button") as HTMLButtonElement,
+    selectedGhostDatabaseDefault = document.getElementById("selected-missing-database-default") as HTMLOptionElement;
 
 let databaseStrings: string[] = [];
 
@@ -165,7 +162,7 @@ async function populateGhostDatabasesModal(): Promise<void> {
         for (let i = 1; i < databaseStrings.length + 1; i++) {
             const optionNode = document.createElement("option");
             optionNode.setAttribute("value", String(i));
-            optionNode.appendChild(document.createTextNode(databaseStrings[i-1]));
+            optionNode.appendChild(document.createTextNode(databaseStrings[i - 1]));
             ghostDatabasesSelect.appendChild(optionNode);
         }
         ghostDatabasesSelect.disabled = false;
@@ -199,11 +196,11 @@ async function deleteAllGhostDatabases(disableCallback: Function): Promise<boole
     const tempAlert: ChildNode | null = addTempAlert();
     changePageState(false, disableCallback);
     try {
-        const deleteConfig = {'data': databaseStrings };
+        const deleteConfig = {'data': databaseStrings};
         await axios.delete(`/rest/missing_databases/`, deleteConfig); // TODO fix this call (body?)
         success = true;
     } catch (error) {
-        addErrorAlert(error, tempAlert)
+        addErrorAlert(error, tempAlert);
         success = false;
     } finally {
         changePageState(true, disableCallback);
@@ -240,11 +237,11 @@ async function deleteGhostDatabase(disableCallback: Function): Promise<boolean> 
     const tempAlert: ChildNode | null = addTempAlert();
     changePageState(false, disableCallback);
     try {
-        const deleteConfig = {'data': [ databaseStrings[Number(ghostDatabasesSelect.value)-1] ] };
+        const deleteConfig = {'data': [databaseStrings[Number(ghostDatabasesSelect.value) - 1]]};
         await axios.delete(`/rest/missing_databases/`, deleteConfig); // TODO fix this call (body?)
         success = true;
     } catch (error) {
-        addErrorAlert(error, tempAlert)
+        addErrorAlert(error, tempAlert);
         success = false;
     } finally {
         changePageState(true, disableCallback);
@@ -272,18 +269,18 @@ export function initNavbar(disableCallback: Function): void {
             populateGhostDatabasesModal();
         })
     }
-        if (deleteAllGhostDatabasesButton) {
-            deleteAllGhostDatabasesButton.addEventListener("click",() => {
-                deleteAllGhostDatabases(disableCallback);
-            });
+    if (deleteAllGhostDatabasesButton) {
+        deleteAllGhostDatabasesButton.addEventListener("click", () => {
+            deleteAllGhostDatabases(disableCallback);
+        });
 
-        }
+    }
 
-        if (deleteGhostDatabaseButton) {
-            deleteGhostDatabaseButton.addEventListener("click", () => {
-                deleteGhostDatabase(disableCallback);
-            })
-        }
+    if (deleteGhostDatabaseButton) {
+        deleteGhostDatabaseButton.addEventListener("click", () => {
+            deleteGhostDatabase(disableCallback);
+        })
+    }
 
 
 }

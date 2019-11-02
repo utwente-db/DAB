@@ -3,11 +3,11 @@ import axios, {AxiosError, urlPrefix} from "./main";
 import {passwordsEqual, validPassword} from "./register";
 import {changePageState, initNavbar} from "./navbar";
 
-const newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement;
-const oldPasswordField = document.getElementById("old-password-field") as HTMLInputElement;
-const newPasswordField = document.getElementById("new-password-field") as HTMLInputElement;
-const confirmPasswordField = document.getElementById("confirm-password-field") as HTMLInputElement;
-const content = document.getElementById('content') as HTMLFormElement;
+const newPasswordButton = document.getElementById("new-password-button") as HTMLButtonElement,
+    oldPasswordField = document.getElementById("old-password-field") as HTMLInputElement,
+    newPasswordField = document.getElementById("new-password-field") as HTMLInputElement,
+    confirmPasswordField = document.getElementById("confirm-password-field") as HTMLInputElement,
+    content = document.getElementById('content') as HTMLFormElement;
 
 /**
  * Checks the fields on the change password page.
@@ -53,12 +53,11 @@ async function tryResetPassword(): Promise<void> {
             if (tempAlert && document.body.contains(tempAlert)) {
                 tempAlert.remove();
             }
-            addTempAlert("Your password has been changed. You will soon be redirected to the homepage.", AlertType.success, false, 0)
+            addTempAlert("Your password has been changed. You will soon be redirected to the homepage.", AlertType.success, false, 0);
             await new Promise(resolve => setTimeout(resolve, 3000));
-            window.location.href = urlPrefix;;
-
+            window.location.href = urlPrefix;
         } catch (error) {
-            const ae = error as AxiosError
+            const ae = error as AxiosError;
             if (ae.response && ae.response.status === 403) {
                 addAlert("The password entered in the current password field is incorrect", AlertType.danger, tempAlert)
             } else {

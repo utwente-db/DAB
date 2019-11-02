@@ -3,39 +3,27 @@ import "popper.js";
 import "bootstrap";
 import {addAlert, addErrorAlert, addTempAlert, AlertType} from "./alert";
 import Swal from 'sweetalert2';
-
 import {changePageState, initNavbar, navbarEditUsers} from "./navbar";
 import {Course, getCoursesPromise, StudentDatabase} from "./courses";
 
-const urlParams = new URLSearchParams(window.location.search);
-
-// let user: User;
-// let databases: Database[];
-
-const x: string | null = urlParams.get("id");
-const usersHtml: HTMLTableSectionElement = document.getElementById("users") as HTMLTableSectionElement;
-
-const pageTitleHtml: HTMLTitleElement = document.getElementById("page-title") as HTMLTitleElement;
-const userInfoHtml: HTMLDivElement = document.getElementById("user-info") as HTMLDivElement;
-
-const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
-const courseDatabasesHtml: HTMLDivElement = document.getElementById("courses-db") as HTMLDivElement;
+const usersHtml = document.getElementById("users") as HTMLTableSectionElement,
+    coursesNavHtml = document.getElementById("courses-nav") as HTMLDivElement,
+    courseDatabasesHtml = document.getElementById("courses-db") as HTMLDivElement,
+    usernameHtml = document.getElementById("username") as HTMLInputElement,
+    selectedRole = document.getElementById("selected-role") as HTMLSelectElement,
+    verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement,
+    searchInput = document.getElementById("search") as HTMLInputElement,
+    usersTbody = document.getElementById("users") as HTMLTableSectionElement,
+    usersTabs = document.getElementById("users-tabs") as HTMLDivElement,
+    editUserPane = document.getElementById("edit-user-pane") as HTMLDivElement,
+    pleaseSelectAuser = document.getElementById("please-select-a-user") as HTMLDivElement;
 
 
-const usernameHtml = document.getElementById("username") as HTMLInputElement;
-const selectedRole = document.getElementById("selected-role") as HTMLSelectElement;
-const verifiedHtml: HTMLLabelElement = document.getElementById("verified") as HTMLLabelElement;
-const searchInput = document.getElementById("search") as HTMLInputElement;
-const usersTbody = document.getElementById("users") as HTMLTableSectionElement;
-const usersTabs = document.getElementById("users-tabs") as HTMLDivElement;
-const editUserPane = document.getElementById("edit-user-pane") as HTMLDivElement;
-const pleaseSelectAuser = document.getElementById("please-select-a-user") as HTMLDivElement;
-
-let deleteButton: HTMLButtonElement = document.getElementById("delete-button") as HTMLButtonElement;
-let editButton: HTMLButtonElement = document.getElementById("edit-button") as HTMLButtonElement;
-let courses: Course[] = [];
-let users: User[];
-let studentDatabases: StudentDatabase[] = [];
+let deleteButton = document.getElementById("delete-button") as HTMLButtonElement,
+    editButton = document.getElementById("edit-button") as HTMLButtonElement,
+    courses: Course[] = [],
+    users: User[] = [],
+    studentDatabases: StudentDatabase[] = [];
 
 export interface User {
     id: number;
@@ -86,7 +74,7 @@ async function displayUsers(): Promise<void> {
             editUserPane.classList.add("active");
             // set new course pane active
             Array.from(document.getElementsByTagName('tr'))!.forEach((el: Element) => {
-                el.classList.remove("active")
+                el.classList.remove("active");
                 el.removeAttribute("style")
             });
             document.getElementById(`user-row-${i}`)!.classList.add("active");
@@ -479,4 +467,4 @@ window.onload = async () => {
     });
 
 
-}
+};

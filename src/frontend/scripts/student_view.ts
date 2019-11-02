@@ -8,30 +8,27 @@ import Swal from 'sweetalert2'
 import {TA, UserRole} from "./user";
 import {goToExistingCoursePane} from "./edit_courses";
 
-const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
-const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
-const noCredsInfo: HTMLDivElement = document.getElementById("no-credentials-courseinfo") as HTMLDivElement;
-const haveCredsCoursename: HTMLHeadingElement = document.getElementById("have-credentials-coursename") as HTMLDivElement;
-const haveCredsInfo: HTMLDivElement = document.getElementById("have-credentials-courseinfo") as HTMLDivElement;
-const credentialsDiv: HTMLDivElement = document.getElementById("credentials-div") as HTMLDivElement;
-const haveCredsPane: HTMLDivElement = document.getElementById("have-credentials-pane") as HTMLDivElement;
-const noCredsPane: HTMLHeadingElement = document.getElementById("no-credentials-pane") as HTMLDivElement;
-const noCredsForm = document.getElementById("no-credentials-form") as HTMLFormElement;
-
-const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
-
-const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
-const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
+const coursesNavHtml = document.getElementById("courses-nav") as HTMLDivElement,
+    noCredsCoursename = document.getElementById("no-credentials-coursename") as HTMLDivElement,
+    noCredsInfo = document.getElementById("no-credentials-courseinfo") as HTMLDivElement,
+    haveCredsCoursename = document.getElementById("have-credentials-coursename") as HTMLDivElement,
+    haveCredsInfo = document.getElementById("have-credentials-courseinfo") as HTMLDivElement,
+    credentialsDiv = document.getElementById("credentials-div") as HTMLDivElement,
+    haveCredsPane = document.getElementById("have-credentials-pane") as HTMLDivElement,
+    noCredsPane = document.getElementById("no-credentials-pane") as HTMLDivElement,
+    noCredsForm = document.getElementById("no-credentials-form") as HTMLFormElement,
+    credentialsButton = document.getElementById("credentials-button") as HTMLButtonElement,
+    groupInput = document.getElementById("group-input") as HTMLInputElement;
 
 
-let ownDatabases: StudentDatabase[];
-let courses: Course[];
-let currentCourse = 0;
-let who: Who;
+let ownDatabases: StudentDatabase[] = [],
+    courses: Course[] = [],
+    currentCourse = 0,
+    who: Who;
 
 function populateNoCredentialsPane(i: number): void {
     noCredsCoursename.innerText = courses[i].coursename;
-    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>"
+    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>";
     noCredsInfo.innerHTML = courses[i].info + courseInactiveString; // We set innerHTML for this field because we know it is sanitized using html special chars
     groupInput.value = "";
 }
@@ -41,8 +38,8 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
     let credentials = "";
     const dbIDs: number[] = [];
     haveCredsCoursename.innerText = courses[i].coursename;
-    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>"
-    haveCredsInfo.innerHTML = courses[i].info + courseInactiveString // We set innerHTML for this field because we know it is sanitized using html special chars
+    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>";
+    haveCredsInfo.innerHTML = courses[i].info + courseInactiveString; // We set innerHTML for this field because we know it is sanitized using html special chars
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
             const html = `<div class="mt-5 form-group row">
@@ -165,7 +162,7 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     for (let i = 0; i < courses.length; i++) {
         let youHavePrivilege = false;
-        const youAreTA = taCourses.includes(courses[i].courseid)
+        const youAreTA = taCourses.includes(courses[i].courseid);
         if (fromEditCourses) {
             youHavePrivilege = (who.role === UserRole.Admin || (who.role === UserRole.Teacher && courses[i].fid === who.id) || youAreTA);
 
@@ -348,7 +345,7 @@ window.onload = async () => {
             courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
             await displayCourses();
         })()
-    ])
+    ]);
     Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove())
 
 };
