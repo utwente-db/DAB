@@ -137,8 +137,8 @@ async function fillStudentDatabasesDropdown(courseDropdown: HTMLSelectElement, d
             const ownedCoursesDatabases: StudentDatabase[] = studentDatabases;
             displayDatabases = ownDatabases.concat(ownedCoursesDatabases);
         } else {
-           const currentCourseDatabases = studentDatabases.filter(db => db.course === Number(existingCourseIDField.value));
-           displayDatabases = ownDatabases.concat(currentCourseDatabases);
+            const currentCourseDatabases = studentDatabases.filter(db => db.course === Number(existingCourseIDField.value));
+            displayDatabases = ownDatabases.concat(currentCourseDatabases);
             displayCourses.push(courses.find((course: Course) => course.courseid === Number(existingCourseIDField.value))!);
         }
         displayCourses = displayCourses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
@@ -371,34 +371,34 @@ function validUpload(uploadElement: HTMLInputElement): boolean {
 
 /**
  * Checks if all the fields on the edit course page are correct
- * @param newCourseInfoField The course info field (should be non-empty)
- * @param newCoursenameField The course name field (should be non-empty)
- * @param newCourseFIDField The course FID field (should be non-empty or an integer > 0)
- * @param newSchemaRadioNone The input radio for not changing/uploading a schema. If selected, we will not check any other fields
- * @param newSchemaRadioTextarea The input radio for changing/uploading a schema via textarea. If selected, we will check the textarea
- * @param newSchemaTextarea The text area field which will be checked if newSchemaRadioTextarea is selected
- * @param newSchemaRadioUpload The input radio for changing/uploading a schema via upload. If selected, we will check the upload field
- * @param newSchemaUpload The upload field which will be checked if newSchemaRadioUpload is selected
- * @param newSchemaRadioTransfer The input radio for changing/uploading a schema via schema transfer. If selected, we will check the schema transfer selects
- * @param schemaTransfer1 The first schema transfer select. Will be checked if newSchemaRadioTransfer is selected
- * @param schemaTransfer2 The second schema transfer select. Will be checked if newSchemaRadioTransfer is selected
+ * @param courseInfoField The course info field (should be non-empty)
+ * @param coursenameField The course name field (should be non-empty)
+ * @param courseFIDField The course FID field (should be non-empty or an integer > 0)
+ * @param schemaRadioNone The input radio for not changing/uploading a schema. If selected, we will not check any other fields
+ * @param schemaRadioTextarea The input radio for changing/uploading a schema via textarea. If selected, we will check the textarea
+ * @param schemaTextarea The text area field which will be checked if schemaRadioTextarea is selected
+ * @param schemaRadioUpload The input radio for changing/uploading a schema via upload. If selected, we will check the upload field
+ * @param schemaUpload The upload field which will be checked if schemaRadioUpload is selected
+ * @param schemaRadioTransfer The input radio for changing/uploading a schema via schema transfer. If selected, we will check the schema transfer selects
+ * @param schemaTransfer1 The first schema transfer select. Will be checked if schemaRadioTransfer is selected
+ * @param schemaTransfer2 The second schema transfer select. Will be checked if schemaRadioTransfer is selected
  * @returns whether all fields to be checked are correct or not
  */
-function checkFields(newCourseInfoField: HTMLInputElement, newCoursenameField: HTMLInputElement, newCourseFIDField: HTMLInputElement,
-                     newSchemaRadioNone: HTMLInputElement, newSchemaRadioTextarea: HTMLInputElement, newSchemaTextarea: HTMLTextAreaElement,
-                     newSchemaRadioUpload: HTMLInputElement, newSchemaUpload: HTMLInputElement, newSchemaRadioTransfer: HTMLInputElement,
+function checkFields(courseInfoField: HTMLInputElement, coursenameField: HTMLInputElement, courseFIDField: HTMLInputElement,
+                     schemaRadioNone: HTMLInputElement, schemaRadioTextarea: HTMLInputElement, schemaTextarea: HTMLTextAreaElement,
+                     schemaRadioUpload: HTMLInputElement, schemaUpload: HTMLInputElement, schemaRadioTransfer: HTMLInputElement,
                      schemaTransfer1: HTMLSelectElement, schemaTransfer2: HTMLSelectElement): boolean {
-    setValid(newCourseInfoField);
-    const a = validCoursename(newCoursenameField);
-    const b = validFID(newCourseFIDField);
-    const c = validCoursename(newCourseInfoField);
+    setValid(courseInfoField);
+    const a = validCoursename(coursenameField);
+    const b = validFID(courseFIDField);
+    const c = validCoursename(courseInfoField);
     let d = true;
     let e = true;
-    if (newSchemaRadioTextarea.checked) {
-        d = nonEmptyTextarea(newSchemaTextarea)
-    } else if (newSchemaRadioUpload.checked) {
-        d = validUpload(newSchemaUpload)
-    } else if (newSchemaRadioTransfer.checked) {
+    if (schemaRadioTextarea.checked) {
+        d = nonEmptyTextarea(schemaTextarea)
+    } else if (schemaRadioUpload.checked) {
+        d = validUpload(schemaUpload)
+    } else if (schemaRadioTransfer.checked) {
         d = validSelect(schemaTransfer1);
         e = validSelect(schemaTransfer2);
     }
@@ -451,12 +451,20 @@ function changeEditCoursesState(enable: boolean): void {
 
 }
 
-async function getSchema(newSchemaRadioTextarea: HTMLInputElement, newSchemaTextarea: HTMLTextAreaElement, newSchemaRadioUpload: HTMLInputElement,
-                         newSchemaUpload: HTMLInputElement): Promise<string> {
-    if (newSchemaRadioTextarea.checked) {
-        return (newSchemaTextarea.value as string)
-    } else if (newSchemaRadioUpload.checked && newSchemaUpload.files) {
-        const file: File = newSchemaUpload.files[0];
+/**
+ * Gets a schema (as string) from form inputs
+ * @param schemaRadioTextarea If this radio is selected, this function will get the schema from the textarea
+ * @param schemaTextarea The textarea that we can get a schema from
+ * @param schemaRadioUpload If this radio is selected, this function will get the schema from the upload input
+ * @param schemaUpload The upload input we can get a schema from
+ * @returns the schema as a string (unless none of the above radios are selected, then we return an empty string)
+ */
+async function getSchema(schemaRadioTextarea: HTMLInputElement, schemaTextarea: HTMLTextAreaElement, schemaRadioUpload: HTMLInputElement,
+                         schemaUpload: HTMLInputElement): Promise<string> {
+    if (schemaRadioTextarea.checked) {
+        return (schemaTextarea.value as string)
+    } else if (schemaRadioUpload.checked && schemaUpload.files) {
+        const file: File = schemaUpload.files[0];
         return (await new Response(file)).text();
 
         // https://stackoverflow.com/questions/36665322/js-get-file-contents
@@ -465,6 +473,9 @@ async function getSchema(newSchemaRadioTextarea: HTMLInputElement, newSchemaText
 
 }
 
+/**
+ * Tries to add a course if [[checkFields]] succeeds and gets the schema from [[getSchema]] or does a schema transfer
+ */
 async function tryAddCourse(): Promise<void> {
     if (checkFields(newCourseInfoField, newCoursenameField, newCourseFIDField,
         newSchemaRadioNone, newSchemaRadioTextarea, newSchemaTextarea,
@@ -525,6 +536,11 @@ async function tryAddCourse(): Promise<void> {
     }
 }
 
+/**
+ * Attempts to remove a course
+ * @param courseID the course ID
+ * @returns whether or not the course was deleted
+ */
 async function tryDeleteCourse(courseID: number): Promise<boolean> {
     // noinspection TypeScriptUnresolvedFunction
     const result = await Swal.fire({
@@ -546,22 +562,15 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
     changePageState(false, changeEditCoursesState);
     try {
         await axios.delete(`/rest/courses/${courseID}/`);
-        // await changeViewToHaveCredentials()
         addAlert("The course has been successfully deleted", AlertType.primary, tempAlert);
-        // await changeView(false);
-        // for (let i = 0; i < courses.length; i++) {
-        //     if (courses[i].courseid === courseID) {
-        //         courses.splice(i, 1)
-        //     }
-        // }
-        // courses = courses.sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
 
         document.getElementsByClassName("course-link nav-link active")[0].remove();
         Array.from(coursesContentHtml.children).forEach((child) => {
             child.classList.remove("active");
         });
         document.getElementById("please-select-a-course")!.classList.add("active");
-
+        studentDatabases = studentDatabases.filter(db => db.course !== courseID);
+        tas = tas.filter(ta => ta.courseid !== courseID);
         success = true;
 
     } catch (error) {
@@ -573,9 +582,10 @@ async function tryDeleteCourse(courseID: number): Promise<boolean> {
     return success;
 }
 
+/**
+ * Tries to edit a course if [[checkFields]] succeeds
+ */
 async function tryEditCourse(): Promise<void> {
-
-
     if (checkFields(existingCourseInfoField, existingCoursenameField, existingCourseFIDField,
         existingSchemaRadioNone, existingSchemaRadioTextarea, existingSchemaTextarea,
         existingSchemaRadioUpload, existingSchemaUpload, existingSchemaRadioTransfer,
@@ -630,6 +640,10 @@ async function tryEditCourse(): Promise<void> {
 
 }
 
+/**
+ * Displays all the studentdatabases for the current course
+ * @param i The index of the course in the "courses' array
+ */
 async function displayStudentDatabasesForCourse(i: number): Promise<void> {
     const databases: StudentDatabase[] = studentDatabases.filter(db => db.course === courses[i].courseid)
 
@@ -722,7 +736,7 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
             });
             const deleteButton: HTMLButtonElement = document.getElementById(`delete-button-${db.dbid}`) as HTMLButtonElement;
             deleteButton.addEventListener("click", async () => {
-                studentDatabases = await deleteDatabase(db.dbid, courseDatabasesHtml,studentDatabases,changeEditCoursesState);
+                studentDatabases = await deleteDatabase(db.dbid, courseDatabasesHtml, studentDatabases, changeEditCoursesState);
             });
         });
 
@@ -734,11 +748,16 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
 
 }
 
+/**
+ * Makes a user into a TA for a course
+ * @param user User to be made TA
+ * @param i Index of course in "courses" array
+ */
 async function makeUserTA(user: User, i: number): Promise<boolean> {
     const taObject: { studentid: number; courseid: number } = {
         "courseid": courses[i].courseid,
         "studentid": user.id
-    }
+    };
     const tempAlert = addTempAlert();
     let success = false;
     changePageState(false, changeEditCoursesState);
@@ -759,19 +778,18 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
         newFragment.firstElementChild!.addEventListener("click", (event) => {
             const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
             userTAButton.addEventListener("click", () => {
-                removeTA(user, ta.taid, i);
+                removeTA(ta);
             });
         });
 
         activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild!);
         activeLink.remove();
 
-        const taFragment = generateTaDivHTML(user, true);
-        taDiv.innerHTML = taFragment;
+        taDiv.innerHTML = generateTaDivHTML(user, true);
 
         const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
         userTAButton.addEventListener("click", () => {
-            removeTA(user, ta.taid, i);
+            removeTA(ta);
         });
 
         success = true;
@@ -786,13 +804,18 @@ async function makeUserTA(user: User, i: number): Promise<boolean> {
 
 }
 
-async function removeTA(user: User, taID: number, i: number): Promise<boolean> {
+/**
+ * Removes a user as TA
+ * @param ta TA object to be removed
+ */
+async function removeTA(ta: TA): Promise<boolean> {
     const tempAlert = addTempAlert();
     let success = false;
+    const user: User = users.find(user => user.id === ta.studentid)!;
     changePageState(false, changeEditCoursesState);
     try {
-        const response = await axios.delete(`/rest/tas/${taID}/`) as AxiosResponse;
-        tas = tas.filter(ta => ta.taid !== taID);
+        const response = await axios.delete(`/rest/tas/${ta.taid}/`) as AxiosResponse;
+        tas = tas.filter(ta => ta.taid !== ta.taid);
         addAlert(`${user.email} is no longer a TA`, AlertType.success, tempAlert);
 
         const templateString = `<a class="ta-link nav-link not-green-nav active" data-toggle="pill" href="#">${user.email}</a>`;
@@ -806,19 +829,18 @@ async function removeTA(user: User, taID: number, i: number): Promise<boolean> {
         newFragment.firstElementChild!.addEventListener("click", (event) => {
             const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
             userTAButton.addEventListener("click", () => {
-                makeUserTA(user, i);
+                makeUserTA(user, courses.findIndex(course => course.courseid === ta.courseid));
             });
         });
 
         activeLink.insertAdjacentElement("afterend", newFragment.firstElementChild!);
         activeLink.remove();
 
-        const taFragment = generateTaDivHTML(user, false);
-        taDiv.innerHTML = taFragment;
+        taDiv.innerHTML = generateTaDivHTML(user, false);
 
         const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
         userTAButton.addEventListener("click", () => {
-            makeUserTA(user, i);
+            makeUserTA(user, courses.findIndex(course => course.courseid === ta.courseid));
         });
 
 
@@ -881,7 +903,7 @@ async function populateTAPane(i: number): Promise<void> {
             fragment.firstElementChild!.addEventListener("click", (event) => {
                 const userTAButton: HTMLButtonElement = document.getElementById(`user-ta-button`) as HTMLButtonElement;
                 userTAButton.addEventListener("click", () => {
-                    removeTA(user, taID, i);
+                    removeTA(tas.find(ta => ta.taid === taID)!);
                 });
             });
         } else {
