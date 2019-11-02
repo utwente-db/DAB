@@ -645,6 +645,11 @@ async function tryEditCourse(): Promise<void> {
         try {
             const response = await axios.put(`/rest/courses/${existingCourseIDField.value}`, inputCourse) as AxiosResponse;
             addAlert("Successfully edited course (without schema)", AlertType.success, tempAlert);
+            if (inputCourse.active) {
+                document.getElementsByClassName("course-link active")[0]!.classList.remove("inactive-course");
+            } else {
+                document.getElementsByClassName("course-link active")[0]!.classList.add("inactive-course");
+            }
             const schema: string = await getSchema(existingSchemaRadioTextarea, existingSchemaTextarea, existingSchemaRadioUpload,
                 existingSchemaUpload);
 
