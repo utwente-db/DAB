@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import {validSelect} from "./edit_courses";
 import {AlertType, Who, Whoami} from "./interfaces";
+import {setNeutral} from "./register";
 
 /**
  * Constant variable declarations (mostly HTML elements)
@@ -208,7 +209,7 @@ async function deleteAllGhostDatabases(disableCallback: Function): Promise<boole
     } finally {
         changePageState(true, disableCallback);
         populateGhostDatabasesModal();
-
+        setNeutral(ghostDatabasesSelect);
     }
     return success;
 }
@@ -250,7 +251,7 @@ async function deleteGhostDatabase(disableCallback: Function): Promise<boolean> 
     } finally {
         changePageState(true, disableCallback);
         populateGhostDatabasesModal();
-
+        setNeutral(ghostDatabasesSelect);
     }
     return success;
 }
