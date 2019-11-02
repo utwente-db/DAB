@@ -720,7 +720,7 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
         const content: string = entry[1];
 
 
-        const templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}</a>`;
+        const templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}<br>${users.find(user => user.id === db.fid)!.email}</a>`;
         const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);
 
         fragment.firstElementChild!.addEventListener("click", (event) => {
