@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import {changePageState, initNavbar, navbarEditUsers} from "./navbar";
 import {AlertType, Course, StudentDatabase, User, UserRole} from "./interfaces";
 import {getCoursesPromise} from "./edit_courses";
+import {setNeutral, tryRegister} from "./register";
 
 /**
  * Constant variable declarations (HTML elements)
@@ -30,7 +31,13 @@ const usersHtml = document.getElementById("users") as HTMLTableSectionElement,
     editUserPane = document.getElementById("edit-user-pane") as HTMLDivElement,
     pleaseSelectAuser = document.getElementById("please-select-a-user") as HTMLDivElement,
     addUserLink = document.getElementById("add-user-link") as HTMLAnchorElement,
-    addUserPane = document.getElementById("add-user-pane") as HTMLDivElement;
+    addUserPane = document.getElementById("add-user-pane") as HTMLDivElement,
+    addUserButton = document.getElementById("add-user-button") as HTMLButtonElement,
+    addUserEmailField = document.getElementById("add-user-email-field") as HTMLInputElement,
+    addUserPasswordField = document.getElementById('add-user-password-field') as HTMLInputElement,
+    addUserPasswordConfirmField = document.getElementById('add-user-password-confirm-field') as HTMLInputElement,
+    addUserForm = document.getElementById('add-user-form') as HTMLFormElement,
+    addUserRole = document.getElementById("add-user-role") as HTMLSelectElement;
 
 
 /**
@@ -490,9 +497,12 @@ function changeEditUserState(enable: boolean): void {
 }
 
 function populateAddUserPane(): void {
-    // TODO set neutral
-    // TODO empty
-    return;
+    [addUserPasswordConfirmField, addUserPasswordField, addUserEmailField, addUserRole].forEach(el => setNeutral(el));
+
+    addUserEmailField.value = "";
+    addUserPasswordField.value = "";
+    addUserPasswordConfirmField.value = "";
+    addUserRole.value = "2";
 }
 
 function goToAddUserPane(event: Event): void {
@@ -507,6 +517,68 @@ function goToAddUserPane(event: Event): void {
         child.classList.remove("active");
     });
     addUserPane.classList.add("active");
+}
+
+function switchPaneAfterCreatingUser(user: User): void {
+    users.push(user);
+    const i = users.indexOf(user);
+
+
+
+    const verified: boolean = user.verified;
+    const tableString =
+        `<tr class="user-row not-disabled" id="user-row-${i}"></a>
+ <th scope="row">${users[i].id}</th>
+             <td>${UserRole[users[i].role]}</td>
+             <td>${users[i].email}</td>
+             <td>${verified}</td></tr>`.trim();
+
+    const tableIndex = users.concat().sort((a: User, b: User) => a.email.localeCompare(b.email)).indexOf(user);
+    document.getElementById(`user-row-${tableIndex-1}`)!.insertAdjacentHTML("afterend",tableString);
+
+    document.getElementById(`user-row-${i}`)!.addEventListener("click", () => {
+        Array.from(usersTabs.children).forEach((tab: Element) => {
+            tab.classList.remove("active")
+        });
+        editUserPane.classList.add("active");
+        // set new course pane active
+        Array.from(document.getElementsByTagName('tr'))!.forEach((el: Element) => {
+            el.classList.remove("active");
+            el.removeAttribute("style")
+        });
+        document.getElementById(`user-row-${i}`)!.classList.add("active");
+        document.getElementById(`user-row-${i}`)!.setAttribute("style", "pointer-events: none;");
+
+
+        const deleteButtonClone = deleteButton!.cloneNode(true) as HTMLButtonElement;
+        deleteButton.parentNode!.replaceChild(deleteButtonClone, deleteButton);
+        deleteButton = deleteButtonClone;
+
+        const changeRoleButtonClone = editButton!.cloneNode(true) as HTMLButtonElement;
+        editButton.parentNode!.replaceChild(changeRoleButtonClone, editButton);
+        editButton = changeRoleButtonClone;
+        editButton.classList.remove("btn-info");
+        editButton.classList.add("btn-secondary");
+        editButton.innerHTML = "Edit Role";
+        selectedRole.setAttribute("disabled", "");
+        editButton.addEventListener("click", () => {
+            allowChangeRole(users[i])
+        });
+        deleteButton.addEventListener("click", () => {
+            deleteUser(users[i])
+        });
+
+        addUserLink.removeAttribute("style");
+        addUserLink.toggleAttribute("href", true);
+        displayUserDetails(users[i]);
+        displayCoursesAndDatabases(users[i]);
+    });
+
+    document.getElementById(`user-row-${i}`)!.click();
+
+
+
+// TODO write typedoc
 }
 
 /**
@@ -531,7 +603,16 @@ window.onload = async () => {
         });
     });
 
-    addUserLink.addEventListener("click", goToAddUserPane)
+    addUserLink.addEventListener("click", goToAddUserPane);
+    addUserForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const user = await tryRegister(addUserEmailField, addUserPasswordField, addUserPasswordConfirmField, changePageState, changeEditUserState, true, Number(addUserRole.value))
+        if (user) {
+            // Operation succeeded
+            switchPaneAfterCreatingUser(user);
+        }
+
+    })
 
 
 };

@@ -200,7 +200,7 @@ async function deleteAllGhostDatabases(disableCallback: Function): Promise<boole
     changePageState(false, disableCallback);
     try {
         const deleteConfig = {'data': databaseStrings};
-        await axios.delete(`/rest/missing_databases/`, deleteConfig); // TODO fix this call (body?)
+        await axios.delete(`/rest/missing_databases/`, deleteConfig);
         addAlert("Successfully deleted ghost databases", AlertType.success, tempAlert);
         success = true;
     } catch (error) {
@@ -242,7 +242,7 @@ async function deleteGhostDatabase(disableCallback: Function): Promise<boolean> 
     changePageState(false, disableCallback);
     try {
         const deleteConfig = {'data': [databaseStrings[Number(ghostDatabasesSelect.value) - 1]]};
-        await axios.delete(`/rest/missing_databases/`, deleteConfig); // TODO fix this call (body?)
+        await axios.delete(`/rest/missing_databases/`, deleteConfig);
         addAlert("Successfully deleted ghost database", AlertType.success);
         success = true;
     } catch (error) {

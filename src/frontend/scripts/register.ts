@@ -10,7 +10,7 @@ import "popper.js"
 import "bootstrap"
 import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import axios, {AxiosResponse} from "./main";
-import {AlertType, Credentials} from "./interfaces";
+import {AlertType, Credentials, User, UserRole} from "./interfaces";
 
 /**
  * Constant variable declarations (HTML elements, mostly)
@@ -126,7 +126,7 @@ export function validPassword(field: HTMLInputElement): boolean {
  * Checks if all the fields are valid and gives feedback
  * @returns whether all fields are valid
  */
-function checkFields(): boolean {
+function checkFields(registerEmailField: HTMLInputElement, registerPasswordField: HTMLInputElement, registerPasswordConfirmField: HTMLInputElement): boolean {
     // Can't use a one-liner here due to lazy evaluation of non-pure functions
     const a = validEmail(registerEmailField);
     const b = validPassword(registerPasswordField);
@@ -135,29 +135,65 @@ function checkFields(): boolean {
 }
 
 /**
- * Tries and register by sending a POST to /rest/dbmusers if the fields are valid
+ * Simple callback function needed for compatibility with navbar.ts [[ChangePageState]] while not having a navbar
+ * @param enable Whether to enable elements or not
+ * @param callback Callback function to execute
  */
-async function tryRegister(): Promise<void> {
-    if (checkFields()) {
-        const credentials: Credentials = {email: registerEmailField.value, password: registerPasswordField.value};
-        const tempAlert: ChildNode | null = addTempAlert();
+function simpleCallback(enable: boolean, callback: Function): void {
+    callback(enable);
+}
+
+/**
+ * Enables/disables elements on the register page
+ * @param enable Whether to enable or disable elements
+ */
+function changeRegisterPageState(enable: boolean): void {
+    if (enable) {
+        registerEmailField.disabled = false;
+        registerPasswordField.disabled = false;
+        registerPasswordConfirmField.disabled = false;
+        registerButton.disabled = false;
+    } else {
         registerEmailField.disabled = true;
         registerPasswordField.disabled = true;
         registerPasswordConfirmField.disabled = true;
         registerButton.disabled = true;
+    }
+}
+
+/**
+ * Tries and register by sending a POST to /rest/dbmusers if the fields are valid
+ */
+export async function tryRegister(registerEmailField: HTMLInputElement, registerPasswordField: HTMLInputElement,
+                           registerPasswordConfirmField: HTMLInputElement, changePageStateCallback: Function,
+                           disableCurrentPage: Function,
+                           admin = false, role = UserRole.Student): Promise<User | null> {
+    let user: User | null = null;
+    if (checkFields(registerEmailField, registerPasswordField, registerPasswordConfirmField)) {
+
+        const credentials: Credentials = {email: registerEmailField.value, password: registerPasswordField.value};
+        if (admin) {
+            credentials.admin = true;
+            credentials.role = role;
+        }
+
+        const tempAlert: ChildNode | null = addTempAlert();
+        changePageStateCallback(false, disableCurrentPage);
         try {
-            const response: AxiosResponse<string> = await axios.post("/rest/dbmusers/", credentials) as AxiosResponse<string>;
-            const responseData: string = response.data;
-            addAlert(`Please check your inbox to confirm your e-mail`, AlertType.success, tempAlert)
+            const response = await axios.post("/rest/dbmusers/", credentials) as AxiosResponse<User>;
+            user = response.data;
+            if (admin) {
+                addAlert(`User successfully added`, AlertType.success, tempAlert)
+            } else {
+                addAlert(`Please check your inbox to confirm your e-mail`, AlertType.success, tempAlert)
+            }
         } catch (error) {
             addErrorAlert(error, tempAlert)
         } finally {
-            registerEmailField.disabled = false;
-            registerPasswordField.disabled = false;
-            registerPasswordConfirmField.disabled = false;
-            registerButton.disabled = false;
+            changePageStateCallback(true, disableCurrentPage);
         }
     }
+    return user;
 }
 
 
@@ -168,7 +204,7 @@ window.onload = () => {
     if (content) {
         content.addEventListener("submit", (event) => {
             event.preventDefault();
-            tryRegister();
+            tryRegister(registerEmailField, registerPasswordField, registerPasswordConfirmField, simpleCallback,changeRegisterPageState);
         });
     }
 };

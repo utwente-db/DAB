@@ -49,9 +49,9 @@ export interface User {
     id: number;
     role: number;
     email: string;
-    password: string;
+    password?: string;
     verified: boolean;
-    token: string;
+    token?: string;
 }
 
 /**
