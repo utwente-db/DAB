@@ -496,6 +496,9 @@ function changeEditUserState(enable: boolean): void {
 
 }
 
+/**
+ * Populates add user pane (all values empty, select is set to student_.
+ */
 function populateAddUserPane(): void {
     [addUserPasswordConfirmField, addUserPasswordField, addUserEmailField, addUserRole].forEach(el => setNeutral(el));
 
@@ -505,6 +508,10 @@ function populateAddUserPane(): void {
     addUserRole.value = "2";
 }
 
+/**
+ * When add user link is clicked, go to add user pane and make the add user link inactive
+ * @param event Form event to prevent default action of
+ */
 function goToAddUserPane(event: Event): void {
     event.preventDefault();
     populateAddUserPane();
@@ -519,12 +526,14 @@ function goToAddUserPane(event: Event): void {
     addUserPane.classList.add("active");
 }
 
+/**
+ * Switches the current view to the existing user pane after adding a user. Also adds that user to the users array,
+ * adds a row at the correct spot in the table, and adds event listeners
+ * @param user The user that has been added
+ */
 function switchPaneAfterCreatingUser(user: User): void {
     users.push(user);
     const i = users.indexOf(user);
-
-
-
     const verified: boolean = user.verified;
     const tableString =
         `<tr class="user-row not-disabled" id="user-row-${i}"></a>
@@ -575,10 +584,6 @@ function switchPaneAfterCreatingUser(user: User): void {
     });
 
     document.getElementById(`user-row-${i}`)!.click();
-
-
-
-// TODO write typedoc
 }
 
 /**
