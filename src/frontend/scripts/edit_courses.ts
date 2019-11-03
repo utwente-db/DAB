@@ -1141,6 +1141,15 @@ window.onload = async () => {
 
                 })
             }
+            if (taSearch) {
+                taSearch.addEventListener("keyup", () => {
+                    const value = taSearch.value.toLowerCase();
+                    Array.from(taNav.children).forEach((child: Element) => {
+                        const childRow = child as HTMLAnchorElement;
+                        childRow.hidden = (!(childRow.textContent!.toLowerCase().includes(value)) && !(value === "!ta" && childRow.classList.contains("green-nav")));
+                    });
+                })
+            }
 
         })(),
 
@@ -1156,14 +1165,6 @@ window.onload = async () => {
                 childRow.hidden = !childRow.textContent!.toLowerCase().includes(value);
             });
         }),
-        taSearch.addEventListener("keyup", () => {
-            const value = taSearch.value.toLowerCase();
-            Array.from(taNav.children).forEach((child: Element) => {
-                const childRow = child as HTMLAnchorElement;
-                childRow.hidden = (!(childRow.textContent!.toLowerCase().includes(value)) && !(value==="!ta" && childRow.classList.contains("green-nav")));
-            });
-        }),
-        // TODO repeat for ta search
 
 
         // populateNewCoursePane(),
