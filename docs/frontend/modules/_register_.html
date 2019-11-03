@@ -91,12 +91,14 @@
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_register_.html#changeregisterpagestate" class="tsd-kind-icon">change<wbr>Register<wbr>Page<wbr>State</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_register_.html#checkfields" class="tsd-kind-icon">check<wbr>Fields</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_register_.html#passwordsequal" class="tsd-kind-icon">passwords<wbr>Equal</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_register_.html#setinvalid" class="tsd-kind-icon">set<wbr>Invalid</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_register_.html#setneutral" class="tsd-kind-icon">set<wbr>Neutral</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_register_.html#setvalid" class="tsd-kind-icon">set<wbr>Valid</a></li>
-								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_register_.html#tryregister" class="tsd-kind-icon">try<wbr>Register</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported"><a href="_register_.html#simplecallback" class="tsd-kind-icon">simple<wbr>Callback</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_register_.html#tryregister" class="tsd-kind-icon">try<wbr>Register</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_register_.html#validemail" class="tsd-kind-icon">valid<wbr>Email</a></li>
 								<li class="tsd-kind-function tsd-parent-kind-external-module"><a href="_register_.html#validpassword" class="tsd-kind-icon">valid<wbr>Password</a></li>
 							</ul>
@@ -185,10 +187,41 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Functions</h2>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+					<a name="changeregisterpagestate" class="tsd-anchor"></a>
+					<h3>change<wbr>Register<wbr>Page<wbr>State</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">change<wbr>Register<wbr>Page<wbr>State<span class="tsd-signature-symbol">(</span>enable<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in register.ts:150</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Enables/disables elements on the register page</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>enable: <span class="tsd-signature-type">boolean</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Whether to enable or disable elements</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 					<a name="checkfields" class="tsd-anchor"></a>
 					<h3>check<wbr>Fields</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">check<wbr>Fields<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+						<li class="tsd-signature tsd-kind-icon">check<wbr>Fields<span class="tsd-signature-symbol">(</span>registerEmailField<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLInputElement</span>, registerPasswordField<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLInputElement</span>, registerPasswordConfirmField<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLInputElement</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -202,6 +235,18 @@
 									<p>Checks if all the fields are valid and gives feedback</p>
 								</div>
 							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>registerEmailField: <span class="tsd-signature-type">HTMLInputElement</span></h5>
+								</li>
+								<li>
+									<h5>registerPasswordField: <span class="tsd-signature-type">HTMLInputElement</span></h5>
+								</li>
+								<li>
+									<h5>registerPasswordConfirmField: <span class="tsd-signature-type">HTMLInputElement</span></h5>
+								</li>
+							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
 							<p>whether all fields are valid</p>
 						</li>
@@ -347,16 +392,53 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-					<a name="tryregister" class="tsd-anchor"></a>
-					<h3>try<wbr>Register</h3>
+					<a name="simplecallback" class="tsd-anchor"></a>
+					<h3>simple<wbr>Callback</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">try<wbr>Register<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">simple<wbr>Callback<span class="tsd-signature-symbol">(</span>enable<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span>, callback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in register.ts:140</li>
+									<li>Defined in register.ts:142</li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Simple callback function needed for compatibility with navbar.ts [[ChangePageState]] while not having a navbar</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>enable: <span class="tsd-signature-type">boolean</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Whether to enable elements or not</p>
+									</div>
+								</li>
+								<li>
+									<h5>callback: <span class="tsd-signature-type">Function</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Callback function to execute</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module">
+					<a name="tryregister" class="tsd-anchor"></a>
+					<h3>try<wbr>Register</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
+						<li class="tsd-signature tsd-kind-icon">try<wbr>Register<span class="tsd-signature-symbol">(</span>registerEmailField<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLInputElement</span>, registerPasswordField<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLInputElement</span>, registerPasswordConfirmField<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HTMLInputElement</span>, changePageStateCallback<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span>, disableCurrentPage<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Function</span>, admin<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span>, role<span class="tsd-signature-symbol">?: </span><a href="../enums/_interfaces_.userrole.html" class="tsd-signature-type">UserRole</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_interfaces_.user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in register.ts:167</li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -364,7 +446,31 @@
 									<p>Tries and register by sending a POST to /rest/dbmusers if the fields are valid</p>
 								</div>
 							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>registerEmailField: <span class="tsd-signature-type">HTMLInputElement</span></h5>
+								</li>
+								<li>
+									<h5>registerPasswordField: <span class="tsd-signature-type">HTMLInputElement</span></h5>
+								</li>
+								<li>
+									<h5>registerPasswordConfirmField: <span class="tsd-signature-type">HTMLInputElement</span></h5>
+								</li>
+								<li>
+									<h5>changePageStateCallback: <span class="tsd-signature-type">Function</span></h5>
+								</li>
+								<li>
+									<h5>disableCurrentPage: <span class="tsd-signature-type">Function</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> admin: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;false</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> role: <a href="../enums/_interfaces_.userrole.html" class="tsd-signature-type">UserRole</a><span class="tsd-signature-symbol"> =&nbsp;UserRole.Student</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_interfaces_.user.html" class="tsd-signature-type">User</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -499,6 +605,9 @@
 						<a href="_register_.html#registerpasswordfield" class="tsd-kind-icon">register<wbr>Password<wbr>Field</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_register_.html#changeregisterpagestate" class="tsd-kind-icon">change<wbr>Register<wbr>Page<wbr>State</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
 						<a href="_register_.html#checkfields" class="tsd-kind-icon">check<wbr>Fields</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
@@ -514,6 +623,9 @@
 						<a href="_register_.html#setvalid" class="tsd-kind-icon">set<wbr>Valid</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_register_.html#simplecallback" class="tsd-kind-icon">simple<wbr>Callback</a>
+					</li>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module">
 						<a href="_register_.html#tryregister" class="tsd-kind-icon">try<wbr>Register</a>
 					</li>
 					<li class=" tsd-kind-function tsd-parent-kind-external-module">
