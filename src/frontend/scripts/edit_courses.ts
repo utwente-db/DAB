@@ -793,9 +793,9 @@ async function displayStudentDatabasesForCourse(i: number): Promise<void> {
 
         let templateString = ""
         if (who.role < UserRole.Student) {
-            templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}<br>${users.find(user => user.id === db.fid)!.email}</a>`;
+            templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}<br>${users.find(user => user.id === db.fid)!.email} (group ${db.groupid})</a>`;
         } else {
-            templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}<br>${db.email}</a>`;
+            templateString = `<a class="studentdatabase-link nav-link" data-toggle="pill" href="#">${db.databasename}<br>${db.email} (group ${db.groupid})</a>`;
 
         }
         const fragment: DocumentFragment = document.createRange().createContextualFragment(templateString);

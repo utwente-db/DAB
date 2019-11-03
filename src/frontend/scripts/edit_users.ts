@@ -20,7 +20,7 @@ import {setNeutral, tryRegister} from "./register";
  * Constant variable declarations (HTML elements)
  */
 const usersHtml = document.getElementById("users") as HTMLTableSectionElement,
-    coursesNavHtml = document.getElementById("courses-nav") as HTMLDivElement,
+    databasesNav = document.getElementById("databases-nav") as HTMLDivElement,
     courseDatabasesHtml = document.getElementById("courses-db") as HTMLDivElement,
     usernameHtml = document.getElementById("username") as HTMLInputElement,
     selectedRole = document.getElementById("selected-role") as HTMLSelectElement,
@@ -37,7 +37,8 @@ const usersHtml = document.getElementById("users") as HTMLTableSectionElement,
     addUserPasswordField = document.getElementById('add-user-password-field') as HTMLInputElement,
     addUserPasswordConfirmField = document.getElementById('add-user-password-confirm-field') as HTMLInputElement,
     addUserForm = document.getElementById('add-user-form') as HTMLFormElement,
-    addUserRole = document.getElementById("add-user-role") as HTMLSelectElement;
+    addUserRole = document.getElementById("add-user-role") as HTMLSelectElement,
+    databaseSearch = document.getElementById("database-search") as HTMLInputElement;
 
 
 /**
@@ -131,7 +132,7 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
 
     const dbToHTMLmap: Map<StudentDatabase, string> = new Map<StudentDatabase, string>();
     if (databases.length === 0) {
-        coursesNavHtml.innerHTML = "This user does not have any databases";
+        databasesNav.innerHTML = "This user does not have any databases";
         courseDatabasesHtml.innerHTML = "No database selected";
         return;
     }
@@ -223,7 +224,7 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
         const content: string = entry[1];
 
         resultNav.push(
-            `<a class="studentdatabase-link nav-link${active}" data-toggle="pill" href="#db-${db.dbid}">${db.databasename}</a>`
+            `<a class="studentdatabase-link nav-link${active}" data-toggle="pill" href="#db-${db.dbid}">${db.databasename} (group ${db.groupid})</a>`
         );
         resultContent.push(
             `<div class="tab-pane${active}" id="db-${db.dbid}">${content}</div>`
@@ -232,7 +233,7 @@ async function displayCoursesAndDatabases(user: User): Promise<void> {
     }
     const resultNavString: string = resultNav.join("\n");
     const resultContentString: string = resultContent.join("\n");
-    coursesNavHtml.innerHTML = resultNavString;
+    databasesNav.innerHTML = resultNavString;
     courseDatabasesHtml.innerHTML = resultContentString;
 
     databases.forEach((db: StudentDatabase) => {
@@ -543,7 +544,7 @@ function switchPaneAfterCreatingUser(user: User): void {
              <td>${verified}</td></tr>`.trim();
 
     const tableIndex = users.concat().sort((a: User, b: User) => a.email.localeCompare(b.email)).indexOf(user);
-    document.getElementById(`user-row-${tableIndex-1}`)!.insertAdjacentHTML("afterend",tableString);
+    document.getElementById(`user-row-${tableIndex - 1}`)!.insertAdjacentHTML("afterend", tableString);
 
     document.getElementById(`user-row-${i}`)!.addEventListener("click", () => {
         Array.from(usersTabs.children).forEach((tab: Element) => {
@@ -604,6 +605,14 @@ window.onload = async () => {
         const value = searchInput.value.toLowerCase();
         Array.from(usersTbody.children).forEach((child: Element) => {
             const childRow = child as HTMLTableRowElement;
+            childRow.hidden = !childRow.textContent!.toLowerCase().includes(value);
+        });
+    });
+
+    databaseSearch.addEventListener("keyup", () => {
+        const value = databaseSearch.value.toLowerCase();
+        Array.from(databasesNav.children).forEach((child: Element) => {
+            const childRow = child as HTMLAnchorElement;
             childRow.hidden = !childRow.textContent!.toLowerCase().includes(value);
         });
     });

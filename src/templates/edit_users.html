@@ -151,14 +151,16 @@
                                 <hr/>
                                 <h5>Databases for this user</h5>
                                 <div class="row">
-                                    <div class="col-12 col-md-5 col-lg-12 col-xl-5">
+                                    <div class="col-12">
+                                        <input class="form-control mb-3" type="text" id="database-search"
+                                               placeholder="Search...">
                                         <div class="overflow-auto border rounded" style="height: 30vh;">
-                                            <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
+                                            <div class="nav flex-column nav-pills" id="databases-nav" role="tablist">
                                                 {#                                    <div class="spinner-border text-info"></div>#}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-md-7 col-lg-12 col-xl-7 mt-0 mt-xl-3">
+                                    <div class="col-12 mt-3">
                                         <div class="tab-content mx-1" id="courses-db">
                                             No database selected
                                             {#                                <div class="spinner-border text-info"></div>#}
