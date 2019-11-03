@@ -365,7 +365,7 @@ async function deleteUser(user: User): Promise<boolean> {
         addErrorAlert(error, tempAlert);
         success = false;
     } finally {
-        changePageState(false, changeEditUserState);
+        changePageState(true, changeEditUserState);
     }
     return success;
 }
