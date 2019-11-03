@@ -874,7 +874,7 @@ def schema(request, pk):
 
 
 @require_POST
-@require_role(teacher)
+@authenticated
 def transferSchema(request, course, database):
     try:
         course = Courses.objects.get(courseid=course)
@@ -883,7 +883,7 @@ def transferSchema(request, course, database):
 
     if course.owner().id != request.session["user"] and request.session["role"] < admin and not am_i_ta_of_this_course(
             request.session["user"], course.courseid):
-        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+        return HttpResponse("You are not allowed to change this course", status=status.HTTP_403_FORBIDDEN)
 
     try:
         db = Studentdatabases.objects.get(dbid=database)
