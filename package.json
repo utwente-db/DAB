@@ -1,6 +1,6 @@
 {
   "name": "dab",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "The Database Administration Bundle (DAB) is a tool used to facilitate database education at the University of Twente.",
   "main": "index.js",
   "dependencies": {
