@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block scripts %}
-    <script defer src="/static/scripts/user.js"></script>
+    <script defer src="/static/scripts/edit_users.js"></script>
 {% endblock %}
 
 <!-- - Inspect datails
@@ -28,19 +28,21 @@
                         <div class="row d-flex flex-column">
                             <div class="col-12"><h3>Users</h3></div>
                             <div class="col-12">
+                                <a class="small" data-toggle="pill" href="#" id="add-user-link">Add user</a>
+
                                 <hr>
                             </div>
                             <div class="col-12 d-flex flex-column flex-grow-1">
                                 <input class="form-control mb-3" type="text" id="search" placeholder="Search...">
-                                <div class="overflow-auto tableFixHead" style="height: 48vh;">
+                                <div class="overflow-auto tableFixHead" style="height: 44vh;">
                                     <table id="user_table"
                                            class="table table-sm table-hover table-fixed table-borderless table-striped">
                                         <thead class="bg-dark text-light sticky-top">
                                         <tr>
-                                            <th class="th-sm" scope="col">#</th>
-                                            <th class="th-sm" scope="col">Role</th>
-                                            <th class="th-sm" scope="col">E-Mail</th>
-                                            <th class="th-sm" scope="col">Verified</th>
+                                            <th class="th-sm bg-dark" scope="col">#</th>
+                                            <th class="th-sm bg-dark" scope="col">Role</th>
+                                            <th class="th-sm bg-dark" scope="col">E-Mail</th>
+                                            <th class="th-sm bg-dark" scope="col">Verified</th>
                                         </tr>
                                         </thead>
                                         <tbody id="users" class="nav-pills" role="tablist">
@@ -57,7 +59,7 @@
 
                     <div class=" center-block
     container border border-dark rounded-lg shadow-lg bg-white p-3 py-lg-5 text-center">
-                                                                                        <div id="alert-div"></div>
+                        <div id="alert-div"></div>
 
                         <div class="tab-content" id="users-tabs">
 
@@ -96,12 +98,13 @@
 
                                         <div class="col-12 col-lg-4">
                                             <button id="edit-button" type="button" class="btn btn-secondary btn-block"
-                                                    >
+                                            >
                                                 Edit Role
                                             </button>
                                         </div>
                                         <div class="col-12 col-lg-4">
-                                            <button id="delete-button" type="button" class="mt-3 mt-lg-0 btn btn-danger btn-block">
+                                            <button id="delete-button" type="button"
+                                                    class="mt-3 mt-lg-0 btn btn-danger btn-block">
                                                 Delete User
                                             </button>
                                         </div>
@@ -148,20 +151,78 @@
                                 <hr/>
                                 <h5>Databases for this user</h5>
                                 <div class="row">
-                                    <div class="col-12 col-md-5 col-lg-12 col-xl-5">
+                                    <div class="col-12">
+                                        <input class="form-control mb-3" type="text" id="database-search"
+                                               placeholder="Search...">
                                         <div class="overflow-auto border rounded" style="height: 30vh;">
-                                            <div class="nav flex-column nav-pills" id="courses-nav" role="tablist">
+                                            <div class="nav flex-column nav-pills" id="databases-nav" role="tablist">
                                                 {#                                    <div class="spinner-border text-info"></div>#}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-12 col-md-7 col-lg-12 col-xl-7 mt-0 mt-xl-3">
+                                    <div class="col-12 mt-3">
                                         <div class="tab-content mx-1" id="courses-db">
                                             No database selected
                                             {#                                <div class="spinner-border text-info"></div>#}
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="tab-pane" id="add-user-pane">
+                                <form class="form-horizontal" id="add-user-form"> {# actual content #}
+                                    <p class="text-center h4 mb-4">Add user</p>
+                                    <hr/>
+                                    <div class="mt-5 form-group row align-items-center">
+                                        <label for="email" class="col-12 col-md-4 col-form-label">UT e-mail
+                                            address</label>
+                                        <div class="col-12 col-md-8 align-middle">
+                                            <input type="email" name="mail" class="form-control my-1"
+                                                   id="add-user-email-field"
+                                                   autofocus="True" maxlength="256" required>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group row align-items-center">
+                                        <label for="password" class="col-12 col-md-4 col-form-label">Password</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="password" name="password" class="form-control"
+                                                   id="add-user-password-field"
+                                                   required>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="passwordConfirm" class="col-12 col-md-4 col-form-label">Confirm
+                                            Password</label>
+                                        <div class="col-12 col-md-8">
+                                            <input type="password" name="passwordConfirm" class="form-control"
+                                                   id="add-user-password-confirm-field" required>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center mb-4">
+                                        <label for="add-user-role" class="col-12 col-md-4 col-form-label">Role</label>
+                                        <div class="col-12 col-md-8">
+                                            <select id="add-user-role" class="form-control">
+                                                <option value="2">Student</option>
+                                                <option value="1">Teacher</option>
+                                                <option value="0">Admin</option>
+                                            </select>
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <p class="text-center small mb-2">Please use a password that has 8 characters or
+                                        more, and contains
+                                        at least one lowercase letter, one uppercase letter, and one number</p>
+                                    <hr>
+                                    <button type='submit' class="btn btn-info btn-block mt-5 mb-1 col-md-6 offset-md-3"
+                                            id="add-user-button">Add user
+                                    </button>
+                                    <div class="mt-5 align-items-center center-block " id="alert-div"></div>
+                                </form>
+
+
                             </div>
 
                         </div>

@@ -29,6 +29,7 @@ Run dependencies:
 - libpq-dev
 - postgresql-client-common
 - postgresql-client-[VERSION] \(we use version 10)
+- zip
 
 Additionally, the following software is needed for the recommended production server setup:
 
@@ -39,7 +40,7 @@ Additionally, the following software is needed for the recommended production se
 
 To install all these dependencies in one go, run:
 
-```sudo apt-get install apache2 libapache2-mod-proxy-uwsgi postfix python3-pip npm python3 python3-venv python3-dev libpq-dev postgresql-client-common postgresql-client-10; pip3 install uwsgi``` 
+```sudo apt-get install zip apache2 libapache2-mod-proxy-uwsgi postfix python3-pip npm python3 python3-venv python3-dev libpq-dev postgresql-client-common postgresql-client-10; pip3 install uwsgi``` 
 
 Any pip and npm packages will be installed automatically during the installation steps
 

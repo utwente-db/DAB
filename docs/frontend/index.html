@@ -1,0 +1,356 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>dab</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">dab</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> dab</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#design-project-group-4-database-manager" id="design-project-group-4-database-manager" style="color: inherit; text-decoration: none;">
+					<h1>Design Project Group 4: Database Manager</h1>
+				</a>
+				<a href="#overview" id="overview" style="color: inherit; text-decoration: none;">
+					<h2>Overview</h2>
+				</a>
+				<p>This project serves as a database manager for the Data Science department.
+					With the increase in students; it is no longer feasible to cut database credentials on paper.
+				As such, this software will allow students to request databases with pre-loaded schemas from a certain course.</p>
+				<a href="#requirements" id="requirements" style="color: inherit; text-decoration: none;">
+					<h2>Requirements</h2>
+				</a>
+				<p>To download the archive that contains the DAB, and extract into a folder called design_project, use:</p>
+				<p><code>git clone https://github.com/notinecrafter/design-project; cd design-project; git checkout bronto</code></p>
+				<p>Firstly, the software requires full administrative access to a PostgreSQL server.
+					This server does not have to be hosted on the same machine.
+				It is recommended that the PostgreSQL databases not be used for any other purpose than this software.</p>
+				<p>Install dependencies:</p>
+				<ul>
+					<li>python3-pip</li>
+					<li>npm </li>
+				</ul>
+				<p>Run dependencies:</p>
+				<ul>
+					<li>python3.6 or newer</li>
+					<li>python3-venv</li>
+					<li>python3-dev</li>
+					<li>libpq-dev</li>
+					<li>postgresql-client-common</li>
+					<li>postgresql-client-[VERSION] (we use version 10)</li>
+					<li>zip</li>
+				</ul>
+				<p>Additionally, the following software is needed for the recommended production server setup:</p>
+				<ul>
+					<li>uWSGI (please install via pip3)</li>
+					<li>a web server (e.g. nginx or apache2)</li>
+					<li>an SMTP server (e.g. postfix)</li>
+					<li>libapache2-mod-proxy-uwsgi (when using apache2)</li>
+				</ul>
+				<p>To install all these dependencies in one go, run:</p>
+				<p><code>sudo apt-get install zip apache2 libapache2-mod-proxy-uwsgi postfix python3-pip npm python3 python3-venv python3-dev libpq-dev postgresql-client-common postgresql-client-10; pip3 install uwsgi</code> </p>
+				<p>Any pip and npm packages will be installed automatically during the installation steps</p>
+				<a href="#the-database-server" id="the-database-server" style="color: inherit; text-decoration: none;">
+					<h2>The Database Server</h2>
+				</a>
+				<p>This service requires a PostgreSQL server to connect to.
+					This server SHOULD not be used for any other purposes but this program, as that might cause unexpected behaviour.
+					It requires a single superuser on this server.
+				Importing the schema into this database will be done in a later step, when <code>install.sh</code> is ran</p>
+				<a href="#settings" id="settings" style="color: inherit; text-decoration: none;">
+					<h2>Settings</h2>
+				</a>
+				<p>There are two kinds of settings: Public settings and private settings.
+					The former can simply be accessed from <code>src/django_settings/settings.py</code>, and are as follows.
+				This file contains many settings that do not need to be edited, but some do:</p>
+				<ul>
+					<li><code>DEBUG</code>: Whether the server is in debug mode. Set to <code>True</code> on development, and to <code>False</code> on production</li>
+					<li><code>EMAIL_SERVER</code> and <code>EMAIL_SENDER</code>: will be discussed under the &quot;email&quot; heading below.</li>
+					<li><code>DATABASE_SERVER</code>: the database server; this will be displayed to students as the server they should connect to</li>
+					<li><code>HOST_SERVER</code>: the domain that this service is hosted on. Used for links sent in emails</li>
+					<li><code>LOGFILE</code>: the file that the server logs to. The server must have write permissions on this file, or it will crash</li>
+				</ul>
+				<p>Private settings are stored in the file <code>secret.py</code>.</p>
+				<p>There MUST exist a file <code>src/django_settings/secret.py</code>.
+					This file is not included in this repository for obvious reasons.
+				The repository does, however, include secret.py.example, which can be used as a template.</p>
+				<p>The file MUST be a correct python file, and SHOULD contain nothing but the following variable definitions, all of which MUST be strings:</p>
+				<pre><code><span class="hljs-attr">db_name</span> = [DATABASE NAME]
+<span class="hljs-attr">db_user</span> = [DATABASE USER]
+<span class="hljs-attr">db_password</span> = [DATABASE PASSWORD]
+<span class="hljs-attr">db_host</span> = [DATABASE SERVER]
+<span class="hljs-attr">db_port</span> = [DATABASE PORT]
+
+<span class="hljs-attr">bitmask</span> = [<span class="hljs-number">33</span> BYTES OF CRYPTORANDOM DATA, AS BASE64]</code></pre><p>If the file does not exist, parse, or assign appropriate values to all of these variables, the program will crash.</p>
+				<p>To create the required 33 bits of data, you could use the command <code>head -c 33 /dev/urandom | base64</code>.</p>
+				<p>The database user MUST exist, and MUST have superuser privileges on the database server.
+					The database server MUST run Postgres, and MUST be available from wherever this software is running.
+					The database name SHOULD be something memorable and SHOULD NOT end on a number.
+				Please ensure that there are no databases created outside of this program that use the database prefix</p>
+				<a href="#installation-and-running-for-development-skip-if-production" id="installation-and-running-for-development-skip-if-production" style="color: inherit; text-decoration: none;">
+					<h2>Installation and running for development (SKIP IF PRODUCTION)</h2>
+				</a>
+				<p>To install the server for development, simply run install_development.sh.
+				This will create a python virtual environment, and install the required python and node packages within it.</p>
+				<p>To run the server, simply run start_development.sh.
+					This will compile the typescript, move static files to their correct location, and finally start a development server on port 8000.
+				Note that this server can only be approached from the local host.</p>
+				<p>NB: In development mode, emails will be printed to the standard output instead of being sent as email</p>
+				<p>WARNING: do not use this way of setting up a server in production.
+				It is not intended for high-demand environments, and using it in production may lead to terrible performance and security risks.</p>
+				<a href="#installation-under-apache" id="installation-under-apache" style="color: inherit; text-decoration: none;">
+					<h2>Installation under Apache</h2>
+				</a>
+				<p>This tutorial will outline the steps required to install the software under Apache.
+					It is intended for services that already have an Apache server running other websites, with a system administrator who is somewhat experienced with Apache httpd and whatever operating system they choose to use.
+					Note that while in principle all operating systems are supported, in practice we have assumed the project will be ran in a UNIX-like environment.
+				If you want to set up the system on a standalone server, we recommend the above tutorial for nginx.</p>
+				<p>Note that this tutorial will use the somewhat newer <code>mod_proxy_uwsgi</code>, instead of the older, and much uglier, <code>mod_wsgi</code>.
+					This mod is NOT CONSIDERED STABLE UNLESS uWSGI is at least version 2.0.6, and Apache is at least version 2.4.9.
+				If your system does not provide these versions, or you have an exceptionally high need for stability, we recommend the usage of the older <code>mod_wsgi</code> instead.</p>
+				<p>Throughout this tutorial, <code>[DOCUMENT ROOT]</code> will be used to indicate the absolute path to the directory in which you cloned this project. Standard practice is putting it somewhere in <code>/var/www/</code></p>
+				<p>Please make sure all the files are owned by <code>www-data</code>, by running <code>sudo chown www-data:www-data [DOCUMENT ROOT]</code></p>
+				<ol>
+					<li>Install all the dependencies listed above. Take care to install uwsgi as a pip3 package, and not via the system dependencies (do not use the venv for this). </li>
+					<li>If your distribution does not come with Python3.6 or later, compile Python3.7 from source, then follow <a href="https://www.paulox.net/2019/03/13/how-to-use-uwsgi-with-python-3-7-in-ubuntu-18-x/">this tutorial</a> to ensure uwsgi uses it. Also edit install.sh: the first line, <code>python3 -m venv venv</code> MUST use your new python3.7 installation.</li>
+					<li>Follow the steps in the paragraph on settings above. Take special care to create <code>secret.py</code> correctly.</li>
+					<li>Run [DOCUMENT ROOT]/install.sh. This will create a virtual environment, install the dependencies for the project in it, and also migrate the database.</li>
+					<li>Copy/rename [DOCUMENT ROOT]/uwsgi.ini.example to [DOCUMENT ROOT]/uwsgi.ini. Edit the values in [DOCUMENT ROOT]/uwsgi.ini (mostly filepaths) to correspond to your system. There are comments explaining what each line is supposed to do, so it should be pretty self-explanatory. Note that most file paths are absolute. The socket file can be at any location of your choice; the &quot;good practice&quot; is to put it in /var/run, but as this requires permissions, the current default file puts it in /data/dab/ instead. If you get errors related to socket.c, that probably means that you do not have file permissions on the socket file. </li>
+					<li>To test if you have correctly configured uwsgi, run <code>sudo -u www-data [DOCUMENT ROOT]/uwsgi --ini [DOCUMENT ROOT]/uwsgi.ini --http :8000</code>, which should now host the website on port 8000; you should see a login page once you go there. Note that static files, such as the CSS for the page, are not yet loaded in at this stage.</li>
+					<li>Now that we know uwsgi works, we can configure it as a service. While in the Document Root, run <code>UWSGI=$(which uwsgi) ; sed &quot;s%uwsgi %$UWSGI %; &quot; dab.service &gt; dab.service; $CURRENT=$(pwd); sed &quot;s%\[DOCUMENT ROOT\]%$CURRENT%&quot; dab.service &gt;dab.service</code>; Make the service <code>dab</code> by running (as root) <code>cp dab.service /etc/systemd/system ; systemctl enable dab.service</code>. The service can then be started via <code>service dab start</code></li>
+					<li>If the previous step succeeded, we can start configuring apache. We require the modules <code>proxy</code> and <code>proxy_uwsgi</code> to be enabled and available to the rest of the configuration settings. The easiest way to do this in modern GNU/Linux package of Apache is to run <code>a2enmod proxy_uwsgi</code>. We assume you want to run the program under <code>/dab</code>. Unfortunately, you will also have to reserve <code>/static</code>. </li>
+				</ol>
+				<p>To install, simply add the following to your Apache2 config file (either <code>apache.conf</code> or <code>sites-enabled/000-default.conf</code>, whichever works).</p>
+				<pre><code>Alias <span class="hljs-string">/static/</span> <span class="hljs-string">"[DOCUMENT ROOT]/static/"</span>
+
+&lt;Directory <span class="hljs-string">"[DOCUMENT ROOT]/static/"</span>&gt;
+    Require all granted
+&lt;<span class="hljs-string">/Directory</span>&gt;
+
+Redirect permanent <span class="hljs-string">/dab</span> <span class="hljs-string">/dab/</span>
+&lt;Location <span class="hljs-string">/dab/</span>&gt;
+    ProxyPass unix:<span class="hljs-string">/data/dab/dab.sock</span>|uwsgi:<span class="hljs-string">//uwsgi-uds-design/</span>
+    ProxyPassReverse unix:<span class="hljs-string">/data/dab/dab.sock</span>|uwsgi:<span class="hljs-string">//uwsgi-uds-design/</span>
+&lt;<span class="hljs-string">/Location</span>&gt;</code></pre><p>If you have changed the location of the socket in the previous steps, you must also change it here.</p>
+				<p>Please ensure that Apache2 has read access to the files in <code>[DOCUMENT ROOT]/static</code>.
+				If this is not the case, CSS, Javascript, and media files can&#39;t be loaded.</p>
+				<p>Congratulations! If you run apache, you should now have the basic web page set up. You can test this by trying to access the page, at whatever port Apache runs on.
+				There are now two things left to do:</p>
+				<p>This project MUST run over https.
+					It is the responsibility of the system administrator to ensure there are proper SSL certificates present.
+					After this has been arranged, <code>SSLRequireSSL</code> MUST be added to the Apache configuration of this site, probably in the <code>&lt;Location /dab&gt;</code> tag, to ensure that only SSL connections will be accepted.
+				Failure to comply with these instructions will cause passwords to be transmitted over unencrypted connections.</p>
+				<p>The second thing is email, described in the section below.</p>
+				<a href="#default-credentials" id="default-credentials" style="color: inherit; text-decoration: none;">
+					<h3>Default credentials</h3>
+				</a>
+				<p>The default administrator credentials are as follows:</p>
+				<ul>
+					<li>username: <code>info@utwente.nl</code></li>
+					<li>password: <code>Aoeuaoeu1</code></li>
+				</ul>
+				<p>Please change the password after you have logged in</p>
+				<a href="#starting-and-stopping-the-service" id="starting-and-stopping-the-service" style="color: inherit; text-decoration: none;">
+					<h3>Starting and stopping the service</h3>
+				</a>
+				<p>If the installation instructions above have been followed, DAB can be started via <code>service dab start</code>, and similarly stopped via <code>service dab stop</code>.</p>
+				<p>Furthermore, upon a new release it can be updated via <code>sudo -u www-data ./update-production.sh</code></p>
+				<a href="#email" id="email" style="color: inherit; text-decoration: none;">
+					<h2>Email</h2>
+				</a>
+				<p>This project sends email to confirm the users are somehow linked to the University of Twente.
+				To ensure this email is sent properly, the following steps must be taken.</p>
+				<ol>
+					<li>The setting for <code>EMAIL_SERVER</code> must be correct. If the server is on campus, you could simply point it to <code>smtp.utwente.nl</code>; however, we recommend hosting an SMTP server locally, in accordance with instructions below</li>
+					<li>The setting for <code>EMAIL_SENDER</code> must use a domain that is actually assigned to the hosting server</li>
+					<li>The SPF records for the domain must designate either the hosting server or <code>smtp.utwente.nl</code> as a permitted sender, preferably both. Failure to comply with this instruction will result in email appearing in the users spam folder.</li>
+				</ol>
+				<a href="#locally-hosting-an-smtp-server" id="locally-hosting-an-smtp-server" style="color: inherit; text-decoration: none;">
+					<h3>Locally hosting an SMTP server</h3>
+				</a>
+				<p>While it is possible to use <code>smtp.utwente.nl</code> directly, email is rather complicated, and the chances of the email correctly arriving in the users inbox increase when using a local SMTP server that relays to <code>smtp.utwente.nl</code> instead.
+					This email server only needs to relay messages from the local host, coming in over a loopback connection.
+					If you do not have one installed, we recommend installing Postfix using the package manager.
+				On the UT campus, the only edit that needs to be made to Postfix is the following line in <code>/etc/postfix/main.cf</code>:</p>
+				<pre><code><span class="hljs-attr">relayhost</span> = smtp.utwente.nl</code></pre><p>Once this is configured, the server should be able to create email.</p>
+				<p>Once finished, please edit some of the settings in src/django_settings/settings.py as they will affect what the address of the database is that will be displayed to users</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_admin_.html">"admin"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_alert_.html">"alert"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_change_password_.html">"change_<wbr>password"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_edit_courses_.html">"edit_<wbr>courses"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_edit_users_.html">"edit_<wbr>users"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_forgot_password_page_.html">"forgot_<wbr>password_<wbr>page"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_interfaces_.html">"interfaces"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_login_.html">"login"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_main_.html">"main"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_navbar_.html">"navbar"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_register_.html">"register"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_reset_password_.html">"reset_<wbr>password"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_student_view_.html">"student_<wbr>view"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

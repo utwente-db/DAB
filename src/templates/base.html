@@ -12,11 +12,10 @@
     {% endfor %}
 
     {% for nr in jsnumbers %}
-            <script defer src="/static/scripts/{{ nr}}.chunk.js"></script>
+            <script defer src="/static/scripts/{{ nr}}.js"></script>
     {% endfor %}
 
     {% block scripts %}
-        <script defer src="/static/scripts/main.js"></script>
     {% endblock %}
 </head>
 <body>

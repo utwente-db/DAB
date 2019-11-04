@@ -1,50 +1,67 @@
-import {Course, getCoursesPromise, StudentDatabase, tryGetCredentials} from './courses'
-import {changePageState, displayWhoami, getWhoPromise, initNavbar, navbarStudentView, Who} from "./navbar";
+/**
+ * student_view.ts:
+ * Contains code for the student view page
+ */
+
+/**
+ * Imports from other files
+ */
+import {AlertType, Course, StudentDatabase, TA, UserRole, Who} from './interfaces'
+import {changePageState, getWhoPromise, initNavbar, navbarStudentView} from "./navbar";
 import axios, {AxiosResponse, urlPrefix} from "./main";
 import "popper.js"
 import "bootstrap"
-import {addAlert, addErrorAlert, AlertType} from "./alert";
+import {addAlert, addErrorAlert, addTempAlert} from "./alert";
 import Swal from 'sweetalert2'
-import {TA, UserRole} from "./user";
-import {goToExistingCoursePane} from "./edit_courses";
+import {getCoursesPromise, goToExistingCoursePane} from "./edit_courses";
 
-const coursesNavHtml: HTMLDivElement = document.getElementById("courses-nav") as HTMLDivElement;
-const noCredsCoursename: HTMLHeadingElement = document.getElementById("no-credentials-coursename") as HTMLDivElement;
-const noCredsInfo: HTMLDivElement = document.getElementById("no-credentials-courseinfo") as HTMLDivElement;
-const haveCredsCoursename: HTMLHeadingElement = document.getElementById("have-credentials-coursename") as HTMLDivElement;
-const haveCredsInfo: HTMLDivElement = document.getElementById("have-credentials-courseinfo") as HTMLDivElement;
-const credentialsDiv: HTMLDivElement = document.getElementById("credentials-div") as HTMLDivElement;
-const haveCredsPane: HTMLDivElement = document.getElementById("have-credentials-pane") as HTMLDivElement;
-const noCredsPane: HTMLHeadingElement = document.getElementById("no-credentials-pane") as HTMLDivElement;
-const noCredsForm = document.getElementById("no-credentials-form") as HTMLFormElement;
+/**
+ * Constant variable declarations (mostly html elements)
+ */
+const coursesNavHtml = document.getElementById("courses-nav") as HTMLDivElement,
+    noCredsCoursename = document.getElementById("no-credentials-coursename") as HTMLDivElement,
+    noCredsInfo = document.getElementById("no-credentials-courseinfo") as HTMLDivElement,
+    haveCredsCoursename = document.getElementById("have-credentials-coursename") as HTMLDivElement,
+    haveCredsInfo = document.getElementById("have-credentials-courseinfo") as HTMLDivElement,
+    credentialsDiv = document.getElementById("credentials-div") as HTMLDivElement,
+    haveCredsPane = document.getElementById("have-credentials-pane") as HTMLDivElement,
+    noCredsPane = document.getElementById("no-credentials-pane") as HTMLDivElement,
+    noCredsForm = document.getElementById("no-credentials-form") as HTMLFormElement,
+    credentialsButton = document.getElementById("credentials-button") as HTMLButtonElement,
+    groupInput = document.getElementById("group-input") as HTMLInputElement;
 
-const credentialsButton: HTMLButtonElement = document.getElementById("credentials-button") as HTMLButtonElement;
+/**
+ * Global variales that will be changed later on (arrays and such)
+ */
+let ownDatabases: StudentDatabase[] = [],
+    courses: Course[] = [],
+    currentCourse = 0,
+    who: Who;
 
-const groupInput: HTMLInputElement = document.getElementById("group-input") as HTMLInputElement;
-const alertDiv: HTMLDivElement = document.getElementById("alert-div") as HTMLDivElement;
-
-
-let ownDatabases: StudentDatabase[];
-let courses: Course[];
-let currentCourse = 0;
-let who: Who;
-
+/**
+ * Populates the pane that shows if the user has no credentials for a course (empties inputs, sets strings and such)
+ * @param i Index of the course in the "courses" list
+ */
 function populateNoCredentialsPane(i: number): void {
     noCredsCoursename.innerText = courses[i].coursename;
-    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>"
+    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>";
     noCredsInfo.innerHTML = courses[i].info + courseInactiveString; // We set innerHTML for this field because we know it is sanitized using html special chars
     groupInput.value = "";
 }
 
-
+/**
+ * Populates the pane that shows if the user has credentials
+ * @param i Index of the course in the "courses" list
+ */
 async function populateHaveCredentialsPane(i: number): Promise<void> {
     let credentials = "";
     const dbIDs: number[] = [];
     haveCredsCoursename.innerText = courses[i].coursename;
-    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>"
-    haveCredsInfo.innerHTML = courses[i].info + courseInactiveString // We set innerHTML for this field because we know it is sanitized using html special chars
+    const courseInactiveString = courses[i].active ? "" : "<br><span class='text-danger'>This course is inactive</span>";
+    haveCredsInfo.innerHTML = courses[i].info + courseInactiveString; // We set innerHTML for this field because we know it is sanitized using html special chars
     ownDatabases.forEach((db: StudentDatabase) => {
         if (db.course === courses[i].courseid) {
+            // While pasting a large bit of HTML into the page here is ugly, it allows us to support having more than one DB per course if that is ever needed
             const html = `<div class="mt-5 form-group row">
                             <label class="col-12 col-md-4 col-form-label">Username and DB name:</label>
                             <div class="col-12 col-md-8">
@@ -95,6 +112,15 @@ async function populateHaveCredentialsPane(i: number): Promise<void> {
 
 }
 
+/**
+ * Generates an HTML fragment for a nav link
+ * @param fromEditCourses If true, this is not being called from the student view so different settings are used
+ * @param courseIsActive If false, course is not active, making the link gray
+ * @param makeGreen If true, makes the link green (for example, if you have a database for the course)
+ * @param i Index of the relevant course in the list of courses
+ * @param active If true, the nav-link will have the class "active", making it blue
+ * @returns an HTML fragment that can be appended as a child somewhere
+ */
 export function createNavLink(fromEditCourses: boolean, courseIsActive: boolean, makeGreen: boolean, i: number, active = false): DocumentFragment {
     let credentialsClass: string;
     let hrefString: string;
@@ -137,6 +163,13 @@ export function createNavLink(fromEditCourses: boolean, courseIsActive: boolean,
     return fragment;
 }
 
+/**
+ * Displays all the courses in the list on the page
+ * @param optionalCourses Allows an optional list of courses to be passed. If not used, we use the gloal variable courses
+ * @param optionalWho Allows an optional Who to be passed. If not used, we use the gloal variable who
+ * @param fromEditCourses If this is not being called from student view, use slightly different settings
+ * @param activeI The index of the course that is currently selected in the list "courses"
+ */
 export async function displayCourses(optionalCourses?: Course[], optionalWho?: Who, fromEditCourses = false, activeI = -1): Promise<void> {
 
     if (optionalCourses) {
@@ -165,7 +198,7 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
     const ownCourses = ownDatabases.map((db: StudentDatabase) => db.course);
     for (let i = 0; i < courses.length; i++) {
         let youHavePrivilege = false;
-        const youAreTA = taCourses.includes(courses[i].courseid)
+        const youAreTA = taCourses.includes(courses[i].courseid);
         if (fromEditCourses) {
             youHavePrivilege = (who.role === UserRole.Admin || (who.role === UserRole.Teacher && courses[i].fid === who.id) || youAreTA);
 
@@ -189,6 +222,10 @@ export async function displayCourses(optionalCourses?: Course[], optionalWho?: W
     }
 }
 
+/**
+ * Change the current active pane
+ * @param hasCredentials If true, switches to the pane which shows credentials. If false, switches to the request credentials pane
+ */
 async function changeView(hasCredentials: boolean): Promise<void> {
     const activeLink: HTMLAnchorElement = document.getElementsByClassName("course-link nav-link active")[0] as HTMLAnchorElement;
     const oldPane = hasCredentials ? noCredsPane : haveCredsPane;
@@ -208,6 +245,49 @@ async function changeView(hasCredentials: boolean): Promise<void> {
     }
 }
 
+/**
+ * Try to request course credentials for this course and group
+ * @param courseID The course ID
+ * @param groupNumber The group number
+ * @param alert Whether to add an alert or not
+ * @returns whether the the credentials were successfully received
+ */
+export async function tryGetCredentials(courseID: number, groupNumber: number, alert = true): Promise<boolean> {
+
+    if (courseID !== 0) {
+        if (groupNumber > 0) {
+            const data = {"course": courseID, "groupid": groupNumber};
+            const tempAlert: ChildNode | null = addTempAlert();
+            try {
+                const response: AxiosResponse<StudentDatabase> = await axios.post("/rest/studentdatabases/", data) as AxiosResponse<StudentDatabase>;
+                const database: StudentDatabase = await response.data;
+                if (alert) {
+                    addAlert(`Database generated for course "${database.course}".<br>
+                                                                   Username: "${database.username}"<br>
+                                                                   Password: "${database.password}"`, AlertType.success, tempAlert);
+                } else {
+                    if (tempAlert) {
+                        tempAlert.remove();
+                    }
+                }
+
+                return true;
+            } catch (error) {
+                addErrorAlert(error, tempAlert)
+            }
+        } else {
+            addAlert("Please enter a valid group number", AlertType.danger)
+        }
+
+    } else {
+        addAlert("Please select a course", AlertType.danger)
+    }
+    return false;
+}
+
+/**
+ * Gets credentials for selected course
+ */
 async function prepareToGetCredentials(): Promise<void> {
     disableElementsOnPage();
     try {
@@ -224,7 +304,9 @@ async function prepareToGetCredentials(): Promise<void> {
     }
 }
 
-
+/**
+ * Disables elements on the page
+ */
 function disableElementsOnPage(): void {
     credentialsButton.disabled = true;
     groupInput.disabled = true;
@@ -243,6 +325,9 @@ function disableElementsOnPage(): void {
         });
 }
 
+/**
+ * Enables elements on the page
+ */
 function enableElementsOnPage(): void {
     credentialsButton.disabled = false;
     groupInput.disabled = false;
@@ -263,6 +348,11 @@ function enableElementsOnPage(): void {
 
 }
 
+/**
+ * Deletes studentdatabase, if the user agrees
+ * @param dbID ID of the database to delete
+ * @returns whether the operation succeeded
+ */
 async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to delete this database?',
@@ -295,6 +385,10 @@ async function prepareToDeleteCredentials(dbID: number): Promise<boolean> {
 
 }
 
+/**
+ * Disable / enable elements on the page
+ * @param enable Whether to enable or disable elements
+ */
 function changeStudentViewState(enable: boolean): void {
     if (enable) {
         enableElementsOnPage();
@@ -303,6 +397,10 @@ function changeStudentViewState(enable: boolean): void {
     }
 }
 
+/**
+ * Tries to reset the studentDatabase, if the user agrees
+ * @param dbID The ID of the studentdatabase to delete
+ */
 async function resetDatabase(dbID: number): Promise<boolean> {
     const result = await Swal.fire({
         title: 'Are you sure you want to reset this database?',
@@ -332,6 +430,10 @@ async function resetDatabase(dbID: number): Promise<boolean> {
     return success;
 }
 
+/**
+ * On page load, inits navbar, adds event listeners, populates global variables (see [[Who]] and [[Course]] ),
+ * afterwards displays courses. Finally, remoevs spinners.
+ */
 window.onload = async () => {
 
     await Promise.all([
@@ -347,9 +449,8 @@ window.onload = async () => {
 
             courses = (await getCoursesPromise()).sort((a: Course, b: Course) => a.coursename.localeCompare(b.coursename));
             await displayCourses();
-        })(),
-        displayWhoami()
-    ])
+        })()
+    ]);
     Array.from(document.getElementsByClassName("spinner-border")).forEach((el: Element) => el.remove())
 
 };

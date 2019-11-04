@@ -59,6 +59,7 @@ if not DEBUG:
 
     jsnumbers.sort()
     cssnumbers.sort()
+    jsnumbers = list(map(lambda x: str(x) + ".chunk", jsnumbers))
 else:
     cssnumbers.append("main")
 
@@ -398,7 +399,7 @@ def post_base_dbmusers_response(request):
             if "role" not in databases:
                 databases["role"] = student
             if "verified" not in databases:
-                database["verified"] = True
+                databases["verified"] = True
         else:
             databases['role'] = student
             databases['verified'] = False
@@ -985,7 +986,7 @@ def schema(request, pk):
 :rtype: django.http.HttpResponse
 """
 @require_POST
-@require_role(teacher)
+@authenticated
 def transferSchema(request, course, database):
     try:
         course = Courses.objects.get(courseid=course)
@@ -994,7 +995,7 @@ def transferSchema(request, course, database):
 
     if course.owner().id != request.session["user"] and request.session["role"] < admin and not am_i_ta_of_this_course(
             request.session["user"], course.courseid):
-        return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+        return HttpResponse("You are not allowed to change this course", status=status.HTTP_403_FORBIDDEN)
 
     try:
         db = Studentdatabases.objects.get(dbid=database)
@@ -1096,7 +1097,7 @@ def missing_databases(request, all=False):
     if request.method=="DELETE":
         try:
             data = JSONParser().parse(request)
-            for db in dbs:
+            for db in data:
                 rm = remove_missing_database(db)
                 if rm:
                     return rm
@@ -1143,12 +1144,12 @@ def remove_missing_database(db_name):
     from django.db import connection
     # We DON'T want to use this to remove a database that we do know about!
     try:
-        db = Studentdatabases.objects.get(databasename=name)
+        db = Studentdatabases.objects.get(databasename=db_name)
         return HttpResponse("Database is managed", status=status.HTTP_400_BAD_REQUEST)
     except Studentdatabases.DoesNotExist:
         pass
 
-    if name == connection.settings_dict["NAME"]:
+    if db_name == connection.settings_dict["NAME"]:
         return HttpResponse("This is the master database", status=status.HTTP_400_BAD_REQUEST)
 
     from psycopg2.extensions import AsIs
@@ -1156,11 +1157,11 @@ def remove_missing_database(db_name):
     with connection.cursor() as cur:
         # make sure no one can connect to the database
         cur.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '%s'",
-                    [AsIs(name)])
+                    [AsIs(db_name)])
         # drop any existing connections
         cur.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '%s'",
-                    [AsIs(name)])
-        cur.execute("DROP DATABASE \"%s\";", [AsIs(name)])
+                    [AsIs(db_name)])
+        cur.execute("DROP DATABASE \"%s\";", [AsIs(db_name)])
 
     return False
 

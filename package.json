@@ -1,19 +1,17 @@
 {
   "name": "dab",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "description": "The Database Administration Bundle (DAB) is a tool used to facilitate database education at the University of Twente.",
   "main": "index.js",
   "dependencies": {
     "@types/autosize": "^3.0.6",
     "@types/bootstrap": "^4.3.1",
-    "@types/bootstrap-select": "^1.11.1",
     "@types/jquery": "^3.3.31",
     "@types/node": "^10.0.3",
     "autosize": "^4.0.2",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
     "bootstrap-cookie-alert": "^1.1.1",
-    "bootstrap-select": "^1.13.11",
     "bootstrap-toggle": "^2.2.2",
     "commonjs": "^0.0.1",
     "css-loader": "^3.2.0",
@@ -31,6 +29,7 @@
     "sweetalert2": "^8.18.3",
     "ts-loader": "^6.1.2",
     "tslint": "^5.20.0",
+    "typedoc": "^0.15.0",
     "typescript": "^3.6.3",
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9"
@@ -45,14 +44,15 @@
     "watchscss": "node-sass --watch src/frontend/sass -o frontend/css",
     "build": "webpack --mode=development",
     "watch": "webpack --watch --mode=development",
-    "production": "webpack --mode=production",
+    "production": "webpack --mode=production && typedoc --out docs/frontend src/frontend",
     "check": "gts check",
     "clean": "gts clean",
     "compile": "tsc -p .",
     "fix": "gts fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
-    "posttest": "npm run check"
+    "posttest": "npm run check",
+    "typedoc": "typedoc --out docs/frontend src/frontend"
   },
   "repository": {
     "type": "git",

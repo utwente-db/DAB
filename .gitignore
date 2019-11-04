@@ -368,8 +368,7 @@ $RECYCLE.BIN/
 
 static/
 static/*
-/static/
-/static/*
+static/**/*
 node_modules/
 node_modules/*
 node_modules/*.*
@@ -384,7 +383,12 @@ db_uwsgi.ini
 static/admin
 static/admin/*
 static/admin/**/*
-static/**/*
 frontend/
 frontend/*
 frontend/**/*
+.npm
+.npm/*
+.npm/**/*
+.config
+.config/*
+.config/**/*
