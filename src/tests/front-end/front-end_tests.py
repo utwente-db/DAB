@@ -42,6 +42,7 @@ class AdminTest(unittest.TestCase):
     def __registerAccount(self):
         driver = self.driver
         driver.implicitly_wait(10)
+	driver.get(PATH)
         driver.find_element_by_id("register-link").click()
 
         time.sleep(1)
