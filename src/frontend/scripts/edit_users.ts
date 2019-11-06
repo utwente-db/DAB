@@ -354,7 +354,7 @@ async function deleteUser(user: User): Promise<boolean> {
     changePageState(false, changeEditUserState);
     try {
         await axios.delete(`/rest/dbmusers/${user.id}/`);
-        addAlert("User succesfully deleted!", AlertType.success, tempAlert);
+        addAlert("User successfully deleted!", AlertType.success, tempAlert);
 
         Array.from(usersTabs.children).forEach((tab: Element) => {
             tab.classList.remove("active")

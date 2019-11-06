@@ -419,7 +419,7 @@ async function resetDatabase(dbID: number): Promise<boolean> {
     changePageState(false, changeStudentViewState);
     try {
         await axios.post(`/rest/reset/${dbID}/`);
-        addAlert("The database has been succesfully reset", AlertType.primary);
+        addAlert("The database has been successfully reset", AlertType.primary);
         success = true;
     } catch (error) {
         addErrorAlert(error);

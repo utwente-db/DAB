@@ -982,7 +982,7 @@ def schema(request, pk):
 :type course: int
 :param databasae: the id of the database to take the schema from
 :type database: int
-:returns: Response with a status code indicating if the call was succesful
+:returns: Response with a status code indicating if the call was successful
 :rtype: django.http.HttpResponse
 """
 @require_POST
@@ -1206,7 +1206,7 @@ def register(request):
     #         role = dbmusers(role=3, email=data["mail"], password=password, maxdatabases=0)
     #         role.save()
     #         return render_with_prefix(request, 'login.html',
-    #                       {'form': LoginForm(), 'message': "Registration succesful; try to login"})
+    #                       {'form': LoginForm(), 'message': "Registration successful; try to login"})
 
     form = RegisterForm()
     return render_with_prefix(request, 'register.html', {'form': form})
@@ -1289,7 +1289,7 @@ A little bit too complicated for the amount of roles that we have, but should be
 
 :param request: The request
 :type request: django.http.HttpRequest
-:returns: A response indicating whether the call was succesful
+:returns: A response indicating whether the call was successful
 :rtype: django.http.HttpResponse
 """
 @require_POST
@@ -1372,7 +1372,7 @@ def who(request):
 :type request: django.http.HttpRequest
 :param token: The email verification token
 :type token: string
-:returns: Whether the verification was succesful, with possibly a login form
+:returns: Whether the verification was successful, with possibly a login form
 :rtype: django.http.HttpResponse
 """
 @require_GET
