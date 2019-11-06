@@ -392,3 +392,6 @@ frontend/**/*
 .config
 .config/*
 .config/**/*
+v8-compile-cache-0
+v8-compile-cache-0/*
+v8-compile-cache-0/**/*
