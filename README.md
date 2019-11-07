@@ -149,9 +149,17 @@ Congratulations! If you run apache, you should now have the basic web page set u
 There are now two things left to do:
 
 This project MUST run over https. 
-It is the responsibility of the system administrator to ensure there are proper SSL certificates present. 
-After this has been arranged, `SSLRequireSSL` MUST be added to the Apache configuration of this site, probably in the `<Location /dab>` tag, to ensure that only SSL connections will be accepted.
+It is the responsibility of the system administrator to ensure there are proper SSL certificates present and provided to Apache2.
+Because of the great variety in certificates, apache configs, environments, and usecases, we can't provide instructions for this.
 Failure to comply with these instructions will cause passwords to be transmitted over unencrypted connections.
+
+To ensure DAB will always run over SSL, one must change the virtualhost of DAB to port 443, and add the following code at the top of the DAB file:
+
+    <VirtualHost *:80>
+        Redirect permanent / https://yourdomain.com/secure
+    </VirtualHost>
+
+If the DAB host has a `ServerName`, this must also be added to the above codeblock, above the `Redirect`.
 
 The second thing is email, described in the section below.
 
