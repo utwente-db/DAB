@@ -3,6 +3,11 @@ from rest_framework import serializers
 from .models import *
 from .settings import *
 
+"""Serializers.py: contains classes to convert switch between models and JSON objects.
+
+These classes convert the correcsponding model to a JSON object, and can generate the corresponding object from a JSON model.
+"""
+
 
 class CoursesSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):

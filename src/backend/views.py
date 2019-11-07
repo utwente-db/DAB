@@ -198,10 +198,21 @@ def get_role(request):
 
 :param request: The request
 :type request: django.http.HttpRequest
+:return: The Requested Database
+:rtype: django.http.HttpResponse
 """
 def defaultresponse(request):
     return HttpResponse("The page that you requested was not found.", status=status.HTTP_404_NOT_FOUND)
 
+"""The view for getting all entries in a table
+
+:param request: The request
+:type request: django.http.HttpRequest
+:param db_parameters: The parameters for the requsted table
+:type db_parameters: dict
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @authenticated
 def get_base_response(request, db_parameters):
     if check_role(request, admin) or db_parameters["dbname"] == "courses" or (
@@ -223,14 +234,26 @@ def get_base_response(request, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+"""Whether the SQL query return anything.
 
+:param sql_result: the result of the SQL query
+:returns: whether there are any rows in the result
+:rtype: boolean
+"""
 def does_a_row_exist(sql_result):
     if sql_result.count() > 0:
         return True
     else:
         return False
 
+"""Whether a user is the TA of the course
 
+:param current_id: the id of the user to test for
+;type current_id: int
+:param course_id: the id of the course
+:type course_id: int
+:rtype: boolean
+"""
 def am_i_ta_of_this_course(current_id, course_id):
     try:
         ta_info = TAs.objects.filter(courseid=course_id, studentid=current_id)
@@ -241,7 +264,14 @@ def am_i_ta_of_this_course(current_id, course_id):
         logging.debug(e)
         return False
 
+"""Whether a user is TA over a certain database
 
+:param current_id: the id of the user to test for
+:type current_id: int
+:param dbid: the id of the database
+:type dbid: int
+:rtype: boolean
+"""
 def am_i_ta_of_this_db(current_id, dbid):
     try:
         db_info = Studentdatabases.objects.get(pk=dbid)
@@ -254,7 +284,16 @@ def am_i_ta_of_this_db(current_id, dbid):
         logging.debug(e)
         return False
 
+"""Whether a user is the owner of a database model
 
+:param current_id: the id of the user to test for
+:type current_id: int
+:param pk: the primary key of the object
+:type pk: int
+:param db_parameters: parameters of the database models
+:type db_parameters: dict
+:rtype boolean:
+"""
 def do_i_own_this_item(current_id, pk, db_parameters):
     db_id = None
     serializer_class = None
@@ -280,7 +319,17 @@ def do_i_own_this_item(current_id, pk, db_parameters):
         else:
             return False
 
+"""The get response for a single item in a table
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param pk: the primary key of the object
+:type pk: int
+:param db_parameters: The parameters for the requested table
+:type db_parameters: dict
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @authenticated
 def get_single_response(request, pk, db_parameters):
     current_id = request.session['user']
@@ -306,7 +355,15 @@ def get_single_response(request, pk, db_parameters):
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+"""The response for getting all entries owned by the current user on a certain table
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param dbname: the name of the model to get
+:type dbname: string
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @authenticated
 def get_own_response(request, dbname):
     db_parameters = get_db_parameters(dbname)
@@ -340,7 +397,15 @@ def get_own_response(request, dbname):
                             " this user has requested its own info in this db")  # LOG THIS ACTION
         return JsonResponse(serializer_class.data, safe=False)
 
+"""view for getting the ta's on a certain course
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param pk: the id of the course
+:type pk: int
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @require_GET
 @authenticated
 def get_course_ta(request, pk):
@@ -358,7 +423,15 @@ def get_course_ta(request, pk):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+"""view for getting all users who have a database in a course
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param pk: the id of the course
+:type pk: int
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @require_GET
 @authenticated
 def search_dbmusers_on_course(request, pk):
@@ -377,7 +450,13 @@ def search_dbmusers_on_course(request, pk):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+"""View for POSTing to dbmusers, i.e. creating a user
 
+:param request: The request
+:type request: django.http.HttpRequest
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 def post_base_dbmusers_response(request):
     databases = None
     try:
@@ -434,7 +513,15 @@ def post_base_dbmusers_response(request):
             return HttpResponse(status=status.HTTP_409_CONFLICT)
         raise e
 
+"""View for POSTing to, i.e. creating, an object
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param db_parameters: The parameters for the requested table
+:type db_parameters: dict
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @authenticated
 def post_base_response(request, db_parameters):
     if check_role(request, teacher) or (
@@ -548,7 +635,15 @@ def post_base_response(request, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+"""View for DELETEing an object
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param requested_pk: the primary key of the object to delete
+:type requested_pk: int
+:return: A status code indicating success
+:rtype: django.http.HttpResponse
+"""
 @authenticated
 def delete_single_response(request, requested_pk, db_parameters):
     current_id = request.session['user']
@@ -591,14 +686,28 @@ def delete_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+"""Indicates which fields of some tables can be set by the user
 
+:param table: the table
+:type table: string
+:returns: which fields can be set
+:rtype: [string]
+"""
 def accepted_fields_for_db(table):
     if table == "courses":
         return {'coursename', 'info', 'active', 'databases'}
     if table == "studentdatabases":
         return {'groupid'}
 
+"""Filters JSON objects to only include acceptable fields for a certain table
 
+:param incoming: the object to filter
+:type incoming: dict
+:param dbname: the name of the database the object is for
+:type dbname: string
+:returns: the filtered object
+:rtype: dict
+"""
 def filter_dict_on_keys(incoming, dbname):
     accepted_fields = accepted_fields_for_db(dbname)
 
@@ -607,7 +716,17 @@ def filter_dict_on_keys(incoming, dbname):
 
     return incoming
 
+"""View for PUTting to an object, i.e. updating it
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param requested_pk: the primary key of the object to update
+:type requested_pk: int
+:param db_parameters: The parameters for the requested table
+:type db_parameters: dict
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @authenticated
 def update_single_response(request, requested_pk, db_parameters):
     # UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES, STUDENTDATABASES, AND DBMUSERS
@@ -670,7 +789,17 @@ def update_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+"""View for searching in the database by name
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param search_value: the requested query
+:type search_value: string
+:param dbname: the name of the database to search in
+:type dbname: string
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @authenticated
 def search_on_name(request, search_value, dbname):
     db_parameters = get_db_parameters(dbname)
@@ -726,7 +855,17 @@ def search_on_name(request, search_value, dbname):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+"""Search a database by the owner of the object
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param search_value: the primary key of the owner to search for
+:type search_value: int
+:param dbname: the name of the model to search for
+:type dbname: string
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @require_GET
 @require_role(admin)
 def search_on_owner(request, search_value, dbname):
@@ -745,7 +884,15 @@ def search_on_owner(request, search_value, dbname):
     except db_parameters["db"].DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
+"""Search for studentdatabases in a certain course
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param search_value: the id of the course
+:type search_value: int
+:returns: A JSON object response
+:rtype: django.http.response.JsonResponse
+"""
 @require_GET
 @require_role(student)
 def search_db_on_course(request, search_value):
@@ -763,7 +910,13 @@ def search_db_on_course(request, search_value):
     except Courses.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
+"""Get the database model and serializer given a database name
 
+:param dbname: the database name
+:type dbname: string
+:returns: the name, model, and serializer
+:rtype: dict
+"""
 def get_db_parameters(dbname):
     db_parameters = {"dbname": dbname}
 
@@ -824,6 +977,16 @@ def ta_own_studentdatabases(request):
     serializer = StudentdatabasesSerializer(results, many=True)
     return JsonResponse(serializer.data, safe=False)
 
+"""The handler for requests that want a single object; redirects to the appropriate view for that object
+
+:param request: The request
+:type request: django.http.HttpRequest
+:param pk: the primary key of the requested object
+:type pk: int
+:param dbname: the name of the requested model
+:type dbname: string
+:rtype: mixed
+"""
 def singleview(request, pk, dbname):
     db_parameters = get_db_parameters(dbname)
 
@@ -836,7 +999,14 @@ def singleview(request, pk, dbname):
     else:
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+"""The handler for requests on the base models; redirects to the appropriate view for that object
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param dbname: the name of the models
+:type dbname: string
+:rtype: mixed
+"""
 def baseview(request, dbname):
     db_parameters = get_db_parameters(dbname)
     if request.method == 'GET':
@@ -1248,7 +1418,13 @@ def login(request):
         form = LoginForm()
         return render_with_prefix(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
 
+"""Logs out the user by deleting their session
 
+:param request: The request
+:type request: django.http.HttpRequest
+:return: The login form, with a message that the user has been logged out
+:rtype: django.http.HttpResponse
+"""
 @require_POST
 @authenticated
 def logout(request):
@@ -1441,7 +1617,13 @@ def change_password(request):
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
+"""View which resend the verification email, in case the user has not received it.
 
+:param request: The request
+:type request: django.http.HttpRequest
+:return: A status code indicating success
+:rtype: django.http.HttpResponse
+"""
 @require_POST
 def resend_verification(request):
     if "user" in request.session:
@@ -1469,7 +1651,15 @@ def resend_verification(request):
     mail.send_verification(user.__dict__)
     return HttpResponse()
 
+"""A view in case the user would like to request a password reset
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param email: the user email
+:type email: string
+:return: A status code indicating success
+:rtype: django.http.HttpResponse
+"""
 @require_POST
 def request_reset_password(request, email):
     if "user" in request.session:
@@ -1493,7 +1683,19 @@ def request_reset_password(request, email):
 
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
+"""A view to reset the password
+On GET, serves a password reset form
+On POST, resets the password
 
+:param request: The request
+:type request: django.http.HttpRequest
+:param pk: the primary key of the user
+:type pk: int
+:param token: the users password reset token
+:type token: string
+:return: mixed
+:rtype: django.http.HttpResponse
+"""
 @require_http_methods(["GET", "POST"])
 def reset_password(request, pk, token):
     if "user" in request.session:

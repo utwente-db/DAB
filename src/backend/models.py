@@ -34,7 +34,12 @@ class dbmusersManager(models.Manager.from_queryset(dbmusersQuerySet)):
             kwargs["email"] = kwargs["email"].lower()
         return super().all(**kwargs)
 
+"""Users of DAB.
 
+Overrides:
+email is not case sensitive; applied by converting to lowercase on search and save.
+email must correspond to regex and be from the UT: checked on save, raises ValueError otherwise.
+"""
 class dbmusers(models.Model):
     id = models.AutoField(db_column='id', primary_key=True)
     role = models.IntegerField()
@@ -62,7 +67,10 @@ class dbmusers(models.Model):
         db_table = 'dbmusers'
         verbose_name_plural = 'dbmusers'
 
+"""Courses: the model for the course.
 
+No overrides.
+"""
 class Courses(models.Model):
     courseid = models.AutoField(db_column='courseid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
@@ -98,6 +106,9 @@ class Courses(models.Model):
         verbose_name_plural = 'Courses'
 
 
+"""applies the bitmask to the password
+
+"""
 def switchPassword(password):
     bits = base64.b64decode(password)
     bits = bytes([x ^ y for (x, y) in zip(settings.BITMASK, bits)])
@@ -138,7 +149,11 @@ class StudentdatabasesManager(models.Manager.from_queryset(StudentdatabasesQuery
         return out
 
 
+"""Model for the student database
 
+Overrides:
+DB passwords are bitmasked. Bitmask is applied when saving, and applied again on retrieval
+"""
 class Studentdatabases(models.Model):
     dbid = models.AutoField(db_column='dbid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.PROTECT, db_column='fid')
@@ -173,7 +188,10 @@ class Studentdatabases(models.Model):
         db_table = 'studentdatabases'
         verbose_name_plural = 'StudentDatabases'
 
+"""Models the TA relationship between dbmusers and courses
 
+No overrides
+"""
 class TAs(models.Model):
     taid = models.AutoField(db_column='taid', primary_key=True)
     courseid = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='courseid')
