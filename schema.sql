@@ -702,6 +702,14 @@ ALTER TABLE ONLY public.auth_user
 
 
 --
+-- Name: courses courses_coursename_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.courses
+    ADD CONSTRAINT courses_coursename_key UNIQUE (coursename);
+
+
+--
 -- Name: courses courses_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -795,14 +803,6 @@ ALTER TABLE ONLY public.studentdatabases
 
 ALTER TABLE ONLY public.tas
     ADD CONSTRAINT tas_pkey PRIMARY KEY (courseid, studentid);
-
-
---
--- Name: courses unique_couple; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.courses
-    ADD CONSTRAINT unique_couple UNIQUE (fid, coursename);
 
 
 --
