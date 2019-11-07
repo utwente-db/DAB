@@ -55,13 +55,13 @@
 <p>If in any situation a 500 error is returned the server has encountered an internal error. If this occurs, please report this instance to the administrator.</p>
 
 
-<h2>/set_role</h2>
+<h3>/set_role</h3>
 
 <h4>CALL: POST</h4>
+<h4>PERMISSIONS GRANTED: admin</h4>
 
 <p>Sets the role of a user.
-Unless one is admin, one can only set the role of someone with a higher role than oneself, and to a role higher to oneself.
-So a teacher can create a ta.</p>
+Unless one is admin, one can only set the role of someone with a higher role than oneself, and to a role higher to oneself.</p>
 
 <p>Body</p>
 
@@ -72,42 +72,48 @@ So a teacher can create a ta.</p>
    }
 </code></pre>
 
-<h2>/whoami</h2>
+<h3>/whoami</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: every role</h4>
 
 <p>Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
 If the user is not logged in, returns a 401.</p>
 
-<h2>/who</h2>
+<h3>/who</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: every user</h4>
 
 <p>Same as whoami, but only return id and role.
 Because there is no (explicit) database query, this request is a bit faster</p>
 
-<h2>/dump/</h2>
+<h3>/dump/</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: Admin (any case). student(only its own databases). Teacher (its own databases and student databases)</h4>
 
 <p>Returns a sql dump of the database corresponding to the specified id.
 Note that the content type is application/sql and that most browsers will see it as a file to be downloaded; a simple link with <code>target=&#34;_blank&#34;</code> would suffice for the front-end.</p>
 
-<h2>/reset/</h2>
+<h3>/reset/</h3>
 
 <h4>CALL: POST</h4>
+<h4>PERMISSIONS GRANTED: Admin (any case). student(only its own databases). Teacher (its own databases and student databases)</h4>
 
 <p>Resets the table to the original schema from the course.</p>
 
-<h2>/missing_databases</h2>
+<h3>/missing_databases</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin</h4>
 
 <p>GET -&gt; A JSON array of databases that the system does not know about, starting with the prefix specified in settings.py</p>
 
-<h2>/missing_databases/all</h2>
+<h3>/missing_databases/all</h3>
 
 <h4>CALL: GET,DELETE</h4>
+<h4>PERMISSIONS GRANTED: admin</h4>
 
 <p>GET -&gt; a JSON array of ALL databases not managed by DAB</p>
 <p>DELETE -&gt; gets a JSON array of database names. DAB will drop all databases in the array, provided they are not managed</p>
@@ -117,6 +123,7 @@ Note that the content type is application/sql and that most browsers will see it
 <h3>/studentdatabases/</h3>
 
 <h4>CALL: GET,POST</h4>
+<h4>PERMISSIONS GRANTED: only admin</h4>
 
 <p>GET -&gt; get info all users</p>
 <p>POST    -&gt; add user</p>
@@ -147,37 +154,43 @@ Note that the content type is application/sql and that most browsers will see it
 <h3>/studentdatabases/pk</h3>
 
 <h4>CALL: GET,DELETE</h4>
+<h4>PERMISSIONS GRANTED: admin (any case).Teacher(if the database belongs to the teacher or from a student in his course). Student(only its own databases)</h4>
 
-<p>GET -&gt; for that pk</p>
-<p>DELETE  -&gt; for that pk</p>
+<p>GET -&gt; get database for that pk</p>
+<p>DELETE  -&gt; delete database for that pk</p>
 
 <h3>/studentdatabases/name/value</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin (any case).Teacher(if the database belongs to the teacher or from a student in his course). Student(only its own databases)</h4>
 
 <p>GET -&gt; search on the name of the database. The value will be taken as the search field</p>
 
 <h3>/studentdatabases/own/</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: every user</h4>
 
 <p>GET -&gt; gives back all the studentdatabases owned by the user currently logged in</p>
 
 <h3>/studentdatabases/owner/value</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin (every case). Teacher(if the student is in his course)</h4>
 
 <p>GET -&gt; gives back all the studentdatabases owned by the user with the id of the value</p>
 
 <h3>/studentdatabases/course/value</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin(any case). Teacher(if the course belongs to the teacher)</h4>
 
 <p>GET -&gt; gives back all the studentdatabases belonging to this specific course</p>
 
 <h3>/studentdatabases/teacher/own</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin and teacher</h4>
 
 <p>GET -&gt; gives back all the studentdatabases owned by the teacher</p>
 
@@ -186,6 +199,7 @@ Note that the content type is application/sql and that most browsers will see it
 <h3>/courses/</h3>
 
 <h4>CALL: GET,POST</h4>
+<h4>PERMISSIONS GRANTED: every user</h4>
 
 <p>GET -&gt; get all courses</p>
 <p>NB: to save data, schemas are not mentioned in GET!</p>
@@ -207,18 +221,23 @@ body:</p>
 <h4>CALL: GET,PUT,DELETE</h4>
 
 <p>GET -&gt; get course for this specific course id</p>
+<h4>PERMISSIONS GRANTED: every user</h4>
 <p>PUT -&gt; update information (updating the fid or courseid is not allowed)</p>
+<h4>PERMISSIONS GRANTED: admin (any case). Teacher(if the course belongs to the teacher). TA(if the TA belongs to the coures)</h4>
 <p>DELETE  -&gt; delete a course for a specific course id</p>
+<h4>PERMISSIONS GRANTED: admin (any case). Teacher (only if the course belongs to the teacher)</h4>
 
 <h3>/courses/name/value</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: every user</h4>
 
 <p>GET -&gt; search for the value field, based on the coursename</p>
 
 <h3>/courses/own/</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin and teacher</h4>
 
 <p>GET -&gt; gives back all the courses owned by the currently logged in user</p>
 
@@ -227,7 +246,9 @@ body:</p>
 <h4>CALL: GET,POST</h4>
 
 <p>GET -&gt; returns the schema for that database as a sql file</p>
+<h4>PERMISSIONS GRANTED: every user</h4>
 <p>POST -&gt; Takes the <strong>plaintext</strong> body, and makes it the schema of the database (if it passes verification).</p>
+<h4>PERMISSIONS GRANTED: admin(any case). Teacher(if the course belongs to the teacher). TA(if the TA belongs to the coures)</h4>
 
 <h2>TABLE: dbmusers</h2>
 
@@ -236,7 +257,9 @@ body:</p>
 <h4>CALL: GET,POST</h4>
 
 <p>GET -&gt; get all users</p>
+<h4>PERMISSIONS GRANTED: admin only</h4>
 <p>POST    -&gt; add a new user</p>
+<h4>PERMISSIONS GRANTED: every user, though by default role is set to 2. only an admin can set the role.</h4>
 <p>body:</p>
 
 <pre><code>{
@@ -251,23 +274,28 @@ body:</p>
 <h4>CALL: GET,DELETE</h4>
 
 <p>GET -&gt; get user for that user id</p>
+<h4>PERMISSIONS GRANTED: admin(any case). Teacher(of his course).TA(if the TA belongs to the coures)</h4>
 <p>DELETE  -&gt; delete user for that user id</p>
+<h4>PERMISSIONS GRANTED: admin(only)</h4>
 
 <h3>/dbmusers/email/value</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin and teacher</h4>
 
 <p>GET -&gt; search for the value, based on emailaddress</p>
 
 <h3>/dbmusers/own/</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: every user</h4>
 
 <p>GET -&gt; gives back the info about the currently logged in user</p>
 
 <h3>/dbmusers/course/value</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin(any case). Teacher(if the course belongs to the teacher).TA(if the TA belongs to the course).</h4>
 
 <p>GET -&gt; gives back the users that have a database in that course</p>
 
@@ -276,6 +304,7 @@ body:</p>
 <h3>/tas/</h3>
 
 <h4>CALL: GET,POST</h4>
+<h4>PERMISSIONS GRANTED: admin(any case). Teacher(for addition any case, for deletion only his own course)</h4>
 
 <p>GET -&gt; get all tas</p>
 <p>POST    -&gt; add a new ta</p>
@@ -290,6 +319,7 @@ body:</p>
 <h3>/tas/pk</h3>
 
 <h4>CALL: GET,DELETE</h4>
+<h4>PERMISSIONS GRANTED: admin(any case). Teacher(if the TA belongs to the course)</h4>
 
 <p>GET -&gt; get ta for that ta id</p>
 DELETE  -&gt; delete ta for that ta id</p>
@@ -297,24 +327,28 @@ DELETE  -&gt; delete ta for that ta id</p>
 <h3>/tas/teacher/own/</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin and teacher</h4>
 
 <p>GET -&gt; returns all the tas in the courses owned by this teacher</p>
 
 <h3>/tas/own/</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin and teacher</h4>
 
 <p>GET -&gt; gives back the ta information about the currently logged in ta</p>
 
 <h3>/tas/course/courseid</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin(every case).Teacher(if the id belongs to a course owned by this teacher)</h4>
 
 <p>GET -&gt; gives back the tas of that course</p>
 
 <h3>/schematransfer/[course]/[database]</h3>
 
 <h4>CALL: POST</h4>
+<h4>PERMISSIONS GRANTED: admin only</h4>
 
 <p>Transfers the schema from the database to the course.</p>
 
@@ -325,25 +359,24 @@ DELETE  -&gt; delete ta for that ta id</p>
 <h3>/generate_migration</h3>
 
 <h4>CALL: POST</h4>
+<h4>PERMISSIONS GRANTED: admin only</h4>
 
 <p>POST -&gt; Generates the backup script. Returns the location of said script.</p>
-
-<p>Only accessible to admins</p>
 
 <h3>/course_dump/courseid</h3>
 
 <h4>CALL: GET</h4>
+<h4>PERMISSIONS GRANTED: admin(every case). Teacher(if this course belongs to the teacher)</h4>
 
 <p>GET -&gt; returns a zip file with dumps of every database in the course.
 Dump filenames are named after the user email.</p>
-
-<p>Accessible to admins and the course owner (NOT TA’s!)</p>
 
 <p>WARNING: May take a long time. Use with caution.</p>
 
 <h3>/request_reset_password/[email] (NOT /rest !!!)</h3>
 
 <h4>CALL: POST</h4>
+<h4>PERMISSIONS GRANTED: every user</h4>
 
 <p>POST -&gt; Sends an password reset email</p>
 
@@ -352,6 +385,7 @@ Dump filenames are named after the user email.</p>
 <h3>/reset_password/[user id]/[token] (NOT /rest !!!)</h3>
 
 <h4>CALL: GET,POST</h4>
+<h4>PERMISSIONS GRANTED: every user</h4>
 
 <p>GET -&gt; Displays a “new password” prompt</p>
 <p>POST -&gt; Takes in a JSON object with one key, “password”, and sets the password to that password.</p>
@@ -361,6 +395,7 @@ Dump filenames are named after the user email.</p>
 <p>The link sent will be valid for 4 hours.</p>
 
 <h3>/change_password/ (NOT /rest !!!)</h3>
+<h4>PERMISSIONS GRANTED: every user</h4>
 
 <h4>CALL: POST</h4>
 
