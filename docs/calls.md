@@ -1,303 +1,375 @@
-# Documentatie REST calls:
+<h1>Documentation REST calls</h1>
 
-!!!---- When not specified the body can be empty ----!!!
+<p>This document gives a complete overview of all the REST calls implemented in the DAB (Database Administration Bundle) application. Every call will start with a /rest/ unless specified otherwise. Depending on the server that DAB is running there will be a hostname before /rest/. To keep this document as general as possible no hostname is included. </p>
 
-IN GENERAL IF YOU GET A 500 ERROR -> YOU FIND A BUG, PLEASE REPORT
+<p>Some calls do require some input in the body. When this is not specified the server will ignore any input in the body and thus can be omitted. If however a body is required the body must be of type JSON.</p>
 
-GET
-	RESPONSE: 	Succes:		data
-			Otherwise: 	404
-PUT 
-    RESPOSNE:   Sucess:     202
-            bad request:    400 [is the JSON object correct?]
-POST
-	RESPONSE: 	Succes:		201
-			bad request: 	400 [Did you provide the correct fields?]
-			DB del err:	500 [ONLY with studentdatabases-> not good,report]
-			duplicate key:	409 [This combination already exsists]
-			other db err:	406
-DELETE
-	RESPONSE: 	Succes:		202
-			Otherwise: 	404 [Probably the pk is not in the db]
-			DB del err:	500 [ONLY with studentdatabases-> not good,report]
-			protected db:	409 [deleting a user with existing db's]
-			other db err:	406
+<p>DAB uses 3 different roles to identify privileges for a user. Each role has a specific value. An admin has value 0, a teacher has value 1 and a student has value 2. These values are used in some calls below.</p>
 
-OTHERWISE [ALSO (e.g.) when trying to post on a particular pk]
-	RESPONSE:	Dont touch that:401 [you have no authorisation to do that action]
-			Any other case:	405
+<h2>Responses</h2>
 
-## /set_role
+<p>Depending on the call there can be a number of different responses. When an error or successful action occurs the server will give back a HTTP response status code. These codes are listed below.</p>
 
-Sets the role of a user.
-Note that unless one is admin, one can only set the role of someone with a higher role than oneself, and to a role higher to oneself.
-So a teacher can create ta's and that's about it.
+<h3>In general</h3>
 
-Method: POST
-Body: JSON, containing:
+<pre><code>RESPONSE:   Dont touch that:401 [you have no authorisation to do that action]
+        Any other case: 405
+</code></pre>
 
-    body:
-       {
-       "user": 3, [USER ID]
-       "role": 0 [ROLE TO BE SET TO]
-       }
+<h3>Call specific</h3>
 
-returns:
-- 200 if successful
-- 401 if user does not have permission
-- 404 if the user that should be modified does not exist, or already has too low of a role.
+<p>GET</p>
 
-## /whoami
+<pre><code>RESPONSE:
+	Succes:     data
+	Otherwise:  404
+</code></pre>
 
-Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
-If the user is not logged in, returns a 401.
+<p>PUT</p>
 
-## /who
+<pre><code>RESPONSE:
+	Sucess:     	202
+	bad request:    400 [is the JSON object correct?]
+</code></pre>
 
-Same as whoami, but only return id and role. 
-Because there is no (explicit) database query, this request is a bit faster
+<p>POST</p>
 
-## /dump/<pk>
+<pre><code>RESPONSE:
+	Succes:     	201
+	bad request:    400 [Did you provide the correct fields?]
+	DB del err: 	500 [ONLY with studentdatabases-&gt; not good,report]
+	duplicate key:  409 [This combination already exsists]
+	other db err:   406
+</code></pre>
 
-Returns a sql dump of the database corresponding to the specified id.
-Note that the content type is application/sql and that most browsers will see it as a file to be downloaded; a simple link with `target="_blank"` would suffice for the front-end.
+<p>DELETE</p>
 
-Only accepts get.
-Permissions:
+<pre><code>RESPONSE:
+	Succes:     	202
+	Otherwise:  	404 [Probably the pk is not in the db]
+	DB del err: 	500 [ONLY with studentdatabases-&gt; not good,report]
+	protected db:   409 [deleting a user with existing db&#39;s]
+	other db err:   406
+</code></pre>
 
-Teachers and above: allowed for any.
-Students: allowed their own.
+<p>If in any situation a 500 error is returned the server has encountered an internal error. If this occurs, please report this instance to the administrator.</p>
 
-## /reset/<pk>
 
-Resets the table to the original schema from the course.
+<h2>/set_role</h2>
 
-Only accepts post
-Permissions same as DELETE for database
+<h4>CALL: POST</h4>
 
-## /missing_databases
+<p>Sets the role of a user.
+Unless one is admin, one can only set the role of someone with a higher role than oneself, and to a role higher to oneself.
+So a teacher can create a ta.</p>
 
-GET -> A JSON array of databases that the system does not know about, starting with the prefix
+<p>Body</p>
 
-Only accessible to admins
+<pre><code>body:
+   {
+   &#34;user&#34;: 3, [USER ID]
+   &#34;role&#34;: 0 [ROLE TO BE SET TO]
+   }
+</code></pre>
 
-## /missing_databases/all
+<h2>/whoami</h2>
 
-GET -> A JSON array of ALL databases not managed by DAB
+<h4>CALL: GET</h4>
 
-Only accessible to admins
+<p>Returns a JSON object with the id, email, and role of the user. Useful for debugging and unit testing.
+If the user is not logged in, returns a 401.</p>
 
-DELETE -> gets in a JSON array of database names as strings, and drops all databases in the array, provided they are not managed
+<h2>/who</h2>
 
-## TABLE: studentdatabases
+<h4>CALL: GET</h4>
 
-### /studentdatabases/
+<p>Same as whoami, but only return id and role.
+Because there is no (explicit) database query, this request is a bit faster</p>
 
-GET	-> get info all users
-POST 	-> add user
+<h2>/dump/</h2>
 
-	body:
-		{
-		"fid":"5", [FOREIGN KEY, MUST EXIST. Optional, if not specified, your current user id]
-		"course":"3", [FOREIGN KEY, MUST EXIST]
-        "groupid":"4" [FREE TO CHOOSE, responsibility is for the student as he is the person who can change it]
-		}
+<h4>CALL: GET</h4>
 
-Note: on success you will get the following object back:
+<p>Returns a sql dump of the database corresponding to the specified id.
+Note that the content type is application/sql and that most browsers will see it as a file to be downloaded; a simple link with <code>target=&#34;_blank&#34;</code> would suffice for the front-end.</p>
 
-	body:
-		{
-		"dbid":<GENERATED VALUE, used as primary key>
-		"fid":<your value>
-		"course":<your value>
-		"databasename":<GENERATED VALUE>
-		"username":<GENERATED VALUE (same as databasename)
-		"password":<GENERATED VALUE (long)>
-		}
+<h2>/reset/</h2>
 
-Note that the student will want to know the generated values
+<h4>CALL: POST</h4>
 
-### /studentdatabases/pk
+<p>Resets the table to the original schema from the course.</p>
 
-GET	-> for that pk
-DELETE	-> for that pk
+<h2>/missing_databases</h2>
 
-### /studentdatabases/name/value
+<h4>CALL: GET</h4>
 
-GET -> search for the value, based on the studentdatabasename
+<p>GET -&gt; A JSON array of databases that the system does not know about, starting with the prefix specified in settings.py</p>
 
-### /studentdatabases/own/
+<h2>/missing_databases/all</h2>
 
-GET -> gives back all the studentdatabases owned by the user currently logged in
+<h4>CALL: GET,DELETE</h4>
 
-### /studentdatabases/owner/value
+<p>GET -&gt; a JSON array of ALL databases not managed by DAB</p>
+<p>DELETE -&gt; gets a JSON array of database names. DAB will drop all databases in the array, provided they are not managed</p>
 
-GET -> gives back all the studentdatabases owned by the user with the id of the value
+<h2>TABLE: studentdatabases</h2>
 
-Only accessible to admins
+<h3>/studentdatabases/</h3>
 
-### /studentdatabases/course/value
+<h4>CALL: GET,POST</h4>
 
-GET -> gives back all teh studentdatabases belonging to the course.
+<p>GET -&gt; get info all users</p>
+<p>POST    -&gt; add user</p>
 
-Only accessible to admins and the owners of said course
-
-### /studentdatabases/teacher/own
-
-GET -> gives back all the studentdatabases owned by the teacher
-
-Only accessible to teachers and above
-
-## TABLE: Courses
-
-### /courses/
-
-GET	-> get all courses
-NB: to save data, schemas are not mentioned in GET!
-POST	-> add a new course
-body:
-
-	{
-	"coursename":"test20", [FREE TO CHOOSE]
-	"students":"2", [FREE TO CHOOSE]
-	"info":"test200", [FREE TO CHOOSE]
-	"fid":"7" [FOREIGN KEY, MUST EXIST; OPTIONAL, defaults to own]
-	"schema": <sql> [OPTIONAL, DEFAULT=""]
-	"active": [BOOLEAN, OPTIONAL, DEFAULT=false]
-	}
-
-NB: Schemas are verified for properties such as assigning ownership and creating schemas.
-This code is not very well tested; if you ever encounter an error that relates to it, please notify Floris immediately
-
-### /courses/pk
-
-GET	-> get course for that course id
-PUT -> update information (updating the fid or courseid is not allowed)
-DELETE	-> delete course for that course id
-
-### /courses/name/value
-
-GET -> search for the value, based on the coursename
-
-### /courses/own/
-
-GET -> gives back all the courses owned by the user currently logged in
-
-### /courses/pk/schema
-
-GET -> returns the schema for that database as a sql file
-POST -> Takes the **plaintext** body, and makes it the schema of the database (if it passes verification).
-
-## TABLE: dbmusers
-
-### /dbmusers/
-
-GET	-> get all users
-POST	-> add a new user
-body:
-	{
-	"role":"0", [0=admin,1=teacher,2=student] [set to 2 if not included]
-	"email":"asdfasdf2", [FREE TO CHOOSE, THOUGH NO DUPLICATE IN TABLE]
-	"password":"test205", [FREE TO CHOOSE, IS HASHED]
-	}
-
-### /dbmusers/pk
-
-GET	-> get user for that user id
-DELETE	-> delete user for that user id
-
-### /dbmusers/email/value
-
-GET -> search for the value, based on emailaddress
-
-### /dbmusers/own/
-
-GET -> gives back the info about the currently logged in user
-
-### /dbmusers/course/value
-
-GET -> gives back the users that have a database in that course
-
-## TABLE: TAs
-
-### /tas/
-
-GET	-> get all tas
-POST	-> add a new ta
-body:
-
-	{
-	"courseid":"8",  [FOREIGN KEY, MUST EXIST]
-	"studentid":"16" [FOREIGN KEY, MUST EXIST]
-	}
-
-### /tas/pk
-
-GET	-> get ta for that ta id
-DELETE	-> delete ta for that ta id
-
-### /tas/name/value
-
------!!!!!NOT IMPLEMENTED YET!!!!!------
-
-### /tas/teacher/own/
-
-GET -> only for the teacher (or admin if it owns courses) returned all the tas in the courses made by this teacher
-
-### /tas/own/
-
-GET -> gives back the ta information about the currently logged in ta
-
-### /tas/course/courseid
-
-GET -> gives back the tas of that course
-accesible to the teacher and tas of that course
-
-## /schematransfer/[course]/[database]
-
-Transfers the schema from the database to the course. 
-
-Only works if the database belongs to the course or to your user personally, unless you are an admin.
-
-Default schema (named after the user) is preserved from the target database
-
-## /generate_migration
-
-POST -> Generates the backup script. Returns the location of said script.
-
-Only accessible to admins
-
-## /course_dump/courseid
-
-GET -> returns a zip file with dumps of every database in the course.
-Dump filenames are named after the user email.
-
-Accessible to admins and the course owner (NOT TA's!)
-
-WARNING: May take a long time. Use with caution.
-
-## /request_reset_password/[email] \(NOT /rest !!!)
-
-POST -> Sends an password reset email
-
-Email contains a link that is valid for 4 hours.
-
-## /reset_password/[user id]/[token] \(NOT /rest !!!)
-
-GET -> Displays a "new password" prompt
-POST -> Takes in a JSON object with one key, "password", and sets the password to that password.
-
-Both of these will return errors if the token is invalid or expired.
-
-The link sent will be valid for 4 hours.
-
-## /change_password/ (NOT /rest !!!)
-
-POST -> Takes in the following JSON
-
+<pre><code>body:
     {
-    "current": "aoeu", [CURRENT USER PASSWORD]
-    "new": "ueoa" [NEW PASSWORD]
+    &#34;fid&#34;:&#34;5&#34;, [FOREIGN KEY, MUST EXIST. Optional, if not specified, your current user id]
+    &#34;course&#34;:&#34;3&#34;, [FOREIGN KEY, MUST EXIST]
+    &#34;groupid&#34;:&#34;4&#34; [FREE TO CHOOSE, responsibility is for the student as he is the person who can change it]
     }
+</code></pre>
 
-and sets the password of the user to the new password, if the current one is correct.
+<p>Note: on success you will get the following object back:</p>
+
+<pre><code>body:
+    {
+    &#34;dbid&#34;:&lt;GENERATED VALUE, used as primary key&gt;
+    &#34;fid&#34;:&lt;your value&gt;
+    &#34;course&#34;:&lt;your value&gt;
+    &#34;databasename&#34;:&lt;GENERATED VALUE&gt;
+    &#34;username&#34;:&lt;GENERATED VALUE (same as databasename)
+    &#34;password&#34;:&lt;GENERATED VALUE (long)&gt;
+    }
+</code></pre>
+
+<p>Note that the student will want to know the generated values</p>
+
+<h3>/studentdatabases/pk</h3>
+
+<h4>CALL: GET,DELETE</h4>
+
+<p>GET -&gt; for that pk</p>
+<p>DELETE  -&gt; for that pk</p>
+
+<h3>/studentdatabases/name/value</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; search on the name of the database. The value will be taken as the search field</p>
+
+<h3>/studentdatabases/own/</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; gives back all the studentdatabases owned by the user currently logged in</p>
+
+<h3>/studentdatabases/owner/value</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; gives back all the studentdatabases owned by the user with the id of the value</p>
+
+<h3>/studentdatabases/course/value</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; gives back all the studentdatabases belonging to this specific course</p>
+
+<h3>/studentdatabases/teacher/own</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; gives back all the studentdatabases owned by the teacher</p>
+
+<h2>TABLE: Courses</h2>
+
+<h3>/courses/</h3>
+
+<h4>CALL: GET,POST</h4>
+
+<p>GET -&gt; get all courses</p>
+<p>NB: to save data, schemas are not mentioned in GET!</p>
+<p>POST    -&gt; add a new course</p>
+body:</p>
+
+<pre><code>{
+&#34;coursename&#34;:&#34;test20&#34;, [FREE TO CHOOSE]
+&#34;students&#34;:&#34;2&#34;, [FREE TO CHOOSE]
+&#34;info&#34;:&#34;test200&#34;, [FREE TO CHOOSE]
+&#34;fid&#34;:&#34;7&#34; [FOREIGN KEY, MUST EXIST; OPTIONAL, defaults to own]
+&#34;schema&#34;: &lt;sql&gt; [OPTIONAL, DEFAULT=&#34;&#34;]
+&#34;active&#34;: [BOOLEAN, OPTIONAL, DEFAULT=false]
+}
+</code></pre>
+
+<h3>/courses/pk</h3>
+
+<h4>CALL: GET,PUT,DELETE</h4>
+
+<p>GET -&gt; get course for this specific course id</p>
+<p>PUT -&gt; update information (updating the fid or courseid is not allowed)</p>
+<p>DELETE  -&gt; delete a course for a specific course id</p>
+
+<h3>/courses/name/value</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; search for the value field, based on the coursename</p>
+
+<h3>/courses/own/</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; gives back all the courses owned by the currently logged in user</p>
+
+<h3>/courses/pk/schema</h3>
+
+<h4>CALL: GET,POST</h4>
+
+<p>GET -&gt; returns the schema for that database as a sql file</p>
+<p>POST -&gt; Takes the <strong>plaintext</strong> body, and makes it the schema of the database (if it passes verification).</p>
+
+<h2>TABLE: dbmusers</h2>
+
+<h3>/dbmusers/</h3>
+
+<h4>CALL: GET,POST</h4>
+
+<p>GET -&gt; get all users</p>
+<p>POST    -&gt; add a new user</p>
+<p>body:</p>
+
+<pre><code>{
+&#34;role&#34;:&#34;0&#34;, [0=admin,1=teacher,2=student] [set to 2 if not included]
+&#34;email&#34;:&#34;asdfasdf2&#34;, [FREE TO CHOOSE, THOUGH NO DUPLICATE IN TABLE]
+&#34;password&#34;:&#34;test205&#34;, [FREE TO CHOOSE, IS HASHED]
+}
+</code></pre>
+
+<h3>/dbmusers/pk</h3>
+
+<h4>CALL: GET,DELETE</h4>
+
+<p>GET -&gt; get user for that user id</p>
+<p>DELETE  -&gt; delete user for that user id</p>
+
+<h3>/dbmusers/email/value</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; search for the value, based on emailaddress</p>
+
+<h3>/dbmusers/own/</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; gives back the info about the currently logged in user</p>
+
+<h3>/dbmusers/course/value</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; gives back the users that have a database in that course</p>
+
+<h2>TABLE: TAs</h2>
+
+<h3>/tas/</h3>
+
+<h4>CALL: GET,POST</h4>
+
+<p>GET -&gt; get all tas</p>
+<p>POST    -&gt; add a new ta</p>
+body:</p>
+
+<pre><code>{
+&#34;courseid&#34;:&#34;8&#34;,  [FOREIGN KEY, MUST EXIST]
+&#34;studentid&#34;:&#34;16&#34; [FOREIGN KEY, MUST EXIST]
+}
+</code></pre>
+
+<h3>/tas/pk</h3>
+
+<h4>CALL: GET,DELETE</h4>
+
+<p>GET -&gt; get ta for that ta id</p>
+DELETE  -&gt; delete ta for that ta id</p>
+
+<h3>/tas/teacher/own/</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; returns all the tas in the courses owned by this teacher</p>
+
+<h3>/tas/own/</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; gives back the ta information about the currently logged in ta</p>
+
+<h3>/tas/course/courseid</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; gives back the tas of that course</p>
+
+<h3>/schematransfer/[course]/[database]</h3>
+
+<h4>CALL: POST</h4>
+
+<p>Transfers the schema from the database to the course.</p>
+
+<p>Only works if the database belongs to the course or to your user personally, unless you are an admin.</p>
+
+<p>Default schema (named after the user) is preserved from the target database</p>
+
+<h3>/generate_migration</h3>
+
+<h4>CALL: POST</h4>
+
+<p>POST -&gt; Generates the backup script. Returns the location of said script.</p>
+
+<p>Only accessible to admins</p>
+
+<h3>/course_dump/courseid</h3>
+
+<h4>CALL: GET</h4>
+
+<p>GET -&gt; returns a zip file with dumps of every database in the course.
+Dump filenames are named after the user email.</p>
+
+<p>Accessible to admins and the course owner (NOT TA’s!)</p>
+
+<p>WARNING: May take a long time. Use with caution.</p>
+
+<h3>/request_reset_password/[email] (NOT /rest !!!)</h3>
+
+<h4>CALL: POST</h4>
+
+<p>POST -&gt; Sends an password reset email</p>
+
+<p>Email contains a link that is valid for 4 hours.</p>
+
+<h3>/reset_password/[user id]/[token] (NOT /rest !!!)</h3>
+
+<h4>CALL: GET,POST</h4>
+
+<p>GET -&gt; Displays a “new password” prompt</p>
+<p>POST -&gt; Takes in a JSON object with one key, “password”, and sets the password to that password.</p>
+
+<p>Both of these will return errors if the token is invalid or expired.</p>
+
+<p>The link sent will be valid for 4 hours.</p>
+
+<h3>/change_password/ (NOT /rest !!!)</h3>
+
+<h4>CALL: POST</h4>
+
+<p>POST -&gt; Takes in the following JSON</p>
+
+<pre><code>{
+&#34;current&#34;: &#34;aoeu&#34;, [CURRENT USER PASSWORD]
+&#34;new&#34;: &#34;ueoa&#34; [NEW PASSWORD]
+}
+</code></pre>
+
+<p>and sets the password of the user to the new password, if the current one is correct.</p>
