@@ -301,29 +301,3 @@ POST -> Takes in the following JSON
     }
 
 and sets the password of the user to the new password, if the current one is correct.
-
-# Permissions
-
-Each user level has the following permissions
-
-|               | Tas           | dbmusers      | Courses      | Studentdatabases |
-|---------------|---------------|---------------|--------------|------------------|
-| Admin         | Get, all      | Get, all      | Get, all     | Get, all         |
-|               | Get, any      | Get, any      | Get, any     | Get, any         |
-|               | POST          | POST          | POST         | POST             |
-|               | DELETE, any   | DELETE, any   | DELETE, any  | DELETE, any      |
-|---------------|---------------|---------------|--------------|------------------|
-| Teacher       | Get, all      | Get, all      | Get, all     | Get, all         |
-|               | Get, any      | Get, any      | Get, any     | Get, any         |
-|               | POST          | POST          | POST         | POST             |
-|               | Delete, own*  | Delete, own   | Delete, own  | Delete, own      |
-|---------------|---------------|---------------|--------------|------------------|
-| Student       | Get, own      | Get, own      | Get, all     | Get, own         |
-|               |               | POST          | Get, any     | POST             |
-|               |               | Delete, own   |              | Delete, own      |
-|---------------|---------------|---------------|--------------|------------------|
-| Not logged in |               | POST          |              |                  |
-
-\*own here refers to ta's added to courses owned by the teacher
-
-NB: dump has the same permissions as GET for that database, and /reset the same as DELETE

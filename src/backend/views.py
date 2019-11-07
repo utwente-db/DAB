@@ -39,9 +39,7 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s',
 )
 
-# --- BEGIN FREEK CHUNK FIX ---
-
-
+# --- IMPORTANT FIX TO CORRECTLY LOAD CHUNCKS ---
 
 cssnumbers = []
 jsnumbers = []
@@ -63,7 +61,7 @@ if not DEBUG:
 else:
     cssnumbers.append("main")
 
-# --- END FREEK CHUNK FIX ---
+# --- END IMPORTANT FIX TO CORRECTLY LOAD CHUNCKS ---
 
 class PrefixHttpResponseRedirect(HttpResponseRedirect):
     def __init__(self,input):
