@@ -34,8 +34,14 @@ class dbmusersManager(models.Manager.from_queryset(dbmusersQuerySet)):
             kwargs["email"] = kwargs["email"].lower()
         return super().all(**kwargs)
 
-
+    
 class dbmusers(models.Model):
+    """Users of DAB.
+
+    Overrides:
+    email is not case sensitive; applied by converting to lowercase on search and save.
+    email must correspond to regex and be from the UT: checked on save, raises ValueError otherwise.
+    """
     id = models.AutoField(db_column='id', primary_key=True)
     role = models.IntegerField()
     email = models.CharField(max_length=265, unique=True)
@@ -62,8 +68,12 @@ class dbmusers(models.Model):
         db_table = 'dbmusers'
         verbose_name_plural = 'dbmusers'
 
-
+    
 class Courses(models.Model):
+    """Courses: the model for the course.
+
+    No overrides.
+    """
     courseid = models.AutoField(db_column='courseid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='fid')
     coursename = models.CharField(max_length=256, unique=True)
@@ -98,7 +108,11 @@ class Courses(models.Model):
         verbose_name_plural = 'Courses'
 
 
+    
 def switchPassword(password):
+    """applies the bitmask to the password
+
+    """
     bits = base64.b64decode(password)
     bits = bytes([x ^ y for (x, y) in zip(settings.BITMASK, bits)])
     return base64.b64encode(bits).decode()
@@ -138,8 +152,13 @@ class StudentdatabasesManager(models.Manager.from_queryset(StudentdatabasesQuery
         return out
 
 
-
+    
 class Studentdatabases(models.Model):
+    """Model for the student database
+
+    Overrides:
+    DB passwords are bitmasked. Bitmask is applied when saving, and applied again on retrieval
+    """
     dbid = models.AutoField(db_column='dbid', primary_key=True)
     fid = models.ForeignKey(dbmusers, on_delete=models.PROTECT, db_column='fid')
     databasename = models.TextField(unique=True)
@@ -173,8 +192,12 @@ class Studentdatabases(models.Model):
         db_table = 'studentdatabases'
         verbose_name_plural = 'StudentDatabases'
 
-
+    
 class TAs(models.Model):
+    """Models the TA relationship between dbmusers and courses
+
+    No overrides
+    """
     taid = models.AutoField(db_column='taid', primary_key=True)
     courseid = models.ForeignKey(Courses, on_delete=models.CASCADE, db_column='courseid')
     studentid = models.ForeignKey(dbmusers, on_delete=models.CASCADE, db_column='studentid')

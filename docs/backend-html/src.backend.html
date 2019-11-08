@@ -1,0 +1,2325 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>src.backend package &#8212; DAB 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="src-backend-package">
+<h1>src.backend package<a class="headerlink" href="#src-backend-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="src.backend.middleware.html">src.backend.middleware package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.backend.middleware.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.backend.middleware.html#module-src.backend.middleware.errorhandling">src.backend.middleware.errorhandling module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.backend.middleware.html#module-src.backend.middleware">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="src.backend.migrations.html">src.backend.migrations package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="src.backend.migrations.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.backend.migrations.html#module-src.backend.migrations.0001_initial">src.backend.migrations.0001_initial module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.backend.migrations.html#module-src.backend.migrations.0002_delete_schemas">src.backend.migrations.0002_delete_schemas module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.backend.migrations.html#module-src.backend.migrations">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="src-backend-admin-module">
+<h2>src.backend.admin module<a class="headerlink" href="#src-backend-admin-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.backend.apps">
+<span id="src-backend-apps-module"></span><h2>src.backend.apps module<a class="headerlink" href="#module-src.backend.apps" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.backend.apps.BackendConfig">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.apps.</code><code class="sig-name descname">BackendConfig</code><span class="sig-paren">(</span><em class="sig-param">app_name</em>, <em class="sig-param">app_module</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.apps.BackendConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.apps.config.AppConfig</span></code></p>
+<dl class="attribute">
+<dt id="src.backend.apps.BackendConfig.name">
+<code class="sig-name descname">name</code><em class="property"> = 'src.backend'</em><a class="headerlink" href="#src.backend.apps.BackendConfig.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.forms">
+<span id="src-backend-forms-module"></span><h2>src.backend.forms module<a class="headerlink" href="#module-src.backend.forms" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.backend.forms.LoginForm">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.forms.</code><code class="sig-name descname">LoginForm</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">files=None</em>, <em class="sig-param">auto_id='id_%s'</em>, <em class="sig-param">prefix=None</em>, <em class="sig-param">initial=None</em>, <em class="sig-param">error_class=&lt;class 'django.forms.utils.ErrorList'&gt;</em>, <em class="sig-param">label_suffix=None</em>, <em class="sig-param">empty_permitted=False</em>, <em class="sig-param">field_order=None</em>, <em class="sig-param">use_required_attribute=None</em>, <em class="sig-param">renderer=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.forms.LoginForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.forms.forms.Form</span></code></p>
+<dl class="attribute">
+<dt id="src.backend.forms.LoginForm.base_fields">
+<code class="sig-name descname">base_fields</code><em class="property"> = {'mail': &lt;django.forms.fields.CharField object&gt;, 'password': &lt;django.forms.fields.CharField object&gt;}</em><a class="headerlink" href="#src.backend.forms.LoginForm.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.forms.LoginForm.declared_fields">
+<code class="sig-name descname">declared_fields</code><em class="property"> = {'mail': &lt;django.forms.fields.CharField object&gt;, 'password': &lt;django.forms.fields.CharField object&gt;}</em><a class="headerlink" href="#src.backend.forms.LoginForm.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.forms.LoginForm.media">
+<em class="property">property </em><code class="sig-name descname">media</code><a class="headerlink" href="#src.backend.forms.LoginForm.media" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.forms.RegisterForm">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.forms.</code><code class="sig-name descname">RegisterForm</code><span class="sig-paren">(</span><em class="sig-param">data=None</em>, <em class="sig-param">files=None</em>, <em class="sig-param">auto_id='id_%s'</em>, <em class="sig-param">prefix=None</em>, <em class="sig-param">initial=None</em>, <em class="sig-param">error_class=&lt;class 'django.forms.utils.ErrorList'&gt;</em>, <em class="sig-param">label_suffix=None</em>, <em class="sig-param">empty_permitted=False</em>, <em class="sig-param">field_order=None</em>, <em class="sig-param">use_required_attribute=None</em>, <em class="sig-param">renderer=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.forms.RegisterForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.forms.forms.Form</span></code></p>
+<dl class="attribute">
+<dt id="src.backend.forms.RegisterForm.base_fields">
+<code class="sig-name descname">base_fields</code><em class="property"> = {'mail': &lt;django.forms.fields.CharField object&gt;, 'password': &lt;django.forms.fields.CharField object&gt;, 'passwordConfirm': &lt;django.forms.fields.CharField object&gt;}</em><a class="headerlink" href="#src.backend.forms.RegisterForm.base_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.forms.RegisterForm.declared_fields">
+<code class="sig-name descname">declared_fields</code><em class="property"> = {'mail': &lt;django.forms.fields.CharField object&gt;, 'password': &lt;django.forms.fields.CharField object&gt;, 'passwordConfirm': &lt;django.forms.fields.CharField object&gt;}</em><a class="headerlink" href="#src.backend.forms.RegisterForm.declared_fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.forms.RegisterForm.media">
+<em class="property">property </em><code class="sig-name descname">media</code><a class="headerlink" href="#src.backend.forms.RegisterForm.media" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.forms.RegisterForm.validate">
+<code class="sig-name descname">validate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.forms.RegisterForm.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.hash">
+<span id="src-backend-hash-module"></span><h2>src.backend.hash module<a class="headerlink" href="#module-src.backend.hash" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="src.backend.hash.UnknownHashException">
+<em class="property">exception </em><code class="sig-prename descclassname">src.backend.hash.</code><code class="sig-name descname">UnknownHashException</code><span class="sig-paren">(</span><em class="sig-param">arg</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.hash.UnknownHashException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.hash.make">
+<code class="sig-prename descclassname">src.backend.hash.</code><code class="sig-name descname">make</code><span class="sig-paren">(</span><em class="sig-param">string</em>, <em class="sig-param">salt=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.hash.make" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a formatted hash from the provided password</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>string</strong> (<em>string</em><em>, or </em><em>really anything that has a .encode</em><em>(</em><em>) </em><em>function</em>) – The password to be hashed</p></li>
+<li><p><strong>salt=None</strong> – The salt to be used. Will be randomly generated if None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the formatted password hash</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.hash.randomNames">
+<code class="sig-prename descclassname">src.backend.hash.</code><code class="sig-name descname">randomNames</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.hash.randomNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generatation of random names and passwords</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a random 18 byte name and 33 byte password, both in base64</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>tuple of strings</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.hash.randomPassword">
+<code class="sig-prename descclassname">src.backend.hash.</code><code class="sig-name descname">randomPassword</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.hash.randomPassword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a random 12 byte password</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A 12 byte random password is base64</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.hash.token">
+<code class="sig-prename descclassname">src.backend.hash.</code><code class="sig-name descname">token</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.hash.token" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a random 16 byte token</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a random 16 byte token, in base64</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.hash.verify">
+<code class="sig-prename descclassname">src.backend.hash.</code><code class="sig-name descname">verify</code><span class="sig-paren">(</span><em class="sig-param">test</em>, <em class="sig-param">password</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.hash.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verifies that the password was used to generate the hash</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>test</strong> (<em>string</em>) – The hash to test for</p></li>
+<li><p><strong>password</strong> (<em>string</em>) – The password to test</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether the password matches the hash</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.log_functions">
+<span id="src-backend-log-functions-module"></span><h2>src.backend.log_functions module<a class="headerlink" href="#module-src.backend.log_functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.backend.log_functions.log_message">
+<code class="sig-prename descclassname">src.backend.log_functions.</code><code class="sig-name descname">log_message</code><span class="sig-paren">(</span><em class="sig-param">execute</em>, <em class="sig-param">message</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.log_functions.log_message" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.log_functions.log_message_with_db">
+<code class="sig-prename descclassname">src.backend.log_functions.</code><code class="sig-name descname">log_message_with_db</code><span class="sig-paren">(</span><em class="sig-param">userid</em>, <em class="sig-param">databasename</em>, <em class="sig-param">execute</em>, <em class="sig-param">message</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.log_functions.log_message_with_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.mail">
+<span id="src-backend-mail-module"></span><h2>src.backend.mail module<a class="headerlink" href="#module-src.backend.mail" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.backend.mail.send_creation_notice">
+<code class="sig-prename descclassname">src.backend.mail.</code><code class="sig-name descname">send_creation_notice</code><span class="sig-paren">(</span><em class="sig-param">user</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.mail.send_creation_notice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a notice to the user that an account has been created with their email. This account should be verified by then.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user</strong> (<em>dict</em>) – the user to send the email to</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.mail.send_reset">
+<code class="sig-prename descclassname">src.backend.mail.</code><code class="sig-name descname">send_reset</code><span class="sig-paren">(</span><em class="sig-param">user</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.mail.send_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>send the password reset email. The token should already be generated by now.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>user</strong> (<em>dict</em>) – the user to send the password reset email to</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.mail.send_verification">
+<code class="sig-prename descclassname">src.backend.mail.</code><code class="sig-name descname">send_verification</code><span class="sig-paren">(</span><em class="sig-param">user</em>, <em class="sig-param">created=False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.mail.send_verification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send the account verification email</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>user</strong> (<em>dict</em>) – The user to send the verification email to</p></li>
+<li><p><strong>created=False</strong> – whether the user requested their own account, or the account was created for them</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.models">
+<span id="src-backend-models-module"></span><h2>src.backend.models module<a class="headerlink" href="#module-src.backend.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.backend.models.Courses">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.models.</code><code class="sig-name descname">Courses</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.Courses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<p>Courses: the model for the course.</p>
+<p>No overrides.</p>
+<dl class="exception">
+<dt id="src.backend.models.Courses.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#src.backend.models.Courses.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.backend.models.Courses.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#src.backend.models.Courses.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.active">
+<code class="sig-name descname">active</code><a class="headerlink" href="#src.backend.models.Courses.active" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.assistants">
+<code class="sig-name descname">assistants</code><a class="headerlink" href="#src.backend.models.Courses.assistants" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the forward and reverse sides of
+a many-to-many relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">toppings</span> <span class="o">=</span> <span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Topping</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;pizzas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Pizza.toppings</span></code> and <code class="docutils literal notranslate"><span class="pre">Topping.pizzas</span></code> are <code class="docutils literal notranslate"><span class="pre">ManyToManyDescriptor</span></code>
+instances.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.courseid">
+<code class="sig-name descname">courseid</code><a class="headerlink" href="#src.backend.models.Courses.courseid" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.coursename">
+<code class="sig-name descname">coursename</code><a class="headerlink" href="#src.backend.models.Courses.coursename" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.databases">
+<code class="sig-name descname">databases</code><a class="headerlink" href="#src.backend.models.Courses.databases" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.fid">
+<code class="sig-name descname">fid</code><a class="headerlink" href="#src.backend.models.Courses.fid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.fid_id">
+<code class="sig-name descname">fid_id</code><a class="headerlink" href="#src.backend.models.Courses.fid_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.info">
+<code class="sig-name descname">info</code><a class="headerlink" href="#src.backend.models.Courses.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.objects">
+<code class="sig-name descname">objects</code><em class="property"> = &lt;django.db.models.manager.Manager object&gt;</em><a class="headerlink" href="#src.backend.models.Courses.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.Courses.owner">
+<code class="sig-name descname">owner</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.Courses.owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.Courses.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.Courses.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current instance. Override this in a subclass if you want to
+control the saving process.</p>
+<p>The ‘force_insert’ and ‘force_update’ parameters can be used to insist
+that the “save” must be an SQL insert or update (or equivalent for
+non-SQL backends), respectively. Normally, they should not be set.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.schema">
+<code class="sig-name descname">schema</code><a class="headerlink" href="#src.backend.models.Courses.schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.studentdatabases_set">
+<code class="sig-name descname">studentdatabases_set</code><a class="headerlink" href="#src.backend.models.Courses.studentdatabases_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Courses.tas_set">
+<code class="sig-name descname">tas_set</code><a class="headerlink" href="#src.backend.models.Courses.tas_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.models.Studentdatabases">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.models.</code><code class="sig-name descname">Studentdatabases</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.Studentdatabases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<p>Model for the student database</p>
+<p>Overrides:
+DB passwords are bitmasked. Bitmask is applied when saving, and applied again on retrieval</p>
+<dl class="exception">
+<dt id="src.backend.models.Studentdatabases.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#src.backend.models.Studentdatabases.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.backend.models.Studentdatabases.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#src.backend.models.Studentdatabases.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.course">
+<code class="sig-name descname">course</code><a class="headerlink" href="#src.backend.models.Studentdatabases.course" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.course_id">
+<code class="sig-name descname">course_id</code><a class="headerlink" href="#src.backend.models.Studentdatabases.course_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.databasename">
+<code class="sig-name descname">databasename</code><a class="headerlink" href="#src.backend.models.Studentdatabases.databasename" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.dbid">
+<code class="sig-name descname">dbid</code><a class="headerlink" href="#src.backend.models.Studentdatabases.dbid" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.Studentdatabases.email">
+<em class="property">property </em><code class="sig-name descname">email</code><a class="headerlink" href="#src.backend.models.Studentdatabases.email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.fid">
+<code class="sig-name descname">fid</code><a class="headerlink" href="#src.backend.models.Studentdatabases.fid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.fid_id">
+<code class="sig-name descname">fid_id</code><a class="headerlink" href="#src.backend.models.Studentdatabases.fid_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.groupid">
+<code class="sig-name descname">groupid</code><a class="headerlink" href="#src.backend.models.Studentdatabases.groupid" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.objects">
+<code class="sig-name descname">objects</code><em class="property"> = &lt;src.backend.models.StudentdatabasesManager object&gt;</em><a class="headerlink" href="#src.backend.models.Studentdatabases.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.Studentdatabases.owner">
+<code class="sig-name descname">owner</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.Studentdatabases.owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.password">
+<code class="sig-name descname">password</code><a class="headerlink" href="#src.backend.models.Studentdatabases.password" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.Studentdatabases.role">
+<em class="property">property </em><code class="sig-name descname">role</code><a class="headerlink" href="#src.backend.models.Studentdatabases.role" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.Studentdatabases.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.Studentdatabases.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current instance. Override this in a subclass if you want to
+control the saving process.</p>
+<p>The ‘force_insert’ and ‘force_update’ parameters can be used to insist
+that the “save” must be an SQL insert or update (or equivalent for
+non-SQL backends), respectively. Normally, they should not be set.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.Studentdatabases.username">
+<code class="sig-name descname">username</code><a class="headerlink" href="#src.backend.models.Studentdatabases.username" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.models.StudentdatabasesManager">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.models.</code><code class="sig-name descname">StudentdatabasesManager</code><a class="headerlink" href="#src.backend.models.StudentdatabasesManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.manager.ManagerFromStudentdatabasesQuerySet</span></code></p>
+<dl class="method">
+<dt id="src.backend.models.StudentdatabasesManager.all">
+<code class="sig-name descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.StudentdatabasesManager.all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.StudentdatabasesManager.raw">
+<code class="sig-name descname">raw</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.StudentdatabasesManager.raw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.models.StudentdatabasesQuerySet">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.models.</code><code class="sig-name descname">StudentdatabasesQuerySet</code><span class="sig-paren">(</span><em class="sig-param">model=None</em>, <em class="sig-param">query=None</em>, <em class="sig-param">using=None</em>, <em class="sig-param">hints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.StudentdatabasesQuerySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.query.QuerySet</span></code></p>
+<dl class="method">
+<dt id="src.backend.models.StudentdatabasesQuerySet.all">
+<code class="sig-name descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.StudentdatabasesQuerySet.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new QuerySet that is a copy of the current one. This allows a
+QuerySet to proxy for a model manager in some cases.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.StudentdatabasesQuerySet.filter">
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.StudentdatabasesQuerySet.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new QuerySet instance with the args ANDed to the existing
+set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.StudentdatabasesQuerySet.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.StudentdatabasesQuerySet.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the query and return a single object matching the given
+keyword arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.models.TAs">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.models.</code><code class="sig-name descname">TAs</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.TAs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<p>Models the TA relationship between dbmusers and courses</p>
+<p>No overrides</p>
+<dl class="exception">
+<dt id="src.backend.models.TAs.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#src.backend.models.TAs.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.backend.models.TAs.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#src.backend.models.TAs.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.TAs.courseid">
+<code class="sig-name descname">courseid</code><a class="headerlink" href="#src.backend.models.TAs.courseid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.TAs.courseid_id">
+<code class="sig-name descname">courseid_id</code><a class="headerlink" href="#src.backend.models.TAs.courseid_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.TAs.objects">
+<code class="sig-name descname">objects</code><em class="property"> = &lt;django.db.models.manager.Manager object&gt;</em><a class="headerlink" href="#src.backend.models.TAs.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.TAs.owner">
+<code class="sig-name descname">owner</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.TAs.owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.TAs.studentid">
+<code class="sig-name descname">studentid</code><a class="headerlink" href="#src.backend.models.TAs.studentid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related object on the forward side of a many-to-one or
+one-to-one (via ForwardOneToOneDescriptor subclass) relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Child.parent</span></code> is a <code class="docutils literal notranslate"><span class="pre">ForwardManyToOneDescriptor</span></code> instance.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.TAs.studentid_id">
+<code class="sig-name descname">studentid_id</code><a class="headerlink" href="#src.backend.models.TAs.studentid_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.TAs.taid">
+<code class="sig-name descname">taid</code><a class="headerlink" href="#src.backend.models.TAs.taid" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.models.dbmusers">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.models.</code><code class="sig-name descname">dbmusers</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.base.Model</span></code></p>
+<p>Users of DAB.</p>
+<p>Overrides:
+email is not case sensitive; applied by converting to lowercase on search and save.
+email must correspond to regex and be from the UT: checked on save, raises ValueError otherwise.</p>
+<dl class="exception">
+<dt id="src.backend.models.dbmusers.DoesNotExist">
+<em class="property">exception </em><code class="sig-name descname">DoesNotExist</code><a class="headerlink" href="#src.backend.models.dbmusers.DoesNotExist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.ObjectDoesNotExist</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="src.backend.models.dbmusers.MultipleObjectsReturned">
+<em class="property">exception </em><code class="sig-name descname">MultipleObjectsReturned</code><a class="headerlink" href="#src.backend.models.dbmusers.MultipleObjectsReturned" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.core.exceptions.MultipleObjectsReturned</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.assisting">
+<code class="sig-name descname">assisting</code><a class="headerlink" href="#src.backend.models.dbmusers.assisting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the forward and reverse sides of
+a many-to-many relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Pizza</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">toppings</span> <span class="o">=</span> <span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Topping</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;pizzas&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Pizza.toppings</span></code> and <code class="docutils literal notranslate"><span class="pre">Topping.pizzas</span></code> are <code class="docutils literal notranslate"><span class="pre">ManyToManyDescriptor</span></code>
+instances.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.courses_set">
+<code class="sig-name descname">courses_set</code><a class="headerlink" href="#src.backend.models.dbmusers.courses_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.email">
+<code class="sig-name descname">email</code><a class="headerlink" href="#src.backend.models.dbmusers.email" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.dbmusers.get_next_by_lastlogin">
+<code class="sig-name descname">get_next_by_lastlogin</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: lastlogin&gt;</em>, <em class="sig-param">is_next=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusers.get_next_by_lastlogin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.dbmusers.get_next_by_tokenExpire">
+<code class="sig-name descname">get_next_by_tokenExpire</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: tokenExpire&gt;</em>, <em class="sig-param">is_next=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusers.get_next_by_tokenExpire" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.dbmusers.get_previous_by_lastlogin">
+<code class="sig-name descname">get_previous_by_lastlogin</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: lastlogin&gt;</em>, <em class="sig-param">is_next=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusers.get_previous_by_lastlogin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.dbmusers.get_previous_by_tokenExpire">
+<code class="sig-name descname">get_previous_by_tokenExpire</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">field=&lt;django.db.models.fields.DateTimeField: tokenExpire&gt;</em>, <em class="sig-param">is_next=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusers.get_previous_by_tokenExpire" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.id">
+<code class="sig-name descname">id</code><a class="headerlink" href="#src.backend.models.dbmusers.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.lastlogin">
+<code class="sig-name descname">lastlogin</code><a class="headerlink" href="#src.backend.models.dbmusers.lastlogin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.objects">
+<code class="sig-name descname">objects</code><em class="property"> = &lt;src.backend.models.dbmusersManager object&gt;</em><a class="headerlink" href="#src.backend.models.dbmusers.objects" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.password">
+<code class="sig-name descname">password</code><a class="headerlink" href="#src.backend.models.dbmusers.password" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.role">
+<code class="sig-name descname">role</code><a class="headerlink" href="#src.backend.models.dbmusers.role" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.dbmusers.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusers.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save the current instance. Override this in a subclass if you want to
+control the saving process.</p>
+<p>The ‘force_insert’ and ‘force_update’ parameters can be used to insist
+that the “save” must be an SQL insert or update (or equivalent for
+non-SQL backends), respectively. Normally, they should not be set.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.studentdatabases_set">
+<code class="sig-name descname">studentdatabases_set</code><a class="headerlink" href="#src.backend.models.dbmusers.studentdatabases_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.tas_set">
+<code class="sig-name descname">tas_set</code><a class="headerlink" href="#src.backend.models.dbmusers.tas_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accessor to the related objects manager on the reverse side of a
+many-to-one relation.</p>
+<p>In the example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Child</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ForeignKey</span><span class="p">(</span><span class="n">Parent</span><span class="p">,</span> <span class="n">related_name</span><span class="o">=</span><span class="s1">&#39;children&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Parent.children</span></code> is a <code class="docutils literal notranslate"><span class="pre">ReverseManyToOneDescriptor</span></code> instance.</p>
+<p>Most of the implementation is delegated to a dynamically defined manager
+class built by <code class="docutils literal notranslate"><span class="pre">create_forward_many_to_many_manager()</span></code> defined below.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.token">
+<code class="sig-name descname">token</code><a class="headerlink" href="#src.backend.models.dbmusers.token" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.tokenExpire">
+<code class="sig-name descname">tokenExpire</code><a class="headerlink" href="#src.backend.models.dbmusers.tokenExpire" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.models.dbmusers.verified">
+<code class="sig-name descname">verified</code><a class="headerlink" href="#src.backend.models.dbmusers.verified" title="Permalink to this definition">¶</a></dt>
+<dd><p>A wrapper for a deferred-loading field. When the value is read from this
+object the first time, the query is executed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.models.dbmusersManager">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.models.</code><code class="sig-name descname">dbmusersManager</code><a class="headerlink" href="#src.backend.models.dbmusersManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.manager.ManagerFromdbmusersQuerySet</span></code></p>
+<dl class="method">
+<dt id="src.backend.models.dbmusersManager.all">
+<code class="sig-name descname">all</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusersManager.all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.models.dbmusersQuerySet">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.models.</code><code class="sig-name descname">dbmusersQuerySet</code><span class="sig-paren">(</span><em class="sig-param">model=None</em>, <em class="sig-param">query=None</em>, <em class="sig-param">using=None</em>, <em class="sig-param">hints=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusersQuerySet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.db.models.query.QuerySet</span></code></p>
+<dl class="method">
+<dt id="src.backend.models.dbmusersQuerySet.filter">
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusersQuerySet.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new QuerySet instance with the args ANDed to the existing
+set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="src.backend.models.dbmusersQuerySet.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.dbmusersQuerySet.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the query and return a single object matching the given
+keyword arguments.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.models.switchPassword">
+<code class="sig-prename descclassname">src.backend.models.</code><code class="sig-name descname">switchPassword</code><span class="sig-paren">(</span><em class="sig-param">password</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.models.switchPassword" title="Permalink to this definition">¶</a></dt>
+<dd><p>applies the bitmask to the password</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.rest_urls">
+<span id="src-backend-rest-urls-module"></span><h2>src.backend.rest_urls module<a class="headerlink" href="#module-src.backend.rest_urls" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.backend.schemaCheck">
+<span id="src-backend-schemacheck-module"></span><h2>src.backend.schemaCheck module<a class="headerlink" href="#module-src.backend.schemaCheck" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.backend.schemaCheck.check">
+<code class="sig-prename descclassname">src.backend.schemaCheck.</code><code class="sig-name descname">check</code><span class="sig-paren">(</span><em class="sig-param">schema</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.schemaCheck.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the schema contains anything you might not want in a schema.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>schema</strong> – the schema to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a whether it passed or not, and the reason why</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>a tuple of a boolean and a string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.schemaCheck.stderr">
+<code class="sig-prename descclassname">src.backend.schemaCheck.</code><code class="sig-name descname">stderr</code><span class="sig-paren">(</span><em class="sig-param">stderr</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.schemaCheck.stderr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if there is any ERROR output in the standard error. For internal use only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stderr</strong> (<em>string</em>) – the standard error of a psql call</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The errors in the stderr</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.schemas">
+<span id="src-backend-schemas-module"></span><h2>src.backend.schemas module<a class="headerlink" href="#module-src.backend.schemas" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.backend.schemas.dump">
+<code class="sig-prename descclassname">src.backend.schemas.</code><code class="sig-name descname">dump</code><span class="sig-paren">(</span><em class="sig-param">database</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.schemas.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the contents of database in SQL</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>database</strong> (<em>dict</em>) – the database to get the contents from</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a SQLdump of the database</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.schemas.dump_course">
+<code class="sig-prename descclassname">src.backend.schemas.</code><code class="sig-name descname">dump_course</code><span class="sig-paren">(</span><em class="sig-param">course</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.schemas.dump_course" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an archive with dumps for all databases in a course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>course</strong> (<a class="reference internal" href="#src.backend.models.Courses" title="src.backend.models.Courses"><em>models.Courses</em></a>) – the course to get a dump from</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a zipfile with a dump of all databases in the course, where the filename of a dump is the user’s email</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.schemas.stderr">
+<code class="sig-prename descclassname">src.backend.schemas.</code><code class="sig-name descname">stderr</code><span class="sig-paren">(</span><em class="sig-param">stderr</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.schemas.stderr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if there is any ERROR output in the standard error. For internal use only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stderr</strong> (<em>string</em>) – the standard error of a psql call</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The errors in the stderr</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.schemas.write">
+<code class="sig-prename descclassname">src.backend.schemas.</code><code class="sig-name descname">write</code><span class="sig-paren">(</span><em class="sig-param">database</em>, <em class="sig-param">schema</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.schemas.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write a schema to a database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>database</strong> (<em>dict</em>) – the database to write to</p></li>
+<li><p><strong>schema</strong> (<em>string</em>) – the schema to write</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>whether it worked and the reason why</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of boolean and string</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.serializers">
+<span id="src-backend-serializers-module"></span><h2>src.backend.serializers module<a class="headerlink" href="#module-src.backend.serializers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.backend.serializers.CoursesSerializer">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.serializers.</code><code class="sig-name descname">CoursesSerializer</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.serializers.CoursesSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<dl class="class">
+<dt id="src.backend.serializers.CoursesSerializer.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#src.backend.serializers.CoursesSerializer.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="src.backend.serializers.CoursesSerializer.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = ('courseid', 'fid', 'coursename', 'info', 'schema', 'active', 'databases')</em><a class="headerlink" href="#src.backend.serializers.CoursesSerializer.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.serializers.CoursesSerializer.Meta.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#src.backend.serializers.CoursesSerializer.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#src.backend.models.Courses" title="src.backend.models.Courses"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.backend.models.Courses</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.serializers.StudentdatabasesDeleteSerializer">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.serializers.</code><code class="sig-name descname">StudentdatabasesDeleteSerializer</code><span class="sig-paren">(</span><em class="sig-param">instance=None</em>, <em class="sig-param">data=&lt;class 'rest_framework.fields.empty'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.serializers.StudentdatabasesDeleteSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<dl class="class">
+<dt id="src.backend.serializers.StudentdatabasesDeleteSerializer.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#src.backend.serializers.StudentdatabasesDeleteSerializer.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="src.backend.serializers.StudentdatabasesDeleteSerializer.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = ('dbid', 'fid', 'databasename', 'course', 'username', 'password')</em><a class="headerlink" href="#src.backend.serializers.StudentdatabasesDeleteSerializer.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.serializers.StudentdatabasesDeleteSerializer.Meta.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#src.backend.serializers.StudentdatabasesDeleteSerializer.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#src.backend.models.Studentdatabases" title="src.backend.models.Studentdatabases"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.backend.models.Studentdatabases</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.serializers.StudentdatabasesSerializer">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.serializers.</code><code class="sig-name descname">StudentdatabasesSerializer</code><span class="sig-paren">(</span><em class="sig-param">instance=None</em>, <em class="sig-param">data=&lt;class 'rest_framework.fields.empty'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.serializers.StudentdatabasesSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<dl class="class">
+<dt id="src.backend.serializers.StudentdatabasesSerializer.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#src.backend.serializers.StudentdatabasesSerializer.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="src.backend.serializers.StudentdatabasesSerializer.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = '__all__'</em><a class="headerlink" href="#src.backend.serializers.StudentdatabasesSerializer.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.serializers.StudentdatabasesSerializer.Meta.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#src.backend.serializers.StudentdatabasesSerializer.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#src.backend.models.Studentdatabases" title="src.backend.models.Studentdatabases"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.backend.models.Studentdatabases</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="method">
+<dt id="src.backend.serializers.StudentdatabasesSerializer.get_email">
+<code class="sig-name descname">get_email</code><span class="sig-paren">(</span><em class="sig-param">StudentdatabasesSerializer</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.serializers.StudentdatabasesSerializer.get_email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="src.backend.serializers.StudentdatabasesSerializer.get_role">
+<code class="sig-name descname">get_role</code><span class="sig-paren">(</span><em class="sig-param">StudentdatabasesSerializer</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.serializers.StudentdatabasesSerializer.get_role" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.serializers.TasSerializer">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.serializers.</code><code class="sig-name descname">TasSerializer</code><span class="sig-paren">(</span><em class="sig-param">instance=None</em>, <em class="sig-param">data=&lt;class 'rest_framework.fields.empty'&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.serializers.TasSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<dl class="class">
+<dt id="src.backend.serializers.TasSerializer.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#src.backend.serializers.TasSerializer.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="src.backend.serializers.TasSerializer.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = '__all__'</em><a class="headerlink" href="#src.backend.serializers.TasSerializer.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.serializers.TasSerializer.Meta.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#src.backend.serializers.TasSerializer.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#src.backend.models.TAs" title="src.backend.models.TAs"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.backend.models.TAs</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="src.backend.serializers.dbmusersSerializer">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.serializers.</code><code class="sig-name descname">dbmusersSerializer</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.serializers.dbmusersSerializer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">rest_framework.serializers.ModelSerializer</span></code></p>
+<dl class="class">
+<dt id="src.backend.serializers.dbmusersSerializer.Meta">
+<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#src.backend.serializers.dbmusersSerializer.Meta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="src.backend.serializers.dbmusersSerializer.Meta.fields">
+<code class="sig-name descname">fields</code><em class="property"> = ('id', 'email', 'role', 'password', 'verified', 'token', 'tokenExpire')</em><a class="headerlink" href="#src.backend.serializers.dbmusersSerializer.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="src.backend.serializers.dbmusersSerializer.Meta.model">
+<code class="sig-name descname">model</code><a class="headerlink" href="#src.backend.serializers.dbmusersSerializer.Meta.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#src.backend.models.dbmusers" title="src.backend.models.dbmusers"><code class="xref py py-class docutils literal notranslate"><span class="pre">src.backend.models.dbmusers</span></code></a></p>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.settings">
+<span id="src-backend-settings-module"></span><h2>src.backend.settings module<a class="headerlink" href="#module-src.backend.settings" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.backend.statements">
+<span id="src-backend-statements-module"></span><h2>src.backend.statements module<a class="headerlink" href="#module-src.backend.statements" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.backend.statements.connect">
+<code class="sig-prename descclassname">src.backend.statements.</code><code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">db_name</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.statements.connect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.statements.create_db">
+<code class="sig-prename descclassname">src.backend.statements.</code><code class="sig-name descname">create_db</code><span class="sig-paren">(</span><em class="sig-param">db_name</em>, <em class="sig-param">username</em>, <em class="sig-param">password</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.statements.create_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.statements.delete_db">
+<code class="sig-prename descclassname">src.backend.statements.</code><code class="sig-name descname">delete_db</code><span class="sig-paren">(</span><em class="sig-param">db_name</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.statements.delete_db" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.statements.delete_db_with_owner">
+<code class="sig-prename descclassname">src.backend.statements.</code><code class="sig-name descname">delete_db_with_owner</code><span class="sig-paren">(</span><em class="sig-param">db_name</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.statements.delete_db_with_owner" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.statements.delete_user">
+<code class="sig-prename descclassname">src.backend.statements.</code><code class="sig-name descname">delete_user</code><span class="sig-paren">(</span><em class="sig-param">username</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.statements.delete_user" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.statements.get_users">
+<code class="sig-prename descclassname">src.backend.statements.</code><code class="sig-name descname">get_users</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.statements.get_users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.studentdb_functions">
+<span id="src-backend-studentdb-functions-module"></span><h2>src.backend.studentdb_functions module<a class="headerlink" href="#module-src.backend.studentdb_functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.backend.studentdb_functions.connect">
+<code class="sig-prename descclassname">src.backend.studentdb_functions.</code><code class="sig-name descname">connect</code><span class="sig-paren">(</span><em class="sig-param">db_name</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.studentdb_functions.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to a database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>db_name</strong> (<em>string</em>) – the database to connect to</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the database connection</p>
+</dd>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>psycopg2.connection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.studentdb_functions.create_studentdatabase">
+<code class="sig-prename descclassname">src.backend.studentdb_functions.</code><code class="sig-name descname">create_studentdatabase</code><span class="sig-paren">(</span><em class="sig-param">db_name</em>, <em class="sig-param">username</em>, <em class="sig-param">password</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.studentdb_functions.create_studentdatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a student database. Does not alter the master database, just creates the database in postgres.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_name</strong> (<em>string</em>) – the name of the database to create</p></li>
+<li><p><strong>username</strong> (<em>string</em>) – the name of the user to be used for the database</p></li>
+<li><p><strong>password</strong> (<em>string</em>) – the password for the database user</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.studentdb_functions.delete_studentdatabase">
+<code class="sig-prename descclassname">src.backend.studentdb_functions.</code><code class="sig-name descname">delete_studentdatabase</code><span class="sig-paren">(</span><em class="sig-param">databasename</em>, <em class="sig-param">username</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.studentdb_functions.delete_studentdatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a student database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>databasename</strong> (<em>string</em>) – the name of the database to delete</p></li>
+<li><p><strong>username</strong> (<em>string</em>) – the postgres user corresponding to the database</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.studentdb_functions.get_studentdatabase_name">
+<code class="sig-prename descclassname">src.backend.studentdb_functions.</code><code class="sig-name descname">get_studentdatabase_name</code><span class="sig-paren">(</span><em class="sig-param">courseid</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.studentdb_functions.get_studentdatabase_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the name of a database in a course, which is the course name followed by an integer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>courseid</strong> (<em>int</em>) – The ID of the course to put the database in</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the database name</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.studentdb_functions.reset_studentdatabase">
+<code class="sig-prename descclassname">src.backend.studentdb_functions.</code><code class="sig-name descname">reset_studentdatabase</code><span class="sig-paren">(</span><em class="sig-param">db</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.studentdb_functions.reset_studentdatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset a database to the schema of it’s course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>db</strong> (<a class="reference internal" href="#src.backend.models.Studentdatabases" title="src.backend.models.Studentdatabases"><em>models.Studentdatabases</em></a>) – The database to reset</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.studentdb_functions.setup_student_db">
+<code class="sig-prename descclassname">src.backend.studentdb_functions.</code><code class="sig-name descname">setup_student_db</code><span class="sig-paren">(</span><em class="sig-param">databases</em>, <em class="sig-param">serializer_class</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.studentdb_functions.setup_student_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform the first-time setup actions for a student database to be created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>databases</strong> (<em>dict</em>) – the database to be set up</p>
+</dd>
+<dt class="field-even">Serializer_class</dt>
+<dd class="field-even"><p>the serializer of the database</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend.tests">
+<span id="src-backend-tests-module"></span><h2>src.backend.tests module<a class="headerlink" href="#module-src.backend.tests" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.backend.urls">
+<span id="src-backend-urls-module"></span><h2>src.backend.urls module<a class="headerlink" href="#module-src.backend.urls" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.backend.views">
+<span id="src-backend-views-module"></span><h2>src.backend.views module<a class="headerlink" href="#module-src.backend.views" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="src.backend.views.PrefixHttpResponseRedirect">
+<em class="property">class </em><code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">PrefixHttpResponseRedirect</code><span class="sig-paren">(</span><em class="sig-param">input</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.PrefixHttpResponseRedirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">django.http.response.HttpResponseRedirect</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.accepted_fields_for_db">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">accepted_fields_for_db</code><span class="sig-paren">(</span><em class="sig-param">table</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.accepted_fields_for_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Indicates which fields of some tables can be set by the user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table</strong> (<em>string</em>) – the table</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>which fields can be set</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>[string]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.admin_view">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">admin_view</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.admin_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.am_i_ta_of_this_course">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">am_i_ta_of_this_course</code><span class="sig-paren">(</span><em class="sig-param">current_id</em>, <em class="sig-param">course_id</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.am_i_ta_of_this_course" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether a user is the TA of the course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>current_id</strong> – the id of the user to test for</p>
+</dd>
+</dl>
+<p>;type current_id: int
+:param course_id: the id of the course
+:type course_id: int
+:rtype: boolean</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.am_i_ta_of_this_db">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">am_i_ta_of_this_db</code><span class="sig-paren">(</span><em class="sig-param">current_id</em>, <em class="sig-param">dbid</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.am_i_ta_of_this_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether a user is TA over a certain database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_id</strong> (<em>int</em>) – the id of the user to test for</p></li>
+<li><p><strong>dbid</strong> (<em>int</em>) – the id of the database</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.auth_redirect">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">auth_redirect</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.auth_redirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to check that the request is from an authenticated user</p>
+<p>If the user is not authenticated, this will instead redirect the user to the login page</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>function</em><em>(</em><em>django.http.HttpRequest</em><em>)</em>) – the function to decorate</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The decorated function</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>function(django.http.HttpRequest)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.authenticated">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">authenticated</code><span class="sig-paren">(</span><em class="sig-param">func</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.authenticated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to check that the request is from an authenticated user.</p>
+<p>If the user is not authenticated, this will return a 401 instead</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>func</strong> (<em>function</em><em>(</em><em>django.http.HttpRequest</em><em>)</em>) – the function to decorate</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The decorated function</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>function(django.http.HttpRequest)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.baseview">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">baseview</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">dbname</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.baseview" title="Permalink to this definition">¶</a></dt>
+<dd><p>The handler for requests on the base models; redirects to the appropriate view for that object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>dbname</strong> (<em>string</em>) – the name of the models</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>mixed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.change_password">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">change_password</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.change_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call to change the user password</p>
+<p>On GET, display the form
+On POST, change the user password (if the previous password is correct)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The form on GET, a status code on POST</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.check_role">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">check_role</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">role</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.check_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>safely check that the user has at least the specified role</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – the HttpRequest</p></li>
+<li><p><strong>role</strong> (<em>int</em>) – the minimum role the user should have</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>whether the user has at least the role</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.course_dump">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">course_dump</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">pk</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.course_dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a zip file with dumps for every database in a course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – The primary key of the requested course</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A zip file response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.courses">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">courses</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.courses" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.defaultresponse">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">defaultresponse</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.defaultresponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response returned when no path is matched</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Requested Database</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.delete_single_response">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">delete_single_response</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">requested_pk</em>, <em class="sig-param">db_parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.delete_single_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for DELETEing an object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>requested_pk</strong> (<em>int</em>) – the primary key of the object to delete</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A status code indicating success</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.do_i_own_this_item">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">do_i_own_this_item</code><span class="sig-paren">(</span><em class="sig-param">current_id</em>, <em class="sig-param">pk</em>, <em class="sig-param">db_parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.do_i_own_this_item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether a user is the owner of a database model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current_id</strong> (<em>int</em>) – the id of the user to test for</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – the primary key of the object</p></li>
+<li><p><strong>db_parameters</strong> (<em>dict</em>) – parameters of the database models</p></li>
+</ul>
+</dd>
+<dt class="field-even">Rtype boolean</dt>
+<dd class="field-even"><p></p></dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.does_a_row_exist">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">does_a_row_exist</code><span class="sig-paren">(</span><em class="sig-param">sql_result</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.does_a_row_exist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the SQL query return anything.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sql_result</strong> – the result of the SQL query</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>whether there are any rows in the result</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.dump">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">dump</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">pk</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a dump of the requested database</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – the primary key of the requested database</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Requested Database</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.edit_courses">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">edit_courses</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.edit_courses" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.edit_users">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">edit_users</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.edit_users" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.filter_dict_on_keys">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">filter_dict_on_keys</code><span class="sig-paren">(</span><em class="sig-param">incoming</em>, <em class="sig-param">dbname</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.filter_dict_on_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters JSON objects to only include acceptable fields for a certain table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>incoming</strong> (<em>dict</em>) – the object to filter</p></li>
+<li><p><strong>dbname</strong> (<em>string</em>) – the name of the database the object is for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the filtered object</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.forgot_password_page">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">forgot_password_page</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.forgot_password_page" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.generate_migration">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">generate_migration</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.generate_migration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a migration script for the course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A response indicating where the migration script was generated</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.get_base_response">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">get_base_response</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">db_parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.get_base_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>The view for getting all entries in a table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>db_parameters</strong> (<em>dict</em>) – The parameters for the requsted table</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.get_course_ta">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">get_course_ta</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">pk</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.get_course_ta" title="Permalink to this definition">¶</a></dt>
+<dd><p>view for getting the ta’s on a certain course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – the id of the course</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.get_db_parameters">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">get_db_parameters</code><span class="sig-paren">(</span><em class="sig-param">dbname</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.get_db_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the database model and serializer given a database name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dbname</strong> (<em>string</em>) – the database name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the name, model, and serializer</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.get_own_response">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">get_own_response</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">dbname</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.get_own_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>The response for getting all entries owned by the current user on a certain table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>dbname</strong> (<em>string</em>) – the name of the model to get</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.get_role">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">get_role</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.get_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the role from the request</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – the request</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.get_single_response">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">get_single_response</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">pk</em>, <em class="sig-param">db_parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.get_single_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>The get response for a single item in a table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – the primary key of the object</p></li>
+<li><p><strong>db_parameters</strong> (<em>dict</em>) – The parameters for the requested table</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.login">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">login</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.login" title="Permalink to this definition">¶</a></dt>
+<dd><p>The call to log in, i.e. set the session variables if the username/password combo is correct</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A redirect if the login was correct, an error message with the same login form otherwise</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponseRedirect or django django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.logout">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">logout</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.logout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs out the user by deleting their session</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The login form, with a message that the user has been logged out</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.logout_button">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">logout_button</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.logout_button" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for debug purposes only; just returns a small web page with the a button to log out.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a very small web page with a logout button</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.missing_databases">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">missing_databases</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">all=False</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.missing_databases" title="Permalink to this definition">¶</a></dt>
+<dd><p>GET a list of missing databases, or DELETE a database not managed by DAB</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>all=False</strong> – Whether to include databases that don’t match the database prefix (only relevant in GET)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>On GET, a Json list; on POST, a status code indicating succes</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>On GET: django.http.JsonResponse, on POST: django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.password_has_been_reset">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">password_has_been_reset</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.password_has_been_reset" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.post_base_dbmusers_response">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">post_base_dbmusers_response</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.post_base_dbmusers_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for POSTing to dbmusers, i.e. creating a user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.post_base_response">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">post_base_response</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">db_parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.post_base_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for POSTing to, i.e. creating, an object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>db_parameters</strong> (<em>dict</em>) – The parameters for the requested table</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.redirect">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">redirect</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.redirect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.register">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.register" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.remove_missing_database">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">remove_missing_database</code><span class="sig-paren">(</span><em class="sig-param">db_name</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.remove_missing_database" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a database from postgres, IF it is NOT managed by DAB.</p>
+<p>Used as a helper to the above missing_databases</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>db_name</strong> (<em>string</em>) – the name of the database to remove</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>django.http.HttpResponse if there was an error, False otherwise</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse or boolean</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.render_with_prefix">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">render_with_prefix</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">template_name</em>, <em class="sig-param">context=None</em>, <em class="sig-param">content_type=None</em>, <em class="sig-param">status=None</em>, <em class="sig-param">using=None</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.render_with_prefix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.request_reset_password">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">request_reset_password</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">email</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.request_reset_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>A view in case the user would like to request a password reset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>email</strong> (<em>string</em>) – the user email</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A status code indicating success</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.require_role">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">require_role</code><span class="sig-paren">(</span><em class="sig-param">role</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.require_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a decorator to ensure that the request comes from a user with at least the specified role</p>
+<p>Will return a 401 if the user is unauthenticated, and a 403 if the role is insufficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>role</strong> (<em>int</em>) – the minumun role the decorated function should accept</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a function decorator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>func(func(django.http.HttpRequest))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.require_role_redirect">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">require_role_redirect</code><span class="sig-paren">(</span><em class="sig-param">role</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.require_role_redirect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a decorator to ensure that the request comes from a user with at least the specified role</p>
+<p>Will redirect the user to login if the user is unauthenticated, and return a 403 if the role is insufficient.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>role</strong> (<em>int</em>) – the minumun role the decorated function should accept</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a function decorator</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>func(func(django.http.HttpRequest))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.resend_verification">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">resend_verification</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.resend_verification" title="Permalink to this definition">¶</a></dt>
+<dd><p>View which resend the verification email, in case the user has not received it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A status code indicating success</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.reset">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">pk</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the requested database to the schema of the course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>pk</strong> – The id of the requested database</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.reset_password">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">reset_password</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">pk</em>, <em class="sig-param">token</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.reset_password" title="Permalink to this definition">¶</a></dt>
+<dd><p>A view to reset the password
+On GET, serves a password reset form
+On POST, resets the password</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – the primary key of the user</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – the users password reset token</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>mixed</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.schema">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">schema</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">pk</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get or set the schema of the requested course</p>
+<p>A GET request will return the contents of the schema, and a POST request will set it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – The id of the requested course</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>If GET, a text response with the schema. If POST, a status code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.search_db_on_course">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">search_db_on_course</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">search_value</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.search_db_on_course" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for studentdatabases in a certain course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>search_value</strong> (<em>int</em>) – the id of the course</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.search_dbmusers_on_course">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">search_dbmusers_on_course</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">pk</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.search_dbmusers_on_course" title="Permalink to this definition">¶</a></dt>
+<dd><p>view for getting all users who have a database in a course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – the id of the course</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.search_on_name">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">search_on_name</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">search_value</em>, <em class="sig-param">dbname</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.search_on_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for searching in the database by name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>search_value</strong> (<em>string</em>) – the requested query</p></li>
+<li><p><strong>dbname</strong> (<em>string</em>) – the name of the database to search in</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.search_on_owner">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">search_on_owner</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">search_value</em>, <em class="sig-param">dbname</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.search_on_owner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search a database by the owner of the object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>search_value</strong> (<em>int</em>) – the primary key of the owner to search for</p></li>
+<li><p><strong>dbname</strong> (<em>string</em>) – the name of the model to search for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.set_role">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">set_role</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.set_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to change the role of users</p>
+<p>A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A response indicating whether the call was successful</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.singleview">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">singleview</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">pk</em>, <em class="sig-param">dbname</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.singleview" title="Permalink to this definition">¶</a></dt>
+<dd><p>The handler for requests that want a single object; redirects to the appropriate view for that object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>pk</strong> (<em>int</em>) – the primary key of the requested object</p></li>
+<li><p><strong>dbname</strong> (<em>string</em>) – the name of the requested model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>mixed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.student_view">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">student_view</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.student_view" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.ta_own_studentdatabases">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">ta_own_studentdatabases</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.ta_own_studentdatabases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the studentdatabases in courses ta’d by the current user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.teacher_own_studentdatabases">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">teacher_own_studentdatabases</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.teacher_own_studentdatabases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the studentdatabases in courses owned by the current user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.teacher_own_tas">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">teacher_own_tas</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.teacher_own_tas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the ta objects corresponding to courses owned by the current user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.test">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">test</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.test" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.transferSchema">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">transferSchema</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">course</em>, <em class="sig-param">database</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.transferSchema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use the contents of a student database as the schema for a course.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>course</strong> (<em>int</em>) – the id of the course to put the schema in</p></li>
+<li><p><strong>databasae</strong> – the id of the database to take the schema from</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Response with a status code indicating if the call was successful</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.update_single_response">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">update_single_response</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">requested_pk</em>, <em class="sig-param">db_parameters</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.update_single_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>View for PUTting to an object, i.e. updating it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>requested_pk</strong> (<em>int</em>) – the primary key of the object to update</p></li>
+<li><p><strong>db_parameters</strong> (<em>dict</em>) – The parameters for the requested table</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.verify">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">verify</code><span class="sig-paren">(</span><em class="sig-param">request</em>, <em class="sig-param">token</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>A call verifying a users email, if the correct token was used</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p></li>
+<li><p><strong>token</strong> (<em>string</em>) – The email verification token</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Whether the verification was successful, with possibly a login form</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.HttpResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.who">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">who</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.who" title="Permalink to this definition">¶</a></dt>
+<dd><p>A call returning a JSON object with the id and role of the user.</p>
+<p>As these are stored in the session, omitting the others saves us a database query, improving performance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.backend.views.whoami">
+<code class="sig-prename descclassname">src.backend.views.</code><code class="sig-name descname">whoami</code><span class="sig-paren">(</span><em class="sig-param">request</em><span class="sig-paren">)</span><a class="headerlink" href="#src.backend.views.whoami" title="Permalink to this definition">¶</a></dt>
+<dd><p>A call returning a json object with the id, email, and role of the current user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>django.http.HttpRequest</em>) – The request</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A JSON object response</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>django.http.response.JsonResponse</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.backend">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-src.backend" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">DAB</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Floris Breggeman, Raoul Linssen.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/src.backend.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

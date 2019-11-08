@@ -39,9 +39,7 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s',
 )
 
-# --- BEGIN FREEK CHUNK FIX ---
-
-
+# --- IMPORTANT FIX TO CORRECTLY LOAD CHUNCKS ---
 
 cssnumbers = []
 jsnumbers = []
@@ -63,7 +61,7 @@ if not DEBUG:
 else:
     cssnumbers.append("main")
 
-# --- END FREEK CHUNK FIX ---
+# --- END IMPORTANT FIX TO CORRECTLY LOAD CHUNCKS ---
 
 class PrefixHttpResponseRedirect(HttpResponseRedirect):
     def __init__(self,input):
@@ -83,18 +81,19 @@ def render_with_prefix(request, template_name, context=None, content_type=None, 
 
 
 # AUTHENTICATION CHECKERS
-# Warning: these are Python decorators, which is some high-lever functional programming.
+# Warning: these are Python decorators, which is some high-level functional programming.
 
-"""Decorator to check that the request is from an authenticated user.
-
-If the user is not authenticated, this will return a 401 instead
-
-:param func: the function to decorate
-:type func: function(django.http.HttpRequest)
-:returns: The decorated function
-:rtype: function(django.http.HttpRequest)
-"""
+    
 def authenticated(func):
+    """Decorator to check that the request is from an authenticated user.
+
+    If the user is not authenticated, this will return a 401 instead
+
+    :param func: the function to decorate
+    :type func: function(django.http.HttpRequest)
+    :returns: The decorated function
+    :rtype: function(django.http.HttpRequest)
+    """
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
         if not check_role(request, student):
@@ -103,16 +102,17 @@ def authenticated(func):
 
     return wrapper
 
-"""Decorator to check that the request is from an authenticated user
-
-If the user is not authenticated, this will instead redirect the user to the login page
-
-:param func: the function to decorate
-:type func: function(django.http.HttpRequest)
-:returns: The decorated function
-:rtype: function(django.http.HttpRequest)
-"""
+    
 def auth_redirect(func):
+    """Decorator to check that the request is from an authenticated user
+
+    If the user is not authenticated, this will instead redirect the user to the login page
+
+    :param func: the function to decorate
+    :type func: function(django.http.HttpRequest)
+    :returns: The decorated function
+    :rtype: function(django.http.HttpRequest)
+    """
     @functools.wraps(func)
     def wrapper(request, *args, **kwargs):
         if not check_role(request, student):
@@ -121,16 +121,17 @@ def auth_redirect(func):
 
     return wrapper
 
-"""Generates a decorator to ensure that the request comes from a user with at least the specified role
-
-Will return a 401 if the user is unauthenticated, and a 403 if the role is insufficient.
-
-:param role: the minumun role the decorated function should accept
-:type role: int
-:returns: a function decorator
-:rtype: func(func(django.http.HttpRequest))
-"""
+    
 def require_role(role):
+    """Generates a decorator to ensure that the request comes from a user with at least the specified role
+
+    Will return a 401 if the user is unauthenticated, and a 403 if the role is insufficient.
+
+    :param role: the minumun role the decorated function should accept
+    :type role: int
+    :returns: a function decorator
+    :rtype: func(func(django.http.HttpRequest))
+    """
     def decorator(func):
         @functools.wraps(func)
         def wrapper(request, *args, **kwargs):
@@ -144,16 +145,17 @@ def require_role(role):
 
     return decorator
 
-"""Generates a decorator to ensure that the request comes from a user with at least the specified role
-
-Will redirect the user to login if the user is unauthenticated, and return a 403 if the role is insufficient.
-
-:param role: the minumun role the decorated function should accept
-:type role: int
-:returns: a function decorator
-:rtype: func(func(django.http.HttpRequest))
-"""
+    
 def require_role_redirect(role):
+    """Generates a decorator to ensure that the request comes from a user with at least the specified role
+
+    Will redirect the user to login if the user is unauthenticated, and return a 403 if the role is insufficient.
+
+    :param role: the minumun role the decorated function should accept
+    :type role: int
+    :returns: a function decorator
+    :rtype: func(func(django.http.HttpRequest))
+    """
     def decorator(func):
         @functools.wraps(func)
         def wrapper(request, *args, **kwargs):
@@ -167,16 +169,17 @@ def require_role_redirect(role):
 
     return decorator
 
-"""safely check that the user has at least the specified role
-
-:param request: the HttpRequest
-:type request: django.http.HttpRequest
-:param role: the minimum role the user should have
-:type role: int
-:returns: whether the user has at least the role
-:rtype: boolean
-"""
+    
 def check_role(request, role):
+    """safely check that the user has at least the specified role
+
+    :param request: the HttpRequest
+    :type request: django.http.HttpRequest
+    :param role: the minimum role the user should have
+    :type role: int
+    :returns: whether the user has at least the role
+    :rtype: boolean
+    """
     try:
         if (int(request.session["role"]) <= role):
             return True
@@ -186,26 +189,41 @@ def check_role(request, role):
         pass
     return False
 
-"""Get the role from the request
-
-:param request: the request
-:type request: django.http.HttpRequest
-"""
+    
 def get_role(request):
+    """Get the role from the request
+
+    :param request: the request
+    :type request: django.http.HttpRequest
+    """
     return int(request.session["role"])
 
 
 # REST RESPONSES
-"""The response returned when no path is matched
-
-:param request: The request
-:type request: django.http.HttpRequest
-"""
+    
 def defaultresponse(request):
+    """The response returned when no path is matched
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :return: The Requested Database
+    :rtype: django.http.HttpResponse
+    """
     return HttpResponse("The page that you requested was not found.", status=status.HTTP_404_NOT_FOUND)
 
+    
 @authenticated
+    
 def get_base_response(request, db_parameters):
+    """The view for getting all entries in a table
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param db_parameters: The parameters for the requsted table
+    :type db_parameters: dict
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     if check_role(request, admin) or db_parameters["dbname"] == "courses" or (
             check_role(request, teacher) and db_parameters["dbname"] == "dbmusers"):
         try:
@@ -225,15 +243,29 @@ def get_base_response(request, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-
+    
 def does_a_row_exist(sql_result):
+    """Whether the SQL query return anything.
+
+    :param sql_result: the result of the SQL query
+    :returns: whether there are any rows in the result
+    :rtype: boolean
+    """
     if sql_result.count() > 0:
         return True
     else:
         return False
 
-
+    
 def am_i_ta_of_this_course(current_id, course_id):
+    """Whether a user is the TA of the course
+
+    :param current_id: the id of the user to test for
+    ;type current_id: int
+    :param course_id: the id of the course
+    :type course_id: int
+    :rtype: boolean
+    """
     try:
         ta_info = TAs.objects.filter(courseid=course_id, studentid=current_id)
 
@@ -243,8 +275,16 @@ def am_i_ta_of_this_course(current_id, course_id):
         logging.debug(e)
         return False
 
-
+    
 def am_i_ta_of_this_db(current_id, dbid):
+    """Whether a user is TA over a certain database
+
+    :param current_id: the id of the user to test for
+    :type current_id: int
+    :param dbid: the id of the database
+    :type dbid: int
+    :rtype: boolean
+    """
     try:
         db_info = Studentdatabases.objects.get(pk=dbid)
         course_id = db_info.course
@@ -256,8 +296,18 @@ def am_i_ta_of_this_db(current_id, dbid):
         logging.debug(e)
         return False
 
-
+    
 def do_i_own_this_item(current_id, pk, db_parameters):
+    """Whether a user is the owner of a database model
+
+    :param current_id: the id of the user to test for
+    :type current_id: int
+    :param pk: the primary key of the object
+    :type pk: int
+    :param db_parameters: parameters of the database models
+    :type db_parameters: dict
+    :rtype boolean:
+    """
     db_id = None
     serializer_class = None
     database = None
@@ -282,9 +332,21 @@ def do_i_own_this_item(current_id, pk, db_parameters):
         else:
             return False
 
-
+    
 @authenticated
+    
 def get_single_response(request, pk, db_parameters):
+    """The get response for a single item in a table
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param pk: the primary key of the object
+    :type pk: int
+    :param db_parameters: The parameters for the requested table
+    :type db_parameters: dict
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     current_id = request.session['user']
 
     try:
@@ -308,9 +370,19 @@ def get_single_response(request, pk, db_parameters):
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-
+    
 @authenticated
+    
 def get_own_response(request, dbname):
+    """The response for getting all entries owned by the current user on a certain table
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param dbname: the name of the model to get
+    :type dbname: string
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     db_parameters = get_db_parameters(dbname)
 
     # logging.debug("hier")
@@ -342,10 +414,20 @@ def get_own_response(request, dbname):
                             " this user has requested its own info in this db")  # LOG THIS ACTION
         return JsonResponse(serializer_class.data, safe=False)
 
-
+    
 @require_GET
 @authenticated
+    
 def get_course_ta(request, pk):
+    """view for getting the ta's on a certain course
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param pk: the id of the course
+    :type pk: int
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     course = None
     try:
         course = Courses.objects.get(courseid=pk)
@@ -364,6 +446,15 @@ def get_course_ta(request, pk):
 @require_GET
 @authenticated
 def search_dbmusers_on_course(request, pk):
+    """view for getting all users who have a database in a course
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param pk: the id of the course
+    :type pk: int
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     course = None
     try:
         course = Courses.objects.get(courseid=pk)
@@ -379,8 +470,15 @@ def search_dbmusers_on_course(request, pk):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-
+    
 def post_base_dbmusers_response(request):
+    """View for POSTing to dbmusers, i.e. creating a user
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     databases = None
     try:
         databases = JSONParser().parse(request)
@@ -439,6 +537,15 @@ def post_base_dbmusers_response(request):
 
 @authenticated
 def post_base_response(request, db_parameters):
+    """View for POSTing to, i.e. creating, an object
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param db_parameters: The parameters for the requested table
+    :type db_parameters: dict
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     if check_role(request, teacher) or (
             db_parameters["dbname"] == "studentdatabases" and check_role(request, student)):
 
@@ -553,6 +660,15 @@ def post_base_response(request, db_parameters):
 
 @authenticated
 def delete_single_response(request, requested_pk, db_parameters):
+    """View for DELETEing an object
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param requested_pk: the primary key of the object to delete
+    :type requested_pk: int
+    :return: A status code indicating success
+    :rtype: django.http.HttpResponse
+    """
     current_id = request.session['user']
 
     if (check_role(request, admin)
@@ -593,15 +709,31 @@ def delete_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-
+    
 def accepted_fields_for_db(table):
+    """Indicates which fields of some tables can be set by the user
+
+    :param table: the table
+    :type table: string
+    :returns: which fields can be set
+    :rtype: [string]
+    """
     if table == "courses":
         return {'coursename', 'info', 'active', 'databases'}
     if table == "studentdatabases":
         return {'groupid'}
 
-
+    
 def filter_dict_on_keys(incoming, dbname):
+    """Filters JSON objects to only include acceptable fields for a certain table
+
+    :param incoming: the object to filter
+    :type incoming: dict
+    :param dbname: the name of the database the object is for
+    :type dbname: string
+    :returns: the filtered object
+    :rtype: dict
+    """
     accepted_fields = accepted_fields_for_db(dbname)
 
     unwanted = set(incoming) - set(accepted_fields)
@@ -609,9 +741,20 @@ def filter_dict_on_keys(incoming, dbname):
 
     return incoming
 
-
+    
 @authenticated
 def update_single_response(request, requested_pk, db_parameters):
+    """View for PUTting to an object, i.e. updating it
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param requested_pk: the primary key of the object to update
+    :type requested_pk: int
+    :param db_parameters: The parameters for the requested table
+    :type db_parameters: dict
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     # UPDATE CURRENTLY ONLY SUPPORTED FOR COURSES, STUDENTDATABASES, AND DBMUSERS
 
     authorised = False
@@ -672,9 +815,20 @@ def update_single_response(request, requested_pk, db_parameters):
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-
+    
 @authenticated
 def search_on_name(request, search_value, dbname):
+    """View for searching in the database by name
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param search_value: the requested query
+    :type search_value: string
+    :param dbname: the name of the database to search in
+    :type dbname: string
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     db_parameters = get_db_parameters(dbname)
 
     results = None
@@ -732,6 +886,17 @@ def search_on_name(request, search_value, dbname):
 @require_GET
 @require_role(admin)
 def search_on_owner(request, search_value, dbname):
+    """Search a database by the owner of the object
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param search_value: the primary key of the owner to search for
+    :type search_value: int
+    :param dbname: the name of the model to search for
+    :type dbname: string
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     db_parameters = get_db_parameters(dbname)
 
     try:
@@ -747,10 +912,18 @@ def search_on_owner(request, search_value, dbname):
     except db_parameters["db"].DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-
 @require_GET
 @require_role(student)
 def search_db_on_course(request, search_value):
+    """Search for studentdatabases in a certain course
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param search_value: the id of the course
+    :type search_value: int
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     try:
         course = Courses.objects.get(courseid=search_value)
 
@@ -765,8 +938,15 @@ def search_db_on_course(request, search_value):
     except Courses.DoesNotExist as e:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-
+    
 def get_db_parameters(dbname):
+    """Get the database model and serializer given a database name
+
+    :param dbname: the database name
+    :type dbname: string
+    :returns: the name, model, and serializer
+    :rtype: dict
+    """
     db_parameters = {"dbname": dbname}
 
     if dbname == "courses":
@@ -784,49 +964,61 @@ def get_db_parameters(dbname):
 
     return db_parameters
 
-"""Get the ta objects corresponding to courses owned by the current user
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: A JSON object response
-:rtype: django.http.response.JsonResponse
-"""
 @require_GET
 @authenticated
 def teacher_own_tas(request):
+    """Get the ta objects corresponding to courses owned by the current user
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     results = TAs.objects.raw("SELECT t.* FROM tas t, courses c WHERE c.fid=%s AND t.courseid=c.courseid;", [request.session["user"]])
     serializer = TasSerializer(results, many=True)
     return JsonResponse(serializer.data, safe=False)
 
-"""Get the studentdatabases in courses owned by the current user
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: A JSON object response
-:rtype: django.http.response.JsonResponse
-"""
 @require_GET
 @authenticated
 def teacher_own_studentdatabases(request):
+    """Get the studentdatabases in courses owned by the current user
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     results = Studentdatabases.objects.raw("SELECT s.* FROM studentdatabases s, courses c WHERE c.fid=%s AND s.course = c.courseid;", [request.session["user"]])
     serializer = StudentdatabasesSerializer(results, many=True)
     return JsonResponse(serializer.data, safe=False)
 
-"""Get the studentdatabases in courses ta'd by the current user
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: A JSON object response
-:rtype: django.http.response.JsonResponse
-"""
 @require_GET
 @authenticated
+    
 def ta_own_studentdatabases(request):
+    """Get the studentdatabases in courses ta'd by the current user
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     results = Studentdatabases.objects.raw("SELECT s.* FROM studentdatabases s, tas t WHERE t.studentid=%s AND s.course = t.courseid;", [request.session["user"]])
     serializer = StudentdatabasesSerializer(results, many=True)
     return JsonResponse(serializer.data, safe=False)
 
+    
 def singleview(request, pk, dbname):
+    """The handler for requests that want a single object; redirects to the appropriate view for that object
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param pk: the primary key of the requested object
+    :type pk: int
+    :param dbname: the name of the requested model
+    :type dbname: string
+    :rtype: mixed
+    """
     db_parameters = get_db_parameters(dbname)
 
     if request.method == 'GET':
@@ -838,8 +1030,16 @@ def singleview(request, pk, dbname):
     else:
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-
+    
 def baseview(request, dbname):
+    """The handler for requests on the base models; redirects to the appropriate view for that object
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param dbname: the name of the models
+    :type dbname: string
+    :rtype: mixed
+    """
     db_parameters = get_db_parameters(dbname)
     if request.method == 'GET':
         return get_base_response(request, db_parameters)
@@ -850,18 +1050,18 @@ def baseview(request, dbname):
     else:
         return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-"""Get a dump of the requested database
-
-:param request: The request
-:type request: django.http.HttpRequest
-:param pk: the primary key of the requested database
-:type pk: int
-:return: The Requested Database
-:rtype: django.http.HttpResponse
-"""
 @require_GET
 @authenticated
 def dump(request, pk):
+    """Get a dump of the requested database
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param pk: the primary key of the requested database
+    :type pk: int
+    :return: The Requested Database
+    :rtype: django.http.HttpResponse
+    """
     try:
         db = Studentdatabases.objects.get(dbid=pk)
     except Studentdatabases.DoesNotExist as e:
@@ -877,18 +1077,18 @@ def dump(request, pk):
     log_message_with_db(request.session['user'], "Studentdatabases", log_dump, message)  # LOG THIS ACTION
     return response
 
-"""Get a zip file with dumps for every database in a course
-
-:param request: The request
-:type request: django.http.HttpRequest
-:param pk: The primary key of the requested course
-:type pk: int
-:return: A zip file response
-:rtype: django.http.HttpResponse
-"""
 @require_GET
 @require_role(teacher)
 def course_dump(request, pk):
+    """Get a zip file with dumps for every database in a course
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param pk: The primary key of the requested course
+    :type pk: int
+    :return: A zip file response
+    :rtype: django.http.HttpResponse
+    """
     course = None
     try:
         course = Courses.objects.get(courseid=pk)
@@ -910,16 +1110,17 @@ def course_dump(request, pk):
                         " course " + str(course.courseid) + " has been dumped")
     return response
 
-"""Reset the requested database to the schema of the course
-
-:param request: The request
-:type request: django.http.HttpRequest
-:param pk: The id of the requested database
-:rtype: django.http.HttpResponse
-"""
 @require_POST
 @authenticated
+    
 def reset(request, pk):
+    """Reset the requested database to the schema of the course
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param pk: The id of the requested database
+    :rtype: django.http.HttpResponse
+    """
     try:
         db = Studentdatabases.objects.get(dbid=pk)
     except Studentdatabases.DoesNotExist as e:
@@ -938,21 +1139,20 @@ def reset(request, pk):
     log_message_with_db(request.session['user'], "Studentdatabases", log_reset, message)  # LOG THIS ACTION
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
-"""Get or set the schema of the requested course
-
-A GET request will return the contents of the schema, and a POST request will set it.
-
-:param request: The request
-:type request: django.http.HttpRequest
-:param pk: The id of the requested course
-:type pk: int
-:return: If GET, a text response with the schema. If POST, a status code
-:rtype: django.http.HttpResponse
-"""
 @require_http_methods(["GET", "POST"])
 @authenticated
-# TODO: investigate file uploads for this, together with front-end team
 def schema(request, pk):
+    """Get or set the schema of the requested course
+
+    A GET request will return the contents of the schema, and a POST request will set it.
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param pk: The id of the requested course
+    :type pk: int
+    :return: If GET, a text response with the schema. If POST, a status code
+    :rtype: django.http.HttpResponse
+    """
     try:
         course = Courses.objects.get(courseid=pk)
         if request.method == "GET":
@@ -974,20 +1174,20 @@ def schema(request, pk):
     except Courses.DoesNotExist:
         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
 
-"""Use the contents of a student database as the schema for a course.
-
-:param request: The request
-:type request: django.http.HttpRequest
-:param course: the id of the course to put the schema in
-:type course: int
-:param databasae: the id of the database to take the schema from
-:type database: int
-:returns: Response with a status code indicating if the call was successful
-:rtype: django.http.HttpResponse
-"""
 @require_POST
 @authenticated
 def transferSchema(request, course, database):
+    """Use the contents of a student database as the schema for a course.
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param course: the id of the course to put the schema in
+    :type course: int
+    :param databasae: the id of the database to take the schema from
+    :type database: int
+    :returns: Response with a status code indicating if the call was successful
+    :rtype: django.http.HttpResponse
+    """
     try:
         course = Courses.objects.get(courseid=course)
     except Courses.DoesNotExist as e:
@@ -1023,16 +1223,16 @@ def transferSchema(request, course, database):
 
     return HttpResponse()
 
-"""Generates a migration script for the course
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: A response indicating where the migration script was generated
-:rtype: django.http.HttpResponse
-"""
 @require_POST
 @require_role(admin)
 def generate_migration(request):
+    """Generates a migration script for the course
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: A response indicating where the migration script was generated
+    :rtype: django.http.HttpResponse
+    """
     import os
     script_file = os.getcwd()+"/dab_backup.sh"
 
@@ -1082,18 +1282,19 @@ def generate_migration(request):
 
     return HttpResponse("Migration generated at " + script_file)
 
-"""GET a list of missing databases, or DELETE a database not managed by DAB
-
-:param request: The request
-:type request: django.http.HttpRequest
-:param all=False: Whether to include databases that don't match the database prefix (only relevant in GET)
-:type all: boolean
-:returns: On GET, a Json list; on POST, a status code indicating succes
-:rtype: On GET: django.http.JsonResponse, on POST: django.http.HttpResponse
-"""
 @require_http_methods(["GET", "DELETE"])
 @require_role(admin)
+    
 def missing_databases(request, all=False):
+    """GET a list of missing databases, or DELETE a database not managed by DAB
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param all=False: Whether to include databases that don't match the database prefix (only relevant in GET)
+    :type all: boolean
+    :returns: On GET, a Json list; on POST, a status code indicating succes
+    :rtype: On GET: django.http.JsonResponse, on POST: django.http.HttpResponse
+    """
     if request.method=="DELETE":
         try:
             data = JSONParser().parse(request)
@@ -1131,16 +1332,17 @@ def missing_databases(request, all=False):
 
     return JsonResponse(output, safe=False)
 
-"""Removes a database from postgres, IF it is NOT managed by DAB.
-
-Used as a helper to the above missing_databases
-
-:param db_name: the name of the database to remove
-:type db_name: string
-:returns: django.http.HttpResponse if there was an error, False otherwise
-:rtype: django.http.HttpResponse or boolean
-"""
+    
 def remove_missing_database(db_name):
+    """Removes a database from postgres, IF it is NOT managed by DAB.
+
+    Used as a helper to the above missing_databases
+
+    :param db_name: the name of the database to remove
+    :type db_name: string
+    :returns: django.http.HttpResponse if there was an error, False otherwise
+    :rtype: django.http.HttpResponse or boolean
+    """
     from django.db import connection
     # We DON'T want to use this to remove a database that we do know about!
     try:
@@ -1212,15 +1414,16 @@ def register(request):
     return render_with_prefix(request, 'register.html', {'form': form})
 
 
-"""The call to log in, i.e. set the session variables if the username/password combo is correct
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: A redirect if the login was correct, an error message with the same login form otherwise
-:rtype: django.http.HttpResponseRedirect or django django.http.HttpResponse
-"""
 @require_POST
+    
 def login(request):
+    """The call to log in, i.e. set the session variables if the username/password combo is correct
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: A redirect if the login was correct, an error message with the same login form otherwise
+    :rtype: django.http.HttpResponseRedirect or django django.http.HttpResponse
+    """
     incorrect_message = "wrong email or password"
     form = LoginForm(request.POST)
     if form.is_valid():
@@ -1250,23 +1453,28 @@ def login(request):
         form = LoginForm()
         return render_with_prefix(request, 'login.html', {"form": form, 'template_class': 'could-not-parse-form'})
 
-
 @require_POST
 @authenticated
 def logout(request):
+    """Logs out the user by deleting their session
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :return: The login form, with a message that the user has been logged out
+    :rtype: django.http.HttpResponse
+    """
     request.session.flush()
     return render_with_prefix(request, 'login.html', {'form': LoginForm(), 'template_class': "you-have-been-logged-out"})
 
-
-"""Function for debug purposes only; just returns a small web page with the a button to log out.
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: a very small web page with a logout button
-:rtype: django.http.HttpResponse
-"""
 @require_GET
 def logout_button(request):
+    """Function for debug purposes only; just returns a small web page with the a button to log out.
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: a very small web page with a logout button
+    :rtype: django.http.HttpResponse
+    """
     return HttpResponse(
         "<!DOCTYPE html><html><body><form action='/logout' method='POST'><input type='submit' value='logout'/></form></body></html>")
 
@@ -1283,18 +1491,19 @@ def courses(request):
     return render_with_prefix(request, template, context)
 
 
-""" Function to change the role of users
-
-A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: A response indicating whether the call was successful
-:rtype: django.http.HttpResponse
-"""
 @require_POST
 @require_role(admin)
+    
 def set_role(request):
+    """ Function to change the role of users
+
+    A little bit too complicated for the amount of roles that we have, but should be expandable to an infite amount of roles.
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: A response indicating whether the call was successful
+    :rtype: django.http.HttpResponse
+    """
     # Always check in case session is not set
     body = json.loads(request.body.decode("utf-8"))
     # Check if the request is formed correctly
@@ -1325,16 +1534,17 @@ def set_role(request):
     return HttpResponse()
 
 
-"""A call returning a json object with the id, email, and role of the current user
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: A JSON object response
-:rtype: django.http.response.JsonResponse
-"""
 @require_GET
 @authenticated
+    
 def whoami(request):
+    """A call returning a json object with the id, email, and role of the current user
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     user = dbmusers.objects.get(id=request.session["user"])
     response = {
         "id": user.id,
@@ -1346,18 +1556,18 @@ def whoami(request):
     response = json.JSONEncoder().encode(response)
     return HttpResponse(str(response), content_type="application/json")
 
-"""A call returning a JSON object with the id and role of the user.
-
-As these are stored in the session, omitting the others saves us a database query, improving performance
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: A JSON object response
-:rtype: django.http.response.JsonResponse
-"""
 @require_GET
 @authenticated
 def who(request):
+    """A call returning a JSON object with the id and role of the user.
+
+    As these are stored in the session, omitting the others saves us a database query, improving performance
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: A JSON object response
+    :rtype: django.http.response.JsonResponse
+    """
     response = {
         "id": request.session["user"],
         "role": request.session["role"],
@@ -1366,17 +1576,18 @@ def who(request):
     response = json.JSONEncoder().encode(response)
     return HttpResponse(str(response), content_type="application/json")
 
-"""A call verifying a users email, if the correct token was used
 
-:param request: The request
-:type request: django.http.HttpRequest
-:param token: The email verification token
-:type token: string
-:returns: Whether the verification was successful, with possibly a login form
-:rtype: django.http.HttpResponse
-"""
 @require_GET
 def verify(request, token):
+    """A call verifying a users email, if the correct token was used
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param token: The email verification token
+    :type token: string
+    :returns: Whether the verification was successful, with possibly a login form
+    :rtype: django.http.HttpResponse
+    """
     if "user" in request.session:
         return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     try:
@@ -1397,19 +1608,19 @@ def verify(request, token):
     except dbmusers.DoesNotExist as e:
         return HttpResponse("Invalid token", status=status.HTTP_400_BAD_REQUEST)
 
-"""Call to change the user password
-
-On GET, display the form
-On POST, change the user password (if the previous password is correct)
-
-:param request: The request
-:type request: django.http.HttpRequest
-:returns: The form on GET, a status code on POST
-:rtype: django.http.HttpResponse
-"""
 @require_http_methods(["GET", "POST"])
 @authenticated
 def change_password(request):
+    """Call to change the user password
+
+    On GET, display the form
+    On POST, change the user password (if the previous password is correct)
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :returns: The form on GET, a status code on POST
+    :rtype: django.http.HttpResponse
+    """
     if request.method == "GET":
         TA_count = TAs.objects.filter(studentid=request.session['user']).count();
         context = {
@@ -1443,9 +1654,15 @@ def change_password(request):
         else:
             return HttpResponse(status=status.HTTP_403_FORBIDDEN)
 
-
 @require_POST
 def resend_verification(request):
+    """View which resend the verification email, in case the user has not received it.
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :return: A status code indicating success
+    :rtype: django.http.HttpResponse
+    """
     if "user" in request.session:
         return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     body = None
@@ -1471,9 +1688,17 @@ def resend_verification(request):
     mail.send_verification(user.__dict__)
     return HttpResponse()
 
-
 @require_POST
 def request_reset_password(request, email):
+    """A view in case the user would like to request a password reset
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param email: the user email
+    :type email: string
+    :return: A status code indicating success
+    :rtype: django.http.HttpResponse
+    """
     if "user" in request.session:
         return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     db = None
@@ -1495,9 +1720,21 @@ def request_reset_password(request, email):
 
     return HttpResponse(status=status.HTTP_202_ACCEPTED)
 
-
 @require_http_methods(["GET", "POST"])
 def reset_password(request, pk, token):
+    """A view to reset the password
+    On GET, serves a password reset form
+    On POST, resets the password
+
+    :param request: The request
+    :type request: django.http.HttpRequest
+    :param pk: the primary key of the user
+    :type pk: int
+    :param token: the users password reset token
+    :type token: string
+    :return: mixed
+    :rtype: django.http.HttpResponse
+    """
     if "user" in request.session:
         return HttpResponse("You are already logged in!", status=status.HTTP_409_CONFLICT)
     # do checks first

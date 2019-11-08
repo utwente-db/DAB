@@ -11,14 +11,15 @@ from .studentdb_functions import create_studentdatabase, delete_studentdatabase
 db_host = connection.settings_dict["HOST"]
 db_port = connection.settings_dict["PORT"]
 
-"""Checks if there is any ERROR output in the standard error. For internal use only.
-
-:param stderr: the standard error of a psql call
-:type stderr: string
-:returns: The errors in the stderr
-:rtype: string or None
-"""
+    
 def stderr(stderr):
+    """Checks if there is any ERROR output in the standard error. For internal use only.
+
+    :param stderr: the standard error of a psql call
+    :type stderr: string
+    :returns: The errors in the stderr
+    :rtype: string or None
+    """
     for line in stderr.splitlines():
         if re.match(r'ERROR:\s(.*)$', line):
             # there's an error
@@ -34,12 +35,15 @@ def stderr(stderr):
     return None
 
 
-"""Checks if the schema contains anything you might not want in a schema.
-
-:returns: a whether it passed or not, and the reason why 
-:rtype: a tuple of a boolean and a string
-"""
+    
 def check(schema):
+    """Checks if the schema contains anything you might not want in a schema.
+    
+    :param schema: the schema to check
+    :type schema:
+    :returns: a whether it passed or not, and the reason why 
+    :rtype: a tuple of a boolean and a string
+    """
     # create new random database with student privileges
     username, password = hash.randomNames()
     create_studentdatabase(username, username, password)
