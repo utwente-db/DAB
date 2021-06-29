@@ -1,10 +1,12 @@
-# Design Project Group 4: Database Manager
+# Database Administration Bundle
+
+The Database Administration Bundle. A fully automated system based on Django and Typescript, where students can request a database accounts for assignments without help. 
 
 ## Overview
 
 This project serves as a database manager for the Data Science department. 
-With the increase in students; it is no longer feasible to cut database credentials on paper. 
-As such, this software will allow students to request databases with pre-loaded schemas from a certain course.
+With an ever increasing amount of students, it is no longer feasible to distribute database credentials manually for courses relating to data science.
+As such, this software will allow students to request databases with pre-loaded schemas for a certain course.
 
 ## Requirements
 
