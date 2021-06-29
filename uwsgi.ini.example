@@ -1,0 +1,33 @@
+# db_uwsgi.ini file
+[uwsgi]
+
+
+# uncomment these lines if you compiled Python3.7 from source
+# plugins-dir = /usr/lib/uwsgi/plugins
+# plugin = python37
+
+# Django-related settings
+# the base directory (please change to your full path)
+chdir = /[DOCUMENT ROOT]
+# Django's wsgi file (does not need changing)
+module = src.django_settings.wsgi
+# the virtualenv (please change to your full path + /venv)
+home = /[DOCUMENT ROOT]/venv
+
+# process-related settings
+# master (does not need changing)
+master = true
+# maximum number of worker processes (choose any you like)
+processes = 10
+# the socket (please change to the path where you'd like the socket to be created)
+socket = /data/dab/dab.sock
+# ... with appropriate permissions - may be needed
+chmod-socket = 666
+# clear environment on exit (does not need changing)
+vacuum = true
+
+# Do not change this!
+env = DJANGO_SETTINGS_MODULE=src.django_settings.settings
+
+# No idea if this setting actually does anything
+deamonize = /data/dab/uwsgi.log

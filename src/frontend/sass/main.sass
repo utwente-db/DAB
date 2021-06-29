@@ -1,0 +1,171 @@
+@import "~bootstrap/scss/bootstrap"
+@import "~bootstrap-cookie-alert/cookiealert.css"
+@import "~sweetalert2/src/sweetalert2.scss"
+
+.cookiealert
+  position: absolute !important
+
+a
+  color: $cyan
+
+.bootstrap-select .dropdown-item.active, .dropdown-item:active, .nav-link.active
+  background-color: $cyan !important
+
+.nav-link
+  &.green-nav
+    background-color: #d0ffcd
+    font-weight: bold
+
+    &.active
+      background-color: #4ecf86 !important
+      pointer-events: none
+
+    &.inactive-course
+      background-color: #a9cfbf !important
+
+      &.active
+        background-color: #3b955f !important
+        pointer-events: none
+
+
+.nav-link
+  &.inactive-course
+    background-color: #f2f2f2
+
+    &.active
+      background-color: lightgray !important
+      pointer-events: none
+
+.badge-light
+  &.inactive
+    background-color: #f2f2f2
+  &.inactive-you
+    background-color: #a9cfbf
+  &.you
+    background-color: #d0ffcd
+
+
+
+.invalid-feedback
+  display: block !important
+
+#alert-div
+  @extend .text-center
+
+.tableFixHead
+  overflow: auto
+
+.tableFixHead
+  & thead
+    position: sticky
+    top: 0
+    & th
+      position: sticky
+      top: 0
+
+th td
+    padding: 8px 16px
+
+table
+  border-collapse: collapse
+  width: 100%
+
+
+.user-row
+  &.not-disabled
+    cursor: pointer
+    color: $cyan
+
+tr.active, tr:active
+    background-color: $info !important
+    color: white !important
+
+    & td
+      & a
+        color: white !important
+
+.cursor-pointer:not(:disabled)
+  cursor: pointer
+
+
+/* --------------------------------------------------------
+/* "Bootstrap V4 Simple Checkbox Switch - No Js"
+/* by pradeep330
+/* https://bootsnipp.com/snippets/GaxR2
+
+/* The switch - the box around the slider */
+.switch
+  position: relative
+  display: inline-block
+  width: 60px
+  height: 34px
+
+  & input
+    display: none
+
+/* Hide default HTML checkbox */
+
+
+/* The slider */
+.slider
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  background-color: #ccc
+  -webkit-transition: .4s
+  transition: .4s
+
+.slider:not(:disabled)
+  cursor: pointer
+
+.slider:before
+  position: absolute
+  content: ""
+  height: 26px
+  width: 26px
+  left: 4px
+  bottom: 4px
+  background-color: white
+  -webkit-transition: .4s
+  transition: .4s
+
+
+input.default:checked:not(:disabled) + .slider
+  background-color: #444
+
+input.primary:checked:not(:disabled) + .slider
+  background-color: $primary
+
+input.success:checked:not(:disabled) + .slider
+  background-color: $success
+
+input.info:checked:not(:disabled) + .slider
+  background-color: $info
+
+input.warning:checked:not(:disabled) + .slider
+  background-color: $warning
+
+input.danger:checked:not(:disabled) + .slider
+  background-color: $danger
+
+
+input:focus + .slider
+  box-shadow: 0 0 1px #2196F3
+
+
+input:checked + .slider:before
+  -webkit-transform: translateX(26px)
+  -ms-transform: translateX(26px)
+  transform: translateX(26px)
+
+
+/* Rounded sliders */
+.slider.round
+  border-radius: 34px
+
+.slider.round:before
+  border-radius: 50%
+/* --------------------------------------------------------
+

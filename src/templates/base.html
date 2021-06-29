@@ -1,0 +1,26 @@
+{#Basic html template that all pages will extend #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include 'head.html' %}
+    {% block head %}
+        <title>Database Administration Bundle</title>
+    {% endblock %}
+
+    {% for nr in cssnumbers %}
+            <link rel="stylesheet" href="/static/css/{{ nr }}.css">
+    {% endfor %}
+
+    {% for nr in jsnumbers %}
+            <script defer src="/static/scripts/{{ nr}}.js"></script>
+    {% endfor %}
+
+    {% block scripts %}
+    {% endblock %}
+</head>
+<body>
+<template id="url-prefix" class="/{{ url_prefix }}"></template>
+{% block content %}{% endblock %}
+
+</body>
+</html>

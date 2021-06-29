@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "declaration": false,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "pretty": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es5",
+    "moduleResolution": "node",
+    "outDir": "frontend/scripts",
+    "importHelpers": true,
+    "removeComments": false,
+    "esModuleInterop": true,
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "es2015.promise",
+      "esnext"
+    ]
+  },
+  "include": [
+    "src/frontend/scripts"
+  ]
+}
